@@ -6,7 +6,7 @@
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
             "path": "JCMathLib/src",
             "entryPoint": "OCUnitTests",
-            "jckit": "jc222",
+            "jckit": "310r20210706",
             "remove": [
                 "JCMathLib/src/opencrypto/jcmathlib/PM.java"
             ],

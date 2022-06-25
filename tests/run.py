@@ -53,7 +53,7 @@ def execute_test(test: Dict[str, Any]):
     # TODO: respect java home!
     cmd = 'java -jar ../build/libs/javacard-profiler-1.0-SNAPSHOT.jar ' + \
           f'-i "{os.path.join(test["name"], test["path"])}" --simulator ' + \
-          f'--repeat-count 100 --jckit "jcsdk/{test["jckit"]}_kit"'
+          f'--repeat-count 100 --jckit "jcsdk/jc{test["jckit"]}_kit"'
     if 'entryPoint' in test:
         cmd += f' --entry-point "{test["entryPoint"]}"'
     if 'resetInst' in test:
