@@ -7,6 +7,7 @@ from typing import Any, Dict
 import json
 import glob
 import os
+import pathlib
 import re
 import sys
 
@@ -85,6 +86,10 @@ def execute_test(test: Dict[str, Any]):
 
 
 def main():
+    root = pathlib.Path(__file__).parent.resolve()
+    print('Test root:', root)
+    os.chdir(root)
+
     with open('test_data.json') as f:
         data = json.load(f)
 
