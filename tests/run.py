@@ -16,6 +16,8 @@ def clone_git_repo(repo: str, target: str) -> bool:
         print(repo, 'seems to be already cloned')
         return False
 
+    print(target, 'is not cloned yet', flush=True)
+
     ret = call(f'git clone --depth 1 {repo} {target}', shell=True)
     if ret != 0:
         print('Cloning failed with return code', ret)
@@ -72,7 +74,7 @@ def execute_test(test: Dict[str, Any]):
         sub_cmd += f' --input-regex "{subtest["input"]}"'
 
         print('Executing subtest', subtest['method'])
-        print('Command:', sub_cmd)
+        print('Command:', sub_cmd, flush=True)
 
         ret = call(sub_cmd, shell=True)
         if ret != 0:
