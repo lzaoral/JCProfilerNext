@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
+from pathlib import Path
 from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict
 
 import json
-import glob
 import os
-import pathlib
 import re
 import sys
 
@@ -30,13 +29,13 @@ def clone_git_repo(repo: str, target: str) -> bool:
 
 def modify_repo(test: Dict[str, Any]):
     for rm in test['remove']:
-        for file in glob.glob(os.path.join(test['name'], rm)):
+        for file in Path(test['name']).glob(rm):
             print('Removing', file)
             os.unlink(file)
 
     for replace in test['fixup']:
         for glb in replace['files']:
-            for file in glob.glob(os.path.join(test['name'], glb)):
+            for file in Path(test['name']).glob(glb):
                 regex = re.compile(replace['regex'], re.MULTILINE)
                 regex_str = replace['regex'].replace('\n', '\\n')
                 print('Removing lines matching', regex_str, 'from', file)
@@ -53,10 +52,12 @@ def execute_test(test: Dict[str, Any]):
     if clone_git_repo(test['repo'], test['name']):
         modify_repo(test)
 
-    # TODO: respect java home!
-    cmd = 'java -jar ../build/libs/javacard-profiler-1.0-SNAPSHOT.jar ' + \
-          f'-i "{os.path.join(test["name"], test["path"])}" --simulator ' + \
-          f'--repeat-count 100 --jckit "jcsdk/jc{test["jckit"]}_kit"'
+    jar = Path('../build/libs/javacard-profiler-1.0-SNAPSHOT.jar')
+    jckit = Path(f'jcsdk/jc{test["jckit"]}_kit')
+
+    cmd = f'java -jar {jar} -i "{Path(test["name"]) / test["path"]}" ' + \
+          f'--jckit "{jckit}" --simulator --repeat-count 100'
+
     if 'entryPoint' in test:
         cmd += f' --entry-point "{test["entryPoint"]}"'
     if 'resetInst' in test:
@@ -86,7 +87,7 @@ def execute_test(test: Dict[str, Any]):
 
 
 def main():
-    root = pathlib.Path(__file__).parent.resolve()
+    root = Path(__file__).parent.resolve()
     print('Test root:', root)
     os.chdir(root)
 
