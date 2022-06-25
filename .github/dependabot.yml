@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - lzaoral
+
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    ignore:
+      # Newer versions do not support Java 8!
+      - dependency-name: "fr.inria.gforge.spoon:spoon-core"
+    reviewers:
+      - lzaoral
