@@ -1,0 +1,162 @@
+#* @vtlvariable name="card" type="java.lang.String" *#
+#* @vtlvariable name="code" type="java.lang.String[]" *#
+#* @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>" *#
+#* @vtlvariable name="methodName" type="java.lang.String" *#
+#* @vtlvariable name="null" type="java.lang.Object" *#
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>$card - $methodName</title>
+    ## highlight.js 11+ ignores and strips HTML tags inside <code> element
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll()
+
+        let selectedTrap = null;
+
+        function redrawGraph(trapName, vals) {
+            selectedTrap?.classList.remove('trap_select');
+            selectedTrap = event.target;
+            selectedTrap.classList.add('trap_select');
+
+            let graphName = document.getElementById('graphName');
+            graphName.textContent = trapName;
+
+            let traces = [];
+
+            const hasUnreach = vals.includes(null);
+            if (hasUnreach) {
+                traces.push({
+                    x: [''],
+                    y: [vals.filter(val => val === null).length],
+                    type: 'bar',
+                    name: 'unreachable',
+                    showlegend: false,
+                    marker: {
+                        color: 'rgb(255, 0, 0)',
+                        opacity: 0.65
+                    }
+                });
+            }
+
+            const hasTime = vals.some(a => a !== null);
+            if (hasTime) {
+                traces.push({
+                    x:  vals.filter(a => a !== null),
+                    type: 'histogram',
+                    xaxis: 'x2',
+                    yaxis: 'y',
+                    name: 'time',
+                    showlegend: false,
+                    marker: {
+                        color: 'rgb(49, 130, 189)',
+                        opacity: 0.75
+                    },
+                });
+            }
+
+            // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
+            Plotly.react('plotly', traces, {
+                bargap: 0.2,
+                xaxis: {
+                    title: 'Unreachable',
+                },
+                xaxis2: {
+                    //dtick: 1,
+                    tickformat: ',d',
+                    title: 'Time in μs',
+                },
+                yaxis: {
+                    tickformat: ',d',
+                    title: 'Frequency',
+                    // type: 'log',
+                },
+                grid: {
+                    rows: 1,
+                    // nothing is more readable than a sum of booleans /s
+                    columns: hasUnreach + hasTime,
+                    subplots: ['xy', 'x2y'],
+                }
+            }, {
+                responsive: true
+            });
+        }
+    </script>
+    <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+    <style>
+h3 {
+    padding-top: 20px;
+    text-align: center;
+}
+
+.contents {
+    display: flex;
+    justify-content: space-between;
+}
+
+.trap:hover {
+    cursor: pointer;
+    font-style: italic;
+}
+
+.trap_select {
+    font-style: italic;
+}
+
+.trap_err {
+    background-color: rgba(255, 0, 0, 25%);
+}
+
+.trap_warn {
+    background-color: rgba(255, 255, 0, 50%);
+}
+
+.graph {
+    align-content: center;
+    width: 46%;
+}
+
+.graph-sticky {
+    top: 0;
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+.code {
+    float: left;
+    width: 50%;
+}
+    </style>
+</head>
+<body>
+    <h1>$methodName</h1>
+    <p>card: $card</p>
+    <div class="contents">
+        <div class="code">
+            <pre><code class="language-java">
+#foreach( $line in $code )
+    #if( $line.trim().startsWith("PM.check(PMC.") )
+        #set( $trap = $line.trim().replace("PM.check(PMC.", "").replace(");", "") )
+        #set( $vals = $measurements[$trap] )
+        #set( $trap_warn = $vals.contains($null) )
+        #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
+<div class="trap #if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end"
+     onclick="redrawGraph( $trap, $vals )">$line
+</div>#else
+$line
+#end#end        </code>
+            </pre>
+        </div>
+        <div class="graph">
+            <div class="graph-sticky">
+                <h3 id="graphName">Select TRAP to view its histogram.</h3>
+                <div id="plotly"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

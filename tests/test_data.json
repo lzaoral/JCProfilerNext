@@ -1,0 +1,62 @@
+{
+    "jcsdkRepo": "https://github.com/martinpaljak/oracle_javacard_sdks",
+    "tests": [
+        {
+            "name": "JCMathLib",
+            "repo": "https://github.com/OpenCryptoProject/JCMathLib",
+            "path": "JCMathLib/src",
+            "entryPoint": "OCUnitTests",
+            "jckit": "jc222",
+            "remove": [
+                "JCMathLib/src/opencrypto/jcmathlib/PM.java"
+            ],
+            "fixup": [
+                {
+                    "regex": "^\\s*PM\\.check.*$",
+                    "files": [
+                        "JCMathLib/src/opencrypto/jcmathlib/*.java"
+                    ]
+                },
+                {
+                    "regex": "^\\s*case INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
+                    "files": [
+                        "JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java"
+                    ]
+                }
+            ],
+            "resetInst": "0x03",
+            "cla": "0xB0",
+            "subtests": [
+                {
+                    "method": "test_BN_STR",
+                    "inst": "0x20",
+                    "input": "[8-9A-F][0-9A-F]{31}"
+                },
+                {
+                    "method": "test_BN_ADD",
+                    "inst": "0x21",
+                    "p1": "0x10",
+                    "input": "([4-7][0-9A-F]{31}){2}"
+                },
+                {
+                    "method": "test_BN_SUB",
+                    "inst": "0x22",
+                    "p1": "0x10",
+                    "input": "([4-7][0-9A-F]{31}){2}"
+                },
+                {
+                    "method": "test_BN_MUL",
+                    "inst": "0x23",
+                    "p1": "0x10",
+                    "input": "([8-9A-F][0-9A-F]{31}){2}"
+                },
+                {
+                    "method": "test_BN_MUL",
+                    "inst": "0x27",
+                    "p1": "0x10",
+                    "input": "([8-9A-F][0-9A-F]{31}){2}"
+                }
+            ]
+        }
+    ]
+}
