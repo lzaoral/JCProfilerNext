@@ -55,7 +55,6 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
                                 method.getSignature())));
 
         processBody(method.getBody());
-        addTrapField(String.format("%s_COMPLETE", trapNamePrefix), trapNamePrefix);
     }
 
     private String getTrapNamePrefix(final CtMethod<?> method) {

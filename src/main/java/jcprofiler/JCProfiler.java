@@ -31,7 +31,7 @@ public class JCProfiler {
         Compiler.compile(args, entryPoint);
 
         final CardManager cardMgr = Installer.install(args, entryPoint);
-        final Map<String, List<Long>> measurements = new Profiler(args, cardMgr, spoon).RunPerformanceTests();
+        final Map<String, List<Long>> measurements = new Profiler(args, cardMgr, spoon).profile();
 
         final Visualiser vis = new Visualiser(args, cardMgr.getChannel().getCard().toString(), spoon, measurements);
         vis.generateHTML();

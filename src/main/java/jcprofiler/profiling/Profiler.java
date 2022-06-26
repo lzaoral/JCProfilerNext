@@ -57,18 +57,13 @@ public class Profiler {
             throw new RuntimeException(String.format(
                     "Extraction of traps from PM for %s failed!", args.method));
 
-        short val = 0;
         for (final CtField<Short> f : traps) {
             final CtLiteral<Integer> evaluated = f.getDefaultExpression().partiallyEvaluate();
-            val = evaluated.getValue().shortValue();
-
-            trapNameMap.put(val, f.getSimpleName());
+            trapNameMap.put(evaluated.getValue().shortValue(), f.getSimpleName());
         }
-
-        finalTrapID = val;
     }
 
-    public Map<String, List<Long>> RunPerformanceTests() {
+    public Map<String, List<Long>> profile() {
         try {
             // reset if possible and erase any previous performance stop and reset if possible
             resetApplet();
@@ -90,7 +85,7 @@ public class Profiler {
                 System.out.printf("Profiling %s, round: %d%n", args.method, repeat + 1);
                 System.out.printf("APDU: %s%n", Util.toHex(triggerAPDU.getBytes()));
 
-                PerfAnalyzeCommand(triggerAPDU);
+                profileSingleStep(triggerAPDU);
             }
 
             System.out.println("\n-------------- Performance profiling finished --------------\n\n");
@@ -141,7 +136,7 @@ public class Profiler {
             throw new RuntimeException("Resetting the applet failed with SW " + response.getSW());
     }
 
-    private void PerfAnalyzeCommand(CommandAPDU triggerAPDu) throws CardException {
+    private void profileSingleStep(CommandAPDU triggerAPDu) throws CardException {
         Duration prevTransmitDuration = Duration.ZERO;
         Duration currentTransmitDuration;
 
@@ -152,8 +147,8 @@ public class Profiler {
             // execute target operation
             ResponseAPDU response = cardManager.transmit(triggerAPDu);
 
-            // Check expected error to be equal performance trap it we're not at the end
-            if (trapID != finalTrapID && response.getSW() != trapID) {
+            // Check expected error to be equal performance trap
+            if (response.getSW() != trapID) {
                 // we have not reached expected performance trap
                 failedTraps.add(getPerfStopName(trapID));
                 measurements.computeIfAbsent(getPerfStopName(trapID), k -> new ArrayList<>()).add(null);
