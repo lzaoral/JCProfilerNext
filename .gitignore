@@ -33,5 +33,9 @@ hs_err_pid*
 # build artifacts
 build
 
+# temporary test files
+tests/jcsdk
+tests/JCMathLib*
+
 # python
 .mypy_cache
