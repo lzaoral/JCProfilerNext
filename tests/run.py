@@ -56,7 +56,7 @@ def execute_test(test: Dict[str, Any]):
     jckit = Path(f'jcsdk/jc{test["jckit"]}_kit')
 
     cmd = f'java -jar {jar} -i "{Path(test["name"]) / test["path"]}" ' + \
-          f'--jckit "{jckit}" --simulator --repeat-count 100'
+          f'--jckit "{jckit}" --simulator --repeat-count 1000'
 
     if 'entryPoint' in test:
         cmd += f' --entry-point "{test["entryPoint"]}"'
