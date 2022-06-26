@@ -67,7 +67,8 @@ def execute_test(test: Dict[str, Any]):
 
     for subtest in test['subtests']:
         sub_cmd = cmd
-        test_dir = mkdtemp(prefix=f'{test["name"]}_{subtest["method"]}_')
+        test_dir = mkdtemp(prefix=f'{test["name"]}_{subtest["method"]}_',
+                           dir='.')
         print('Created temporary directory', test_dir)
 
         sub_cmd += f' --output-dir "{test_dir}"'
