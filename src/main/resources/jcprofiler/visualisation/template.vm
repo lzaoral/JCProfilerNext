@@ -145,7 +145,7 @@ h3 {
         #set( $trap_warn = $vals.contains($null) )
         #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
 <div class="trap #if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end"
-     onclick="redrawGraph( $trap, $vals )">$line
+     onclick="redrawGraph( '$trap', $vals )">$line
 </div>#else
 $line
 #end#end        </code>
