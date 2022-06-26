@@ -67,8 +67,8 @@ public class Args {
     public String entryPoint = "";
 
     @Parameter(names = {"--repeat-count"},
-            description = "Number of profiling rounds (default 1)")
-    public int repeat_count = 1;
+            description = "Number of profiling rounds (default 1000)")
+    public int repeat_count = 1000;
 
     @Parameter(names = {"--reset-inst"},
             description = "Applet reset instruction in hex",
