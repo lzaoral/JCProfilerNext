@@ -55,7 +55,7 @@ public class Compiler {
         final JCCap cap = jc.createCap();
         cap.setTaskName("JavaCard");
         cap.setProject(p);
-        cap.setSources(Paths.get(args.outputDir, "sources").toString());
+        cap.setSources(Paths.get(args.outputDir, "sources").toFile().getAbsolutePath());
         cap.setExport("bin");
 
         // TODO: check if this ok
