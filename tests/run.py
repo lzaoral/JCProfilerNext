@@ -76,6 +76,11 @@ def execute_test(test: Dict[str, Any]):
         sub_cmd += f' --inst "{subtest["inst"]}"'
         sub_cmd += f' --input-regex "{subtest["input"]}"'
 
+        if 'p1' in subtest:
+            sub_cmd += f' --p1 "{subtest["p1"]}"'
+        if 'p2' in subtest:
+            sub_cmd += f' --p2 "{subtest["p2"]}"'
+
         print('Executing subtest', subtest['method'])
         print('Command:', sub_cmd, flush=True)
 
