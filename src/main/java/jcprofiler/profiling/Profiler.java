@@ -30,7 +30,7 @@ public class Profiler {
 
     // use LinkedHashX to preserve insertion order
     private final Map<Short, String> trapNameMap = new LinkedHashMap<>();
-    private final Set<String> failedTraps = new LinkedHashSet<>();
+    private final Set<String> unreachedTraps = new LinkedHashSet<>();
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 
     public Profiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
@@ -95,7 +95,7 @@ public class Profiler {
             cardManager.disconnect(true);
             System.out.println(" Done.");
 
-            if (failedTraps.isEmpty()) {
+            if (unreachedTraps.isEmpty()) {
                 System.out.println("#######################################");
                 System.out.println("ALL PERFORMANCE TRAPS REACHED CORRECTLY");
                 System.out.println("#######################################");
@@ -103,7 +103,7 @@ public class Profiler {
                 System.out.println("################################################");
                 System.out.println("!!! SOME PERFORMANCE TRAPS NOT ALWAYS REACHED!!!");
                 System.out.println("################################################");
-                failedTraps.forEach(System.out::println);
+                unreachedTraps.forEach(System.out::println);
             }
 
             // sanity check
@@ -150,7 +150,7 @@ public class Profiler {
             // Check expected error to be equal performance trap
             if (response.getSW() != trapID) {
                 // we have not reached expected performance trap
-                failedTraps.add(getPerfStopName(trapID));
+                unreachedTraps.add(getPerfStopName(trapID));
                 measurements.computeIfAbsent(getPerfStopName(trapID), k -> new ArrayList<>()).add(null);
                 continue;
             }
