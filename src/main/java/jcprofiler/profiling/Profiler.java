@@ -27,11 +27,11 @@ public class Profiler {
     private final Args args;
     private final CardManager cardManager;
     private final CtModel model;
-    private final Map<Short, String> trapNameMap = new LinkedHashMap<>(); // to preserve insertion order
-    private final Set<String> failedTraps = new HashSet<>();
-    // map between trap id key and a list of measurements
-    private final Map<String, List<Long>> measurements = new LinkedHashMap<>(); // to preserve insertion order
-    private short finalTrapID;
+
+    // use LinkedHashX to preserve insertion order
+    private final Map<Short, String> trapNameMap = new LinkedHashMap<>();
+    private final Set<String> failedTraps = new LinkedHashSet<>();
+    private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 
     public Profiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         this.args = args;
