@@ -23,7 +23,7 @@ public class Args {
             description = "Input files or directories (can be specified multiple times)",
             required = true,
             validateWith = InputPathValidator.class)
-    public List<String> inputs = new ArrayList<>();
+    public List<String> inputs;
 
     @Parameter(names = {"-o", "--output-dir"},
             description = "Output directory",
