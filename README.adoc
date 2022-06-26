@@ -1,0 +1,38 @@
+:warning-caption: :warning:
+
+JCProfilerNext
+==============
+
+link:https://github.com/lzaoral/JCProfilerNext/actions/workflows/ci.yml[image:https://github.com/lzaoral/JCProfilerNext/actions/workflows/ci.yml/badge.svg[Java CI with Gradle]]
+
+WARNING: JCProfilerNext is still a work in progress so bugs and crashes are expected.  If you encounter one, please file an issue.  Thank you!
+
+JCProfilerNext is a complete rewrite of link:https://github.com/OpenCryptoProject/JCProfiler[OpenCryptoProject/JCProfiler]
+that provides a completely automated preprocessing, compilation, installation
+and profiling of JavaCard code on JavaCard smart cards or in the jCardSim
+simulator.
+
+Prerequisites
+-------------
+
+Install JDK 8 or newer.
+
+Installation
+------------
+
+. Clone this repository.
+. Run `./gradlew build` on Unix-like systems or `./gradlew.bat` on Windows.
+. Execute
+.. directly using Gradle: `./gradlew run --args='--help'`.
+.. directly using built JAR: `java -jar build/libs/javacard-profiler-1.0-SNAPSHOT.jar --help`.
+.. directly from distribution archives in `build/distributions`.
+
+Limitations
+-----------
+
+* Only the whole process (preprocessing, etc.) is supported.
+** Therefore, cards that require a special CAP installation procedure or special communication are not supported.
+* Instrumentation and profiling of nested classes may fail.
+* It is not possible to use a different JDK to compile the JavaCard applets and to run this project.
+* Instrumentation of distinct methods that have the same simple name is not supported.
+* Connection to wireless card terminals may occasionally fail.
