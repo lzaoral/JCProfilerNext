@@ -14,6 +14,9 @@ import spoon.reflect.declaration.CtField;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -74,12 +77,21 @@ public class Profiler {
 
             // TODO: print seed for reproducibility
             final Random rdn = new Random();
-            final RgxGen rgxGen = new RgxGen(args.dataRegex);
+
+            // TODO: The lambdas could be replaced with a regular classes if their count will increase.
+            InputGenerator inputGen;
+            if (args.dataRegex != null) {
+                final RgxGen rgxGen = new RgxGen(args.dataRegex);
+                inputGen = () -> rgxGen.generate(rdn);
+            } else {
+                final List<String> inputs = Files.readAllLines(Paths.get(args.dataFile));
+                inputGen = () -> inputs.get(rdn.nextInt(inputs.size()));
+            }
 
             System.out.println("\n-------------- Performance profiling start --------------\n\n");
 
             for (int repeat = 0; repeat < args.repeat_count; repeat++) {
-                byte[] arr = Util.hexStringToByteArray(rgxGen.generate(rdn));
+                byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
                 final CommandAPDU triggerAPDU = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
 
                 System.out.printf("Profiling %s, round: %d%n", args.method, repeat + 1);
@@ -113,7 +125,7 @@ public class Profiler {
             });
 
             return Collections.unmodifiableMap(measurements);
-        } catch (CardException e) {
+        } catch (CardException | IOException e) {
             throw new RuntimeException(e);
         }
     }

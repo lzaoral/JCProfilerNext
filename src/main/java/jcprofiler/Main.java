@@ -11,6 +11,12 @@ public class Main {
         jc.setProgramName("JCProfiler");
         jc.parse(argv);
 
+        if ((args.dataRegex == null) == (args.dataFile == null)) {
+            if (args.dataRegex == null)
+                throw new RuntimeException("Neither --data-file or --data-regex option were specified!");
+            throw new RuntimeException("Options --data-file or --data-regex cannot be specified simultaneously.");
+        }
+
         if (args.help) {
             jc.usage();
             return;

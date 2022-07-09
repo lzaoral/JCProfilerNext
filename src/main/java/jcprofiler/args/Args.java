@@ -100,4 +100,9 @@ public class Args {
             description = "Regex specifying input data format in hex",
             validateWith = RegexValidator.class)
     public String dataRegex;
+
+    @Parameter(names = {"--data-file"},
+            description = "Path to a file specifying data inputs in hex",
+            validateWith = InputPathValidator.class)
+    public String dataFile;
 }
