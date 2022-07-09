@@ -55,7 +55,7 @@ public class Args {
     public JavaCardSDK jcSDK;
 
     @Parameter(names = {"--simulator"},
-            description = "Path to the root directory with JavaCard development kit")
+            description = "Use jCardSim simulator instead of a real card")
     public boolean use_simulator = false;
 
     @Parameter(names = {"--method"},
