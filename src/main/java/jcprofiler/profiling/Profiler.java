@@ -41,7 +41,7 @@ public class Profiler {
         buildPerfMapping();
     }
 
-    private String getPerfStopName(final short trapID) {
+    private String getTrapName(final short trapID) {
         return trapID == PERF_START ? "PERF_START" : trapNameMap.get(trapID);
     }
 
@@ -123,7 +123,7 @@ public class Profiler {
         ResponseAPDU response = cardManager.transmit(setTrap);
         if (response.getSW() != ISO7816.SW_NO_ERROR)
             throw new RuntimeException(String.format(
-                    "Setting \"%s\" trap failed with SW %d", getPerfStopName(trapID), response.getSW()));
+                    "Setting \"%s\" trap failed with SW %d", getTrapName(trapID), response.getSW()));
     }
 
     private void resetApplet() throws CardException {
@@ -150,15 +150,15 @@ public class Profiler {
             // Check expected error to be equal performance trap
             if (response.getSW() != (trapID & 0xFFFF)) {
                 // we have not reached expected performance trap
-                unreachedTraps.add(getPerfStopName(trapID));
-                measurements.computeIfAbsent(getPerfStopName(trapID), k -> new ArrayList<>()).add(null);
+                unreachedTraps.add(getTrapName(trapID));
+                measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>()).add(null);
                 continue;
             }
 
             // TODO: set precision with a commandline-option
             currentTransmitDuration = cardManager.getLastTransmitTimeDuration();
 
-            measurements.computeIfAbsent(getPerfStopName(trapID), k -> new ArrayList<>())
+            measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>())
                     .add(TimeUnit.NANOSECONDS.toMicros(currentTransmitDuration.minus(prevTransmitDuration).toNanos()));
 
             prevTransmitDuration = currentTransmitDuration;
