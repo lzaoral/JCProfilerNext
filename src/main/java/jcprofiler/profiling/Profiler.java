@@ -42,7 +42,7 @@ public class Profiler {
     }
 
     private String getPerfStopName(final short trapID) {
-        return trapNameMap.get(trapID);
+        return trapID == PERF_START ? "PERF_START" : trapNameMap.get(trapID);
     }
 
     private void buildPerfMapping() {
