@@ -32,7 +32,7 @@ public class Args {
     public String outputDir;
 
     @Parameter(names = {"--instrument-only"},
-            description = "Only instrument the code (default false)")
+            description = "Only instrument the code")
     public boolean instrument_only = false;
 
 //    @Parameter(names = {"-p", "--profile-only"},
@@ -40,7 +40,7 @@ public class Args {
 //    public boolean profile_only = false;
 
     @Parameter(names = {"--max-traps-per-method"},
-            description = "Maximum number of traps to be inserted in a method (default 100)",
+            description = "Maximum number of traps to be inserted in a method",
             validateWith = PositiveInteger.class)
     public int max_traps = 100;
 
@@ -67,7 +67,7 @@ public class Args {
     public String entryPoint = "";
 
     @Parameter(names = {"--repeat-count"},
-            description = "Number of profiling rounds (default 1000)")
+            description = "Number of profiling rounds")
     public int repeat_count = 1000;
 
     @Parameter(names = {"--reset-inst"},
@@ -78,22 +78,22 @@ public class Args {
     // TODO: check that this (and related options) are correctly passed to the applet due
     // to possible implicit conversions that may change the value
     @Parameter(names = {"--cla"},
-            description = "Applet CLA in hex (default 0x00)",
+            description = "Applet CLA in hex",
             converter = ByteConverter.class)
     public byte cla = 0;
 
     @Parameter(names = {"--inst"},
-            description = "Applet instruction in hex (default 0x00)",
+            description = "Applet instruction in hex",
             converter = ByteConverter.class)
     public byte inst = 0;
 
     @Parameter(names = {"--p1"},
-            description = "Applet P1 in hex (default 0x00)",
+            description = "Applet P1 in hex",
             converter = ByteConverter.class)
     public byte p1 = 0;
 
     @Parameter(names = {"--p2"},
-            description = "Applet P2 in hex (default 0x00)",
+            description = "Applet P2 in hex",
             converter = ByteConverter.class)
     public byte p2 = 0;
 
