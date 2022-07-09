@@ -76,9 +76,13 @@ public class Example extends Applet {
 }
 ----
 
-When run as `./gradlew run --args='-i Example.java --jckit jc222_kit -o output --method example --inst 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100'`,
-the measurements captured by JCProfilerNext, stored in the `output` will confirm
-this fact.  See the link:https://lzaoral.github.io/JCProfilerNext/example.html[visualisation]
+When run as
+[source,console]
+----
+$ ./gradlew run --args='-i Example.java --jckit jc222_kit -o output --method example --inst 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100'
+----
+the measurements captured by JCProfilerNext, stored in the `output` directory,
+will confirm this fact.  See the link:https://lzaoral.github.io/JCProfilerNext/example.html[visualisation]
 for details, namely the corresponding histograms of traps after the `for` loops.
 
 Limitations
