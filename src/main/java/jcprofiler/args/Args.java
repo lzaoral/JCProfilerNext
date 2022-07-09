@@ -9,7 +9,6 @@ import jcprofiler.args.validators.OutputPathValidator;
 import jcprofiler.args.validators.RegexValidator;
 import pro.javacard.JavaCardSDK;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Args {
