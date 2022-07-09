@@ -5,7 +5,9 @@ JCProfilerNext
 
 link:https://github.com/lzaoral/JCProfilerNext/actions/workflows/ci.yml[image:https://github.com/lzaoral/JCProfilerNext/actions/workflows/ci.yml/badge.svg[Java CI with Gradle]]
 
-WARNING: JCProfilerNext is still a work in progress so bugs and crashes are expected.  If you encounter one, please file an issue.  Thank you!
+WARNING: JCProfilerNext is still a work in progress so changes in behaviour,
+bugs and crashes are expected.  If you encounter a bug, please file an issue.
+Thank you!
 
 JCProfilerNext is a complete rewrite of link:https://github.com/OpenCryptoProject/JCProfiler[OpenCryptoProject/JCProfiler]
 that provides a completely automated preprocessing, compilation, installation
@@ -21,7 +23,7 @@ Installation
 ------------
 
 . Clone this repository.
-. Run `./gradlew build` on Unix-like systems or `./gradlew.bat` on Windows.
+. Run `./gradlew build` on Unix-like systems or `./gradlew.bat build` on Windows.
 . Execute
 .. directly using Gradle: `./gradlew run --args='--help'`.
 .. directly using built JAR: `java -jar build/libs/javacard-profiler-1.0-SNAPSHOT.jar --help`.
