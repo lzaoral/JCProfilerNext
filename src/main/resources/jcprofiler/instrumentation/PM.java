@@ -1,4 +1,4 @@
-package @TODO@;
+package @PACKAGE@;
 
 import javacard.framework.ISOException;
 

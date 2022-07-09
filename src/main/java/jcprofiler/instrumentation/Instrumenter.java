@@ -118,6 +118,11 @@ public class Instrumenter {
             // TODO: no exception and nicely and better wording!
             throw new RuntimeException(String.format("Only one package is allowed! Found: %s", pkgs));
 
+        final String packageName = pkgs.get(0).getQualifiedName();
+        if (packageName.isEmpty())
+            throw new RuntimeException("Usage of the default package detected! " +
+                    "This is unsupported by the CAP converter.");
+
         for (final String className : generatedClasses) {
             final long count = classes.stream().filter(c -> c.getSimpleName().equals(className)).count();
 //            if (count > 1)
@@ -140,7 +145,7 @@ public class Instrumenter {
                 try (final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                     final String src = br.lines()
                             .collect(Collectors.joining(System.lineSeparator()))
-                            .replace("@TODO@", pkgs.get(0).getQualifiedName());
+                            .replace("@PACKAGE@", packageName);
                     spoon.addInputResource(new VirtualFile(src, filename));
                 }
             } catch (final IOException e) {
