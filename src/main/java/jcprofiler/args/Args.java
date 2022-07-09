@@ -63,7 +63,7 @@ public class Args {
     public String method = "process";
 
     @Parameter(names = {"--entry-point"},
-            description = "Main class to be used as an entry point (useful when there are more)")
+            description = "Qualified name of a class to be used as an entry point (useful when there are more)")
     public String entryPoint = "";
 
     @Parameter(names = {"--repeat-count"},

@@ -68,7 +68,7 @@ public class Instrumenter {
     private void checkArguments(final Launcher spoon) {
         // validate args.entryPoint
         final List<String> entryPoints = Utils.getEntryPoints(spoon.getModel()).stream()
-                .map(CtClass::getSimpleName).collect(Collectors.toList());
+                .map(CtClass::getQualifiedName).collect(Collectors.toList());
 
         if (entryPoints.isEmpty())
             throw new RuntimeException("None of the provided classes is an entry point!");

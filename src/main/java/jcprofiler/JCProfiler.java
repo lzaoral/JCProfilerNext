@@ -26,7 +26,7 @@ public class JCProfiler {
         final List<CtClass<?>> entryPoints = Utils.getEntryPoints(spoon.getModel());
         final CtClass<?> entryPoint = args.entryPoint.isEmpty()
                 ? entryPoints.get(0)
-                : entryPoints.stream().filter(cls -> cls.getSimpleName().equals(args.entryPoint)).findAny().get();
+                : entryPoints.stream().filter(cls -> cls.getQualifiedName().equals(args.entryPoint)).findAny().get();
 
         Compiler.compile(args, entryPoint);
 

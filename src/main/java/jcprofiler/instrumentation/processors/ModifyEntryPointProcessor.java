@@ -23,7 +23,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     @Override
     public boolean isToBeProcessed(final CtClass<?> cls) {
         // isEntryPoint && (!entryPointArg.isEmpty() => cls.SimpleName == entryPointArg)
-        return Utils.isClsEntryPoint(cls) && (args.entryPoint.isEmpty() || cls.getSimpleName().equals(args.entryPoint));
+        return Utils.isClsEntryPoint(cls) && (args.entryPoint.isEmpty() || cls.getQualifiedName().equals(args.entryPoint));
     }
 
     @Override

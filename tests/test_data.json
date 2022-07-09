@@ -5,7 +5,7 @@
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
             "path": "JCMathLib/src",
-            "entryPoint": "OCUnitTests",
+            "entryPoint": "opencrypto.jcmathlib.OCUnitTests",
             "jckit": "310r20210706",
             "remove": [
                 "JCMathLib/src/opencrypto/jcmathlib/PM.java"
