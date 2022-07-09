@@ -29,6 +29,58 @@ Installation
 .. directly using built JAR: `java -jar build/libs/javacard-profiler-1.0-SNAPSHOT.jar --help`.
 .. directly from distribution archives in `build/distributions`.
 
+Example
+-------
+Consider the `example` method in the following class.  The outer loop is clearly
+not constant since its iteration count depends on the input value.  On the other
+hand, the inner loop is constant.
+
+[source,java]
+----
+package example;
+
+import javacard.framework.*;
+
+public class Example extends Applet {
+    public static final byte INS_EXAMPLE = (byte) 0xEE;
+
+    Example() { }
+
+    public static void install(byte[] bArray, short bOffset, byte bLength) {
+        new Example().register();
+    }
+
+    @Override
+    public void process(APDU apdu) throws ISOException {
+        if (selectingApplet())
+            return;
+
+        switch (apdu.getBuffer()[ISO7816.OFFSET_INS]) {
+            case INS_EXAMPLE:
+                example(apdu);
+                break;
+            default:
+                ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
+        }
+    }
+
+    private void example(APDU apdu) {
+        short count = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
+        for (short i = 0; i < count; i++) {
+            short tmp = 0;
+            for (short k = 0; k < 50; k++) {
+                tmp++;
+            }
+        }
+    }
+}
+----
+
+When run as `./gradlew run --args='-i Example.java --jckit jc222_kit -o output --method example --inst 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100'`,
+the measurements captured by JCProfilerNext, stored in the `output` will confirm
+this fact.  See the link:https://lzaoral.github.io/JCProfilerNext/example.html[visualisation]
+for details, namely the corresponding histograms of traps after the `for` loops.
+
 Limitations
 -----------
 

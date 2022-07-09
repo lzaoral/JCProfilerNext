@@ -1,0 +1,176 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WrappingCard{wrappedCard=JnaCard{scardHandle=SCardHandle{14ce6a61}}} - example.Example.example(javacard.framework.APDU)</title>
+        <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll()
+
+        let selectedTrap = null;
+
+        function redrawGraph(trapName, vals) {
+            selectedTrap?.classList.remove('trap_select');
+            selectedTrap = event.target;
+            selectedTrap.classList.add('trap_select');
+
+            let graphName = document.getElementById('graphName');
+            graphName.textContent = trapName;
+
+            let traces = [];
+
+            const hasUnreach = vals.includes(null);
+            if (hasUnreach) {
+                traces.push({
+                    x: [''],
+                    y: [vals.filter(val => val === null).length],
+                    type: 'bar',
+                    name: 'unreachable',
+                    showlegend: false,
+                    marker: {
+                        color: 'rgb(255, 0, 0)',
+                        opacity: 0.65
+                    }
+                });
+            }
+
+            const hasTime = vals.some(a => a !== null);
+            if (hasTime) {
+                traces.push({
+                    x:  vals.filter(a => a !== null),
+                    type: 'histogram',
+                    xaxis: 'x2',
+                    yaxis: 'y',
+                    name: 'time',
+                    showlegend: false,
+                    marker: {
+                        color: 'rgb(49, 130, 189)',
+                        opacity: 0.75
+                    },
+                });
+            }
+
+            // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
+            Plotly.react('plotly', traces, {
+                bargap: 0.2,
+                xaxis: {
+                    title: 'Unreachable',
+                },
+                xaxis2: {
+                    //dtick: 1,
+                    tickformat: ',d',
+                    title: 'Time in μs',
+                },
+                yaxis: {
+                    tickformat: ',d',
+                    title: 'Frequency',
+                    // type: 'log',
+                },
+                grid: {
+                    rows: 1,
+                    // nothing is more readable than a sum of booleans /s
+                    columns: hasUnreach + hasTime,
+                    subplots: ['xy', 'x2y'],
+                }
+            }, {
+                responsive: true
+            });
+        }
+    </script>
+    <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+    <style>
+h3 {
+    padding-top: 20px;
+    text-align: center;
+}
+
+.contents {
+    display: flex;
+    justify-content: space-between;
+}
+
+.trap:hover {
+    cursor: pointer;
+    font-style: italic;
+}
+
+.trap_select {
+    font-style: italic;
+}
+
+.trap_err {
+    background-color: rgba(255, 0, 0, 25%);
+}
+
+.trap_warn {
+    background-color: rgba(255, 255, 0, 50%);
+}
+
+.graph {
+    align-content: center;
+    width: 46%;
+}
+
+.graph-sticky {
+    top: 0;
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+.code {
+    float: left;
+    width: 50%;
+}
+    </style>
+</head>
+<body>
+    <h1>example.Example.example(javacard.framework.APDU)</h1>
+    <p>card: WrappingCard{wrappedCard=JnaCard{scardHandle=SCardHandle{14ce6a61}}}</p>
+    <div class="contents">
+        <div class="code">
+            <pre><code class="language-java">
+private void example(APDU apdu) {
+<div class="trap "
+     onclick="redrawGraph( 'TRAP_Example_example_argb_javacard_framework_APDU_arge_1', [92132, 92134, 92037, 92192, 92102, 92462, 91673, 92004, 91988, 91924, 91989, 91657, 91956, 91885, 92076, 91648, 91854, 91483, 91689, 91895, 91797, 91930, 91713, 91185, 91622, 91571, 91672, 91471, 91791, 91657, 91584, 91615, 91669, 91610, 91527, 91722, 91429, 91658, 91720, 91695, 91743, 91466, 91676, 91706, 91696, 91771, 91275, 91441, 91240, 91501, 91490, 91323, 91663, 91775, 91318, 91508, 91599, 91182, 91756, 91489, 91607, 91783, 91903, 91376, 91342, 91505, 91716, 91580, 91734, 91391, 91644, 91706, 91516, 91303, 92096, 91738, 91580, 91737, 91714, 91563, 91629, 91664, 91587, 91547, 91247, 91624, 91646, 91629, 91680, 91560, 91379, 91634, 91603, 91710, 91622, 91635, 91695, 91665, 91556, 91581] )">    PM.check(PMC.TRAP_Example_example_argb_javacard_framework_APDU_arge_1);
+</div>    short count = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
+<div class="trap "
+     onclick="redrawGraph( 'TRAP_Example_example_argb_javacard_framework_APDU_arge_2', [-18, 210, -35, 7859, -55, -136, 572, 169, 332, 329, -28, 510, 176, 361, 69, 337, 286, 506, 281, -17, 272, 280, 389, 527, 411, 264, 255, 602, 163, 234, 166, 327, 242, 286, 400, 21, 327, 448, 83, 223, 292, 453, 11, 229, 405, 202, 624, 327, 161, 246, 511, 391, 361, -76, 657, 454, 385, 454, -121, 209, 370, 56, 37, 692, 484, 414, 217, 355, -130, 213, 224, -91, 195, 277, -195, 182, 197, -70, 139, 402, 226, 201, 353, 207, 389, 17, 284, 352, 136, -43, 343, 313, 242, 304, -69, 65, 193, 105, 267, 260] )">    PM.check(PMC.TRAP_Example_example_argb_javacard_framework_APDU_arge_2);
+</div>    for (short i = 0; i &lt; count; i++) {
+<div class="trap "
+     onclick="redrawGraph( 'TRAP_Example_example_argb_javacard_framework_APDU_arge_3', [-145, -34, 207, -7637, 104, 14, 152, -12, 30, -92, 407, 120, 59, 224, 189, 434, -260, 329, -235, 165, 108, -269, 8, 78, -169, 160, 254, -101, 94, 144, 497, -51, 256, 427, -191, -80, 101, 100, 175, -47, 85, 42, 507, -97, 99, 17, 229, 164, 428, 359, 1, 64, -201, 178, -116, -65, 120, 318, 188, -195, -146, 247, 88, -340, 59, -120, 244, -176, 362, 290, 368, 457, 108, 211, 119, 230, 231, 373, -11, -13, -43, 160, -5, 159, -82, 324, 60, -2, 135, 455, 351, 35, 193, -85, 526, 264, -205, 158, 258, 220] )">        PM.check(PMC.TRAP_Example_example_argb_javacard_framework_APDU_arge_3);
+</div>        short tmp = 0;
+<div class="trap "
+     onclick="redrawGraph( 'TRAP_Example_example_argb_javacard_framework_APDU_arge_4', [321, 503, 23, 283, 294, 341, -235, 507, -297, -32, -82, -146, 29, -422, 66, -300, 347, -73, 386, -189, -12, 239, 321, 125, 491, 177, 4, 28, -158, 273, -456, 66, 132, -45, 310, 489, 383, 1, 70, 309, 45, 281, 240, 226, -80, 169, -64, 195, -52, -21, 37, 275, -238, 234, 235, -216, -23, -64, 241, 676, 45, 187, -4, 193, -145, 182, -93, 309, -88, -195, -158, -357, 278, 15, -38, -65, 258, 88, -162, 396, 252, -133, 15, 224, 355, 210, 104, -33, 75, 194, -102, 117, 0, 220, 66, 89, 259, 156, 72, 176] )">        PM.check(PMC.TRAP_Example_example_argb_javacard_framework_APDU_arge_4);
+</div>        for (short k = 0; k &lt; 50; k++) {
+<div class="trap "
+     onclick="redrawGraph( 'TRAP_Example_example_argb_javacard_framework_APDU_arge_5', [492, -187, 440, -284, 54, 77, 376, -235, 294, 267, 124, 362, 170, 506, 234, 288, 262, -228, -406, 387, 204, 61, -74, 298, 91, 59, 52, 155, 424, -58, 412, 183, 57, -42, 226, 213, 43, 136, 145, 117, 171, -14, -244, 26, 178, 80, 202, 56, -49, 147, 163, 19, 375, 136, -23, 302, 146, 197, -348, 132, 358, -26, 88, -51, 549, 42, 138, -63, 309, 49, 175, 723, -125, -38, -263, 57, -104, 50, 153, -245, 37, 183, 78, -155, 38, -235, -75, 228, 536, -38, 241, -8, 251, -79, 8, 147, 63, 187, 71, -11] )">            PM.check(PMC.TRAP_Example_example_argb_javacard_framework_APDU_arge_5);
+</div>            tmp++;
+<div class="trap "
+     onclick="redrawGraph( 'TRAP_Example_example_argb_javacard_framework_APDU_arge_6', [37, 609, 67, -38, 96, -328, -28, 125, 293, 321, 119, 80, 138, -259, -180, 140, 70, 503, 434, 215, 14, -87, 64, 28, -71, 245, 298, 129, 55, 880, 80, 225, 47, 49, 67, 51, -48, 76, 248, 187, -33, 60, 94, 246, -12, 168, 17, 893, 543, -10, 69, -133, 146, 240, 69, 385, 149, 253, 587, -479, -209, 83, -67, 172, -80, 472, 46, 109, -34, 244, 55, -350, 248, 107, 479, 166, 43, -25, 535, 45, 287, 244, -75, 280, 112, -102, 250, 438, -282, 256, 146, 217, -71, -131, 132, -294, 202, -159, -136, 21] )">            PM.check(PMC.TRAP_Example_example_argb_javacard_framework_APDU_arge_6);
+</div>        }
+<div class="trap "
+     onclick="redrawGraph( 'TRAP_Example_example_argb_javacard_framework_APDU_arge_7', [10318, 9623, 10203, 10606, 10113, 10235, 10108, 10124, 9869, 10741, 10154, 9820, 10216, 10135, 10505, 9818, 9979, 9781, 9920, 10215, 10422, 11151, 10098, 10132, 10152, 10168, 9939, 10090, 10080, 9152, 10214, 10003, 10031, 10180, 9994, 10201, 10328, 9982, 10197, 9899, 10186, 10150, 10138, 10180, 10292, 11358, 10242, 9389, 10164, 10204, 10241, 10243, 10294, 9880, 10181, 9827, 10115, 9887, 9717, 10557, 10512, 10078, 10469, 10000, 10033, 9708, 10197, 10529, 10197, 10199, 9860, 10387, 10156, 10366, 10120, 10162, 10007, 10312, 9979, 10419, 10036, 10137, 10507, 10042, 10037, 10643, 10499, 9801, 10138, 9971, 10015, 10198, 10171, 12483, 10132, 10030, 10260, 10257, 10334, 10113] )">        PM.check(PMC.TRAP_Example_example_argb_javacard_framework_APDU_arge_7);
+</div>    }
+<div class="trap "
+     onclick="redrawGraph( 'TRAP_Example_example_argb_javacard_framework_APDU_arge_8', [3027499, 458310, 1162718, 4648421, 5575903, 3614348, 9563069, 9425198, 3262689, 2910174, 917213, 10012229, 224261, 8391342, 4072683, 597097, 1034556, 3838860, 4883626, 4552429, 234489, 1854822, 2569434, 8370527, 1269005, 8732268, 693171, 458661, 362371, 2207199, 6535885, 8166994, 2793677, 4435345, 8156527, 4307341, 8390943, 5576215, 7932439, 9670390, 1983135, 8967071, 7218884, 1269242, 1855527, 9904114, 2900371, 8252599, 4542333, 5139039, 4200980, 6653509, 7218444, 5714984, 224047, 8978074, 8967151, 1993990, 799927, 6994590, 5011331, 4766309, 8732455, 9778402, 6280357, 6739234, 5587237, 1151780, 9191094, 1876944, 3839044, 9084816, 4883526, 8626410, 6739318, 8274040, 3956415, 4542466, 1513997, 9767287, 1759491, 4296859, 2324857, 7687940, 4766930, 1290204, 8850028, 2090299, 4190827, 6994914, 703868, 5245962, 3956156, 10128389, 7336555, 6409140, 8371224, 9778596, 6057279, 4543055] )">    PM.check(PMC.TRAP_Example_example_argb_javacard_framework_APDU_arge_8);
+</div>}
+        </code>
+            </pre>
+        </div>
+        <div class="graph">
+            <div class="graph-sticky">
+                <h3 id="graphName">Select TRAP to view its histogram.</h3>
+                <div id="plotly"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
