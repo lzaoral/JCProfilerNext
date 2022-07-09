@@ -74,7 +74,7 @@ public class Profiler {
 
             // TODO: print seed for reproducibility
             final Random rdn = new Random();
-            final RgxGen rgxGen = new RgxGen(args.inputRegex);
+            final RgxGen rgxGen = new RgxGen(args.dataRegex);
 
             System.out.println("\n-------------- Performance profiling start --------------\n\n");
 

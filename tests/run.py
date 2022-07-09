@@ -74,7 +74,7 @@ def execute_test(test: Dict[str, Any]):
         sub_cmd += f' --output-dir "{test_dir}"'
         sub_cmd += f' --method "{subtest["method"]}"'
         sub_cmd += f' --inst "{subtest["inst"]}"'
-        sub_cmd += f' --input-regex "{subtest["input"]}"'
+        sub_cmd += f' --data-regex "{subtest["input"]}"'
 
         if 'p1' in subtest:
             sub_cmd += f' --p1 "{subtest["p1"]}"'

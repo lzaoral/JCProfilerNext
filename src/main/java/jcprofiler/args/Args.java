@@ -96,8 +96,8 @@ public class Args {
             converter = ByteConverter.class)
     public byte p2 = 0;
 
-    @Parameter(names = {"--input-regex"},
-            description = "Regex specifying input format in hex",
+    @Parameter(names = {"--data-regex"},
+            description = "Regex specifying input data format in hex",
             validateWith = RegexValidator.class)
-    public String inputRegex;
+    public String dataRegex;
 }
