@@ -114,18 +114,16 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         }
 
         try {
-            // get javacard.framework.Util.makeShort(byte b1, byte b2)
+            // get javacard.framework.Util.getShort(byte[] bArray, short bOff)
             final Class<?> utilClass = getEnvironment().getInputClassLoader().loadClass("javacard.framework.Util");
-            final Method makeShortMethod = utilClass.getMethod("makeShort", Byte.TYPE, Byte.TYPE);
+            final Method getShortMethod = utilClass.getMethod("getShort", byte[].class, Short.TYPE);
 
             final String paramName = processMethod.getParameters().get(0).getSimpleName();
             final CtInvocation<Short> makeShortInvocation = getFactory().createInvocation(
                     getFactory().createTypeAccess(getFactory().Class().createReference(utilClass)),
-                    getFactory().Method().createReference(makeShortMethod),
-                    getFactory().createCodeSnippetExpression(String.format(
-                            "%s.getBuffer()[ISO7816.OFFSET_CDATA]", paramName)),
-                    getFactory().createCodeSnippetExpression(String.format(
-                            "%s.getBuffer()[(short) (ISO7816.OFFSET_CDATA + 1)]", paramName)));
+                    getFactory().Method().createReference(getShortMethod),
+                    getFactory().createCodeSnippetExpression(paramName + ".getBuffer()"),
+                    getFactory().createCodeSnippetExpression("ISO7816.OFFSET_CDATA"));
 
             perfStopAssign.setAssignment(makeShortInvocation);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
