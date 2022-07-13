@@ -28,38 +28,12 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
     @Override
     public void process(final CtClass<?> cls) {
-        // private static final byte INS_PERF_STOP = (byte) 0xf5
         final CtField<Byte> insPerfSetStop = addInsPerfSetStopField(cls);
-
-        final CtMethod<Void> processMethod = cls.filterChildren(
-                (CtMethod<Void> m) -> m.getSignature().equals("process(javacard.framework.APDU)") &&
-                        m.getType().equals(getFactory().createCtTypeReference(Void.TYPE))).first();
-        if (processMethod == null || processMethod.getBody() == null)
-            throw new RuntimeException(String.format(
-                    "Class %s inherits from %s but does not implement the 'process' method!",
-                    cls.getQualifiedName(), cls.getSuperclass().getQualifiedName()));
-
-        // TODO: will this work for switch in a block?
-        final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
-        final List<CtSwitch<Byte>> ctSwitches = processMethod.getElements(
-                (CtSwitch<Byte> s) -> s.getSelector().getType().equals(byteRef));
-
-        // TODO: skip adding this piece if it is already present
-        final CtCase<Byte> ctCase = createPerfStopSwitchCase(processMethod, insPerfSetStop);
-
-        if (ctSwitches.size() != 1) {
-            System.out.printf("WARNING: Switch in %s.%s method either not found or more than two are present!%n",
-                    cls.getQualifiedName(), processMethod.getSignature());
-            System.out.println("Adapt the following piece of code so that your applet correctly responds to the " +
-                    "INS_PERF_SETSTOP instruction");
-            System.out.println(ctCase.prettyprint());
-            return;
-        }
-
-        ctSwitches.get(0).addCaseAt(0, ctCase);
+        addInsPerfSetStopSwitchCase(cls, insPerfSetStop);
     }
 
     private CtField<Byte> addInsPerfSetStopField(final CtClass<?> cls) {
+        // private static final byte INS_PERF_STOP = (byte) 0xf5
         final CtTypeReference<Byte> byteType = getFactory().createCtTypeReference(Byte.TYPE);
         CtField<Byte> insPerfSetStop = cls.filterChildren(
                 (CtField<Byte> f) -> f.getSimpleName().equals("INS_PERF_SETSTOP")).first();
@@ -134,5 +108,71 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         //     break;
         ctCase.addStatement(getFactory().createBreak());
         return ctCase;
+    }
+
+    private CtMethod<Void> getProcessMethod(CtClass<?> cls) {
+        final CtMethod<Void> processMethod = cls.filterChildren(
+                (CtMethod<Void> m) -> m.getSignature().equals("process(javacard.framework.APDU)") &&
+                        m.getType().equals(getFactory().createCtTypeReference(Void.TYPE))).first();
+        if (processMethod == null || processMethod.getBody() == null)
+            throw new RuntimeException(String.format(
+                    "Class %s inherits from %s but does not implement the 'process' method!",
+                    cls.getQualifiedName(), cls.getSuperclass().getQualifiedName()));
+        return processMethod;
+    }
+
+    private void addInsPerfSetStopSwitchCase(CtClass<?> cls, CtField<Byte> insPerfSetStop) {
+        final CtMethod<Void> processMethod = getProcessMethod(cls);
+
+        // TODO: will this work for switch in a block?
+        final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
+        final List<CtSwitch<Byte>> ctSwitches = processMethod.getElements(
+                (CtSwitch<Byte> s) -> s.getSelector().getType().equals(byteRef));
+
+        final CtCase<Byte> newPerfStopCase = createPerfStopSwitchCase(processMethod, insPerfSetStop);
+
+        if (ctSwitches.size() != 1) {
+            // TODO: make this fatal?
+            System.out.printf("WARNING: Switch in %s.%s method either not found or more than two are present!%n",
+                    cls.getQualifiedName(), processMethod.getSignature());
+            System.out.println("Adapt the following piece of code so that your applet correctly responds to the " +
+                    "INS_PERF_SETSTOP instruction");
+            System.out.println(newPerfStopCase.prettyprint());
+            return;
+        }
+
+        CtSwitch<Byte> ctSwitch = ctSwitches.get(0);
+
+        // get case with the same value as Utils.INS_PERF_SETSTOP
+        final Optional<CtCase<? super Byte>> maybeExistingPerfStopCase = ctSwitch.getCases().stream().filter(
+                c -> {
+                    final CtExpression<? super Byte> e = c.getCaseExpression();
+                    if (e == null) // default case
+                        return false;
+
+                    final CtLiteral<Integer> lit = e.partiallyEvaluate();
+                    return lit.getValue().byteValue() == Utils.INS_PERF_SETSTOP;
+                }).findAny();
+
+        if (maybeExistingPerfStopCase.isPresent()) {
+            // cases are equal
+            CtCase<? super Byte> existingPerfStopCase = maybeExistingPerfStopCase.get();
+            if (existingPerfStopCase.equals(newPerfStopCase))
+                return;
+
+            // check that the value in label corresponds to a read of INS_PERF_SETSTOP field
+            CtExpression<?> expr = existingPerfStopCase.getCaseExpression();
+            if (!(expr instanceof CtFieldRead) ||
+                    !((CtFieldRead<?>) expr).getVariable().getSimpleName().equals("INS_PERF_SETSTOP"))
+                throw new RuntimeException(String.format(
+                        "The switch in process method already contains a case for 0x%02x distinct from the " +
+                        "INS_PERF_SETSTOP field: %s", Utils.INS_PERF_SETSTOP, existingPerfStopCase.prettyprint()));
+
+            throw new RuntimeException(String.format(
+                    "The body of the INS_PERF_SETSTOP switch case has unexpected contents:%n%s%nExpected:%n%s",
+                    existingPerfStopCase.prettyprint(), newPerfStopCase.prettyprint()));
+        }
+
+        ctSwitch.addCaseAt(0, newPerfStopCase);
     }
 }
