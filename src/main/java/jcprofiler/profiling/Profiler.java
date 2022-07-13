@@ -3,6 +3,7 @@ package jcprofiler.profiling;
 import com.github.curiousoddman.rgxgen.RgxGen;
 import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.Util;
+import jcprofiler.Utils;
 import jcprofiler.args.Args;
 import pro.javacard.gp.ISO7816;
 import spoon.SpoonAPI;
@@ -25,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  * @author Lukáš Zaoral and Petr Svenda
  */
 public class Profiler {
-    private static final byte INS_PERF_SETSTOP = (byte) 0xf5;
     private static final short PERF_START = 0x0001;
     private final Args args;
     private final CardManager cardManager;
@@ -131,7 +131,8 @@ public class Profiler {
     }
 
     private void setTrap(short trapID) throws CardException {
-        CommandAPDU setTrap = new CommandAPDU(args.cla, INS_PERF_SETSTOP, 0, 0, Util.shortToByteArray(trapID));
+        CommandAPDU setTrap = new CommandAPDU(args.cla, Utils.INS_PERF_SETSTOP, 0, 0,
+                                              Util.shortToByteArray(trapID));
         ResponseAPDU response = cardManager.transmit(setTrap);
         if (response.getSW() != ISO7816.SW_NO_ERROR)
             throw new RuntimeException(String.format(

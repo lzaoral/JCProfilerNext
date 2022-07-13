@@ -7,6 +7,8 @@ import spoon.reflect.reference.CtTypeReference;
 import java.util.List;
 
 public class Utils {
+    public static final byte INS_PERF_SETSTOP = (byte) 0xf5;
+
     // static class!
     private Utils() {}
 

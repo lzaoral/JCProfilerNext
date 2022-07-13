@@ -11,7 +11,7 @@ import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.*;
 
 public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     final Args args;
@@ -71,7 +71,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
             if (hasCorrectType && hasCorrectModifiers) {
                 final CtLiteral<Integer> lit = insPerfSetStop.getAssignment().partiallyEvaluate();
-                if (lit.getValue() == 0xf5)
+                if (lit.getValue() == Utils.INS_PERF_SETSTOP)
                     return insPerfSetStop;
             }
 
@@ -79,9 +79,9 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
             insPerfSetStop.delete();
         }
 
-        insPerfSetStop = getFactory().createCtField("INS_PERF_SETSTOP", byteType, "(byte) 0xf5",
-                ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC);
-        cls.addField(insPerfSetStop);
+        insPerfSetStop = getFactory().Field().create(
+                cls, new HashSet<>(Arrays.asList(ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC)),
+                byteType, "INS_PERF_SETSTOP", getFactory().createLiteral(Utils.INS_PERF_SETSTOP));
         return insPerfSetStop;
     }
 
