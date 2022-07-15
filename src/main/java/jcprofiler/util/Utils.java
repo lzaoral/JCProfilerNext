@@ -1,4 +1,4 @@
-package jcprofiler;
+package jcprofiler.util;
 
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtClass;

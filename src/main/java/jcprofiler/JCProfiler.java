@@ -6,6 +6,7 @@ import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
 import jcprofiler.instrumentation.Instrumenter;
 import jcprofiler.profiling.Profiler;
+import jcprofiler.util.Utils;
 import jcprofiler.visualisation.Visualiser;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;

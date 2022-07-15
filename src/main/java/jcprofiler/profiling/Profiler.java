@@ -3,7 +3,7 @@ package jcprofiler.profiling;
 import com.github.curiousoddman.rgxgen.RgxGen;
 import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.Util;
-import jcprofiler.Utils;
+import jcprofiler.util.Utils;
 import jcprofiler.args.Args;
 import pro.javacard.gp.ISO7816;
 import spoon.SpoonAPI;

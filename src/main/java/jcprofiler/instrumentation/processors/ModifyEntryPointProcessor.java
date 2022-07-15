@@ -1,6 +1,6 @@
 package jcprofiler.instrumentation.processors;
 
-import jcprofiler.Utils;
+import jcprofiler.util.Utils;
 import jcprofiler.args.Args;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;

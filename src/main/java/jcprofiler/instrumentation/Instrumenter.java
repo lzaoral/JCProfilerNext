@@ -1,6 +1,6 @@
 package jcprofiler.instrumentation;
 
-import jcprofiler.Utils;
+import jcprofiler.util.Utils;
 import jcprofiler.args.Args;
 import jcprofiler.instrumentation.processors.InsertTrapProcessor;
 import jcprofiler.instrumentation.processors.ModifyEntryPointProcessor;
