@@ -2,6 +2,8 @@ package jcprofiler.args;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
+import jcprofiler.args.converters.StageConverter;
+import jcprofiler.util.Stage;
 import jcprofiler.args.converters.ByteConverter;
 import jcprofiler.args.converters.JCKitConverter;
 import jcprofiler.args.validators.InputPathValidator;
@@ -30,9 +32,10 @@ public class Args {
                validateWith = OutputPathValidator.class)
     public String outputDir;
 
-    @Parameter(names = {"--instrument-only"},
-               description = "Only instrument the code")
-    public boolean instrument_only = false;
+    @Parameter(names = {"--stop-after"},
+               description = "Stop after executing the given stage",
+               converter = StageConverter.class)
+    public Stage stopAfter = Stage.visualisation;
 
 //    @Parameter(names = {"-p", "--profile-only"},
 //               description = "Profile already installed applet")
