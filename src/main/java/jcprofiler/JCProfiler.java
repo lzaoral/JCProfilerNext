@@ -7,7 +7,7 @@ import jcprofiler.installation.Installer;
 import jcprofiler.instrumentation.Instrumenter;
 import jcprofiler.profiling.Profiler;
 import jcprofiler.util.Stage;
-import jcprofiler.util.Utils;
+import jcprofiler.util.ProfilerUtil;
 import jcprofiler.visualisation.Visualiser;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
@@ -25,7 +25,7 @@ public class JCProfiler {
         if (args.stopAfter == Stage.instrumentation)
             return;
 
-        final List<CtClass<?>> entryPoints = Utils.getEntryPoints(spoon.getModel());
+        final List<CtClass<?>> entryPoints = ProfilerUtil.getEntryPoints(spoon.getModel());
         final CtClass<?> entryPoint = args.entryPoint.isEmpty()
                 ? entryPoints.get(0)
                 : entryPoints.stream().filter(cls -> cls.getQualifiedName().equals(args.entryPoint)).findAny().get();

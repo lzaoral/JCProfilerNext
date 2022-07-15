@@ -1,6 +1,6 @@
 package jcprofiler.instrumentation;
 
-import jcprofiler.util.Utils;
+import jcprofiler.util.ProfilerUtil;
 import jcprofiler.args.Args;
 import jcprofiler.instrumentation.processors.InsertTrapProcessor;
 import jcprofiler.instrumentation.processors.ModifyEntryPointProcessor;
@@ -67,7 +67,7 @@ public class Instrumenter {
     // TODO: better exception handling
     private void checkArguments(final Launcher spoon) {
         // validate args.entryPoint
-        final List<String> entryPoints = Utils.getEntryPoints(spoon.getModel()).stream()
+        final List<String> entryPoints = ProfilerUtil.getEntryPoints(spoon.getModel()).stream()
                 .map(CtClass::getQualifiedName).collect(Collectors.toList());
 
         if (entryPoints.isEmpty())
