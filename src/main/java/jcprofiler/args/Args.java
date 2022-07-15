@@ -13,25 +13,25 @@ import java.util.List;
 
 public class Args {
     @Parameter(names = {"-h", "--help"},
-            description = "Show help",
-            help = true)
+               description = "Show help",
+               help = true)
     public boolean help = false;
 
     // TODO: add some filter for input files?
     @Parameter(names = {"-i", "--input-file", "--input-dir"},
-            description = "Input files or directories (can be specified multiple times)",
-            required = true,
-            validateWith = InputPathValidator.class)
+               description = "Input files or directories (can be specified multiple times)",
+               required = true,
+               validateWith = InputPathValidator.class)
     public List<String> inputs;
 
     @Parameter(names = {"-o", "--output-dir"},
-            description = "Output directory",
-            required = true,
-            validateWith = OutputPathValidator.class)
+               description = "Output directory",
+               required = true,
+               validateWith = OutputPathValidator.class)
     public String outputDir;
 
     @Parameter(names = {"--instrument-only"},
-            description = "Only instrument the code")
+               description = "Only instrument the code")
     public boolean instrument_only = false;
 
 //    @Parameter(names = {"-p", "--profile-only"},
@@ -39,8 +39,8 @@ public class Args {
 //    public boolean profile_only = false;
 
     @Parameter(names = {"--max-traps-per-method"},
-            description = "Maximum number of traps to be inserted in a method",
-            validateWith = PositiveInteger.class)
+               description = "Maximum number of traps to be inserted in a method",
+               validateWith = PositiveInteger.class)
     public int max_traps = 100;
 
 //    @Parameter(names = {"-u", "--update"},
@@ -48,61 +48,61 @@ public class Args {
 //    public boolean update = false;
 
     @Parameter(names = {"--jckit"},
-            required = true,
-            description = "Path to the root directory with JavaCard development kit",
-            converter = JCKitConverter.class)
+               required = true,
+               description = "Path to the root directory with JavaCard development kit",
+               converter = JCKitConverter.class)
     public JavaCardSDK jcSDK;
 
     @Parameter(names = {"--simulator"},
-            description = "Use jCardSim simulator instead of a real card")
+               description = "Use jCardSim simulator instead of a real card")
     public boolean use_simulator = false;
 
     @Parameter(names = {"--method"},
-            description = "Method to profile")
+               description = "Method to profile")
     public String method = "process";
 
     @Parameter(names = {"--entry-point"},
-            description = "Qualified name of a class to be used as an entry point (useful when there are more)")
+               description = "Qualified name of a class to be used as an entry point (useful when there are more)")
     public String entryPoint = "";
 
     @Parameter(names = {"--repeat-count"},
-            description = "Number of profiling rounds")
+               description = "Number of profiling rounds")
     public int repeat_count = 1000;
 
     @Parameter(names = {"--reset-inst"},
-            description = "Applet reset instruction in hex",
-            converter = ByteConverter.class)
+               description = "Applet reset instruction in hex",
+               converter = ByteConverter.class)
     public Byte cleanupInst;
 
     // TODO: check that this (and related options) are correctly passed to the applet due
     // to possible implicit conversions that may change the value
     @Parameter(names = {"--cla"},
-            description = "Applet CLA in hex",
-            converter = ByteConverter.class)
+               description = "Applet CLA in hex",
+               converter = ByteConverter.class)
     public byte cla = 0;
 
     @Parameter(names = {"--inst"},
-            description = "Applet instruction in hex",
-            converter = ByteConverter.class)
+               description = "Applet instruction in hex",
+               converter = ByteConverter.class)
     public byte inst = 0;
 
     @Parameter(names = {"--p1"},
-            description = "Applet P1 in hex",
-            converter = ByteConverter.class)
+               description = "Applet P1 in hex",
+               converter = ByteConverter.class)
     public byte p1 = 0;
 
     @Parameter(names = {"--p2"},
-            description = "Applet P2 in hex",
-            converter = ByteConverter.class)
+               description = "Applet P2 in hex",
+               converter = ByteConverter.class)
     public byte p2 = 0;
 
     @Parameter(names = {"--data-regex"},
-            description = "Regex specifying input data format in hex",
-            validateWith = RegexValidator.class)
+               description = "Regex specifying input data format in hex",
+               validateWith = RegexValidator.class)
     public String dataRegex;
 
     @Parameter(names = {"--data-file"},
-            description = "Path to a file specifying data inputs in hex",
-            validateWith = InputPathValidator.class)
+               description = "Path to a file specifying data inputs in hex",
+               validateWith = InputPathValidator.class)
     public String dataFile;
 }
