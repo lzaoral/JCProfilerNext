@@ -1,4 +1,4 @@
-#* @vtlvariable name="card" type="java.lang.String" *#
+#* @vtlvariable name="cardATR" type="java.lang.String" *#
 #* @vtlvariable name="code" type="java.lang.String[]" *#
 #* @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>" *#
 #* @vtlvariable name="methodName" type="java.lang.String" *#
@@ -8,7 +8,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$card - $methodName</title>
+    <title>Measurements - $methodName</title>
     ## highlight.js 11+ ignores and strips HTML tags inside <code> element
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
@@ -134,7 +134,7 @@ h3 {
 </head>
 <body>
     <h1>$methodName</h1>
-    <p>card: $card</p>
+    <p>Card ATR: $cardATR</p>
     <div class="contents">
         <div class="code">
             <pre><code class="language-java">

@@ -18,15 +18,15 @@ import java.util.stream.IntStream;
 
 public class Visualiser {
     private final Args args;
-    private final String cardName;
+    private final String atr;
     private final SpoonAPI spoon;
     private final Map<String, List<Long>> measurements;
 
-    public Visualiser(final Args args, final String cardName,
+    public Visualiser(final Args args, final String atr,
                       final SpoonAPI spoon, final Map<String, List<Long>> measurements) {
         this.args = args;
         // TODO: integrate with https://smartcard-atr.apdu.fr/parse?ATR=XXX?
-        this.cardName = cardName;
+        this.atr = atr;
         this.spoon = spoon;
         this.measurements = measurements;
     }
@@ -34,7 +34,7 @@ public class Visualiser {
     // TODO: aggregate results when there's too many of them
     public void insertMeasurementsToSources() {
         spoon.setSourceOutputDirectory(Paths.get(args.outputDir, "sources_perf").toFile());
-        spoon.addProcessor(new InsertTimesProcessor(args, cardName, measurements));
+        spoon.addProcessor(new InsertTimesProcessor(args, atr, measurements));
         spoon.process();
         spoon.prettyprint();
     }
@@ -69,7 +69,7 @@ public class Visualiser {
         velocityEngine.init();
 
         final VelocityContext context = new VelocityContext();
-        context.put("card", cardName);
+        context.put("cardATR", atr);
         context.put("code", StringEscapeUtils.escapeHtml4(method.prettyprint()).split(System.lineSeparator()));
         context.put("methodName", method.getDeclaringType().getQualifiedName() + "." + method.getSignature());
         context.put("measurements", measurements);

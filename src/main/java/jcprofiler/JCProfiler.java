@@ -1,6 +1,7 @@
 package jcprofiler;
 
 import cz.muni.fi.crocs.rcard.client.CardManager;
+import cz.muni.fi.crocs.rcard.client.Util;
 import jcprofiler.args.Args;
 import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
@@ -43,7 +44,8 @@ public class JCProfiler {
         if (args.stopAfter == Stage.profiling)
             return;
 
-        final Visualiser vis = new Visualiser(args, cardMgr.getChannel().getCard().toString(), spoon, measurements);
+        final String atr = Util.bytesToHex(cardMgr.getChannel().getCard().getATR().getBytes());
+        final Visualiser vis = new Visualiser(args, atr, spoon, measurements);
         vis.generateHTML();
         vis.generateCSV();
         vis.insertMeasurementsToSources();

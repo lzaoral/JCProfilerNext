@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 public class InsertTimesProcessor extends AbstractProcessor<CtInvocation<Void>> {
     private final Args args;
-    private final String cardName;
+    private final String atr;
     private final Map<String, List<Long>> measurements;
 
-    public InsertTimesProcessor(Args args, String cardName, Map<String, List<Long>> measurements) {
+    public InsertTimesProcessor(Args args, String atr, Map<String, List<Long>> measurements) {
         this.args = args;
-        this.cardName = cardName;
+        this.atr = atr;
         this.measurements = measurements;
     }
 
@@ -37,7 +37,7 @@ public class InsertTimesProcessor extends AbstractProcessor<CtInvocation<Void>> 
 
         final CtComment comment = getFactory().createInlineComment(
                 // TODO: use IntSummaryStatistics if args.repeat_count is too big?
-                String.format("%s: %s", cardName, values.stream()
+                String.format("ATR %s: %s", atr, values.stream()
                         .map(v -> v != null ? v + "ms" : "unreachable")
                         .collect(Collectors.joining(", "))));
 
