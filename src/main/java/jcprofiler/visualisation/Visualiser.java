@@ -34,7 +34,7 @@ public class Visualiser {
     // TODO: aggregate results when there's too many of them
     public void insertMeasurementsToSources() {
         spoon.setSourceOutputDirectory(Paths.get(args.outputDir, "sources_perf").toFile());
-        spoon.addProcessor(new InsertTimesProcessor(args, atr, measurements));
+        spoon.addProcessor(new InsertTimesProcessor(atr, measurements));
         spoon.process();
         spoon.prettyprint();
     }

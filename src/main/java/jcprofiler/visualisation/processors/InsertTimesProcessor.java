@@ -1,6 +1,5 @@
 package jcprofiler.visualisation.processors;
 
-import jcprofiler.args.Args;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtComment;
 import spoon.reflect.code.CtFieldRead;
@@ -12,12 +11,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InsertTimesProcessor extends AbstractProcessor<CtInvocation<Void>> {
-    private final Args args;
     private final String atr;
     private final Map<String, List<Long>> measurements;
 
-    public InsertTimesProcessor(Args args, String atr, Map<String, List<Long>> measurements) {
-        this.args = args;
+    public InsertTimesProcessor(String atr, Map<String, List<Long>> measurements) {
         this.atr = atr;
         this.measurements = measurements;
     }
