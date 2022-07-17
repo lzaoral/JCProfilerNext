@@ -10,6 +10,7 @@ import jcprofiler.profiling.Profiler;
 import jcprofiler.util.Stage;
 import jcprofiler.util.ProfilerUtil;
 import jcprofiler.visualisation.Visualiser;
+import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
 
@@ -22,10 +23,17 @@ public class JCProfiler {
 
     public static void run(final Args args) {
         // TODO: support already instrumented stuff
-        final SpoonAPI spoon = new Instrumenter(args).process();
+        new Instrumenter(args).process();
         if (args.stopAfter == Stage.instrumentation)
             return;
 
+        // check that the generated sources are compilable by rebuilding the model after instrumentation
+        final SpoonAPI spoon = new Launcher();
+        Instrumenter.setupSpoon(spoon, args);
+        spoon.addInputResource(args.outputDir);
+        spoon.buildModel();
+
+        // get entry point class
         final CtClass<?> entryPoint = ProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
         Compiler.compile(args, entryPoint);

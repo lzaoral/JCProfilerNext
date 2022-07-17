@@ -1,9 +1,9 @@
 package jcprofiler.instrumentation;
 
-import jcprofiler.util.ProfilerUtil;
 import jcprofiler.args.Args;
 import jcprofiler.instrumentation.processors.InsertTrapProcessor;
 import jcprofiler.instrumentation.processors.ModifyEntryPointProcessor;
+import jcprofiler.util.ProfilerUtil;
 import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
@@ -22,15 +22,13 @@ import java.util.stream.Collectors;
 public class Instrumenter {
     private final Args args;
     private final List<String> generatedClasses = Arrays.asList("PM", "PMC");
-    private final String outputDir;
 
     public Instrumenter(final Args args) {
         this.args = args;
-        this.outputDir = Paths.get(args.outputDir, "sources").toString();
     }
 
     // TODO: logging
-    public SpoonAPI process() {
+    public void process() {
         Launcher spoon = new Launcher();
 
         // prepare and check the model
@@ -48,18 +46,10 @@ public class Instrumenter {
         spoon.prettyprint();
 
         // TODO sanity check that all PMC members are unique
-
-        // check that the generated sources are compilable by rebuilding the model from the output
-        spoon = new Launcher();
-        setupSpoon(spoon);
-        spoon.addInputResource(outputDir);
-        spoon.buildModel();
-
-        return spoon;
     }
 
     private void buildModel(final Launcher spoon) {
-        setupSpoon(spoon);
+        setupSpoon(spoon, args);
         args.inputs.forEach(spoon::addInputResource);
         spoon.buildModel();
     }
@@ -77,13 +67,13 @@ public class Instrumenter {
                     String.format("None of the provided classes contains implemented %s method!", args.method));
     }
 
-    private void setupSpoon(final Launcher spoon) {
+    public static void setupSpoon(final SpoonAPI spoon, final Args args) {
         spoon.getEnvironment().setLevel("WARN");
 
         // TODO: uncommenting this might lead to SPOON crashes!
         // spoon.getEnvironment().setPrettyPrinterCreator(() -> new SniperJavaPrettyPrinter(spoon.getEnvironment()));
 
-        spoon.setSourceOutputDirectory(outputDir);
+        spoon.setSourceOutputDirectory(Paths.get(args.outputDir, "sources").toFile());
         spoon.getEnvironment().setNoClasspath(false);
         spoon.getEnvironment().setAutoImports(true);
         spoon.getEnvironment().setCopyResources(false);
