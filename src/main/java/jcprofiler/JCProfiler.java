@@ -26,10 +26,7 @@ public class JCProfiler {
         if (args.stopAfter == Stage.instrumentation)
             return;
 
-        final List<CtClass<?>> entryPoints = ProfilerUtil.getEntryPoints(spoon.getModel());
-        final CtClass<?> entryPoint = args.entryPoint.isEmpty()
-                ? entryPoints.get(0)
-                : entryPoints.stream().filter(cls -> cls.getQualifiedName().equals(args.entryPoint)).findAny().get();
+        final CtClass<?> entryPoint = ProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
         Compiler.compile(args, entryPoint);
         if (args.stopAfter == Stage.compilation)

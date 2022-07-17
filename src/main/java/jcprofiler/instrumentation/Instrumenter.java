@@ -67,19 +67,7 @@ public class Instrumenter {
     // TODO: better exception handling
     private void checkArguments(final Launcher spoon) {
         // validate args.entryPoint
-        final List<String> entryPoints = ProfilerUtil.getEntryPoints(spoon.getModel()).stream()
-                .map(CtClass::getQualifiedName).collect(Collectors.toList());
-
-        if (entryPoints.isEmpty())
-            throw new RuntimeException("None of the provided classes is an entry point!");
-
-        if (args.entryPoint.isEmpty() && entryPoints.size() > 1)
-            throw new RuntimeException("More entry points detected but none was specified to be used! " +
-                    "Use the -e/--entry-point argument." +
-                    String.format("%nDetected entry points: %s", entryPoints));
-
-        if (!args.entryPoint.isEmpty() && entryPoints.stream().noneMatch(cls -> cls.equals(args.entryPoint)))
-            throw new RuntimeException("None of the classes is an entry point!");
+        ProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
         // validate args.method
         final CtMethod<?> method = spoon.getModel().filterChildren(
