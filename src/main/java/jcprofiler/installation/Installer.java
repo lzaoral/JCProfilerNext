@@ -1,6 +1,6 @@
 package jcprofiler.installation;
 
-import apdu4j.APDUBIBO;
+import apdu4j.BIBO;
 import apdu4j.CardBIBO;
 import apdu4j.TerminalManager;
 import cz.muni.fi.crocs.rcard.client.CardManager;
@@ -66,11 +66,11 @@ public class Installer {
             final Card card = connectToCard(cardManager);
 
             final GPTool gp = new GPTool();
-            final APDUBIBO apdubibo = new APDUBIBO(CardBIBO.wrap(card));
+            final BIBO bibo = CardBIBO.wrap(card);
 
             // TODO: be very careful to not destroy the card!!!
             int ret;
-            if ((ret = gp.run(apdubibo, new String[]{"-v", "--force", "--install", capPath.toString()})) != 0)
+            if ((ret = gp.run(bibo, new String[]{"-v", "--force", "--install", capPath.toString()})) != 0)
                 throw new RuntimeException(String.format("GlobalPlatformPro exited with non-zero code: %d", ret));
 
             System.out.print("Selecting installed applet on card...");
