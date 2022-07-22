@@ -7,15 +7,15 @@ import spoon.reflect.reference.CtTypeReference;
 import java.util.List;
 import java.util.Optional;
 
-public class ProfilerUtil {
+public class JCProfilerUtil {
     public static final byte INS_PERF_SETSTOP = (byte) 0xf5;
 
     // static class!
-    private ProfilerUtil() {}
+    private JCProfilerUtil() {}
 
     // entry points
     public static CtClass<?> getEntryPoint(final SpoonAPI spoon, final String className) {
-        final List<CtClass<?>> entryPoints = spoon.getModel().getElements(ProfilerUtil::isClsEntryPoint);
+        final List<CtClass<?>> entryPoints = spoon.getModel().getElements(JCProfilerUtil::isClsEntryPoint);
         if (entryPoints.isEmpty())
             throw new RuntimeException("None of the provided classes is an entry point!");
 

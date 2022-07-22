@@ -3,7 +3,7 @@ package jcprofiler.instrumentation;
 import jcprofiler.args.Args;
 import jcprofiler.instrumentation.processors.InsertTrapProcessor;
 import jcprofiler.instrumentation.processors.ModifyEntryPointProcessor;
-import jcprofiler.util.ProfilerUtil;
+import jcprofiler.util.JCProfilerUtil;
 import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
@@ -57,7 +57,7 @@ public class Instrumenter {
     // TODO: better exception handling
     private void checkArguments(final Launcher spoon) {
         // validate args.entryPoint
-        ProfilerUtil.getEntryPoint(spoon, args.entryPoint);
+        JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
         // validate args.method
         final CtMethod<?> method = spoon.getModel().filterChildren(

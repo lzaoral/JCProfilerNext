@@ -3,7 +3,7 @@ package jcprofiler.profiling;
 import com.github.curiousoddman.rgxgen.RgxGen;
 import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.Util;
-import jcprofiler.util.ProfilerUtil;
+import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
 import pro.javacard.gp.ISO7816;
 import spoon.SpoonAPI;
@@ -131,7 +131,7 @@ public class Profiler {
     }
 
     private void setTrap(short trapID) throws CardException {
-        CommandAPDU setTrap = new CommandAPDU(args.cla, ProfilerUtil.INS_PERF_SETSTOP, 0, 0,
+        CommandAPDU setTrap = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_SETSTOP, 0, 0,
                                               Util.shortToByteArray(trapID));
         ResponseAPDU response = cardManager.transmit(setTrap);
         if (response.getSW() != ISO7816.SW_NO_ERROR)

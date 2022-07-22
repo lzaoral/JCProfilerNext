@@ -1,6 +1,6 @@
 package jcprofiler.instrumentation.processors;
 
-import jcprofiler.util.ProfilerUtil;
+import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
@@ -23,7 +23,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     @Override
     public boolean isToBeProcessed(final CtClass<?> cls) {
         // isEntryPoint && (!entryPointArg.isEmpty() => cls.SimpleName == entryPointArg)
-        return ProfilerUtil.isClsEntryPoint(cls) &&
+        return JCProfilerUtil.isClsEntryPoint(cls) &&
                 (args.entryPoint.isEmpty() || cls.getQualifiedName().equals(args.entryPoint));
     }
 
@@ -46,7 +46,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
             if (hasCorrectType && hasCorrectModifiers) {
                 final CtLiteral<Integer> lit = insPerfSetStop.getAssignment().partiallyEvaluate();
-                if (lit.getValue() == ProfilerUtil.INS_PERF_SETSTOP)
+                if (lit.getValue() == JCProfilerUtil.INS_PERF_SETSTOP)
                     return insPerfSetStop;
             }
 
@@ -56,7 +56,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
         insPerfSetStop = getFactory().Field().create(
                 cls, new HashSet<>(Arrays.asList(ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC)),
-                byteType, "INS_PERF_SETSTOP", getFactory().createLiteral(ProfilerUtil.INS_PERF_SETSTOP));
+                byteType, "INS_PERF_SETSTOP", getFactory().createLiteral(JCProfilerUtil.INS_PERF_SETSTOP));
         return insPerfSetStop;
     }
 
@@ -152,7 +152,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
                         return false;
 
                     final CtLiteral<Integer> lit = e.partiallyEvaluate();
-                    return lit.getValue().byteValue() == ProfilerUtil.INS_PERF_SETSTOP;
+                    return lit.getValue().byteValue() == JCProfilerUtil.INS_PERF_SETSTOP;
                 }).findAny();
 
         if (maybeExistingPerfStopCase.isPresent()) {
@@ -167,7 +167,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
                     !((CtFieldRead<?>) expr).getVariable().getSimpleName().equals("INS_PERF_SETSTOP"))
                 throw new RuntimeException(String.format(
                         "The switch in process method already contains a case for 0x%02x distinct from the " +
-                        "INS_PERF_SETSTOP field: %s", ProfilerUtil.INS_PERF_SETSTOP, existingPerfStopCase.prettyprint()));
+                        "INS_PERF_SETSTOP field: %s", JCProfilerUtil.INS_PERF_SETSTOP, existingPerfStopCase.prettyprint()));
 
             throw new RuntimeException(String.format(
                     "The body of the INS_PERF_SETSTOP switch case has unexpected contents:%n%s%nExpected:%n%s",
