@@ -24,14 +24,15 @@ public class JCProfiler {
     public static void run(final Args args) {
         // TODO: support already instrumented stuff
         new Instrumenter(args).process();
-        if (args.stopAfter == Stage.instrumentation)
-            return;
 
         // check that the generated sources are compilable by rebuilding the model after instrumentation
         final SpoonAPI spoon = new Launcher();
         Instrumenter.setupSpoon(spoon, args);
         spoon.addInputResource(args.outputDir);
         spoon.buildModel();
+
+        if (args.stopAfter == Stage.instrumentation)
+            return;
 
         // get entry point class
         final CtClass<?> entryPoint = JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
