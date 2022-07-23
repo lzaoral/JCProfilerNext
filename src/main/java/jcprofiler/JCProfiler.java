@@ -28,7 +28,7 @@ public class JCProfiler {
         // check that the generated sources are compilable by rebuilding the model after instrumentation
         final SpoonAPI spoon = new Launcher();
         Instrumenter.setupSpoon(spoon, args);
-        spoon.addInputResource(args.outputDir);
+        spoon.addInputResource(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toString());
         spoon.buildModel();
 
         if (args.stopAfter == Stage.instrumentation)

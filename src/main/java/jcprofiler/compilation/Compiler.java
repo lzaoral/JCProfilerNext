@@ -1,6 +1,7 @@
 package jcprofiler.compilation;
 
 import jcprofiler.args.Args;
+import jcprofiler.util.JCProfilerUtil;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -10,7 +11,9 @@ import pro.javacard.ant.JavaCard.JCApplet;
 import pro.javacard.ant.JavaCard.JCCap;
 import spoon.reflect.declaration.CtClass;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Compiler {
@@ -19,10 +22,18 @@ public class Compiler {
 
     // Inspired by https://stackoverflow.com/questions/6440295/is-it-possible-to-call-ant-or-nsis-scripts-from-java-code/6440342#6440342
     public static void compile(final Args args, final CtClass<?> entryPoint) {
+        // create the output directory if it does not exist
+        final Path appletDir = JCProfilerUtil.getAppletOutputDirectory(args.workDir).toAbsolutePath();
+        try {
+            Files.createDirectories(appletDir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         final Project p = new Project();
         p.init();
         p.setName("JavaCard");
-        p.setBaseDir(new File(args.outputDir));
+        p.setBaseDir(appletDir.toFile());
 
         /*
          TODO: make it possible to select the JDK that is used to compile the project if possible
@@ -55,8 +66,8 @@ public class Compiler {
         final JCCap cap = jc.createCap();
         cap.setTaskName("JavaCard");
         cap.setProject(p);
-        cap.setSources(Paths.get(args.outputDir, "sources").toFile().getAbsolutePath());
-        cap.setExport("bin");
+        cap.setSources(Paths.get("..", JCProfilerUtil.INSTR_OUT_DIRNAME).toString());
+        cap.setExport(".");
 
         // TODO: check if this ok
         cap.setDebug(false);
@@ -64,7 +75,7 @@ public class Compiler {
 
         cap.setAID("1234567890");
         cap.setPackage(entryPoint.getPackage().getQualifiedName());
-        cap.setOutput(String.format("%s.cap", entryPoint.getSimpleName()));
+        cap.setOutput(entryPoint.getSimpleName() + ".cap");
 
         final JCApplet app = cap.createApplet();
         app.setClass(entryPoint.getQualifiedName());

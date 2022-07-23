@@ -1,6 +1,7 @@
 package jcprofiler.visualisation;
 
 import jcprofiler.args.Args;
+import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.processors.InsertTimesProcessor;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
@@ -10,7 +11,6 @@ import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtMethod;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,14 +33,14 @@ public class Visualiser {
 
     // TODO: aggregate results when there's too many of them
     public void insertMeasurementsToSources() {
-        spoon.setSourceOutputDirectory(Paths.get(args.outputDir, "sources_perf").toFile());
+        spoon.setSourceOutputDirectory(JCProfilerUtil.getPerfOutputDirectory(args.workDir).toFile());
         spoon.addProcessor(new InsertTimesProcessor(atr, measurements));
         spoon.process();
         spoon.prettyprint();
     }
 
     public void generateCSV() {
-        final File csv = Paths.get(args.outputDir, "measurements.csv").toFile();
+        final File csv = args.workDir.resolve("measurements.csv").toFile();
         try (final PrintWriter writer = new PrintWriter(csv)) {
             writer.printf("trap,%s (measurements in nanoseconds)%n",
                     IntStream.rangeClosed(1, args.repeat_count)
@@ -75,7 +75,7 @@ public class Visualiser {
         context.put("measurements", measurements);
         context.put("null", null);
 
-        final File output = Paths.get(args.outputDir, "measurements.html").toFile();
+        final File output = args.workDir.resolve("measurements.html").toFile();
         try (final Writer writer = new FileWriter(output)) {
             final Template template = velocityEngine.getTemplate("jcprofiler/visualisation/template.vm");
             template.merge(context, writer);

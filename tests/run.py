@@ -4,6 +4,7 @@ from pathlib import Path
 from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict
+from shutil import copytree
 
 import json
 import os
@@ -55,8 +56,7 @@ def execute_test(test: Dict[str, Any]):
     jar = Path('../build/libs/javacard-profiler-1.0-SNAPSHOT.jar')
     jckit = Path(f'jcsdk/jc{test["jckit"]}_kit')
 
-    cmd = f'java -jar {jar} -i "{Path(test["name"]) / test["path"]}" ' + \
-          f'--jckit "{jckit}" --simulator --repeat-count 1000'
+    cmd = f'java -jar {jar} --jckit "{jckit}" --simulator --repeat-count 1000'
 
     if 'entryPoint' in test:
         cmd += f' --entry-point "{test["entryPoint"]}"'
@@ -69,9 +69,12 @@ def execute_test(test: Dict[str, Any]):
         sub_cmd = cmd
         test_dir = mkdtemp(prefix=f'{test["name"]}_{subtest["method"]}_',
                            dir='.')
-        print('Created temporary directory', test_dir)
+        print('Created temporary directory', Path(test_dir).absolute())
 
-        sub_cmd += f' --output-dir "{test_dir}"'
+        copytree(Path(test['name']) / test['path'], test_dir,
+                 dirs_exist_ok=True)
+
+        sub_cmd += f' --work-dir "{test_dir}"'
         sub_cmd += f' --method "{subtest["method"]}"'
         sub_cmd += f' --inst "{subtest["inst"]}"'
         sub_cmd += f' --data-regex "{subtest["input"]}"'

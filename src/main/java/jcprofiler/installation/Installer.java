@@ -9,6 +9,7 @@ import cz.muni.fi.crocs.rcard.client.RunConfig;
 import cz.muni.fi.crocs.rcard.client.Util;
 import javacard.framework.Applet;
 import jcprofiler.args.Args;
+import jcprofiler.util.JCProfilerUtil;
 import pro.javacard.gp.GPTool;
 import pro.javacard.gp.ISO7816;
 import spoon.reflect.declaration.CtClass;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -33,7 +33,8 @@ public class Installer {
     }
 
     private static CardManager configureSimulator(final Args args, final CtClass<?> entryPoint) {
-        final Path jarPath = Paths.get(args.outputDir, "bin", entryPoint.getPackage().getSimpleName() + ".jar");
+        final Path jarPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
+                .resolve(entryPoint.getPackage().getSimpleName() + ".jar");
         final CardManager cardManager = new CardManager(false, Util.hexStringToByteArray("123456789001"));
 
         try {
@@ -57,7 +58,8 @@ public class Installer {
     }
 
     private static CardManager installOnCard(final Args args, final CtClass<?> entryPoint) {
-        final Path capPath = Paths.get(args.outputDir, entryPoint.getSimpleName() + ".cap");
+        final Path capPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
+                .resolve(entryPoint.getSimpleName() + ".cap");
         final CardManager cardManager = new CardManager(false, Util.hexStringToByteArray("123456789001"));
         // we do it manually later after we have successfully installed the applet
         cardManager.setDoSelect(false);

@@ -3,15 +3,15 @@ package jcprofiler.args;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
 import jcprofiler.args.converters.StageConverter;
-import jcprofiler.util.Stage;
+import jcprofiler.args.converters.DirectoryConverter;
 import jcprofiler.args.converters.ByteConverter;
 import jcprofiler.args.converters.JCKitConverter;
 import jcprofiler.args.validators.InputPathValidator;
-import jcprofiler.args.validators.OutputPathValidator;
 import jcprofiler.args.validators.RegexValidator;
+import jcprofiler.util.Stage;
 import pro.javacard.JavaCardSDK;
 
-import java.util.List;
+import java.nio.file.Path;
 
 public class Args {
     @Parameter(names = {"-h", "--help"},
@@ -19,18 +19,11 @@ public class Args {
                help = true)
     public boolean help = false;
 
-    // TODO: add some filter for input files?
-    @Parameter(names = {"-i", "--input-file", "--input-dir"},
+    @Parameter(names = {"-w", "--work-dir"},
                description = "Input files or directories (can be specified multiple times)",
                required = true,
-               validateWith = InputPathValidator.class)
-    public List<String> inputs;
-
-    @Parameter(names = {"-o", "--output-dir"},
-               description = "Output directory",
-               required = true,
-               validateWith = OutputPathValidator.class)
-    public String outputDir;
+               converter = DirectoryPathConverter.class)
+    public Path workDir;
 
     @Parameter(names = {"--stop-after"},
                description = "Stop after executing the given stage",

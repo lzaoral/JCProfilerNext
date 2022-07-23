@@ -4,11 +4,16 @@ import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.reference.CtTypeReference;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
 public class JCProfilerUtil {
     public static final byte INS_PERF_SETSTOP = (byte) 0xf5;
+
+    public static final String APPLET_OUT_DIRNAME = "applet";
+    public static final String INSTR_OUT_DIRNAME  = "sources_instr";
+    public static final String PERF_OUT_DIRNAME   = "sources_perf";
 
     // static class!
     private JCProfilerUtil() {}
@@ -44,5 +49,17 @@ public class JCProfilerUtil {
     public static boolean isClsEntryPoint(final CtClass<?> cls) {
         final CtTypeReference<?> parent = cls.getSuperclass();
         return parent != null && parent.getQualifiedName().equals("javacard.framework.Applet");
+    }
+
+    public static Path getInstrOutputDirectory(final Path workDirPath) {
+        return workDirPath.resolve(INSTR_OUT_DIRNAME);
+    }
+
+    public static Path getPerfOutputDirectory(final Path workDirPath) {
+        return workDirPath.resolve(PERF_OUT_DIRNAME);
+    }
+
+    public static Path getAppletOutputDirectory(final Path workDirPath) {
+        return workDirPath.resolve(APPLET_OUT_DIRNAME);
     }
 }

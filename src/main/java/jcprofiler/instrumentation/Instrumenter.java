@@ -13,7 +13,6 @@ import spoon.reflect.declaration.CtPackage;
 import spoon.support.compiler.VirtualFile;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -41,8 +40,9 @@ public class Instrumenter {
         spoon.addProcessor(new InsertTrapProcessor(args));
         spoon.process();
 
-        // compile the result???
+        // save the result
         spoon.getEnvironment().setOutputType(OutputType.CLASSES);
+        spoon.setSourceOutputDirectory(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toFile());
         spoon.prettyprint();
 
         // TODO sanity check that all PMC members are unique
@@ -50,7 +50,7 @@ public class Instrumenter {
 
     private void buildModel(final Launcher spoon) {
         setupSpoon(spoon, args);
-        args.inputs.forEach(spoon::addInputResource);
+        spoon.addInputResource(args.workDir.toString());
         spoon.buildModel();
     }
 
@@ -73,7 +73,6 @@ public class Instrumenter {
         // TODO: uncommenting this might lead to SPOON crashes!
         // spoon.getEnvironment().setPrettyPrinterCreator(() -> new SniperJavaPrettyPrinter(spoon.getEnvironment()));
 
-        spoon.setSourceOutputDirectory(Paths.get(args.outputDir, "sources").toFile());
         spoon.getEnvironment().setNoClasspath(false);
         spoon.getEnvironment().setAutoImports(true);
         spoon.getEnvironment().setCopyResources(false);
