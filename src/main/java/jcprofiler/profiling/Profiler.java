@@ -92,14 +92,14 @@ public class Profiler {
 
             System.out.println("\n-------------- Performance profiling start --------------\n\n");
 
-            for (int repeat = 0; repeat < args.repeat_count; repeat++) {
-                byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
+            for (int repeat = 1; repeat <= args.repeat_count; repeat++) {
+                final byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
                 final CommandAPDU triggerAPDU = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
 
                 final String input =  Util.bytesToHex(triggerAPDU.getBytes());
                 inputs.add(input);
 
-                System.out.printf("Profiling %s, round: %d%n", args.method, repeat + 1);
+                System.out.printf("Profiling %s, round: %d%n", args.method, repeat);
                 System.out.println("APDU: " + input);
 
                 profileSingleStep(triggerAPDU);
