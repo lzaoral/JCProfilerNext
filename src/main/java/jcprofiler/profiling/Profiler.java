@@ -17,7 +17,6 @@ import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -84,7 +83,7 @@ public class Profiler {
                 final RgxGen rgxGen = new RgxGen(args.dataRegex);
                 inputGen = () -> rgxGen.generate(rdn);
             } else {
-                final List<String> inputs = Files.readAllLines(Paths.get(args.dataFile));
+                final List<String> inputs = Files.readAllLines(args.dataFile);
                 inputGen = () -> inputs.get(rdn.nextInt(inputs.size()));
             }
 

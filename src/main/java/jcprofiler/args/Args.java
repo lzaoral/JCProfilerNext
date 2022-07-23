@@ -2,11 +2,7 @@ package jcprofiler.args;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
-import jcprofiler.args.converters.StageConverter;
-import jcprofiler.args.converters.DirectoryConverter;
-import jcprofiler.args.converters.ByteConverter;
-import jcprofiler.args.converters.JCKitConverter;
-import jcprofiler.args.validators.InputPathValidator;
+import jcprofiler.args.converters.*;
 import jcprofiler.args.validators.RegexValidator;
 import jcprofiler.util.Stage;
 import pro.javacard.JavaCardSDK;
@@ -99,6 +95,6 @@ public class Args {
 
     @Parameter(names = {"--data-file"},
                description = "Path to a file specifying data inputs in hex",
-               validateWith = InputPathValidator.class)
-    public String dataFile;
+               converter = FilePathConverter.class)
+    public Path dataFile;
 }
