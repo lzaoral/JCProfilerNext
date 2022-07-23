@@ -67,6 +67,7 @@ public class Installer {
         final CardManager cardManager = new CardManager(false, Util.hexStringToByteArray("123456789001"));
 
         try {
+            // FIXME: this leak is intentional so that the simulator can access every class in the loaded JAR
             final URLClassLoader classLoader = new URLClassLoader(new URL[]{jarPath.toUri().toURL()});
             final Class<? extends Applet> cls = classLoader.loadClass(entryPoint.getQualifiedName())
                     .asSubclass(Applet.class);
@@ -76,7 +77,7 @@ public class Installer {
                     .setbReuploadApplet(true)
                     .setInstallData(new byte[8]);
 
-            // TODO: simulator may print unrelated messages to stdout
+            // TODO: simulator may print unrelated messages to stdout (happens with JCMathLib)
             if (!cardManager.connect(runCfg))
                 throw new RuntimeException("Setting-up the simulator failed");
 
