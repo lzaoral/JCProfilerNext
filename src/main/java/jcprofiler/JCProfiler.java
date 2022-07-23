@@ -41,9 +41,14 @@ public class JCProfiler {
         if (args.stopAfter == Stage.compilation)
             return;
 
-        final CardManager cardMgr = Installer.install(args, entryPoint);
+        CardManager cardMgr = null;
+        if (!args.use_simulator)
+            cardMgr = Installer.installOnCard(args, entryPoint);
         if (args.stopAfter == Stage.installation)
             return;
+
+        if (cardMgr == null)
+            cardMgr = Installer.connect(args, entryPoint);
 
         final Map<String, List<Long>> measurements = new Profiler(args, cardMgr, spoon).profile();
         // TODO: what about storing the measured results?

@@ -27,9 +27,38 @@ public class Installer {
     // static class
     private Installer() {}
 
-    public static CardManager install(final Args args, final CtClass<?> entryPoint) {
+    public static CardManager installOnCard(final Args args, final CtClass<?> entryPoint) {
+        if (args.use_simulator)
+            throw new RuntimeException("Installation on a simulator is not possible");
+
+        final CardManager cardManager = connectToCard();
+
+        final GPTool gp = new GPTool();
+        final BIBO bibo = CardBIBO.wrap(cardManager.getChannel().getCard());
+        final Path capPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
+                .resolve(entryPoint.getSimpleName() + ".cap");
+
+        // TODO: be very careful to not destroy the card!!!
+        int ret = gp.run(bibo, new String[]{"-v", "--force", "--install", capPath.toString()});
+        if (ret != 0)
+            throw new RuntimeException(String.format("GlobalPlatformPro exited with non-zero code: %d", ret));
+
+        try {
+            System.out.print("Selecting installed applet on card...");
+            ResponseAPDU out = cardManager.selectApplet();
+            if (out.getSW() != ISO7816.SW_NO_ERROR)
+                throw new CardException("Applet could not se selected. SW: " + out.getSW());
+            System.out.println("Done");
+        } catch (CardException e) {
+            throw new RuntimeException(e);
+        }
+
+        return cardManager;
+    }
+
+    public static CardManager connect(final Args args, final CtClass<?> entryPoint) {
         return args.use_simulator ? configureSimulator(args, entryPoint)
-                                  : installOnCard(args, entryPoint);
+                                  : connectToCard();
     }
 
     private static CardManager configureSimulator(final Args args, final CtClass<?> entryPoint) {
@@ -57,58 +86,34 @@ public class Installer {
         }
     }
 
-    private static CardManager installOnCard(final Args args, final CtClass<?> entryPoint) {
-        final Path capPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
-                .resolve(entryPoint.getSimpleName() + ".cap");
+    private static CardManager connectToCard() {
         final CardManager cardManager = new CardManager(false, Util.hexStringToByteArray("123456789001"));
-        // we do it manually later after we have successfully installed the applet
-        cardManager.setDoSelect(false);
 
-        try {
-            final Card card = connectToCard(cardManager);
-
-            final GPTool gp = new GPTool();
-            final BIBO bibo = CardBIBO.wrap(card);
-
-            // TODO: be very careful to not destroy the card!!!
-            int ret;
-            if ((ret = gp.run(bibo, new String[]{"-v", "--force", "--install", capPath.toString()})) != 0)
-                throw new RuntimeException(String.format("GlobalPlatformPro exited with non-zero code: %d", ret));
-
-            System.out.print("Selecting installed applet on card...");
-            ResponseAPDU out = cardManager.selectApplet();
-            if (out.getSW() != ISO7816.SW_NO_ERROR)
-                throw new CardException("Applet could not se selected. SW: " + out.getSW());
-            System.out.println("Done");
-
-            return cardManager;
-        } catch (CardException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Card connectToCard(final CardManager cardManager) throws CardException {
         // for better portability across different platforms
         TerminalManager.fixPlatformPaths();
         final CardTerminals terminals = TerminalManager.getTerminalFactory().terminals();
         System.out.println("Waiting for terminal with a card ...");
 
-        List<CardTerminal> terminalList;
-        do {
-            terminals.waitForChange();
-            terminalList = terminals.list(CardTerminals.State.CARD_PRESENT);
-        } while (terminalList.isEmpty());
+        try {
+            List<CardTerminal> terminalList;
+            do {
+                terminals.waitForChange();
+                terminalList = terminals.list(CardTerminals.State.CARD_PRESENT);
+            } while (terminalList.isEmpty());
 
-        int terminalIdx = 0;
-        if (terminalList.size() > 2)
-            terminalIdx = selectTerminal(terminalList);
+            int terminalIdx = 0;
+            if (terminalList.size() > 2)
+                terminalIdx = selectTerminal(terminalList);
 
-        final CardTerminal terminal = terminalList.get(terminalIdx);
-        System.out.println("Connecting card in terminal " + terminal.getName());
+            final CardTerminal terminal = terminalList.get(terminalIdx);
+            System.out.println("Connecting card in terminal " + terminal.getName());
+            cardManager.connectTerminal(terminal);
+            System.out.println("Connected!");
 
-        final Card card = cardManager.connectTerminal(terminal).getCard();
-        System.out.println("Connected!");
-        return card;
+            return cardManager;
+        } catch (CardException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static int selectTerminal(final List<CardTerminal> terminalList) {
