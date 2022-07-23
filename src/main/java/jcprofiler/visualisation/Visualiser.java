@@ -20,6 +20,7 @@ public class Visualiser {
     private final SpoonAPI spoon;
 
     private String atr;
+    private List<String> inputs;
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 
     public Visualiser(final Args args, final SpoonAPI spoon) {
@@ -33,7 +34,9 @@ public class Visualiser {
         final File csv = args.workDir.resolve("measurements.csv").toFile();
         try (Scanner scan = new Scanner(csv)) {
             // parse header
-            atr = scan.nextLine();
+            atr = scan.findInLine("[^,]+");
+            scan.skip(",");
+            inputs = Arrays.asList(scan.nextLine().split(","));
 
             while (scan.hasNextLine()) {
                 final String trap = scan.findInLine("[^,]+");

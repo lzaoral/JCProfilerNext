@@ -36,6 +36,7 @@ public class Profiler {
     private final Map<Short, String> trapNameMap = new LinkedHashMap<>();
     private final Set<String> unreachedTraps = new LinkedHashSet<>();
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
+    private final List<String> inputs = new ArrayList<>();
 
     public Profiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         this.args = args;
@@ -95,8 +96,11 @@ public class Profiler {
                 byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
                 final CommandAPDU triggerAPDU = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
 
+                final String input =  Util.bytesToHex(triggerAPDU.getBytes());
+                inputs.add(input);
+
                 System.out.printf("Profiling %s, round: %d%n", args.method, repeat + 1);
-                System.out.printf("APDU: %s%n", Util.toHex(triggerAPDU.getBytes()));
+                System.out.println("APDU: " + input);
 
                 profileSingleStep(triggerAPDU);
             }
@@ -124,6 +128,8 @@ public class Profiler {
                 if (v.size() != args.repeat_count)
                     throw new RuntimeException(String.format("%s.size() == %d", v, args.repeat_count));
             });
+            if (inputs.size() != args.repeat_count)
+                throw new RuntimeException("inputs.size() == " + args.repeat_count);
 
             generateCSV();
         } catch (CardException | IOException e) {
@@ -187,7 +193,7 @@ public class Profiler {
         final File csv = args.workDir.resolve("measurements.csv").toFile();
 
         try (PrintWriter writer = new PrintWriter(csv)) {
-            writer.printf("%s%n", atr);
+            writer.printf("%s,%s%n", atr, String.join(",", inputs));
             measurements.forEach((trap, values) ->
                     writer.printf("%s,%s%n", trap,
                             values.stream().map(v -> v != null ? v.toString() : "unreach")
