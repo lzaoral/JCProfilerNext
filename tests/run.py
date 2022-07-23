@@ -12,6 +12,10 @@ import re
 import sys
 
 
+STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
+          'visualisation']
+
+
 def clone_git_repo(repo: str, target: str) -> bool:
     if os.path.exists(target):
         print(repo, 'seems to be already cloned')
@@ -86,12 +90,18 @@ def execute_test(test: Dict[str, Any]):
             sub_cmd += f' --p2 "{subtest["p2"]}"'
 
         print('Executing subtest', subtest['method'])
-        print('Command:', sub_cmd, flush=True)
 
-        ret = call(sub_cmd, shell=True)
-        if ret != 0:
-            print('Command failed with return code', ret)
-            sys.exit(1)
+        for stage in STAGES:
+            stage_cmd = sub_cmd
+            stage_cmd += f' --start-from "{stage}"'
+            stage_cmd += f' --stop-after "{stage}"'
+
+            print('Excecuting stage', stage)
+            print('Command:', stage_cmd, flush=True)
+            ret = call(stage_cmd, shell=True)
+            if ret != 0:
+                print('Command failed with return code', ret)
+                sys.exit(1)
 
         # TODO: check format and contents of generated profiling reports
 

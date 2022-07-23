@@ -18,8 +18,11 @@ public class JCProfiler {
     private JCProfiler() {}
 
     public static void run(final Args args) {
-        // TODO: support already instrumented stuff
-        new Instrumenter(args).process();
+        // Instrumentation
+        if (args.startFrom.ordinal() <= Stage.instrumentation.ordinal()) {
+            // TODO: support already instrumented stuff
+            new Instrumenter(args).process();
+        }
 
         // check that the generated sources are compilable by rebuilding the model after instrumentation
         final SpoonAPI spoon = new Launcher();
@@ -33,23 +36,33 @@ public class JCProfiler {
         // get entry point class
         final CtClass<?> entryPoint = JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
-        Compiler.compile(args, entryPoint);
-        if (args.stopAfter == Stage.compilation)
-            return;
+        // Compilation
+        if (args.startFrom.ordinal() <= Stage.compilation.ordinal()) {
+            Compiler.compile(args, entryPoint);
+            if (args.stopAfter == Stage.compilation)
+                return;
+        }
 
-        CardManager cardMgr = null;
-        if (!args.use_simulator)
-            cardMgr = Installer.installOnCard(args, entryPoint);
+        // Installation (noop for --simulator)
+        CardManager cardManager = null;
+        if (args.startFrom.ordinal() <= Stage.installation.ordinal() && !args.use_simulator)
+            cardManager = Installer.installOnCard(args, entryPoint);
         if (args.stopAfter == Stage.installation)
             return;
 
-        if (cardMgr == null)
-            cardMgr = Installer.connect(args, entryPoint);
+        // Profiling
+        if (args.startFrom.ordinal() <= Stage.profiling.ordinal()) {
+            // Connect if the installation was skipped or simulator is used
+            if (cardManager == null)
+                // TODO: move connection stuff to a separate class?
+                cardManager = Installer.connect(args, entryPoint);
 
-        new Profiler(args, cardMgr, spoon).profile();
-        if (args.stopAfter == Stage.profiling)
-            return;
+            new Profiler(args, cardManager, spoon).profile();
+            if (args.stopAfter == Stage.profiling)
+                return;
+        }
 
+        // Visualisation
         final Visualiser vis = new Visualiser(args, spoon);
         vis.generateHTML();
         vis.insertMeasurementsToSources();

@@ -21,14 +21,15 @@ public class Args {
                converter = DirectoryPathConverter.class)
     public Path workDir;
 
+    @Parameter(names = {"--start-from"},
+               description = "Start from executing the given stage",
+               converter = StageConverter.class)
+    public Stage startFrom = Stage.instrumentation;
+
     @Parameter(names = {"--stop-after"},
                description = "Stop after executing the given stage",
                converter = StageConverter.class)
     public Stage stopAfter = Stage.visualisation;
-
-//    @Parameter(names = {"-p", "--profile-only"},
-//               description = "Profile already installed applet")
-//    public boolean profile_only = false;
 
     @Parameter(names = {"--max-traps-per-method"},
                description = "Maximum number of traps to be inserted in a method",

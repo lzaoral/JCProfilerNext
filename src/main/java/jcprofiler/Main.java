@@ -22,6 +22,10 @@ public class Main {
             throw new RuntimeException("Options --data-file or --data-regex cannot be specified simultaneously.");
         }
 
+        if (args.startFrom.ordinal() > args.stopAfter.ordinal())
+            throw new RuntimeException(String.format(
+                    "Nothing to do! Cannot start with %s and end with %s.", args.startFrom, args.stopAfter));
+
         JCProfiler.run(args);
     }
 }
