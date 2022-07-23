@@ -1,7 +1,6 @@
 package jcprofiler;
 
 import cz.muni.fi.crocs.rcard.client.CardManager;
-import cz.muni.fi.crocs.rcard.client.Util;
 import jcprofiler.args.Args;
 import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
@@ -13,9 +12,6 @@ import jcprofiler.visualisation.Visualiser;
 import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
-
-import java.util.List;
-import java.util.Map;
 
 public class JCProfiler {
     // static class!
@@ -50,15 +46,12 @@ public class JCProfiler {
         if (cardMgr == null)
             cardMgr = Installer.connect(args, entryPoint);
 
-        final Map<String, List<Long>> measurements = new Profiler(args, cardMgr, spoon).profile();
-        // TODO: what about storing the measured results?
+        new Profiler(args, cardMgr, spoon).profile();
         if (args.stopAfter == Stage.profiling)
             return;
 
-        final String atr = Util.bytesToHex(cardMgr.getChannel().getCard().getATR().getBytes());
-        final Visualiser vis = new Visualiser(args, atr, spoon, measurements);
+        final Visualiser vis = new Visualiser(args, spoon);
         vis.generateHTML();
-        vis.generateCSV();
         vis.insertMeasurementsToSources();
     }
 }

@@ -15,11 +15,13 @@ import spoon.reflect.declaration.CtField;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Lukáš Zaoral and Petr Svenda
@@ -65,7 +67,7 @@ public class Profiler {
         }
     }
 
-    public Map<String, List<Long>> profile() {
+    public void profile() {
         try {
             // reset if possible and erase any previous performance stop and reset if possible
             resetApplet();
@@ -123,7 +125,7 @@ public class Profiler {
                     throw new RuntimeException(String.format("%s.size() == %d", v, args.repeat_count));
             });
 
-            return Collections.unmodifiableMap(measurements);
+            generateCSV();
         } catch (CardException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -171,12 +173,26 @@ public class Profiler {
             currentTransmitDuration = cardManager.getLastTransmitTimeDuration();
 
             measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>())
-                    .add(TimeUnit.NANOSECONDS.toMicros(currentTransmitDuration.minus(prevTransmitDuration).toNanos()));
+                    .add(currentTransmitDuration.minus(prevTransmitDuration).toNanos());
 
             prevTransmitDuration = currentTransmitDuration;
 
             // free memory after command
             resetApplet();
+        }
+    }
+
+    private void generateCSV() throws IOException {
+        final String atr = Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
+        final File csv = args.workDir.resolve("measurements.csv").toFile();
+
+        try (PrintWriter writer = new PrintWriter(csv)) {
+            writer.printf("%s%n", atr);
+            measurements.forEach((trap, values) ->
+                    writer.printf("%s,%s%n", trap,
+                            values.stream().map(v -> v != null ? v.toString() : "unreach")
+                                    .collect(Collectors.joining(",")))
+            );
         }
     }
 }

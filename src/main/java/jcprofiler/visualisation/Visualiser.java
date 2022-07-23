@@ -11,24 +11,42 @@ import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtMethod;
 
 import java.io.*;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class Visualiser {
     private final Args args;
-    private final String atr;
     private final SpoonAPI spoon;
-    private final Map<String, List<Long>> measurements;
 
-    public Visualiser(final Args args, final String atr,
-                      final SpoonAPI spoon, final Map<String, List<Long>> measurements) {
+    private String atr;
+    private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
+
+    public Visualiser(final Args args, final SpoonAPI spoon) {
         this.args = args;
-        // TODO: integrate with https://smartcard-atr.apdu.fr/parse?ATR=XXX?
-        this.atr = atr;
         this.spoon = spoon;
-        this.measurements = measurements;
+
+        loadCSV();
+    }
+
+    private void loadCSV() {
+        final File csv = args.workDir.resolve("measurements.csv").toFile();
+        try (Scanner scan = new Scanner(csv)) {
+            // parse header
+            atr = scan.nextLine();
+
+            while (scan.hasNextLine()) {
+                final String trap = scan.findInLine("[^,]+");
+                scan.skip(",");
+                final List<Long> trapMeasurements = Arrays.stream(scan.nextLine().split(","))
+                        .map(s -> s.equals("unreach") ? null : TimeUnit.NANOSECONDS.toMicros(Long.parseLong(s)))
+                        .collect(Collectors.toList());
+
+                measurements.put(trap, trapMeasurements);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // TODO: aggregate results when there's too many of them
@@ -37,23 +55,6 @@ public class Visualiser {
         spoon.addProcessor(new InsertTimesProcessor(atr, measurements));
         spoon.process();
         spoon.prettyprint();
-    }
-
-    public void generateCSV() {
-        final File csv = args.workDir.resolve("measurements.csv").toFile();
-        try (final PrintWriter writer = new PrintWriter(csv)) {
-            writer.printf("trap,%s (measurements in nanoseconds)%n",
-                    IntStream.rangeClosed(1, args.repeat_count)
-                            .mapToObj(i -> "round " + i)
-                            .collect(Collectors.joining(",")));
-            measurements.forEach((trap, values) ->
-                    writer.printf("%s,%s%n", trap,
-                            values.stream().map(v -> v != null ? v.toString() : "unreach")
-                                    .collect(Collectors.joining(",")))
-            );
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     // TODO: must be executed before insertMeasurementsToSources()
@@ -67,6 +68,8 @@ public class Visualiser {
         velocityEngine.setProperty(
                 "resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         velocityEngine.init();
+
+        // TODO: integrate with https://smartcard-atr.apdu.fr/parse?ATR=XXX?
 
         final VelocityContext context = new VelocityContext();
         context.put("cardATR", atr);
