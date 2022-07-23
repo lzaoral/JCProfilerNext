@@ -11,7 +11,6 @@ import javacard.framework.Applet;
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 import pro.javacard.gp.GPTool;
-import pro.javacard.gp.ISO7816;
 import spoon.reflect.declaration.CtClass;
 
 import javax.smartcardio.*;
@@ -46,7 +45,7 @@ public class Installer {
         try {
             System.out.print("Selecting installed applet on card...");
             ResponseAPDU out = cardManager.selectApplet();
-            if (out.getSW() != ISO7816.SW_NO_ERROR)
+            if (out.getSW() != JCProfilerUtil.SW_NO_ERROR)
                 throw new CardException("Applet could not se selected. SW: " + out.getSW());
             System.out.println("Done");
         } catch (CardException e) {

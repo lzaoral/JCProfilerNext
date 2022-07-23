@@ -5,7 +5,6 @@ import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.Util;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
-import pro.javacard.gp.ISO7816;
 import spoon.SpoonAPI;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtLiteral;
@@ -141,7 +140,7 @@ public class Profiler {
         CommandAPDU setTrap = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_SETSTOP, 0, 0,
                                               Util.shortToByteArray(trapID));
         ResponseAPDU response = cardManager.transmit(setTrap);
-        if (response.getSW() != ISO7816.SW_NO_ERROR)
+        if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
             throw new RuntimeException(String.format(
                     "Setting \"%s\" trap failed with SW %d", getTrapName(trapID), response.getSW()));
     }
@@ -152,7 +151,7 @@ public class Profiler {
 
         CommandAPDU reset = new CommandAPDU(args.cla, args.cleanupInst, 0, 0, 0);
         ResponseAPDU response = cardManager.transmit(reset);
-        if (response.getSW() != ISO7816.SW_NO_ERROR)
+        if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
             throw new RuntimeException("Resetting the applet failed with SW " + response.getSW());
     }
 

@@ -1,5 +1,6 @@
 package jcprofiler.util;
 
+import javacard.framework.ISO7816;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.reference.CtTypeReference;
@@ -10,6 +11,10 @@ import java.util.Optional;
 
 public class JCProfilerUtil {
     public static final byte INS_PERF_SETSTOP = (byte) 0xf5;
+
+    // Needed to fix a SNAFU, where ISO7816.SW_NO_ERROR is a short, ResponseAPDU::getSW returns int
+    // and (short) 0x9000 != 0x9000 ...
+    public static final int SW_NO_ERROR = ISO7816.SW_NO_ERROR & 0xFFFF;
 
     public static final String APPLET_OUT_DIRNAME = "applet";
     public static final String INSTR_OUT_DIRNAME  = "sources_instr";
