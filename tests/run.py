@@ -4,7 +4,7 @@ from pathlib import Path
 from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict
-from shutil import copytree
+from shutil import copytree, rmtree
 
 import json
 import os
@@ -67,9 +67,10 @@ def execute_test(test: Dict[str, Any]):
 
     for subtest in test['subtests']:
         sub_cmd = cmd
-        test_dir = mkdtemp(prefix=f'{test["name"]}_{subtest["method"]}_',
-                           dir='.')
-        print('Created temporary directory', Path(test_dir).absolute())
+
+        test_dir = Path(mkdtemp(prefix=f'{test["name"]}_{subtest["method"]}_',
+                        dir='.')).absolute()
+        print('Created temporary directory', test_dir)
 
         copytree(Path(test['name']) / test['path'], test_dir,
                  dirs_exist_ok=True)
@@ -92,7 +93,10 @@ def execute_test(test: Dict[str, Any]):
             print('Command failed with return code', ret)
             sys.exit(1)
 
-    # TODO: check format and contents of generated profiling reports
+        # TODO: check format and contents of generated profiling reports
+
+        rmtree(test_dir)
+        print('Removed temporary directory', test_dir)
 
 
 def main():
