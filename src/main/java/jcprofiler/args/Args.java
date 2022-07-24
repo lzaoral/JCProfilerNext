@@ -5,6 +5,7 @@ import com.beust.jcommander.validators.PositiveInteger;
 import jcprofiler.args.converters.*;
 import jcprofiler.args.validators.RegexValidator;
 import jcprofiler.util.Stage;
+import jcprofiler.util.TimeUnit;
 import pro.javacard.JavaCardSDK;
 
 import java.nio.file.Path;
@@ -98,4 +99,9 @@ public class Args {
                description = "Path to a file specifying data inputs in hex",
                converter = FilePathConverter.class)
     public Path dataFile;
+
+    @Parameter(names = {"--time-unit"},
+               description = "Time unit to be used in result visualisation",
+               converter = TimeUnitConverter.class)
+    public TimeUnit timeUnit = TimeUnit.micro;
 }

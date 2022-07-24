@@ -3,6 +3,7 @@
 #* @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>" *#
 #* @vtlvariable name="methodName" type="java.lang.String" *#
 #* @vtlvariable name="null" type="java.lang.Object" *#
+#* @vtlvariable name="timeUnit" type="java.lang.String" *#
 
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +69,7 @@
                 xaxis2: {
                     //dtick: 1,
                     tickformat: ',d',
-                    title: 'Time in μs',
+                    title: 'Time in $timeUnit',
                 },
                 yaxis: {
                     tickformat: ',d',

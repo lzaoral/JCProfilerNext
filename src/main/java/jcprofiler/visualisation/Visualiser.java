@@ -42,13 +42,31 @@ public class Visualiser {
                 final String trap = scan.findInLine("[^,]+");
                 scan.skip(",");
                 final List<Long> trapMeasurements = Arrays.stream(scan.nextLine().split(","))
-                        .map(s -> s.equals("unreach") ? null : TimeUnit.NANOSECONDS.toMicros(Long.parseLong(s)))
-                        .collect(Collectors.toList());
+                        .map(this::convertTime).collect(Collectors.toList());
 
                 measurements.put(trap, trapMeasurements);
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private Long convertTime(final String input) {
+        if (input.equals("unreach"))
+            return null;
+
+        long nanos = Long.parseLong(input);
+        switch (args.timeUnit) {
+            case nano:
+                return nanos; // noop
+            case micro:
+                return TimeUnit.NANOSECONDS.toMicros(nanos);
+            case mili:
+                return TimeUnit.NANOSECONDS.toMillis(nanos);
+            case sec:
+                return TimeUnit.NANOSECONDS.toSeconds(nanos);
+            default:
+                throw new RuntimeException("Unreachable statement reached!");
         }
     }
 
@@ -80,6 +98,7 @@ public class Visualiser {
         context.put("methodName", method.getDeclaringType().getQualifiedName() + "." + method.getSignature());
         context.put("measurements", measurements);
         context.put("null", null);
+        context.put("timeUnit", getTimeUnitSymbol());
 
         final File output = args.workDir.resolve("measurements.html").toFile();
         try (final Writer writer = new FileWriter(output)) {
@@ -87,6 +106,21 @@ public class Visualiser {
             template.merge(context, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private String getTimeUnitSymbol() {
+        switch (args.timeUnit) {
+            case nano:
+                return "ns";
+            case micro:
+                return "μs";
+            case mili:
+                return "ms";
+            case sec:
+                return "s";
+            default:
+                throw new RuntimeException("Unreachable statement reached!");
         }
     }
 }
