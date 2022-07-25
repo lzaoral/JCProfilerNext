@@ -76,14 +76,25 @@ public class Example extends Applet {
 }
 ----
 
-When run as
+Run as:
 [source,console]
 ----
-$ ./gradlew run --args='-i Example.java --jckit jc222_kit -o output --method example --inst 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100'
+$ ./gradlew run --args='--work-dir example --jckit jc222_kit -o output --method example --inst 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100'
 ----
-the measurements captured by JCProfilerNext, stored in the `output` directory,
-will confirm this fact.  See the link:https://lzaoral.github.io/JCProfilerNext/example.html[visualisation]
-for details, namely the corresponding histograms of traps after the `for` loops.
+JCProfilerNext will process all sources in the `example` directory and will
+also use this directory to store all intermediate results:
+
+* `applet` - contains the built applet with corresponding CAP and JAR files
+* `measurements.csv` - contains raw measurements
+* `measurements.html` - contains visualisation of the measurements
+* `sources_instr` - contains instrumented sources
+* `sources_original` - contains original unchanged sources
+* `sources_perf` - contains sources with inserted measurements as inline comments
+
+If you open the corresponding link:https://lzaoral.github.io/JCProfilerNext/example.html[`measurements.html`]
+produced by JCProfilerNext, you will see that some parts of the code are indeed
+not constant.  Namely if you inspect the corresponding histograms of traps
+after the `for` loops.
 
 Limitations
 -----------
