@@ -79,7 +79,7 @@ public class Example extends Applet {
 Run as:
 [source,console]
 ----
-$ ./gradlew run --args='--work-dir example --jckit jc222_kit -o output --method example --inst 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100'
+$ ./gradlew run --args="--work-dir example --jckit jc222_kit -o output --method example --inst 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100"
 ----
 JCProfilerNext will process all sources in the `example` directory and will
 also use this directory to store all intermediate results:
