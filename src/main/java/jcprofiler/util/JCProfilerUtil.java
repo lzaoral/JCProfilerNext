@@ -5,9 +5,12 @@ import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.reference.CtTypeReference;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class JCProfilerUtil {
     public static final byte INS_PERF_SETSTOP = (byte) 0xf5;
@@ -19,6 +22,7 @@ public class JCProfilerUtil {
     public static final String APPLET_OUT_DIRNAME = "applet";
     public static final String INSTR_OUT_DIRNAME  = "sources_instr";
     public static final String PERF_OUT_DIRNAME   = "sources_perf";
+    public static final String SRC_IN_DIRNAME     = "sources_original";
 
     // static class!
     private JCProfilerUtil() {}
@@ -66,5 +70,29 @@ public class JCProfilerUtil {
 
     public static Path getAppletOutputDirectory(final Path workDirPath) {
         return workDirPath.resolve(APPLET_OUT_DIRNAME);
+    }
+
+    public static Path getSourceInputDirectory(final Path workDirPath) {
+        return workDirPath.resolve(SRC_IN_DIRNAME);
+    }
+
+    public static void moveToSubDirIfNotExists(final Path from, final Path to) {
+        if (!to.toFile().isDirectory()) {
+            try {
+                // FIXME: there has to be a nicer solution than this ...
+                Files.createDirectories(to);
+                try (Stream<Path> s = Files.list(from)) {
+                    s.filter(p -> !p.equals(to)).forEach(f -> {
+                        try {
+                            Files.move(f, to.resolve(f.getFileName()));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

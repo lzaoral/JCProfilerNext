@@ -20,6 +20,7 @@ public class JCProfiler {
     public static void run(final Args args) {
         // Instrumentation
         if (args.startFrom.ordinal() <= Stage.instrumentation.ordinal()) {
+            JCProfilerUtil.moveToSubDirIfNotExists(args.workDir, JCProfilerUtil.getSourceInputDirectory(args.workDir));
             // TODO: support already instrumented stuff
             new Instrumenter(args).process();
         }

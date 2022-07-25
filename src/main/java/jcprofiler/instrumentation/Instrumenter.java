@@ -50,7 +50,7 @@ public class Instrumenter {
 
     private void buildModel(final Launcher spoon) {
         setupSpoon(spoon, args);
-        spoon.addInputResource(args.workDir.toString());
+        spoon.addInputResource(JCProfilerUtil.getSourceInputDirectory(args.workDir).toString());
         spoon.buildModel();
     }
 
