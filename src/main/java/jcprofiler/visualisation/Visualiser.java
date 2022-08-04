@@ -95,6 +95,7 @@ public class Visualiser {
         final VelocityContext context = new VelocityContext();
         context.put("cardATR", atr);
         context.put("code", StringEscapeUtils.escapeHtml4(method.prettyprint()).split(System.lineSeparator()));
+        context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
         context.put("methodName", method.getDeclaringType().getQualifiedName() + "." + method.getSignature());
         context.put("measurements", measurements);
         context.put("null", null);

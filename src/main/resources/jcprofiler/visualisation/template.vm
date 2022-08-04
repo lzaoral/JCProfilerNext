@@ -1,5 +1,6 @@
 #* @vtlvariable name="cardATR" type="java.lang.String" *#
 #* @vtlvariable name="code" type="java.lang.String[]" *#
+#* @vtlvariable name="inputs" type="java.util.List<java.lang.String>" *#
 #* @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>" *#
 #* @vtlvariable name="methodName" type="java.lang.String" *#
 #* @vtlvariable name="null" type="java.lang.Object" *#
@@ -17,7 +18,9 @@
     <script>
         hljs.highlightAll()
 
+        const inputs = $inputs;
         let selectedTrap = null;
+        let plotlyInitialized = false;
 
         function redrawGraph(trapName, vals) {
             selectedTrap?.classList.remove('trap_select');
@@ -85,6 +88,26 @@
             }, {
                 responsive: true
             });
+
+            // set click event handler
+            if (!plotlyInitialized) {
+                plotlyInitialized = true;
+                let plotlyDiv = document.getElementById('plotly');
+
+                plotlyDiv.on('plotly_click', function (data) {
+                    const bin = data.points[0];
+                    const binSizeHalf = bin.fullData.xbins.size / 2;
+
+                    let binInputs = new Set(bin.pointIndices.map(e => inputs[e]));
+                    const sortedBinInputs = Array.from(binInputs).sort();
+
+                    let msg = 'Bin: ' + Math.ceil(bin.x - binSizeHalf) + ' to ' + Math.floor(bin.x + binSizeHalf) + '\n';
+                    msg += 'Inputs:\n';
+                    sortedBinInputs.forEach(e => msg += e + '\n');
+
+                    alert(msg);
+                });
+            }
         }
     </script>
     <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
@@ -131,6 +154,10 @@ h3 {
     float: left;
     width: 50%;
 }
+
+.center {
+    text-align: center;
+}
     </style>
 </head>
 <body>
@@ -155,6 +182,7 @@ $line
         <div class="graph">
             <div class="graph-sticky">
                 <h3 id="graphName">Select TRAP to view its histogram.</h3>
+                <p class="center">Click on a bin to get a list of corresponding inputs.</p>
                 <div id="plotly"></div>
             </div>
         </div>
