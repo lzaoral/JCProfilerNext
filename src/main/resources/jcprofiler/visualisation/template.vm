@@ -15,6 +15,7 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.13.3.min.js"></script>
     <script>
         hljs.highlightAll()
 
@@ -110,7 +111,6 @@
             }
         }
     </script>
-    <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
     <style>
 h3 {
     padding-top: 20px;
