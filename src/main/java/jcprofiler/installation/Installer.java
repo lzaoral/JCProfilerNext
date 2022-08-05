@@ -63,7 +63,7 @@ public class Installer {
     private static CardManager configureSimulator(final Args args, final CtClass<?> entryPoint) {
         final Path jarPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                 .resolve(entryPoint.getPackage().getSimpleName() + ".jar");
-        final CardManager cardManager = new CardManager(false, Util.hexStringToByteArray("123456789001"));
+        final CardManager cardManager = new CardManager(true, Util.hexStringToByteArray("123456789001"));
 
         try {
             // FIXME: this leak is intentional so that the simulator can access every class in the loaded JAR
@@ -87,7 +87,7 @@ public class Installer {
     }
 
     private static CardManager connectToCard() {
-        final CardManager cardManager = new CardManager(false, Util.hexStringToByteArray("123456789001"));
+        final CardManager cardManager = new CardManager(true, Util.hexStringToByteArray("123456789001"));
 
         // for better portability across different platforms
         TerminalManager.fixPlatformPaths();
