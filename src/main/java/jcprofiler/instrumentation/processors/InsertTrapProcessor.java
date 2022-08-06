@@ -3,10 +3,7 @@ package jcprofiler.instrumentation.processors;
 import jcprofiler.args.Args;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtField;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.ModifierKind;
+import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.util.List;
@@ -190,16 +187,24 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
         final String trapName = String.format("%s_%d", trapNamePrefix, trap_count);
         final String initializer = String.format("(short) (%s + %d)", trapNamePrefix, trap_count++);
-        addTrapField(trapName, initializer);
 
-        final CtStatement snip =
-                getFactory().createCodeSnippetStatement(String.format("PM.check(PMC.%s)", trapName));
+        final CtField<Short> trapField = addTrapField(trapName, initializer);
+        final CtFieldRead<Short> trapFieldRead = getFactory().createFieldRead();
+        trapFieldRead.setTarget(getFactory().createTypeAccess(trapField.getDeclaringType().getReference()));
+        trapFieldRead.setVariable(trapField.getReference());
+
+        final CtClass<?> pm = getFactory().getModel()
+                .getElements((CtClass<?> c) -> c.getSimpleName().equals("PM")).get(0);
+        final CtInvocation<?> pmCall = getFactory().createInvocation(
+                getFactory().createTypeAccess(pm.getReference()),
+                pm.getMethod("check", getFactory().createCtTypeReference(Short.TYPE)).getReference(),
+                trapFieldRead);
 
         // TODO: check ret val
         if (where == INSERT.AFTER)
-            statement.insertAfter(snip);
+            statement.insertAfter(pmCall);
         else
-            statement.insertBefore(snip);
+            statement.insertBefore(pmCall);
     }
 
     private CtField<Short> addTrapField(String trapFieldName, String initializer) {
