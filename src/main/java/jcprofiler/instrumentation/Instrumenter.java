@@ -92,8 +92,7 @@ public class Instrumenter {
 
         // TODO: does even javacard allow more?
         if (pkgs.size() != 1)
-            // TODO: no exception and nicely and better wording!
-            throw new RuntimeException(String.format("Only one package is allowed! Found: %s", pkgs));
+            throw new RuntimeException("Only one package is allowed! Found: " + pkgs);
 
         final String packageName = pkgs.get(0).getQualifiedName();
         if (packageName.isEmpty())
