@@ -162,8 +162,10 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         if (statement instanceof CtBodyHolder)
             return isTerminator(((CtBodyHolder) statement).getBody());
 
-        if (statement instanceof CtBlock)
-            return isTerminator(((CtBlock<?>) statement).getLastStatement());
+        if (statement instanceof CtStatementList) {
+            final CtStatementList stl = (CtStatementList) statement;
+            return !stl.getStatements().isEmpty() && isTerminator(stl.getLastStatement());
+        }
 
         if (statement instanceof CtIf) {
             final CtIf i = (CtIf) statement;
