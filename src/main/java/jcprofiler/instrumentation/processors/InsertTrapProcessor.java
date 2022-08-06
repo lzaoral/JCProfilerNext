@@ -71,11 +71,21 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
     }
 
     private void processBody(final CtStatementList block) {
+        // remove empty stand-alone code blocks to get a consistent behaviour in tests,
+        // SPOON does it automatically only sometimes
+        final List<CtStatement> forDeletion = block.getStatements().stream()
+                .filter(x -> x instanceof CtBlock && ((CtBlock<?>) x).getStatements().isEmpty())
+                .collect(Collectors.toList());
+        forDeletion.forEach(CtStatement::delete);
+
         // copy is needed as we modify the collection
         final List<CtStatement> statements = block.getStatements().stream()
-                // and skip comments (SPOON classifies comments as statements)
+                // skip comments (SPOON classifies comments as statements)
                 // e.g. JCMathLib/JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java:198
-                .filter(x -> !(x instanceof CtComment)).collect(Collectors.toList());
+                .filter(x -> !(x instanceof CtComment))
+                .collect(Collectors.toList());
+
+        forDeletion.forEach(CtElement::delete);
 
         for (final CtStatement statement : statements) {
             insertTrapCheck(statement, INSERT.BEFORE);
