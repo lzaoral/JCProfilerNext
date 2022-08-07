@@ -20,6 +20,14 @@ class ModifyEntryPointProcessorTest {
         assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(expected);
     }
 
+    @Test
+    public void alreadyInstrumented() {
+        final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
+        final CtClass<?> expected = parseClass("ModifyEntryPointProcessorTestExpected.java");
+
+        assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(expected);
+    }
+
     public CtClass<?> parseClass(final String fileName) {
         final Launcher spoon = new Launcher();
 
