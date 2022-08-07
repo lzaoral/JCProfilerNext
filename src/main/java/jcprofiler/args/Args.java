@@ -60,7 +60,8 @@ public class Args {
     public String entryPoint = "";
 
     @Parameter(names = {"--repeat-count"},
-               description = "Number of profiling rounds")
+               description = "Number of profiling rounds",
+               validateWith = PositiveInteger.class)
     public int repeat_count = 1000;
 
     @Parameter(names = {"--reset-inst"},
