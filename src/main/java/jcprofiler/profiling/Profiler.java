@@ -129,8 +129,6 @@ public class Profiler {
             });
             if (inputs.size() != args.repeat_count)
                 throw new RuntimeException("inputs.size() == " + args.repeat_count);
-
-            generateCSV();
         } catch (CardException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -187,7 +185,7 @@ public class Profiler {
         }
     }
 
-    private void generateCSV() throws IOException {
+    public void generateCSV() {
         final String atr = Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
         final File csv = args.workDir.resolve("measurements.csv").toFile();
 
@@ -198,6 +196,8 @@ public class Profiler {
                             values.stream().map(v -> v != null ? v.toString() : "unreach")
                                     .collect(Collectors.joining(",")))
             );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

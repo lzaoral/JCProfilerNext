@@ -58,7 +58,10 @@ public class JCProfiler {
                 // TODO: move connection stuff to a separate class?
                 cardManager = Installer.connect(args, entryPoint);
 
-            new Profiler(args, cardManager, spoon).profile();
+            final Profiler profiler = new Profiler(args, cardManager, spoon);
+            profiler.profile();
+            profiler.generateCSV();
+
             if (args.stopAfter == Stage.profiling)
                 return;
         }
