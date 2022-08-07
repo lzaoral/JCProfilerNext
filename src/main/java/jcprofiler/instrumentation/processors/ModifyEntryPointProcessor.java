@@ -1,15 +1,16 @@
 package jcprofiler.instrumentation.processors;
 
+import javacard.framework.APDU;
+import javacard.framework.ISO7816;
+import javacard.framework.Util;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtField;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.ModifierKind;
+import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -77,49 +78,74 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         final CtClass<?> cls = processMethod.getParent(CtClass.class::isInstance);
         final CtCase<Byte> ctCase = getFactory().createCase();
 
+        final CtTypeReference<Short> shortRef = getFactory().createCtTypeReference(Short.TYPE);
+
         // case INS_PERF_SETSTOP:
         {
             final CtFieldRead<Byte> fieldAccess = getFactory().createFieldRead();
+            fieldAccess.setTarget(getFactory().createTypeAccess(cls.getReference()));
             fieldAccess.setVariable(insPerfSetStop.getReference());
             ctCase.setCaseExpression(fieldAccess);
         }
 
-        //     PM.m_perfStop = Util.makeShort(apdu.getBuffer()[ISO7816.OFFSET_CDATA],
-        //                                    apdu.getBuffer()[(short) (ISO7816.OFFSET_CDATA + 1)])
-        final CtAssignment<Short, Short> perfStopAssign = getFactory().createAssignment();
+        // PM.m_perfStop
+        final CtFieldWrite<Short> fieldWrite = getFactory().createFieldWrite();
         {
-            final CtFieldRead<Short> fieldAccess = getFactory().createFieldRead();
-            final CtField<?> perfStopField = cls.getPackage().getType("PM").getField("m_perfStop");
-            if (!perfStopField.getType().equals(getFactory().createCtTypeReference(Short.TYPE)))
+            final CtClass<?> pmClass = cls.getPackage().getType("PM");
+            final CtField<?> perfStopField = pmClass.getField("m_perfStop");
+
+            if (!perfStopField.getType().equals(shortRef))
                 throw new RuntimeException(String.format("PM.m_perfStop has type %s which is unexpected!",
                         perfStopField.getType().getQualifiedName()));
 
             @SuppressWarnings("unchecked") // the runtime check is above
-            final CtField<Short> perfStopFieldCasted = (CtField<Short>) cls.getPackage()
-                    .getType("PM").getField("m_perfStop");
-            fieldAccess.setVariable(perfStopFieldCasted.getReference());
-            perfStopAssign.setAssigned(fieldAccess);
+            final CtField<Short> perfStopFieldCasted = (CtField<Short>) perfStopField;
+
+            fieldWrite.setTarget(getFactory().createTypeAccess(pmClass.getReference()));
+            fieldWrite.setVariable(perfStopFieldCasted.getReference());
         }
 
+        // Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA)
+        CtInvocation<Short> makeShortInvocation;
         try {
+            // get ${param}.getBuffer()
+            final Method getBufferMethod = APDU.class.getMethod("getBuffer");
+            final CtParameter<?> apduParam = processMethod.getParameters().get(0);
+            final CtVariableAccess<?> apduParamRead = getFactory().createVariableRead(apduParam.getReference(), false);
+
+            final CtInvocation<?> getBufferInvocation = getFactory()
+                    .createInvocation(apduParamRead, getFactory().Method().createReference(getBufferMethod));
+
+            // get javacard.framework.ISO7816.OFFSET_CDATA
+            final Class<?> iso7816Class = ISO7816.class;
+            final Field offsetCdata = iso7816Class.getField("OFFSET_CDATA");
+
+            final CtFieldRead<Short> offsetFieldRead = getFactory().createFieldRead();
+            offsetFieldRead.setTarget(getFactory().createTypeAccess(getFactory().createCtTypeReference(iso7816Class)));
+            offsetFieldRead.setVariable(getFactory().Field().createReference(offsetCdata));
+
             // get javacard.framework.Util.getShort(byte[] bArray, short bOff)
-            final Class<?> utilClass = getEnvironment().getInputClassLoader().loadClass("javacard.framework.Util");
+            final Class<?> utilClass = Util.class;
             final Method getShortMethod = utilClass.getMethod("getShort", byte[].class, Short.TYPE);
 
-            final String paramName = processMethod.getParameters().get(0).getSimpleName();
-            final CtInvocation<Short> makeShortInvocation = getFactory().createInvocation(
+            // create Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA)
+            makeShortInvocation = getFactory().createInvocation(
                     getFactory().createTypeAccess(getFactory().Class().createReference(utilClass)),
                     getFactory().Method().createReference(getShortMethod),
-                    getFactory().createCodeSnippetExpression(paramName + ".getBuffer()"),
-                    getFactory().createCodeSnippetExpression("ISO7816.OFFSET_CDATA"));
-
-            perfStopAssign.setAssignment(makeShortInvocation);
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
+                    getBufferInvocation, offsetFieldRead);
+        } catch (NoSuchMethodException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
+
+        // PM.m_perfStop = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
+        final CtAssignment<Short, Short> perfStopAssign = getFactory().createAssignment();
+        perfStopAssign.setType(shortRef);
+        perfStopAssign.setAssigned(fieldWrite);
+        perfStopAssign.setAssignment(makeShortInvocation);
+
         ctCase.addStatement(perfStopAssign);
 
-        //     break;
+        // break;
         ctCase.addStatement(getFactory().createBreak());
         return ctCase;
     }
