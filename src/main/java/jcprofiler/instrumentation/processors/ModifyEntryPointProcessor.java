@@ -35,11 +35,11 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
     private CtField<Byte> addInsPerfSetStopField(final CtClass<?> cls) {
         // private static final byte INS_PERF_STOP = (byte) 0xf5
-        final CtTypeReference<Byte> byteType = getFactory().createCtTypeReference(Byte.TYPE);
+        final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
         CtField<Byte> insPerfSetStop = cls.filterChildren(
                 (CtField<Byte> f) -> f.getSimpleName().equals("INS_PERF_SETSTOP")).first();
         if (insPerfSetStop != null) {
-            final boolean hasCorrectType = insPerfSetStop.getType().equals(byteType);
+            final boolean hasCorrectType = insPerfSetStop.getType().equals(byteRef);
             // private or public modifier does NOT make a difference in this case
             final boolean hasCorrectModifiers = insPerfSetStop.hasModifier(ModifierKind.FINAL) &&
                     insPerfSetStop.hasModifier(ModifierKind.STATIC);
@@ -54,9 +54,22 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
             insPerfSetStop.delete();
         }
 
-        insPerfSetStop = getFactory().Field().create(
-                cls, new HashSet<>(Arrays.asList(ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC)),
-                byteType, "INS_PERF_SETSTOP", getFactory().createLiteral(JCProfilerUtil.INS_PERF_SETSTOP));
+        // create new INS_PERF_SETSTOP field
+        insPerfSetStop = getFactory().createCtField(
+                "INS_PERF_SETSTOP", byteRef, "", ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC);
+
+        // create and set the initializer
+        final CtLiteral<Integer> initializer = getFactory().createLiteral(Byte.toUnsignedInt(JCProfilerUtil.INS_PERF_SETSTOP));
+        initializer.setBase(LiteralBase.HEXADECIMAL);
+        initializer.addTypeCast(byteRef);
+
+        @SuppressWarnings("unchecked")
+        // Unfortunately, this is the best solution we have since SPOON does not reflect type casts in type parameters.
+        final CtLiteral<Byte> initializerCasted = (CtLiteral<Byte>) (Object) initializer;
+        insPerfSetStop.setAssignment(initializerCasted);
+
+        // insert the field
+        cls.addField(0, insPerfSetStop);
         return insPerfSetStop;
     }
 
