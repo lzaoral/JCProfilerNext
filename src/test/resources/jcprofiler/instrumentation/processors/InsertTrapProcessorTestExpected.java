@@ -110,6 +110,31 @@ public class SimpleClass {
         }
         PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_44);
 
+        for (int i = 0; i != 1; i++);
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_45);
+
+        for (int i = 0; i != 1; i++) {}
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_46);
+
+        if (a != 1);
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_47);
+
+        if (a != 1) {}
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_48);
+
+        while (a != 1);
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_49);
+
+        while (a != 1) {}
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_50);
+
+        if (a != 1) {}
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_51);
+
+        if (a != 1) {}
+        else {}
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_52);
+
         return a;
     }
 

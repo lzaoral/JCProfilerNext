@@ -61,6 +61,24 @@ public class SimpleClass {
         for (int i = 0; i != 1; i++)
             continue;
 
+        for (int i = 0; i != 1; i++);
+
+        for (int i = 0; i != 1; i++) {}
+
+        if (a != 1);
+
+        if (a != 1) {}
+
+        while (a != 1);
+
+        while (a != 1) {}
+
+        if (a != 1) {}
+        else;
+
+        if (a != 1) {}
+        else {}
+
         return a;
     }
 

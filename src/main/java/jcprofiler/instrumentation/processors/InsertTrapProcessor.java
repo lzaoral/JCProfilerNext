@@ -103,10 +103,12 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
                     processBody(t.getFinalizer());
             } else if (statement instanceof CtBodyHolder) {
                 final CtBodyHolder b = (CtBodyHolder) statement;
-                processBody((CtBlock<?>) b.getBody());
+                if (b.getBody() != null)
+                    processBody((CtBlock<?>) b.getBody());
             } else if (statement instanceof CtIf) {
                 final CtIf i = (CtIf) statement;
-                processBody(i.getThenStatement());
+                if (i.getThenStatement() != null)
+                    processBody(i.getThenStatement());
                 if (i.getElseStatement() != null)
                     processBody(i.getElseStatement());
             } else if (statement instanceof CtBlock) {
