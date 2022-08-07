@@ -46,7 +46,7 @@ public class JCProfiler {
 
         // Installation (noop for --simulator)
         CardManager cardManager = null;
-        if (args.startFrom.ordinal() <= Stage.installation.ordinal() && !args.use_simulator)
+        if (args.startFrom.ordinal() <= Stage.installation.ordinal() && !args.useSimulator)
             cardManager = Installer.installOnCard(args, entryPoint);
         if (args.stopAfter == Stage.installation)
             return;

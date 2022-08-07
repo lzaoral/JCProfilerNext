@@ -91,7 +91,7 @@ public class Profiler {
 
             System.out.println("\n-------------- Performance profiling start --------------\n\n");
 
-            for (int repeat = 1; repeat <= args.repeat_count; repeat++) {
+            for (int repeat = 1; repeat <= args.repeatCount; repeat++) {
                 final byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
                 final CommandAPDU triggerAPDU = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
 
@@ -124,11 +124,11 @@ public class Profiler {
 
             // sanity check
             measurements.values().forEach(v -> {
-                if (v.size() != args.repeat_count)
-                    throw new RuntimeException(String.format("%s.size() == %d", v, args.repeat_count));
+                if (v.size() != args.repeatCount)
+                    throw new RuntimeException(String.format("%s.size() == %d", v, args.repeatCount));
             });
-            if (inputs.size() != args.repeat_count)
-                throw new RuntimeException("inputs.size() == " + args.repeat_count);
+            if (inputs.size() != args.repeatCount)
+                throw new RuntimeException("inputs.size() == " + args.repeatCount);
         } catch (CardException | IOException e) {
             throw new RuntimeException(e);
         }

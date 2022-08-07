@@ -14,8 +14,8 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     private CtClass<?> PMC;
     private String trapNamePrefix;
-    private int method_count = 1;
-    private int trap_count;
+    private int methodCount = 1;
+    private int trapCount;
 
     public InsertTrapProcessor(final Args args) {
         this.args = args;
@@ -34,18 +34,18 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         if (PMC == null)
             PMC = method.getDeclaringType().getPackage().getType("PMC");
 
-        trap_count = 1;
+        trapCount = 1;
 
         // TODO: what about method overloading?
         trapNamePrefix = getTrapNamePrefix(method);
 
-        if (args.max_traps * method_count >= 0xffff)
+        if (args.maxTraps * methodCount >= 0xffff)
             throw new RuntimeException(String.format("Class has more than %d (%d)",
-                    (int) Math.ceil((float) 0xffff / args.max_traps), method_count));
+                    (int) Math.ceil((float) 0xffff / args.maxTraps), methodCount));
 
         // TODO: make it possible to instrument constructors?
 
-        addTrapField(trapNamePrefix, String.format("(short) %d", args.max_traps * method_count++))
+        addTrapField(trapNamePrefix, String.format("(short) %d", args.maxTraps * methodCount++))
                 .addComment(getFactory().createInlineComment(
                         String.format("%s.%s",
                                 method.getDeclaringType().getQualifiedName(),
@@ -188,17 +188,17 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
     }
 
     private void insertTrapCheck(final CtStatement statement, INSERT where) {
-        if (args.max_traps * method_count + trap_count >= 0xffff) {
+        if (args.maxTraps * methodCount + trapCount >= 0xffff) {
             final CtMethod<?> parentMethod = statement.getParent(CtMethod.class::isInstance);
             throw new RuntimeException(
                     String.format("Method %s.%s needs more than %d traps",
                             parentMethod.getDeclaringType().getQualifiedName(),
                             parentMethod.getSignature(),
-                            args.max_traps));
+                            args.maxTraps));
         }
 
-        final String trapName = String.format("%s_%d", trapNamePrefix, trap_count);
-        final String initializer = String.format("(short) (%s + %d)", trapNamePrefix, trap_count++);
+        final String trapName = String.format("%s_%d", trapNamePrefix, trapCount);
+        final String initializer = String.format("(short) (%s + %d)", trapNamePrefix, trapCount++);
 
         final CtField<Short> trapField = addTrapField(trapName, initializer);
         final CtFieldRead<Short> trapFieldRead = getFactory().createFieldRead();
@@ -221,13 +221,13 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     private CtField<Short> addTrapField(String trapFieldName, String initializer) {
         final CtTypeReference<Short> shortType = getFactory().createCtTypeReference(Short.TYPE);
-        final CtField<Short> ins_trap = getFactory().createCtField(
+        final CtField<Short> trapField = getFactory().createCtField(
                 trapFieldName, shortType, initializer,
                 ModifierKind.PUBLIC, ModifierKind.STATIC, ModifierKind.FINAL);
 
-        PMC.addField(ins_trap);
+        PMC.addField(trapField);
 
-        return ins_trap;
+        return trapField;
     }
 
     private enum INSERT {

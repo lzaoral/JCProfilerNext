@@ -35,7 +35,7 @@ public class Args {
     @Parameter(names = {"--max-traps-per-method"},
                description = "Maximum number of traps to be inserted in a method",
                validateWith = PositiveInteger.class)
-    public int max_traps = 100;
+    public int maxTraps = 100;
 
 //    @Parameter(names = {"-u", "--update"},
 //               description = "Update already instrumented files")
@@ -49,7 +49,7 @@ public class Args {
 
     @Parameter(names = {"--simulator"},
                description = "Use jCardSim simulator instead of a real card")
-    public boolean use_simulator = false;
+    public boolean useSimulator = false;
 
     @Parameter(names = {"--method"},
                description = "Method to profile")
@@ -62,7 +62,7 @@ public class Args {
     @Parameter(names = {"--repeat-count"},
                description = "Number of profiling rounds",
                validateWith = PositiveInteger.class)
-    public int repeat_count = 1000;
+    public int repeatCount = 1000;
 
     @Parameter(names = {"--reset-inst"},
                description = "Applet reset instruction in hex",
