@@ -135,6 +135,13 @@ public class SimpleClass {
         else {}
         PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_52);
 
+        {
+            PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_53);
+            a++;
+            PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_54);
+        }
+        PM.check(PMC.TRAP_SimpleClass_foo_argb_int_arge_55);
+
         return a;
     }
 

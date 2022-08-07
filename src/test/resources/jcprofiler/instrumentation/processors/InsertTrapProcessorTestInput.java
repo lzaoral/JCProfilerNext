@@ -79,6 +79,10 @@ public class SimpleClass {
         if (a != 1) {}
         else {}
 
+        {
+            a++;
+        }
+
         return a;
     }
 
