@@ -97,7 +97,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         // case INS_PERF_SETSTOP:
         {
             final CtFieldRead<Byte> fieldAccess = getFactory().createFieldRead();
-            fieldAccess.setTarget(getFactory().createTypeAccess(cls.getReference()));
+            fieldAccess.setTarget(getFactory().createTypeAccess(cls.getReference(), true));
             fieldAccess.setVariable(insPerfSetStop.getReference());
             ctCase.setCaseExpression(fieldAccess);
         }
@@ -109,8 +109,8 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
             final CtField<?> perfStopField = pmClass.getField("m_perfStop");
 
             if (!perfStopField.getType().equals(shortRef))
-                throw new RuntimeException(String.format("PM.m_perfStop has type %s which is unexpected!",
-                        perfStopField.getType().getQualifiedName()));
+                throw new RuntimeException(String.format(
+                        "PM.m_perfStop has type %s! Expected: short", perfStopField.getType().getQualifiedName()));
 
             @SuppressWarnings("unchecked") // the runtime check is above
             final CtField<Short> perfStopFieldCasted = (CtField<Short>) perfStopField;
@@ -178,35 +178,39 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     private void addInsPerfSetStopSwitchCase(CtClass<?> cls, CtField<Byte> insPerfSetStop) {
         final CtMethod<Void> processMethod = getProcessMethod(cls);
 
-        // TODO: will this work for switch in a block?
         final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
         final List<CtSwitch<Byte>> ctSwitches = processMethod.getElements(
                 (CtSwitch<Byte> s) -> s.getSelector().getType().equals(byteRef));
 
-        final CtCase<Byte> newPerfStopCase = createPerfStopSwitchCase(processMethod, insPerfSetStop);
-
         if (ctSwitches.size() != 1) {
-            // TODO: make this fatal?
-            System.out.printf("WARNING: Switch in %s.%s method either not found or more than two are present!%n",
-                    cls.getQualifiedName(), processMethod.getSignature());
-            System.out.println("Adapt the following piece of code so that your applet correctly responds to the " +
-                    "INS_PERF_SETSTOP instruction");
-            System.out.println(newPerfStopCase.prettyprint());
-            return;
+            final String msg = "Please adapt your applet so that it uses a single switch statement" +
+                    " to determine the instruction to execute.";
+
+            if (ctSwitches.isEmpty())
+                throw new RuntimeException(String.format(
+                        "No switch statement with byte selector found in %s.process method!%n%s",
+                        cls.getQualifiedName(), msg));
+
+            throw new RuntimeException(String.format(
+                    "More switch statements with byte selector found in %s.process method!%n%s%nFound:%n%s%n",
+                    cls.getQualifiedName(), msg, ctSwitches.stream().map(CtSwitch::prettyprint)
+                            .collect(Collectors.joining(System.lineSeparator()))));
         }
 
         CtSwitch<Byte> ctSwitch = ctSwitches.get(0);
 
-        // get case with the same value as Utils.INS_PERF_SETSTOP
+        // get case with the same value as JCProfilerUtil.INS_PERF_SETSTOP
         final Optional<CtCase<? super Byte>> maybeExistingPerfStopCase = ctSwitch.getCases().stream().filter(
                 c -> {
                     final CtExpression<? super Byte> e = c.getCaseExpression();
                     if (e == null) // default case
                         return false;
 
-                    final CtLiteral<Integer> lit = e.partiallyEvaluate();
+                    final CtLiteral<? extends Number> lit = e.partiallyEvaluate();
                     return lit.getValue().byteValue() == JCProfilerUtil.INS_PERF_SETSTOP;
                 }).findAny();
+
+        final CtCase<Byte> newPerfStopCase = createPerfStopSwitchCase(processMethod, insPerfSetStop);
 
         if (maybeExistingPerfStopCase.isPresent()) {
             // cases are equal
@@ -217,13 +221,14 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
             // check that the value in label corresponds to a read of INS_PERF_SETSTOP field
             CtExpression<?> expr = existingPerfStopCase.getCaseExpression();
             if (!(expr instanceof CtFieldRead) ||
-                    !((CtFieldRead<?>) expr).getVariable().getSimpleName().equals("INS_PERF_SETSTOP"))
+                    !((CtFieldRead<?>) expr).getVariable().equals(insPerfSetStop.getReference()))
                 throw new RuntimeException(String.format(
-                        "The switch in process method already contains a case for 0x%02x distinct from the " +
-                        "INS_PERF_SETSTOP field: %s", JCProfilerUtil.INS_PERF_SETSTOP, existingPerfStopCase.prettyprint()));
+                        "The switch in process method already contains a case for 0x%02X distinct from the " +
+                        "INS_PERF_SETSTOP field:%n%s", JCProfilerUtil.INS_PERF_SETSTOP, expr.prettyprint()));
 
+            newPerfStopCase.setParent(ctSwitch);
             throw new RuntimeException(String.format(
-                    "The body of the INS_PERF_SETSTOP switch case has unexpected contents:%n%s%nExpected:%n%s",
+                    "The body of the INS_PERF_SETSTOP switch case has unexpected contents:%n%s%nExpected:%n%s%n",
                     existingPerfStopCase.prettyprint(), newPerfStopCase.prettyprint()));
         }
 
