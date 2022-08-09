@@ -17,7 +17,7 @@ public class JCProfilerUtil {
 
     // Needed to fix a SNAFU, where ISO7816.SW_NO_ERROR is a short, ResponseAPDU::getSW returns int
     // and (short) 0x9000 != 0x9000 ...
-    public static final int SW_NO_ERROR = ISO7816.SW_NO_ERROR & 0xFFFF;
+    public static final int SW_NO_ERROR = Short.toUnsignedInt(ISO7816.SW_NO_ERROR);
 
     public static final String APPLET_OUT_DIRNAME = "applet";
     public static final String INSTR_OUT_DIRNAME  = "sources_instr";

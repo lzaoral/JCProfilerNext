@@ -165,7 +165,7 @@ public class Profiler {
             ResponseAPDU response = cardManager.transmit(triggerAPDu);
 
             // Check expected error to be equal performance trap
-            if (response.getSW() != (trapID & 0xFFFF)) {
+            if (response.getSW() != Short.toUnsignedInt(trapID)) {
                 // we have not reached expected performance trap
                 unreachedTraps.add(getTrapName(trapID));
                 measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>()).add(null);
