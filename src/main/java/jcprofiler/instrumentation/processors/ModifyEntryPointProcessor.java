@@ -13,6 +13,7 @@ import spoon.reflect.reference.CtTypeReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     final Args args;
@@ -37,26 +38,39 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     private CtField<Byte> addInsPerfSetStopField(final CtClass<?> cls) {
         // private static final byte INS_PERF_STOP = (byte) 0xf5
         final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
-        CtField<Byte> insPerfSetStop = cls.filterChildren(
-                (CtField<Byte> f) -> f.getSimpleName().equals("INS_PERF_SETSTOP")).first();
-        if (insPerfSetStop != null) {
-            final boolean hasCorrectType = insPerfSetStop.getType().equals(byteRef);
+
+        Optional<CtField<?>> existingInsPerfSetStop = cls.getFields().stream().filter(
+                f -> f.getSimpleName().equals("INS_PERF_SETSTOP")).findFirst();
+        if (existingInsPerfSetStop.isPresent()) {
+            final CtField<?> insPerfSetStop = existingInsPerfSetStop.get();
+
+            if (!insPerfSetStop.getType().equals(byteRef))
+                throw new RuntimeException(String.format(
+                        "Existing INS_PERF_SETSTOP field has type %s! Expected: %s",
+                        insPerfSetStop.getType().getQualifiedName(), Byte.TYPE.getTypeName()));
+
+            @SuppressWarnings("unchecked") // the runtime check is above
+            final CtField<Byte> insPerfSetStopCasted = (CtField<Byte>) insPerfSetStop;
+
             // private or public modifier does NOT make a difference in this case
-            final boolean hasCorrectModifiers = insPerfSetStop.hasModifier(ModifierKind.FINAL) &&
-                    insPerfSetStop.hasModifier(ModifierKind.STATIC);
+            if (!insPerfSetStopCasted.hasModifier(ModifierKind.FINAL) ||
+                    !insPerfSetStopCasted.hasModifier(ModifierKind.STATIC))
+                throw new RuntimeException(
+                        "Existing INS_PERF_SETSTOP field is not static and final! Got: " +
+                        // Set<ModifierKind> does not have a stable ordering
+                        insPerfSetStopCasted.getModifiers().stream().sorted().collect(Collectors.toList()));
 
-            if (hasCorrectType && hasCorrectModifiers) {
-                final CtLiteral<Integer> lit = insPerfSetStop.getAssignment().partiallyEvaluate();
-                if (lit.getValue() == JCProfilerUtil.INS_PERF_SETSTOP)
-                    return insPerfSetStop;
-            }
+            final CtLiteral<? extends Number> lit = insPerfSetStopCasted.getAssignment().partiallyEvaluate();
+            if (lit.getValue().byteValue() != JCProfilerUtil.INS_PERF_SETSTOP)
+                throw new RuntimeException(String.format(
+                        "Existing INS_PERF_SETSTOP field has %s as initializer! Expected: (byte) 0x%02x",
+                        insPerfSetStopCasted.getAssignment().prettyprint(), JCProfilerUtil.INS_PERF_SETSTOP));
 
-            // TODO: log the deletion with a warning and reason
-            insPerfSetStop.delete();
+            return insPerfSetStopCasted;
         }
 
         // create new INS_PERF_SETSTOP field
-        insPerfSetStop = getFactory().createCtField(
+        final CtField<Byte> insPerfSetStop = getFactory().createCtField(
                 "INS_PERF_SETSTOP", byteRef, "", ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC);
 
         // create and set the initializer
