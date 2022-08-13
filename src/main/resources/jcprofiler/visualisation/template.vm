@@ -38,6 +38,8 @@
                     x: [''],
                     y: [vals.filter(val => val === null).length],
                     type: 'bar',
+                    xaxis: 'x1',
+                    yaxis: 'y1',
                     name: 'unreachable',
                     showlegend: false,
                     marker: {
@@ -54,7 +56,7 @@
                     x:  vals.filter(a => a !== null),
                     type: 'histogram',
                     xaxis: 'x2',
-                    yaxis: 'y',
+                    yaxis: 'y1',
                     name: 'time',
                     showlegend: false,
                     marker: {
@@ -63,30 +65,60 @@
                     },
                     hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>",
                 });
+
+                traces.push({
+                    x: [...Array(vals.length + 1).keys()].splice(1),
+                    y: vals,
+                    type: 'scatter',
+                    ... hasUnreach && {mode: 'lines+markers'},
+                    xaxis: 'x3',
+                    yaxis: 'y2',
+                    name: 'timediff',
+                    showlegend: false,
+                    marker: {
+                        color: 'rgb(86,189,49)',
+                        opacity: 0.75
+                    },
+                    customdata: inputs,
+                    hovertemplate: "Round: %{x}<br>Time: %{y}<br>Input %{customdata}<extra></extra>",
+                });
             }
 
             // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
             Plotly.react('plotly', traces, {
                 bargap: 0.2,
+                height: 700,
                 xaxis: {
+                    anchor: 'y1',
+                    domain: [0, 0.45],
                     title: 'Unreachable',
                 },
                 xaxis2: {
-                    //dtick: 1,
+                    anchor: 'y1',
+                    domain: [hasUnreach ? 0.55 : 0, 1],
+                    // dtick: 1,
                     tickformat: ',d',
                     title: 'Time in $timeUnit',
                 },
+                xaxis3: {
+                    anchor: 'y2',
+                    domain: [0, 1],
+                    tickformat: ',d',
+                    title: 'Round',
+                },
                 yaxis: {
+                    anchor: 'x1',
+                    domain: [0.55, 1],
                     tickformat: ',d',
                     title: 'Frequency',
                     // type: 'log',
                 },
-                grid: {
-                    rows: 1,
-                    // nothing is more readable than a sum of booleans /s
-                    columns: hasUnreach + hasTime,
-                    subplots: ['xy', 'x2y'],
-                }
+                yaxis2: {
+                    anchor: 'x3',
+                    domain: [0, 0.43],
+                    tickformat: ',d',
+                    title: 'Time in $timeUnit',
+                },
             }, {
                 responsive: true
             });
@@ -98,6 +130,10 @@
             plotlyDiv.removeAllListeners('plotly_click');
             plotlyDiv.on('plotly_click', function (data) {
                 const bin = data.points[0];
+
+                // noop for line graph
+                if (bin.fullData.type === 'scatter')
+                    return;
 
                 let msg, binInputs;
 
