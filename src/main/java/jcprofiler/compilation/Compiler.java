@@ -72,6 +72,7 @@ public class Compiler {
         final JCCap cap = jc.createCap();
         cap.setTaskName("JavaCard");
         cap.setProject(p);
+        cap.setClasses("./classes");
         cap.setSources(Paths.get("..", JCProfilerUtil.INSTR_OUT_DIRNAME).toString());
         cap.setExport(".");
 
