@@ -149,7 +149,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
      * A statement is a terminator iff any statement inserted after it will be unreachable, e.g.:
      *     1. the statement is a jump
      *     2. the last statement is not an expression and all its held block statements are terminators, e.g.:
-     *
+     * <p>
      * if (cond) {
      *     return true;
      * } else {
@@ -212,7 +212,6 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
                 pm.getMethod("check", getFactory().createCtTypeReference(Short.TYPE)).getReference(),
                 trapFieldRead);
 
-        // TODO: check ret val
         if (where == INSERT.AFTER)
             statement.insertAfter(pmCall);
         else

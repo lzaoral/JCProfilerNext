@@ -80,7 +80,6 @@ public class Instrumenter {
                 .stream().map(File::getAbsolutePath).toArray(String[]::new));
     }
 
-    // TODO: rename parameter
     private void addMissingClasses(final Launcher spoon) {
         // this atrocity seems to be required as SPOON does not allow a module rebuild :(
         final Launcher tmpSpoon = new Launcher();

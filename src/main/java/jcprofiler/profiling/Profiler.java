@@ -54,7 +54,7 @@ public class Profiler {
         // idea: make PM and PMC both inherit from our special and empty abstract class
         final CtClass<?> pmc = model.filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
 
-        // FIXME: this may fail, may get more methods, die to dependence on mangling
+        // FIXME: this may fail, may get more methods, due to dependence on mangling
         final String regex = String.format(".*_%s_argb_.*_arge_[^_]*", args.method);
         final List<CtField<Short>> traps = pmc.getElements((CtField<Short> f) -> f.getSimpleName().matches(regex));
         if (traps.isEmpty())
@@ -69,17 +69,15 @@ public class Profiler {
 
     public void profile() {
         try {
-            // reset if possible and erase any previous performance stop and reset if possible
+            // reset if possible and erase any previous performance stop
             resetApplet();
             setTrap(PERF_START);
 
-            // TODO: add input to measured data
             // TODO: more formats? hamming weight?
-
             // TODO: print seed for reproducibility
             final Random rdn = new Random();
 
-            // TODO: The lambdas could be replaced with a regular classes if their count will increase.
+            // TODO: These lambdas could be replaced with regular classes if we are going to add more of them.
             InputGenerator inputGen;
             if (args.dataRegex != null) {
                 final RgxGen rgxGen = new RgxGen(args.dataRegex);
@@ -172,12 +170,9 @@ public class Profiler {
                 continue;
             }
 
-            // TODO: set precision with a commandline-option
             currentTransmitDuration = cardManager.getLastTransmitTimeDuration();
-
             measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>())
                     .add(currentTransmitDuration.minus(prevTransmitDuration).toNanos());
-
             prevTransmitDuration = currentTransmitDuration;
 
             // free memory after command
