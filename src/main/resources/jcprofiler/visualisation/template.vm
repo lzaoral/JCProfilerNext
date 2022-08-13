@@ -21,7 +21,6 @@
 
         const inputs = $inputs;
         let selectedTrap = null;
-        let plotlyInitialized = false;
 
         function redrawGraph(trapName, vals) {
             selectedTrap?.classList.remove('trap_select');
@@ -93,24 +92,41 @@
             });
 
             // set click event handler
-            if (!plotlyInitialized) {
-                plotlyInitialized = true;
-                let plotlyDiv = document.getElementById('plotly');
+            let plotlyDiv = document.getElementById('plotly');
 
-                plotlyDiv.on('plotly_click', function (data) {
-                    const bin = data.points[0];
+            // replace the event handler
+            plotlyDiv.removeAllListeners('plotly_click');
+            plotlyDiv.on('plotly_click', function (data) {
+                const bin = data.points[0];
+
+                let msg, binInputs;
+
+                // histogram
+                if ('xbins' in bin.fullData) {
                     const binSizeHalf = bin.fullData.xbins.size / 2;
+                    binInputs = bin.pointIndices.map(e => inputs[e]);
 
-                    let binInputs = new Set(bin.pointIndices.map(e => inputs[e]));
-                    const sortedBinInputs = Array.from(binInputs).sort();
+                    msg = 'Bin: ' + Math.ceil(bin.x - binSizeHalf) + ' to ' + Math.floor(bin.x + binSizeHalf) + '\n';
+                }
+                // undefined bar
+                else {
+                    binInputs = vals.reduce((res, e, i) => {
+                        if (e === null)
+                            res.push(inputs[i]);
+                        return res;
+                    }, []);
+                    console.assert(binInputs.length === bin.y);
 
-                    let msg = 'Bin: ' + Math.ceil(bin.x - binSizeHalf) + ' to ' + Math.floor(bin.x + binSizeHalf) + '\n';
-                    msg += 'Inputs:\n';
-                    sortedBinInputs.forEach(e => msg += e + '\n');
+                    msg = 'Unreachable\n';
+                }
 
-                    alert(msg);
-                });
-            }
+                msg += 'Inputs:\n';
+
+                const sortedBinInputs = Array.from(new Set(binInputs)).sort();
+                sortedBinInputs.forEach(e => msg += e + '\n');
+
+                alert(msg);
+            });
         }
     </script>
     <style>
