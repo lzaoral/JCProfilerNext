@@ -49,7 +49,7 @@ public class Compiler {
         final DefaultLogger consoleLogger = new DefaultLogger();
         consoleLogger.setErrorPrintStream(System.err);
         consoleLogger.setOutputPrintStream(System.out);
-        consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+        consoleLogger.setMessageOutputLevel(args.debug ? Project.MSG_VERBOSE : Project.MSG_INFO);
         p.addBuildListener(consoleLogger);
 
         final Target jcTarget = new Target();
