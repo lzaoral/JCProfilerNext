@@ -36,7 +36,7 @@
             if (hasUnreach) {
                 traces.push({
                     x: [''],
-                    y: [vals.filter(val => val === null).length],
+                    y: [vals.filter(e => e === null).length],
                     type: 'bar',
                     xaxis: 'x1',
                     yaxis: 'y1',
@@ -50,10 +50,10 @@
                 });
             }
 
-            const hasTime = vals.some(a => a !== null);
+            const hasTime = vals.some(e => e !== null);
             if (hasTime) {
                 traces.push({
-                    x:  vals.filter(a => a !== null),
+                    x: vals.filter(e => e !== null),
                     type: 'histogram',
                     xaxis: 'x2',
                     yaxis: 'y1',
