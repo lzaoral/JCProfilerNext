@@ -2,13 +2,17 @@ package jcprofiler.compilation;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Echo;
+
 import pro.javacard.ant.JavaCard;
 import pro.javacard.ant.JavaCard.JCApplet;
 import pro.javacard.ant.JavaCard.JCCap;
+
 import spoon.reflect.declaration.CtClass;
 
 import java.io.IOException;
@@ -25,6 +29,8 @@ public class Compiler {
         // create the output directory if it does not exist
         final Path appletDir = JCProfilerUtil.getAppletOutputDirectory(args.workDir).toAbsolutePath();
         try {
+            if (Files.exists(appletDir))
+                FileUtils.deleteDirectory(appletDir.toFile());
             Files.createDirectories(appletDir);
         } catch (IOException e) {
             throw new RuntimeException(e);
