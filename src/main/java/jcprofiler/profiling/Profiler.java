@@ -87,7 +87,7 @@ public class Profiler {
                 inputGen = () -> inputs.get(rdn.nextInt(inputs.size()));
             }
 
-            System.out.println("\n-------------- Performance profiling start --------------\n\n");
+            System.out.println("-------------- Performance profiling start --------------");
 
             for (int repeat = 1; repeat <= args.repeatCount; repeat++) {
                 final byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
@@ -102,7 +102,7 @@ public class Profiler {
                 profileSingleStep(triggerAPDU);
             }
 
-            System.out.println("\n-------------- Performance profiling finished --------------\n\n");
+            System.out.println("-------------- Performance profiling finished --------------");
             System.out.print("Disconnecting from card...");
 
             // TODO: what difference is between true and false? javax.smartcardio.Card javadoc is now very helpful
