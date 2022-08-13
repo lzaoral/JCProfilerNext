@@ -81,6 +81,7 @@ public class Compiler {
         cap.setStrip(false);
 
         cap.setAID("1234567890");
+        cap.setJca(entryPoint.getPackage().getSimpleName() + ".jca");
         cap.setPackage(entryPoint.getPackage().getQualifiedName());
         cap.setOutput(entryPoint.getSimpleName() + ".cap");
 
