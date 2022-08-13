@@ -216,7 +216,7 @@ h3 {
 </head>
 <body>
     <h1>$methodName</h1>
-    <p>Card ATR: $cardATR</p>
+    <p><b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a></p>
     <div class="contents">
         <div class="code">
             <pre><code class="language-java">

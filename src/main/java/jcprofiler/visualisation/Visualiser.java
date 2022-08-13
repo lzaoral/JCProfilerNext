@@ -90,8 +90,6 @@ public class Visualiser {
                 "resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         velocityEngine.init();
 
-        // TODO: integrate with https://smartcard-atr.apdu.fr/parse?ATR=XXX?
-
         final VelocityContext context = new VelocityContext();
         context.put("cardATR", atr);
         context.put("code", StringEscapeUtils.escapeHtml4(method.prettyprint()).split(System.lineSeparator()));
