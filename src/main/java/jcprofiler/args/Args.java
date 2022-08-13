@@ -16,6 +16,10 @@ public class Args {
                help = true)
     public boolean help = false;
 
+    @Parameter(names = {"-d", "--debug"},
+               description = "Enable debug messages")
+    public boolean debug = false;
+
     @Parameter(names = {"-w", "--work-dir"},
                description = "Input files or directories (can be specified multiple times)",
                required = true,
