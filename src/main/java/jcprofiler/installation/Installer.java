@@ -15,12 +15,15 @@ import spoon.reflect.declaration.CtClass;
 
 import javax.smartcardio.*;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
 public class Installer {
     // static class
@@ -76,10 +79,14 @@ public class Installer {
                     .setbReuploadApplet(true)
                     .setInstallData(new byte[8]);
 
-            // TODO: simulator may print unrelated messages to stdout (happens with JCMathLib)
+            // Simulator may print unrelated messages to stdout during initialization (happens with JCMathLib)
+            PrintStream stdout = System.out;
+            System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
+
             if (!cardManager.connect(runCfg))
                 throw new RuntimeException("Setting-up the simulator failed");
 
+            System.setOut(stdout);
             return cardManager;
         } catch (ClassNotFoundException | CardException | IOException e) {
             throw new RuntimeException(e);
