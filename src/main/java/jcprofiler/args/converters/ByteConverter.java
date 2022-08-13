@@ -11,14 +11,13 @@ public class ByteConverter extends BaseConverter<Byte> {
 
     @Override
     public Byte convert(String value) {
-        try {
-            if (value.startsWith("0x"))
-                value = value.replaceFirst("^0x", "");
+        if (value.startsWith("0x"))
+            value = value.replaceFirst("^0x", "");
 
-            byte[] ret = Util.hexStringToByteArray(value);
-            if (ret.length == 1)
-                return ret[0];
-        } catch (NumberFormatException ignored) {}
+        byte[] ret = Util.hexStringToByteArray(value);
+        if (ret.length == 1)
+            return ret[0];
+
         throw new ParameterException(getErrorString(value, "a single byte"));
     }
 }
