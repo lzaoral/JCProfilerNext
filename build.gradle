@@ -27,7 +27,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:1.7.36'
 
     // for input generation
-    implementation 'com.github.curious-odd-man:rgxgen:1.3'
+    implementation 'com.github.curious-odd-man:rgxgen:1.4'
 
     implementation 'org.apache.ant:ant:1.10.12'
     implementation 'com.github.martinpaljak:ant-javacard:21.12.31'
