@@ -18,6 +18,25 @@ public class JCProfiler {
     private JCProfiler() {}
 
     public static void run(final Args args) {
+        // this is practically a noop but probably not a deliberate one
+        if (args.startFrom.ordinal() > args.stopAfter.ordinal())
+            throw new RuntimeException(String.format(
+                   "Nothing to do! Cannot start with %s and end with %s.",
+                    args.startFrom, args.stopAfter));
+
+        // validate --data-regex and --data-file
+        if ((args.dataRegex == null) == (args.dataFile == null)) {
+            if (args.dataRegex != null)
+                throw new RuntimeException(
+                        "Options --data-file or --data-regex cannot be specified simultaneously.");
+
+            // following check is applicable only for the profiling stage
+            final int profilingStage = Stage.profiling.ordinal();
+            if (args.startFrom.ordinal() <= profilingStage && profilingStage <= args.stopAfter.ordinal())
+                throw new RuntimeException(
+                        "Either --data-file or --data-regex options must be specified for the profiling stage!");
+        }
+
         // Instrumentation
         if (args.startFrom.ordinal() <= Stage.instrumentation.ordinal()) {
             JCProfilerUtil.moveToSubDirIfNotExists(args.workDir, JCProfilerUtil.getSourceInputDirectory(args.workDir));
