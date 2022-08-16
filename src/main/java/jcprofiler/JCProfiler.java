@@ -59,9 +59,10 @@ public class JCProfiler {
         // Compilation
         if (args.startFrom.ordinal() <= Stage.compilation.ordinal()) {
             Compiler.compile(args, entryPoint);
-            if (args.stopAfter == Stage.compilation)
-                return;
         }
+
+        if (args.stopAfter == Stage.compilation)
+            return;
 
         // Installation (noop for --simulator)
         CardManager cardManager = null;
@@ -80,10 +81,10 @@ public class JCProfiler {
             final Profiler profiler = new Profiler(args, cardManager, spoon);
             profiler.profile();
             profiler.generateCSV();
-
-            if (args.stopAfter == Stage.profiling)
-                return;
         }
+
+        if (args.stopAfter == Stage.profiling)
+            return;
 
         // Visualisation
         final Visualiser vis = new Visualiser(args, spoon);
