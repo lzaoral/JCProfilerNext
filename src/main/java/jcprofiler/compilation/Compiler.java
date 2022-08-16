@@ -13,6 +13,9 @@ import pro.javacard.ant.JavaCard;
 import pro.javacard.ant.JavaCard.JCApplet;
 import pro.javacard.ant.JavaCard.JCCap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.reflect.declaration.CtClass;
 
 import java.io.IOException;
@@ -21,6 +24,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Compiler {
+    private static final Logger log = LoggerFactory.getLogger(Compiler.class);
+
     // static class
     private Compiler() {}
 
@@ -29,13 +34,18 @@ public class Compiler {
         // create the output directory if it does not exist
         final Path appletDir = JCProfilerUtil.getAppletOutputDirectory(args.workDir).toAbsolutePath();
         try {
-            if (Files.exists(appletDir))
+            if (Files.exists(appletDir)) {
                 FileUtils.deleteDirectory(appletDir.toFile());
+                log.debug("Deleted existing {}.", appletDir);
+            }
+
             Files.createDirectories(appletDir);
+            log.debug("Created {}.", appletDir);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        log.debug("Generating ANT JavaCard project");
         final Project p = new Project();
         p.init();
         p.setName("JavaCard");
@@ -88,6 +98,7 @@ public class Compiler {
         final JCApplet app = cap.createApplet();
         app.setClass(entryPoint.getQualifiedName());
 
+        log.debug("Compiling into {}.cap", entryPoint.getSimpleName());
         p.executeTarget(p.getDefaultTarget());
     }
 }
