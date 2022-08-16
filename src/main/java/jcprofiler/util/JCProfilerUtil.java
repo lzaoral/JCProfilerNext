@@ -80,22 +80,23 @@ public class JCProfilerUtil {
     }
 
     public static void moveToSubDirIfNotExists(final Path from, final Path to) {
-        if (!to.toFile().isDirectory()) {
-            try {
-                // FIXME: there has to be a nicer solution than this ...
-                Files.createDirectories(to);
-                try (Stream<Path> s = Files.list(from)) {
-                    s.filter(p -> !p.equals(to)).forEach(f -> {
-                        try {
-                            Files.move(f, to.resolve(f.getFileName()));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        if (to.toFile().isDirectory())
+            return;
+
+        try {
+            // FIXME: there has to be a nicer solution than this ...
+            Files.createDirectories(to);
+            try (Stream<Path> s = Files.list(from)) {
+                s.filter(p -> !p.equals(to)).forEach(f -> {
+                    try {
+                        Files.move(f, to.resolve(f.getFileName()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
