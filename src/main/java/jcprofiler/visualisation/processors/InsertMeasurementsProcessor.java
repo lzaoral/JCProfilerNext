@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class InsertTimesProcessor extends AbstractProcessor<CtInvocation<Void>> {
+public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<Void>> {
     private final String atr;
     private final Map<String, List<Long>> measurements;
 
-    public InsertTimesProcessor(String atr, Map<String, List<Long>> measurements) {
+    public InsertMeasurementsProcessor(String atr, Map<String, List<Long>> measurements) {
         this.atr = atr;
         this.measurements = measurements;
     }

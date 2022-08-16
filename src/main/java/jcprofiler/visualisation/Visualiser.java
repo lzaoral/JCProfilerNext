@@ -2,7 +2,7 @@ package jcprofiler.visualisation;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
-import jcprofiler.visualisation.processors.InsertTimesProcessor;
+import jcprofiler.visualisation.processors.InsertMeasurementsProcessor;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -73,7 +73,7 @@ public class Visualiser {
     // TODO: aggregate results when there's too many of them
     public void insertMeasurementsToSources() {
         spoon.setSourceOutputDirectory(JCProfilerUtil.getPerfOutputDirectory(args.workDir).toFile());
-        spoon.addProcessor(new InsertTimesProcessor(atr, measurements));
+        spoon.addProcessor(new InsertMeasurementsProcessor(atr, measurements));
         spoon.process();
         spoon.prettyprint();
     }
