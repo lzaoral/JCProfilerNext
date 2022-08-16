@@ -80,7 +80,7 @@ public class Compiler {
         cap.setDebug(false);
         cap.setStrip(false);
 
-        cap.setAID("1234567890");
+        cap.setAID(JCProfilerUtil.APPLET_AID);
         cap.setJca(entryPoint.getPackage().getSimpleName() + ".jca");
         cap.setPackage(entryPoint.getPackage().getQualifiedName());
         cap.setOutput(entryPoint.getSimpleName() + ".cap");

@@ -26,6 +26,8 @@ import java.util.Scanner;
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
 public class Installer {
+    private static final byte[] APPLET_AID = Util.hexStringToByteArray(JCProfilerUtil.PACKAGE_AID);
+
     // static class
     private Installer() {}
 
@@ -66,7 +68,7 @@ public class Installer {
     private static CardManager configureSimulator(final Args args, final CtClass<?> entryPoint) {
         final Path jarPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                 .resolve(entryPoint.getPackage().getSimpleName() + ".jar");
-        final CardManager cardManager = new CardManager(true, Util.hexStringToByteArray("123456789001"));
+        final CardManager cardManager = new CardManager(true, APPLET_AID);
 
         try {
             // FIXME: this leak is intentional so that the simulator can access every class in the loaded JAR
@@ -94,7 +96,7 @@ public class Installer {
     }
 
     private static CardManager connectToCard() {
-        final CardManager cardManager = new CardManager(true, Util.hexStringToByteArray("123456789001"));
+        final CardManager cardManager = new CardManager(true, APPLET_AID);
 
         // for better portability across different platforms
         TerminalManager.fixPlatformPaths();
