@@ -1,6 +1,7 @@
 package jcprofiler;
 
 import cz.muni.fi.crocs.rcard.client.CardManager;
+
 import jcprofiler.args.Args;
 import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
@@ -9,15 +10,24 @@ import jcprofiler.profiling.Profiler;
 import jcprofiler.util.Stage;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.Visualiser;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
 
 public class JCProfiler {
+    private static final Logger log = LoggerFactory.getLogger(JCProfiler.class);
+
     // static class!
     private JCProfiler() {}
 
     public static void run(final Args args) {
+        log.info("Start from: {}", args.startFrom);
+        log.info("Stop after: {}", args.stopAfter);
+
         // this is practically a noop but probably not a deliberate one
         if (args.startFrom.ordinal() > args.stopAfter.ordinal())
             throw new RuntimeException(String.format(
@@ -39,13 +49,18 @@ public class JCProfiler {
 
         // Instrumentation
         if (args.startFrom.ordinal() <= Stage.instrumentation.ordinal()) {
+            log.info("Instrumentation started.");
             JCProfilerUtil.moveToSubDirIfNotExists(args.workDir, JCProfilerUtil.getSourceInputDirectory(args.workDir));
+
             // TODO: support already instrumented stuff
             new Instrumenter(args).process();
+            log.info("Instrumentation complete.");
         }
 
         // check that the generated sources are compilable by rebuilding the model after instrumentation
         final SpoonAPI spoon = new Launcher();
+        log.info("Validating SPOON model.");
+
         Instrumenter.setupSpoon(spoon, args);
         spoon.addInputResource(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toString());
         spoon.buildModel();
@@ -58,16 +73,27 @@ public class JCProfiler {
 
         // Compilation
         if (args.startFrom.ordinal() <= Stage.compilation.ordinal()) {
+            log.info("Compilation started.");
             Compiler.compile(args, entryPoint);
+            log.info("Compilation complete.");
         }
 
         if (args.stopAfter == Stage.compilation)
             return;
 
-        // Installation (noop for --simulator)
+        // Installation
         CardManager cardManager = null;
-        if (args.startFrom.ordinal() <= Stage.installation.ordinal() && !args.useSimulator)
-            cardManager = Installer.installOnCard(args, entryPoint);
+        if (args.startFrom.ordinal() <= Stage.installation.ordinal()) {
+            // noop for --simulator
+            if (args.useSimulator) {
+                log.info("Skipping installation because simulator is used.");
+            } else{
+                log.info("Installation started.");
+                cardManager = Installer.installOnCard(args, entryPoint);
+                log.info("Installation complete.");
+            }
+        }
+
         if (args.stopAfter == Stage.installation)
             return;
 
@@ -78,17 +104,21 @@ public class JCProfiler {
                 // TODO: move connection stuff to a separate class?
                 cardManager = Installer.connect(args, entryPoint);
 
+            log.info("Profiling started.");
             final Profiler profiler = new Profiler(args, cardManager, spoon);
             profiler.profile();
             profiler.generateCSV();
+            log.info("Profiling complete.");
         }
 
         if (args.stopAfter == Stage.profiling)
             return;
 
         // Visualisation
+        log.info("Visualising results.");
         final Visualiser vis = new Visualiser(args, spoon);
         vis.generateHTML();
         vis.insertMeasurementsToSources();
+        log.info("Visualising results complete.");
     }
 }
