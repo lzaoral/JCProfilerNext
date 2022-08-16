@@ -14,13 +14,13 @@ public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<
     private final String atr;
     private final Map<String, List<Long>> measurements;
 
-    public InsertMeasurementsProcessor(String atr, Map<String, List<Long>> measurements) {
+    public InsertMeasurementsProcessor(final String atr, final Map<String, List<Long>> measurements) {
         this.atr = atr;
         this.measurements = measurements;
     }
 
     @Override
-    public boolean isToBeProcessed(CtInvocation<Void> statement) {
+    public boolean isToBeProcessed(final CtInvocation<Void> statement) {
         final CtExecutableReference<?> executable = statement.getExecutable();
         return executable.getDeclaringType().getSimpleName().equals("PM")
                 && executable.getSignature().equals("check(short)")
@@ -28,7 +28,7 @@ public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<
     }
 
     @Override
-    public void process(CtInvocation<Void> invocation) {
+    public void process(final CtInvocation<Void> invocation) {
         final CtFieldRead<?> trapFieldRead = (CtFieldRead<?>) invocation.getArguments().get(0);
         final List<Long> values = measurements.get(trapFieldRead.getVariable().getSimpleName());
 
