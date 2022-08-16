@@ -80,7 +80,7 @@ public class JCProfilerUtil {
     }
 
     public static void moveToSubDirIfNotExists(final Path from, final Path to) {
-        if (to.toFile().isDirectory())
+        if (Files.isDirectory(to))
             return;
 
         try {

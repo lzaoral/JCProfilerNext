@@ -3,8 +3,9 @@ package jcprofiler.args.converters;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.BaseConverter;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class DirectoryPathConverter extends BaseConverter<Path> {
     public DirectoryPathConverter(String optionName) {
@@ -13,9 +14,9 @@ public class DirectoryPathConverter extends BaseConverter<Path> {
 
     @Override
     public Path convert(String value) {
-        final File input = new File(value);
-        if (!input.isDirectory())
+        final Path input = Paths.get(value);
+        if (!Files.isDirectory(input))
             throw new ParameterException(getErrorString(value, "a path to existing directory"));
-        return input.toPath();
+        return input.toAbsolutePath();
     }
 }

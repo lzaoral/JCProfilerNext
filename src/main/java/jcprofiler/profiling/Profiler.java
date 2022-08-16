@@ -14,10 +14,10 @@ import spoon.reflect.declaration.CtField;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -182,9 +182,9 @@ public class Profiler {
 
     public void generateCSV() {
         final String atr = Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
-        final File csv = args.workDir.resolve("measurements.csv").toFile();
+        final Path csv = args.workDir.resolve("measurements.csv");
 
-        try (PrintWriter writer = new PrintWriter(csv)) {
+        try (PrintWriter writer = new PrintWriter(csv.toFile())) {
             writer.printf("%s,%s%n", atr, String.join(",", inputs));
             measurements.forEach((trap, values) ->
                     writer.printf("%s,%s%n", trap,

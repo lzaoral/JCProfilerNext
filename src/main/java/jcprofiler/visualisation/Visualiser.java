@@ -11,6 +11,7 @@ import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtMethod;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class Visualiser {
     }
 
     private void loadCSV() {
-        final File csv = args.workDir.resolve("measurements.csv").toFile();
+        final Path csv = args.workDir.resolve("measurements.csv");
         try (Scanner scan = new Scanner(csv)) {
             // parse header
             atr = scan.findInLine("[^,]+");
@@ -46,7 +47,7 @@ public class Visualiser {
 
                 measurements.put(trap, trapMeasurements);
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -99,8 +100,8 @@ public class Visualiser {
         context.put("null", null);
         context.put("timeUnit", getTimeUnitSymbol());
 
-        final File output = args.workDir.resolve("measurements.html").toFile();
-        try (final Writer writer = new FileWriter(output)) {
+        final Path output = args.workDir.resolve("measurements.html");
+        try (final Writer writer = new FileWriter(output.toFile())) {
             final Template template = velocityEngine.getTemplate("jcprofiler/visualisation/template.vm");
             template.merge(context, writer);
         } catch (IOException e) {
