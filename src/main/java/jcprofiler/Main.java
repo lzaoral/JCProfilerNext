@@ -2,6 +2,7 @@ package jcprofiler;
 
 import com.beust.jcommander.JCommander;
 import jcprofiler.args.Args;
+import jcprofiler.util.Stage;
 
 public class Main {
     public static void main(final String[] argv) {
@@ -17,9 +18,16 @@ public class Main {
         }
 
         if ((args.dataRegex == null) == (args.dataFile == null)) {
-            if (args.dataRegex == null)
-                throw new RuntimeException("Neither --data-file or --data-regex option were specified!");
-            throw new RuntimeException("Options --data-file or --data-regex cannot be specified simultaneously.");
+            if (args.dataRegex != null)
+                throw new RuntimeException("Options --data-file or --data-regex cannot be specified simultaneously.");
+
+            // following check is applicable only for the profiling stage
+
+            final int profilingStage = Stage.profiling.ordinal();
+            if (args.startFrom.ordinal() <= profilingStage && profilingStage <= args.stopAfter.ordinal())
+                throw new RuntimeException(
+                        "Either --data-file or --data-regex options must be specified for the profiling stage!");
+
         }
 
         if (args.startFrom.ordinal() > args.stopAfter.ordinal())
