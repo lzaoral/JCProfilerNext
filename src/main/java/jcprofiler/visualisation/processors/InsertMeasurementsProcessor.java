@@ -32,6 +32,10 @@ public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<
         final CtFieldRead<?> trapFieldRead = (CtFieldRead<?>) invocation.getArguments().get(0);
         final List<Long> values = measurements.get(trapFieldRead.getVariable().getSimpleName());
 
+        // skip if this trap was not measured
+        if (values == null)
+            return;
+
         final CtComment comment = getFactory().createInlineComment(
                 // TODO: use IntSummaryStatistics if args.repeat_count is too big?
                 String.format("ATR %s: %s", atr, values.stream()
