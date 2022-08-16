@@ -3,10 +3,15 @@ package jcprofiler.visualisation;
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.processors.InsertMeasurementsProcessor;
+
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtMethod;
 
@@ -24,6 +29,8 @@ public class Visualiser {
     private List<String> inputs;
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 
+    private static final Logger log = LoggerFactory.getLogger(Visualiser.class);
+
     public Visualiser(final Args args, final SpoonAPI spoon) {
         this.args = args;
         this.spoon = spoon;
@@ -33,6 +40,8 @@ public class Visualiser {
 
     private void loadCSV() {
         final Path csv = args.workDir.resolve("measurements.csv");
+        log.info("Loading measurements in {} from {}.", getTimeUnitSymbol(), csv);
+
         try (Scanner scan = new Scanner(csv)) {
             // parse header
             atr = scan.findInLine("[^,]+");
@@ -73,6 +82,7 @@ public class Visualiser {
 
     // TODO: aggregate results when there's too many of them
     public void insertMeasurementsToSources() {
+        log.info("Inserting measurements into sources.");
         spoon.setSourceOutputDirectory(JCProfilerUtil.getPerfOutputDirectory(args.workDir).toFile());
         spoon.addProcessor(new InsertMeasurementsProcessor(atr, measurements));
         spoon.process();
@@ -85,6 +95,7 @@ public class Visualiser {
         final CtMethod<?> method = spoon.getModel()
                 .filterChildren((CtMethod<?> m) -> m.getSimpleName().equals(args.method)).first();
 
+        log.info("Initializing Apache Velocity.");
         final VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty("resource.loaders", "class");
         velocityEngine.setProperty(
@@ -101,6 +112,8 @@ public class Visualiser {
         context.put("timeUnit", getTimeUnitSymbol());
 
         final Path output = args.workDir.resolve("measurements.html");
+        log.info("Generating {}.", output.toAbsolutePath());
+
         try (final Writer writer = new FileWriter(output.toFile())) {
             final Template template = velocityEngine.getTemplate("jcprofiler/visualisation/template.vm");
             template.merge(context, writer);

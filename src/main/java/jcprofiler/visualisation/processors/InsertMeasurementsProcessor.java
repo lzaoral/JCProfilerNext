@@ -1,5 +1,8 @@
 package jcprofiler.visualisation.processors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtComment;
 import spoon.reflect.code.CtFieldRead;
@@ -13,6 +16,8 @@ import java.util.stream.Collectors;
 public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<Void>> {
     private final String atr;
     private final Map<String, List<Long>> measurements;
+
+    private static final Logger log = LoggerFactory.getLogger(InsertMeasurementsProcessor.class);
 
     public InsertMeasurementsProcessor(final String atr, final Map<String, List<Long>> measurements) {
         this.atr = atr;
@@ -41,6 +46,8 @@ public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<
                 String.format("ATR %s: %s", atr, values.stream()
                         .map(v -> v != null ? v + "ms" : "unreachable")
                         .collect(Collectors.joining(", "))));
+
+        log.debug("Inserting comment with measurements at {}.", invocation.getPosition());
 
         invocation.insertAfter(comment);
         invocation.delete();
