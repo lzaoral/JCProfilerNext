@@ -1,10 +1,16 @@
 package jcprofiler.profiling;
 
 import com.github.curiousoddman.rgxgen.RgxGen;
+
 import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.Util;
+
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.SpoonAPI;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtLiteral;
@@ -37,6 +43,8 @@ public class Profiler {
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
     private final List<String> inputs = new ArrayList<>();
 
+    private static final Logger log = LoggerFactory.getLogger(Profiler.class);
+
     public Profiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         this.args = args;
         this.cardManager = cardManager;
@@ -50,6 +58,9 @@ public class Profiler {
     }
 
     private void buildPerfMapping() {
+        // TODO: use a more precise method name
+        log.info("Looking for traps in {}.", args.method);
+
         // TODO: what about more classes with such name?
         // idea: make PM and PMC both inherit from our special and empty abstract class
         final CtClass<?> pmc = model.filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
@@ -64,6 +75,7 @@ public class Profiler {
         for (final CtField<Short> f : traps) {
             final CtLiteral<Integer> evaluated = f.getDefaultExpression().partiallyEvaluate();
             trapNameMap.put(evaluated.getValue().shortValue(), f.getSimpleName());
+            log.info("Found {}.", f.getSimpleName());
         }
     }
 
@@ -80,14 +92,14 @@ public class Profiler {
             // TODO: These lambdas could be replaced with regular classes if we are going to add more of them.
             InputGenerator inputGen;
             if (args.dataRegex != null) {
+                log.info("Generating inputs from {}.", args.dataRegex);
                 final RgxGen rgxGen = new RgxGen(args.dataRegex);
                 inputGen = () -> rgxGen.generate(rdn);
             } else {
+                log.info("Reading inputs from {}.", args.dataFile);
                 final List<String> inputs = Files.readAllLines(args.dataFile);
                 inputGen = () -> inputs.get(rdn.nextInt(inputs.size()));
             }
-
-            System.out.println("-------------- Performance profiling start --------------");
 
             for (int repeat = 1; repeat <= args.repeatCount; repeat++) {
                 final byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
@@ -96,43 +108,39 @@ public class Profiler {
                 final String input =  Util.bytesToHex(triggerAPDU.getBytes());
                 inputs.add(input);
 
-                System.out.printf("Profiling %s, round: %d%n", args.method, repeat);
-                System.out.println("APDU: " + input);
-
+                log.info("Round: {}/{} APDU: {}", repeat, args.repeatCount, input);
                 profileSingleStep(triggerAPDU);
             }
-
-            System.out.println("-------------- Performance profiling finished --------------");
-            System.out.print("Disconnecting from card...");
+            log.info("Collecting measurements complete.");
 
             // TODO: what difference is between true and false? javax.smartcardio.Card javadoc is now very helpful
             cardManager.disconnect(true);
-            System.out.println(" Done.");
-
-            if (unreachedTraps.isEmpty()) {
-                System.out.println("#######################################");
-                System.out.println("ALL PERFORMANCE TRAPS REACHED CORRECTLY");
-                System.out.println("#######################################");
-            } else {
-                System.out.println("################################################");
-                System.out.println("!!! SOME PERFORMANCE TRAPS NOT ALWAYS REACHED!!!");
-                System.out.println("################################################");
-                unreachedTraps.forEach(System.out::println);
-            }
+            log.info("Disconnected from card.");
 
             // sanity check
-            measurements.values().forEach(v -> {
+            log.debug("Checking that no measurements are missing.");
+            measurements.forEach((k, v) -> {
                 if (v.size() != args.repeatCount)
-                    throw new RuntimeException(String.format("%s.size() == %d", v, args.repeatCount));
+                    throw new RuntimeException(k + ".size() != " + args.repeatCount);
             });
             if (inputs.size() != args.repeatCount)
-                throw new RuntimeException("inputs.size() == " + args.repeatCount);
+                throw new RuntimeException("inputs.size() != " + args.repeatCount);
+
+            if (!unreachedTraps.isEmpty()) {
+                log.warn("Some traps were not always reached:");
+                unreachedTraps.forEach(System.out::println);
+                return;
+            }
+
+            log.info("All traps reached correctly.");
         } catch (CardException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private void setTrap(short trapID) throws CardException {
+        log.debug("Setting next trap to {}.", getTrapName(trapID));
+
         CommandAPDU setTrap = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_SETSTOP, 0, 0,
                                               Util.shortToByteArray(trapID));
         ResponseAPDU response = cardManager.transmit(setTrap);
@@ -144,6 +152,8 @@ public class Profiler {
     private void resetApplet() throws CardException {
         if (args.cleanupInst == null)
             return;
+
+        log.debug("Resetting applet before measurement.");
 
         CommandAPDU reset = new CommandAPDU(args.cla, args.cleanupInst, 0, 0, 0);
         ResponseAPDU response = cardManager.transmit(reset);
@@ -160,6 +170,7 @@ public class Profiler {
             setTrap(trapID);
 
             // execute target operation
+            log.debug("Measuring {}.", getTrapName(trapID));
             ResponseAPDU response = cardManager.transmit(triggerAPDu);
 
             // Check expected error to be equal performance trap
@@ -167,13 +178,19 @@ public class Profiler {
                 // we have not reached expected performance trap
                 unreachedTraps.add(getTrapName(trapID));
                 measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>()).add(null);
+                log.debug("Duration: unreachable");
                 continue;
             }
 
+            // compute the difference
             currentTransmitDuration = cardManager.getLastTransmitTimeDuration();
-            measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>())
-                    .add(currentTransmitDuration.minus(prevTransmitDuration).toNanos());
+            final Long diff = currentTransmitDuration.minus(prevTransmitDuration).toNanos();
             prevTransmitDuration = currentTransmitDuration;
+
+            log.debug("Duration: {} ns", diff);
+
+            // store the difference
+            measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>()).add(diff);
 
             // free memory after command
             resetApplet();
@@ -194,5 +211,7 @@ public class Profiler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        log.info("Measurements saved to {}.", csv);
     }
 }
