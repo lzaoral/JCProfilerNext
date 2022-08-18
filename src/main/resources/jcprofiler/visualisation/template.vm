@@ -79,7 +79,7 @@
                         color: 'rgb(86,189,49)',
                         opacity: 0.75
                     },
-                    hovertemplate: "Round: %{x}<br>Time: %{y}<extra></extra>",
+                    hovertemplate: "Round: %{x}<br>Time: %{y} $timeUnit<extra></extra>",
                 });
             }
 
