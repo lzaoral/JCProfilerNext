@@ -129,20 +129,20 @@
             // replace the event handler
             plotlyDiv.removeAllListeners('plotly_click');
             plotlyDiv.on('plotly_click', function (data) {
-                const bin = data.points[0];
+                const graph = data.points[0];
 
                 // noop for line graph
-                if (bin.fullData.type === 'scatter')
+                if (graph.fullData.type === 'scatter')
                     return;
 
                 let msg, binInputs;
 
                 // histogram
-                if ('xbins' in bin.fullData) {
-                    const binSizeHalf = bin.fullData.xbins.size / 2;
-                    binInputs = bin.pointIndices.map(e => inputs[e]);
+                if ('xbins' in graph.fullData) {
+                    const binSizeHalf = graph.fullData.xbins.size / 2;
+                    binInputs = graph.pointIndices.map(e => inputs[e]);
 
-                    msg = 'Bin: ' + Math.ceil(bin.x - binSizeHalf) + ' to ' + Math.floor(bin.x + binSizeHalf) + '\n';
+                    msg = 'Bin: ' + Math.ceil(graph.x - binSizeHalf) + ' to ' + Math.floor(graph.x + binSizeHalf) + '\n';
                 }
                 // undefined bar
                 else {
@@ -151,7 +151,7 @@
                             res.push(inputs[i]);
                         return res;
                     }, []);
-                    console.assert(binInputs.length === bin.y);
+                    console.assert(binInputs.length === graph.y);
 
                     msg = 'Unreachable\n';
                 }
