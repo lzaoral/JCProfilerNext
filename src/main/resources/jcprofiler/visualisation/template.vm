@@ -79,8 +79,7 @@
                         color: 'rgb(86,189,49)',
                         opacity: 0.75
                     },
-                    customdata: inputs,
-                    hovertemplate: "Round: %{x}<br>Time: %{y}<br>Input %{customdata}<extra></extra>",
+                    hovertemplate: "Round: %{x}<br>Time: %{y}<extra></extra>",
                 });
             }
 
@@ -128,30 +127,33 @@
             plotlyDiv.removeAllListeners('plotly_click');
             plotlyDiv.on('plotly_click', function (data) {
                 const graph = data.points[0];
-
-                // noop for line graph
-                if (graph.fullData.type === 'scatter')
-                    return;
-
                 let msg, binInputs;
 
-                // histogram
-                if ('xbins' in graph.fullData) {
-                    const binSizeHalf = graph.fullData.xbins.size / 2;
-                    binInputs = graph.pointIndices.map(e => inputs[e]);
+                switch (graph.fullData.type) {
+                    // line graph
+                    case 'scatter':
+                        binInputs = inputs.slice(graph.x - 1, graph.x);
+                        msg = 'Round: ' + graph.x + '\n';
+                        break;
+                    case 'histogram':
+                        const binSizeHalf = graph.fullData.xbins.size / 2;
+                        binInputs = graph.pointIndices.map(e => inputs[e]);
 
-                    msg = 'Bin: ' + Math.ceil(graph.x - binSizeHalf) + ' to ' + Math.floor(graph.x + binSizeHalf) + '\n';
-                }
-                // undefined bar
-                else {
-                    binInputs = vals.reduce((res, e, i) => {
-                        if (e === null)
-                            res.push(inputs[i]);
-                        return res;
-                    }, []);
-                    console.assert(binInputs.length === graph.y);
+                        msg = 'Bin: ' + Math.ceil(graph.x - binSizeHalf) + ' to ' +
+                                        Math.floor(graph.x + binSizeHalf) + '\n';
+                        break;
+                    case 'bar':
+                        binInputs = vals.reduce((res, e, i) => {
+                            if (e === null)
+                                res.push(inputs[i]);
+                            return res;
+                        }, []);
+                        console.assert(binInputs.length === graph.y);
 
-                    msg = 'Unreachable\n';
+                        msg = 'Unreachable\n';
+                        break;
+                    default:
+                        return;
                 }
 
                 msg += 'Inputs:\n';
