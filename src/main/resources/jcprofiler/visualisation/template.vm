@@ -90,7 +90,7 @@
                 height: 700,
                 xaxis: {
                     anchor: 'y1',
-                    domain: [0, 0.45],
+                    domain: [0, hasTime ? 0.45 : 1],
                     title: 'Unreachable',
                 },
                 xaxis2: {
