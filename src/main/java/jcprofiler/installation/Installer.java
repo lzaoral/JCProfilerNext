@@ -9,11 +9,15 @@ import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.CardType;
 import cz.muni.fi.crocs.rcard.client.RunConfig;
 import cz.muni.fi.crocs.rcard.client.Util;
+
 import javacard.framework.Applet;
+
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import spoon.reflect.declaration.CtClass;
 
@@ -23,6 +27,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -30,6 +35,7 @@ import java.util.Scanner;
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
 public class Installer {
+    private static final Logger log = LoggerFactory.getLogger(Installer.class);
     private static final byte[] APPLET_AID = Util.hexStringToByteArray(JCProfilerUtil.PACKAGE_AID);
 
     // static class
@@ -51,16 +57,17 @@ public class Installer {
             gpArgv = ArrayUtils.add(gpArgv, "--debug");
 
         // TODO: be very careful to not destroy the card!!!
+        log.info("Executing GlobalPlatformPro to install {}.", capPath);
+        log.debug("GlobalPlatformPro argv: {}", Arrays.toString(gpArgv));
         int ret = gp.run(bibo, gpArgv);
         if (ret != 0)
             throw new RuntimeException(String.format("GlobalPlatformPro exited with non-zero code: %d", ret));
 
         try {
-            System.out.print("Selecting installed applet on card...");
+            log.info("Selecting installed applet on card.");
             ResponseAPDU out = cardManager.selectApplet();
             if (out.getSW() != JCProfilerUtil.SW_NO_ERROR)
                 throw new CardException("Applet could not se selected. SW: " + out.getSW());
-            System.out.println("Done");
         } catch (CardException e) {
             throw new RuntimeException(e);
         }
@@ -74,11 +81,15 @@ public class Installer {
     }
 
     private static CardManager configureSimulator(final Args args, final CtClass<?> entryPoint) {
+        log.info("Configuring jCardSim simulator.");
+
         final Path jarPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                 .resolve(entryPoint.getPackage().getSimpleName() + ".jar");
         final CardManager cardManager = new CardManager(true, APPLET_AID);
 
         try {
+            log.debug("Loading {} from {}.", entryPoint.getQualifiedName(), jarPath);
+
             // FIXME: this leak is intentional so that the simulator can access every class in the loaded JAR
             final URLClassLoader classLoader = new URLClassLoader(new URL[]{jarPath.toUri().toURL()});
             final Class<? extends Applet> cls = classLoader.loadClass(entryPoint.getQualifiedName())
@@ -93,6 +104,7 @@ public class Installer {
             PrintStream stdout = System.out;
             System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
 
+            log.debug("Connecting to jCardSim simulator.");
             if (!cardManager.connect(runCfg))
                 throw new RuntimeException("Setting-up the simulator failed");
 
@@ -104,28 +116,32 @@ public class Installer {
     }
 
     private static CardManager connectToCard() {
+        log.info("Connecting to a physical card reader.");
         final CardManager cardManager = new CardManager(true, APPLET_AID);
 
         // for better portability across different platforms
         TerminalManager.fixPlatformPaths();
         final CardTerminals terminals = TerminalManager.getTerminalFactory().terminals();
-        System.out.println("Waiting for terminal with a card ...");
+        log.info("Looking for terminal with a card.");
 
         try {
-            List<CardTerminal> terminalList;
-            do {
+            List<CardTerminal> terminalList = terminals.list(CardTerminals.State.CARD_PRESENT);
+            while (terminalList.isEmpty()) {
+                log.warn("No connected terminals with a card found!");
+                log.info("Waiting for a terminal with a card.");
                 terminals.waitForChange();
                 terminalList = terminals.list(CardTerminals.State.CARD_PRESENT);
-            } while (terminalList.isEmpty());
+            }
 
             int terminalIdx = 0;
             if (terminalList.size() > 1)
                 terminalIdx = selectTerminal(terminalList);
 
             final CardTerminal terminal = terminalList.get(terminalIdx);
-            System.out.println("Connecting card in terminal " + terminal.getName());
+            log.info("Connecting to a card in terminal {}.", terminal.getName());
             cardManager.connectTerminal(terminal);
-            System.out.println("Connected!");
+            log.info("Successfully connected.");
+            log.info("Card ATR: {}", Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes()));
 
             return cardManager;
         } catch (CardException e) {
