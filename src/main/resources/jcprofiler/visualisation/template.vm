@@ -66,11 +66,24 @@
                     hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>",
                 });
 
-                traces.push({
-                    x: [...Array(vals.length + 1).keys()].splice(1),
-                    y: vals,
+                // make dots only on line endings
+                let dot_x = [], dot_y = [];
+                for (let i = 0; i < vals.length; i++) {
+                    // no value
+                    if (vals[i] === null)
+                        continue;
+
+                    // both neighbouring values are defined or only one is defined on border values
+                    if (vals.length > 1 &&
+                            (i === 0 || vals[i - 1] !== null) && (i === vals.length - 1 || vals[i + 1] != null))
+                        continue;
+
+                    dot_x.push(i + 1);
+                    dot_y.push(vals[i]);
+                }
+
+                const common = {
                     type: 'scatter',
-                    ... hasUnreach && {mode: 'lines+markers'},
                     xaxis: 'x3',
                     yaxis: 'y2',
                     name: 'timediff',
@@ -80,6 +93,18 @@
                         opacity: 0.75
                     },
                     hovertemplate: "Round: %{x}<br>Time: %{y} $timeUnit<extra></extra>",
+                };
+
+                traces.push({
+                    ... common,
+                    x: dot_x,
+                    y: dot_y,
+                    mode: 'markers',
+                }, {
+                    ... common,
+                    x: [...Array(vals.length + 1).keys()].splice(1),
+                    y: vals,
+                    mode: 'lines',
                 });
             }
 
