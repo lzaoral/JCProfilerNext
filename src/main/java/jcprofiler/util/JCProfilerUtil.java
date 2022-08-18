@@ -1,6 +1,10 @@
 package jcprofiler.util;
 
 import javacard.framework.ISO7816;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.reference.CtTypeReference;
@@ -27,6 +31,8 @@ public class JCProfilerUtil {
     public static final String APPLET_AID  = "123456789001";
     public static final String PACKAGE_AID = APPLET_AID + "01";
 
+    private static final Logger log = LoggerFactory.getLogger(JCProfilerUtil.class);
+
     // static class!
     private JCProfilerUtil() {}
 
@@ -45,17 +51,20 @@ public class JCProfilerUtil {
             return entryPoints.get(0);
         }
 
-        final Optional<CtClass<?>> entryPoint = entryPoints.stream()
+        final Optional<CtClass<?>> maybeEntryPoint = entryPoints.stream()
                 .filter(cls -> cls.getQualifiedName().equals(className)).findAny();
 
-        if (!entryPoint.isPresent()) {
+        if (!maybeEntryPoint.isPresent()) {
             if (spoon.getModel().getElements((CtClass<?> cls) -> cls.getQualifiedName().equals(className)).isEmpty())
                 throw new RuntimeException("Class " + className + " specified an an entry point does not exist!");
 
             throw new RuntimeException("Class " + className + " is not an entry point!");
         }
 
-        return entryPoint.get();
+        final CtClass<?> entryPoint = maybeEntryPoint.get();
+        log.debug("Found Applet entry point: {}", entryPoint.getQualifiedName());
+
+        return entryPoint;
     }
 
     public static boolean isClsEntryPoint(final CtClass<?> cls) {
@@ -80,8 +89,10 @@ public class JCProfilerUtil {
     }
 
     public static void moveToSubDirIfNotExists(final Path from, final Path to) {
-        if (Files.isDirectory(to))
+        if (Files.isDirectory(to)) {
+            log.debug("{} already exists. Contents of {} will not be moved.", to, from);
             return;
+        }
 
         try {
             // FIXME: there has to be a nicer solution than this ...
@@ -98,5 +109,7 @@ public class JCProfilerUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        log.info("Moved contents of {} to {}", from, to);
     }
 }
