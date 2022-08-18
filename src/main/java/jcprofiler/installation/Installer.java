@@ -119,7 +119,7 @@ public class Installer {
             } while (terminalList.isEmpty());
 
             int terminalIdx = 0;
-            if (terminalList.size() > 2)
+            if (terminalList.size() > 1)
                 terminalIdx = selectTerminal(terminalList);
 
             final CardTerminal terminal = terminalList.get(terminalIdx);
