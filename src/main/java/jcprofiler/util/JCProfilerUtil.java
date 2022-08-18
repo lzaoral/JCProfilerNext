@@ -112,4 +112,19 @@ public class JCProfilerUtil {
 
         log.info("Moved contents of {} to {}", from, to);
     }
+
+    public static String getTimeUnitSymbol(final TimeUnit unit) {
+        switch (unit) {
+            case nano:
+                return "ns";
+            case micro:
+                return "μs";
+            case milli:
+                return "ms";
+            case sec:
+                return "s";
+            default:
+                throw new RuntimeException("Unreachable statement reached!");
+        }
+    }
 }

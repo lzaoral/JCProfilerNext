@@ -40,7 +40,7 @@ public class Visualiser {
 
     private void loadCSV() {
         final Path csv = args.workDir.resolve("measurements.csv");
-        log.info("Loading measurements in {} from {}.", getTimeUnitSymbol(), csv);
+        log.info("Loading measurements in {} from {}.", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit), csv);
 
         try (Scanner scan = new Scanner(csv)) {
             // parse header
@@ -109,7 +109,7 @@ public class Visualiser {
         context.put("methodName", method.getDeclaringType().getQualifiedName() + "." + method.getSignature());
         context.put("measurements", measurements);
         context.put("null", null);
-        context.put("timeUnit", getTimeUnitSymbol());
+        context.put("timeUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
 
         final Path output = args.workDir.resolve("measurements.html");
         log.info("Generating {}.", output.toAbsolutePath());
@@ -119,21 +119,6 @@ public class Visualiser {
             template.merge(context, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private String getTimeUnitSymbol() {
-        switch (args.timeUnit) {
-            case nano:
-                return "ns";
-            case micro:
-                return "μs";
-            case milli:
-                return "ms";
-            case sec:
-                return "s";
-            default:
-                throw new RuntimeException("Unreachable statement reached!");
         }
     }
 }
