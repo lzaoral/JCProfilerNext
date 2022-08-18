@@ -3,6 +3,8 @@ package jcprofiler.installation;
 import apdu4j.BIBO;
 import apdu4j.CardBIBO;
 import apdu4j.TerminalManager;
+import pro.javacard.gp.GPTool;
+
 import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.CardType;
 import cz.muni.fi.crocs.rcard.client.RunConfig;
@@ -10,7 +12,9 @@ import cz.muni.fi.crocs.rcard.client.Util;
 import javacard.framework.Applet;
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
-import pro.javacard.gp.GPTool;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import spoon.reflect.declaration.CtClass;
 
 import javax.smartcardio.*;
@@ -42,8 +46,12 @@ public class Installer {
         final Path capPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                 .resolve(entryPoint.getSimpleName() + ".cap");
 
+        String[] gpArgv = new String[]{"--verbose", "--force", "--install", capPath.toString()};
+        if (args.debug)
+            gpArgv = ArrayUtils.add(gpArgv, "--debug");
+
         // TODO: be very careful to not destroy the card!!!
-        int ret = gp.run(bibo, new String[]{"-v", "--force", "--install", capPath.toString()});
+        int ret = gp.run(bibo, gpArgv);
         if (ret != 0)
             throw new RuntimeException(String.format("GlobalPlatformPro exited with non-zero code: %d", ret));
 
