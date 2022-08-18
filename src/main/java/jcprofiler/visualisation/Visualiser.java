@@ -71,7 +71,7 @@ public class Visualiser {
                 return nanos; // noop
             case micro:
                 return TimeUnit.NANOSECONDS.toMicros(nanos);
-            case mili:
+            case milli:
                 return TimeUnit.NANOSECONDS.toMillis(nanos);
             case sec:
                 return TimeUnit.NANOSECONDS.toSeconds(nanos);
@@ -128,7 +128,7 @@ public class Visualiser {
                 return "ns";
             case micro:
                 return "μs";
-            case mili:
+            case milli:
                 return "ms";
             case sec:
                 return "s";
