@@ -109,14 +109,12 @@
                 yaxis: {
                     anchor: 'x1',
                     domain: [0.55, 1],
-                    tickformat: ',d',
                     title: 'Frequency',
                     // type: 'log',
                 },
                 yaxis2: {
                     anchor: 'x3',
                     domain: [0, 0.43],
-                    tickformat: ',d',
                     title: 'Time in $timeUnit',
                 },
             }, {
