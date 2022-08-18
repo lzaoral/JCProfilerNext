@@ -89,7 +89,7 @@
                     name: 'timediff',
                     showlegend: false,
                     marker: {
-                        color: 'rgb(86,189,49)',
+                        color: 'rgb(86, 189, 49)',
                         opacity: 0.75
                     },
                     hovertemplate: "Round: %{x}<br>Time: %{y} $timeUnit<extra></extra>",
@@ -112,7 +112,7 @@
             Plotly.react('plotly', traces, {
                 bargap: 0.2,
                 height: 700,
-                xaxis: {
+                xaxis1: {
                     anchor: 'y1',
                     domain: [0, hasTime ? 0.45 : 1],
                     title: 'Unreachable',
@@ -130,7 +130,7 @@
                     tickformat: ',d',
                     title: 'Round',
                 },
-                yaxis: {
+                yaxis1: {
                     anchor: 'x1',
                     domain: [0.55, 1],
                     title: 'Frequency',
