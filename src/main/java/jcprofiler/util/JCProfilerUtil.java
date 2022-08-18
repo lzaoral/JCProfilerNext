@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.io.IOException;
@@ -126,5 +127,13 @@ public class JCProfilerUtil {
             default:
                 throw new RuntimeException("Unreachable statement reached!");
         }
+    }
+
+    public static void getProfiledMethod(final SpoonAPI spoon, final String methodName) {
+        final CtMethod<?> method = spoon.getModel().filterChildren(
+                (final CtMethod<?> m) -> m.getSimpleName().equals(methodName) && m.getBody() != null).first();
+        if (method == null)
+            throw new RuntimeException(
+                    String.format("None of the provided classes contains implemented %s method!", methodName));
     }
 }

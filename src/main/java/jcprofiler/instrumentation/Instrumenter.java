@@ -8,7 +8,6 @@ import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtPackage;
 import spoon.support.compiler.VirtualFile;
 
@@ -60,11 +59,7 @@ public class Instrumenter {
         JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
         // validate args.method
-        final CtMethod<?> method = spoon.getModel().filterChildren(
-                (final CtMethod<?> m) -> m.getSimpleName().equals(args.method) && m.getBody() != null).first();
-        if (method == null)
-            throw new RuntimeException(
-                    String.format("None of the provided classes contains implemented %s method!", args.method));
+        JCProfilerUtil.getProfiledMethod(spoon, args.method);
     }
 
     public static void setupSpoon(final SpoonAPI spoon, final Args args) {
