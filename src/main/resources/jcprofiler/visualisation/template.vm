@@ -167,7 +167,6 @@
     </script>
     <style>
 h3 {
-    padding-top: 20px;
     text-align: center;
 }
 
@@ -216,10 +215,10 @@ h3 {
 </head>
 <body>
     <h1>$methodName</h1>
-    <p><b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a></p>
-    <p><b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a></p>
     <div class="contents">
         <div class="code">
+            <p><b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a></p>
+            <p><b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a></p>
             <pre><code class="language-java">
 #foreach( $line in $code )
     #if( $line.trim().startsWith("PM.check(PMC.") )
