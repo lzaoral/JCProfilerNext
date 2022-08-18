@@ -1,5 +1,8 @@
 package jcprofiler.visualisation.processors;
 
+import jcprofiler.args.Args;
+import jcprofiler.util.JCProfilerUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,12 +17,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<Void>> {
+    private final Args args;
     private final String atr;
     private final Map<String, List<Long>> measurements;
 
     private static final Logger log = LoggerFactory.getLogger(InsertMeasurementsProcessor.class);
 
-    public InsertMeasurementsProcessor(final String atr, final Map<String, List<Long>> measurements) {
+    public InsertMeasurementsProcessor(final Args args, final String atr, final Map<String, List<Long>> measurements) {
+        this.args = args;
         this.atr = atr;
         this.measurements = measurements;
     }
@@ -44,7 +49,7 @@ public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<
         final CtComment comment = getFactory().createInlineComment(
                 // TODO: use IntSummaryStatistics if args.repeat_count is too big?
                 String.format("ATR %s: %s", atr, values.stream()
-                        .map(v -> v != null ? v + "ms" : "unreachable")
+                        .map(v -> v != null ? v + JCProfilerUtil.getTimeUnitSymbol(args.timeUnit) : "unreachable")
                         .collect(Collectors.joining(", "))));
 
         log.debug("Inserting comment with measurements at {}.", invocation.getPosition());

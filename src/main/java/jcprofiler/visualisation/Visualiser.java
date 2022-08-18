@@ -84,7 +84,7 @@ public class Visualiser {
     public void insertMeasurementsToSources() {
         log.info("Inserting measurements into sources.");
         spoon.setSourceOutputDirectory(JCProfilerUtil.getPerfOutputDirectory(args.workDir).toFile());
-        spoon.addProcessor(new InsertMeasurementsProcessor(atr, measurements));
+        spoon.addProcessor(new InsertMeasurementsProcessor(args, atr, measurements));
         spoon.process();
         spoon.prettyprint();
     }
