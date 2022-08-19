@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spoon.SpoonAPI;
-import spoon.reflect.CtModel;
 import spoon.reflect.code.CtLiteral;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtField;
+import spoon.reflect.declaration.CtMethod;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
@@ -35,7 +35,7 @@ public class Profiler {
     private static final short PERF_START = 0x0001;
     private final Args args;
     private final CardManager cardManager;
-    private final CtModel model;
+    private final SpoonAPI spoon;
 
     // use LinkedHashX to preserve insertion order
     private final Map<Short, String> trapNameMap = new LinkedHashMap<>();
@@ -48,7 +48,7 @@ public class Profiler {
     public Profiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         this.args = args;
         this.cardManager = cardManager;
-        this.model = spoon.getModel();
+        this.spoon = spoon;
 
         buildPerfMapping();
     }
@@ -58,16 +58,15 @@ public class Profiler {
     }
 
     private void buildPerfMapping() {
-        // TODO: use a more precise method name
-        log.info("Looking for traps in {}.", args.method);
+        log.info("Looking for traps in the {} method.", args.method);
+        final CtMethod<?> profiledMethod = JCProfilerUtil.getProfiledMethod(spoon, args.method);
+        final String trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(profiledMethod) + "_";
 
         // TODO: what about more classes with such name?
         // idea: make PM and PMC both inherit from our special and empty abstract class
-        final CtClass<?> pmc = model.filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
+        final CtClass<?> pmc = spoon.getModel().filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
 
-        // FIXME: this may fail, may get more methods, due to dependence on mangling
-        final String regex = String.format(".*_%s_argb_.*_arge_[^_]*", args.method);
-        final List<CtField<Short>> traps = pmc.getElements((CtField<Short> f) -> f.getSimpleName().matches(regex));
+        final List<CtField<Short>> traps = pmc.getElements((CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix));
         if (traps.isEmpty())
             throw new RuntimeException(String.format(
                     "Extraction of traps from PM for %s failed!", args.method));

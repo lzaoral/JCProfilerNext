@@ -127,6 +127,21 @@ public class JCProfilerUtil {
         return method;
     }
 
+    // trap mangling
+    static public String getTrapNamePrefix(final CtMethod<?> method) {
+        final String prefix = "TRAP_" + method.getDeclaringType().getQualifiedName() + "_" + method.getSignature();
+
+        // list may not be exhaustive
+        return prefix.replace('.', '_') // used in qualified types
+                .replace("$", "_dol_") // nested class
+                .replace(",", "__") // args delimiter
+                .replace("(", "_argb_")
+                .replace(")", "_arge")
+                .replace("<", "_genb_")
+                .replace(">", "_gene_")
+                .replace("[]", "arr"); // used in arrays
+    }
+
     public static boolean isClsEntryPoint(final CtClass<?> cls) {
         final CtTypeReference<?> parent = cls.getSuperclass();
         return parent != null && parent.getQualifiedName().equals("javacard.framework.Applet");

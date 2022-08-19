@@ -1,6 +1,8 @@
 package jcprofiler.instrumentation.processors;
 
 import jcprofiler.args.Args;
+import jcprofiler.util.JCProfilerUtil;
+
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
@@ -35,9 +37,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
             PMC = method.getDeclaringType().getPackage().getType("PMC");
 
         trapCount = 1;
-
-        // TODO: what about method overloading?
-        trapNamePrefix = getTrapNamePrefix(method);
+        trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(method);
 
         if (args.maxTraps * methodCount >= 0xffff)
             throw new RuntimeException(String.format("Class has more than %d (%d)",
@@ -52,22 +52,6 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
                                 method.getSignature())));
 
         processBody(method.getBody());
-    }
-
-    private String getTrapNamePrefix(final CtMethod<?> method) {
-        // simple name should be enough as all classes should be in the same package
-        // TODO: what about nested classes?
-        final String prefix = String.format(
-                "TRAP_%s_%s", method.getDeclaringType().getSimpleName(), method.getSignature());
-
-        // list may not be exhaustive
-        return prefix.replace('.', '_') // used in qualified types
-                .replace(",", "__") // args delimiter
-                .replace("(", "_argb_")
-                .replace(")", "_arge")
-                .replace("<", "_genb_")
-                .replace(">", "_gene_")
-                .replace("[]", "arr"); // used in arrays
     }
 
     private void processBody(final CtStatementList block) {

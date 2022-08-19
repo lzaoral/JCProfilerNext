@@ -100,7 +100,5 @@ Limitations
 -----------
 
 * Cards that require special communication procedures are not supported.
-* Instrumentation and profiling of nested classes may fail.
 * It is not possible to use a different JDK to compile the JavaCard applets and to run this project.
-* Instrumentation of distinct methods that have the same simple name is not supported.
 * Connection to wireless card terminals may occasionally fail.
