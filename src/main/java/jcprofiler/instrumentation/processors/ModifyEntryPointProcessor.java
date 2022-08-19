@@ -3,8 +3,13 @@ package jcprofiler.instrumentation.processors;
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 import javacard.framework.Util;
+
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
@@ -17,6 +22,8 @@ import java.util.stream.Collectors;
 
 public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     final Args args;
+
+    private static final Logger log = LoggerFactory.getLogger(ModifyEntryPointProcessor.class);
 
     public ModifyEntryPointProcessor(final Args args) {
         this.args = args;
@@ -31,6 +38,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
     @Override
     public void process(final CtClass<?> cls) {
+        log.info("Instrumenting entry point class {}.", cls.getQualifiedName());
         final CtField<Byte> insPerfSetStop = addInsPerfSetStopField(cls);
         addInsPerfSetStopSwitchCase(cls, insPerfSetStop);
     }
@@ -43,6 +51,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
                 f -> f.getSimpleName().equals("INS_PERF_SETSTOP")).findFirst();
         if (existingInsPerfSetStop.isPresent()) {
             final CtField<?> insPerfSetStop = existingInsPerfSetStop.get();
+            log.info("Existing INS_PERF_SETSTOP field found at {}.", insPerfSetStop.getPosition());
 
             if (!insPerfSetStop.getType().equals(byteRef))
                 throw new RuntimeException(String.format(
@@ -85,6 +94,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
         // insert the field
         cls.addField(0, insPerfSetStop);
+        log.debug("Added INS_PERF_SETSTOP field to {}.", cls.getQualifiedName());
         return insPerfSetStop;
     }
 
@@ -213,8 +223,10 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         final CtCase<Byte> newPerfStopCase = createPerfStopSwitchCase(processMethod, insPerfSetStop);
 
         if (maybeExistingPerfStopCase.isPresent()) {
+            final CtCase<? super Byte> existingPerfStopCase = maybeExistingPerfStopCase.get();
+            log.info("Existing INS_PERF_SETSTOP switch case statement found at {}.", insPerfSetStop.getPosition());
+
             // cases are equal
-            CtCase<? super Byte> existingPerfStopCase = maybeExistingPerfStopCase.get();
             if (existingPerfStopCase.equals(newPerfStopCase))
                 return;
 
@@ -233,5 +245,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         }
 
         ctSwitch.addCaseAt(0, newPerfStopCase);
+        log.debug("Added INS_PERF_SETSTOP switch case statement to {}.{}.",
+                cls.getQualifiedName(), processMethod.getSignature());
     }
 }

@@ -4,6 +4,10 @@ import jcprofiler.args.Args;
 import jcprofiler.instrumentation.processors.InsertTrapProcessor;
 import jcprofiler.instrumentation.processors.ModifyEntryPointProcessor;
 import jcprofiler.util.JCProfilerUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
@@ -19,7 +23,9 @@ import java.util.stream.Collectors;
 
 public class Instrumenter {
     private final Args args;
-    private final List<String> generatedClasses = Arrays.asList("PM", "PMC");
+
+    private static final List<String> generatedClasses = Arrays.asList("PM", "PMC");
+    private static final Logger log = LoggerFactory.getLogger(Instrumenter.class);
 
     public Instrumenter(final Args args) {
         this.args = args;
@@ -37,11 +43,15 @@ public class Instrumenter {
         // instrument the model
         spoon.addProcessor(new ModifyEntryPointProcessor(args));
         spoon.addProcessor(new InsertTrapProcessor(args));
+
+        log.info("Instrumenting existing classes.");
         spoon.process();
 
         // save the result
         spoon.getEnvironment().setOutputType(OutputType.CLASSES);
         spoon.setSourceOutputDirectory(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toFile());
+
+        log.info("Saving instrumented classes.");
         spoon.prettyprint();
 
         // TODO sanity check that all PMC members are unique
@@ -50,11 +60,15 @@ public class Instrumenter {
     private void buildModel(final Launcher spoon) {
         setupSpoon(spoon, args);
         spoon.addInputResource(JCProfilerUtil.getSourceInputDirectory(args.workDir).toString());
+
+        log.debug("Building SPOON model.");
         spoon.buildModel();
     }
 
     // TODO: better exception handling
     private void checkArguments(final Launcher spoon) {
+        log.info("Validating '--entry-point' and '--method' arguments.");
+
         // validate args.entryPoint
         JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
@@ -63,7 +77,7 @@ public class Instrumenter {
     }
 
     public static void setupSpoon(final SpoonAPI spoon, final Args args) {
-        spoon.getEnvironment().setLevel("WARN");
+        log.debug("Setting SPOON's environment.");
 
         // TODO: uncommenting this might lead to SPOON crashes!
         // spoon.getEnvironment().setPrettyPrinterCreator(() -> new SniperJavaPrettyPrinter(spoon.getEnvironment()));
@@ -76,13 +90,17 @@ public class Instrumenter {
     }
 
     private void addMissingClasses(final Launcher spoon) {
+        log.info("Generating additional classes.");
+
         // this atrocity seems to be required as SPOON does not allow a module rebuild :(
         final Launcher tmpSpoon = new Launcher();
         buildModel(tmpSpoon);
 
         final List<CtClass<?>> classes = tmpSpoon.getModel().getElements(CtClass.class::isInstance);
         // TODO: will this always work? what about nested classes?
+
         final List<CtPackage> pkgs = classes.stream().map(CtClass::getPackage).distinct().collect(Collectors.toList());
+        log.debug("Found following packages in sources: {}", pkgs);
 
         // TODO: does even javacard allow more?
         if (pkgs.size() != 1)
@@ -94,6 +112,7 @@ public class Instrumenter {
                     "This is unsupported by the CAP converter.");
 
         for (final String className : generatedClasses) {
+            log.debug("Looking for existing {} class.", className);
             final long count = classes.stream().filter(c -> c.getSimpleName().equals(className)).count();
 //            if (count > 1)
             if (count > 0)
@@ -108,6 +127,7 @@ public class Instrumenter {
 //                continue;
 //            }
 
+            log.debug("Class {} not found.", className);
             try {
                 final String filename = String.format("%s.java", className);
                 // getClass().getResource() does not work when executed from JAR
@@ -118,6 +138,7 @@ public class Instrumenter {
                             .replace("@PACKAGE@", packageName);
                     spoon.addInputResource(new VirtualFile(src, filename));
                 }
+                log.debug("Successfully generated new {} class.", className);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }

@@ -3,6 +3,9 @@ package jcprofiler.instrumentation.processors;
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
@@ -12,6 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
+    private static final Logger log = LoggerFactory.getLogger(InsertTrapProcessor.class);
+
     private final Args args;
 
     private CtClass<?> PMC;
@@ -32,6 +37,8 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     @Override
     public void process(final CtMethod<?> method) {
+        log.info("Instrumenting {}.{}.", method.getDeclaringType().getQualifiedName(), method.getSignature());
+
         // TODO: this is not ideal solution
         if (PMC == null)
             PMC = method.getDeclaringType().getPackage().getType("PMC");
@@ -45,6 +52,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
         // TODO: make it possible to instrument constructors?
 
+        log.debug("Adding {} trap.", trapNamePrefix);
         addTrapField(trapNamePrefix, String.format("(short) %d", args.maxTraps * methodCount++))
                 .addComment(getFactory().createInlineComment(
                         String.format("%s.%s",
@@ -195,6 +203,9 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
                 getFactory().createTypeAccess(pm.getReference()),
                 pm.getMethod("check", getFactory().createCtTypeReference(Short.TYPE)).getReference(),
                 trapFieldRead);
+
+        log.debug("Adding {} trap {} {}.",
+                trapField.getSimpleName(), where.toString().toLowerCase(), statement.getPosition());
 
         if (where == INSERT.AFTER)
             statement.insertAfter(pmCall);
