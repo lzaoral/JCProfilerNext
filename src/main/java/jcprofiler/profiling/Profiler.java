@@ -35,6 +35,7 @@ public class Profiler {
     private static final short PERF_START = 0x0001;
     private final Args args;
     private final CardManager cardManager;
+    private final CtMethod<?> profiledMethod;
     private final SpoonAPI spoon;
 
     // use LinkedHashX to preserve insertion order
@@ -48,6 +49,7 @@ public class Profiler {
     public Profiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         this.args = args;
         this.cardManager = cardManager;
+        this.profiledMethod = JCProfilerUtil.getProfiledMethod(spoon, args.method);
         this.spoon = spoon;
 
         buildPerfMapping();
@@ -59,7 +61,6 @@ public class Profiler {
 
     private void buildPerfMapping() {
         log.info("Looking for traps in the {} method.", args.method);
-        final CtMethod<?> profiledMethod = JCProfilerUtil.getProfiledMethod(spoon, args.method);
         final String trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(profiledMethod) + "_";
 
         // TODO: what about more classes with such name?
@@ -201,6 +202,7 @@ public class Profiler {
         final Path csv = args.workDir.resolve("measurements.csv");
 
         try (PrintWriter writer = new PrintWriter(csv.toFile())) {
+            writer.printf("%s.%s%n", profiledMethod.getDeclaringType().getQualifiedName(), profiledMethod.getSignature());
             writer.printf("%s,%s%n", atr, String.join(",", inputs));
             measurements.forEach((trap, values) ->
                     writer.printf("%s,%s%n", trap,

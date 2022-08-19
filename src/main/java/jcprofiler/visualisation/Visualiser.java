@@ -26,6 +26,7 @@ public class Visualiser {
     private final SpoonAPI spoon;
 
     private String atr;
+    private String profiledMethodSignature;
     private List<String> inputs;
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 
@@ -44,6 +45,7 @@ public class Visualiser {
 
         try (Scanner scan = new Scanner(csv)) {
             // parse header
+            profiledMethodSignature = scan.nextLine();
             atr = scan.findInLine("[^,]+");
             scan.skip(",");
             inputs = Arrays.asList(scan.nextLine().split(","));
@@ -91,9 +93,7 @@ public class Visualiser {
 
     // TODO: must be executed before insertMeasurementsToSources()
     public void generateHTML() {
-        // TODO: this might break if more methods have the same name
-        final CtMethod<?> method = spoon.getModel()
-                .filterChildren((CtMethod<?> m) -> m.getSimpleName().equals(args.method)).first();
+        final CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, profiledMethodSignature);
 
         log.info("Initializing Apache Velocity.");
         final VelocityEngine velocityEngine = new VelocityEngine();
@@ -106,7 +106,7 @@ public class Visualiser {
         context.put("cardATR", atr);
         context.put("code", StringEscapeUtils.escapeHtml4(method.prettyprint()).split(System.lineSeparator()));
         context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
-        context.put("methodName", method.getDeclaringType().getQualifiedName() + "." + method.getSignature());
+        context.put("methodName", profiledMethodSignature);
         context.put("measurements", measurements);
         context.put("null", null);
         context.put("timeUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
