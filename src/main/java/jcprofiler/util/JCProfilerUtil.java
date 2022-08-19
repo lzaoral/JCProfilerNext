@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JCProfilerUtil {
@@ -66,6 +68,63 @@ public class JCProfilerUtil {
         log.debug("Found Applet entry point: {}", entryPoint.getQualifiedName());
 
         return entryPoint;
+    }
+
+    // profiled method
+    public static CtMethod<?> getProfiledMethod(final SpoonAPI spoon, final String methodName) {
+        if (methodName == null)
+            throw new RuntimeException("--method argument was not provided!");
+
+        // either split on the last . not followed by any . or (), or on the last . before the opening (
+        final String[] split = methodName.split("[.](?=[^.()]*$|[^.]+[(].*$)");
+        final int lastIdx = split.length - 1;
+
+        final List<CtMethod<?>> methods = spoon.getModel().getElements((CtMethod<?> m) -> {
+            boolean sameSignature = split[lastIdx].contains("(") ? m.getSignature().equals(split[lastIdx])
+                                                                 : m.getSimpleName().equals(split[lastIdx]);
+            return sameSignature && (split.length == 1 || m.getDeclaringType().getQualifiedName().equals(split[0]));
+        });
+
+        if (methods.isEmpty())
+            throw new RuntimeException(String.format(
+                    "None of the provided classes contain %s method!", methodName));
+
+        final List<String> containingClassNames = methods.stream().map(CtMethod::getDeclaringType)
+                .map(CtType::getQualifiedName).distinct().sorted().collect(Collectors.toList());
+
+        final List<String> methodSignatures = methods.stream().map(CtMethod::getSignature)
+                .distinct().sorted().collect(Collectors.toList());
+
+        // every method found is not overloaded and is in a distinct class
+        if (containingClassNames.size() > 1 && methodSignatures.size() == 1)
+            throw new RuntimeException(String.format(
+                    "More of the provided classes contain the %s method!%n" +
+                            "Please, specify the --method parameter in the 'class.%s' format where class is one of:%n%s",
+                    methodName, methodName, containingClassNames));
+
+        // overloaded methods are in a single class
+        if (containingClassNames.size() == 1 && methodSignatures.size() > 1)
+            throw new RuntimeException(String.format(
+                    "More %s methods with distinct signatures found in the %s class!%n" +
+                            "Please, add the corresponding signature to the --method parameter%nFound: %s",
+                    split[split.length - 1], containingClassNames.get(0), methodSignatures));
+
+        // overloaded methods in more classes
+        if (containingClassNames.size() > 1 && methodSignatures.size() > 1)
+            throw new RuntimeException(String.format(
+                    "More %s methods with distinct signatures found in more classes!%n" +
+                            "Please, use one of the following values as an argument to the --method parameter:%n%s",
+                    methodName, methods.stream().map(m -> m.getDeclaringType().getQualifiedName() + "." + m.getSignature())
+                            .sorted().collect(Collectors.toList())));
+
+        // only a single method with such name exists
+        final CtMethod<?> method = methods.get(0);
+        if (method.getBody() == null)
+            throw new RuntimeException(String.format(
+                    "Found the %s method but it has empty body! Found in class %s.",
+                    methodName, containingClassNames.get(0)));
+
+        return method;
     }
 
     public static boolean isClsEntryPoint(final CtClass<?> cls) {
@@ -127,13 +186,5 @@ public class JCProfilerUtil {
             default:
                 throw new RuntimeException("Unreachable statement reached!");
         }
-    }
-
-    public static void getProfiledMethod(final SpoonAPI spoon, final String methodName) {
-        final CtMethod<?> method = spoon.getModel().filterChildren(
-                (final CtMethod<?> m) -> m.getSimpleName().equals(methodName) && m.getBody() != null).first();
-        if (method == null)
-            throw new RuntimeException(
-                    String.format("None of the provided classes contains implemented %s method!", methodName));
     }
 }
