@@ -57,7 +57,7 @@ public class Args {
 
     @Parameter(names = {"--method"},
                description = "Method to profile")
-    public String method = "process";
+    public String method;
 
     @Parameter(names = {"--entry-point"},
                description = "Qualified name of a class to be used as an entry point (useful when there are more)")
