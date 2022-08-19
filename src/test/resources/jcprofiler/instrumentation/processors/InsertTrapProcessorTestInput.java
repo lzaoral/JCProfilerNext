@@ -137,6 +137,14 @@ public class SimpleClass {
             return a;
     }
 
+    public static int terminator9(int a) {
+        terminator8(a);
+    }
+
+    public int terminator10(int a) {
+        terminator9(a);
+    }
+
     public static class Nest {
         int nest(int a) {
             a++;
