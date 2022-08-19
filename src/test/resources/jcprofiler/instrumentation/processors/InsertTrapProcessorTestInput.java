@@ -136,4 +136,10 @@ public class SimpleClass {
         if (a == 0)
             return a;
     }
+
+    public static class Nest {
+        int nest(int a) {
+            a++;
+        }
+    }
 }

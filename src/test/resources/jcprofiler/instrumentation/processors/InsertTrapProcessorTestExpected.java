@@ -219,4 +219,12 @@ public class SimpleClass {
         }
         PM.check(PMC.TRAP_SimpleClass_terminator8_argb_int_arge_3);
     }
+
+    public static class Nest {
+        int nest(int a) {
+            PM.check(PMC.TRAP_SimpleClass_dol_Nest_nest_argb_int_arge_1);
+            a++;
+            PM.check(PMC.TRAP_SimpleClass_dol_Nest_nest_argb_int_arge_2);
+        }
+    }
 }
