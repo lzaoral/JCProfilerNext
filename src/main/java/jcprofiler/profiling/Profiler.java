@@ -202,8 +202,9 @@ public class Profiler {
         final Path csv = args.workDir.resolve("measurements.csv");
 
         try (PrintWriter writer = new PrintWriter(csv.toFile())) {
-            writer.printf("%s.%s%n", profiledMethod.getDeclaringType().getQualifiedName(), profiledMethod.getSignature());
-            writer.printf("%s,%s%n", atr, String.join(",", inputs));
+            writer.printf("%s.%s,%s%n", profiledMethod.getDeclaringType().getQualifiedName(),
+                    profiledMethod.getSignature(), atr);
+            writer.println(String.join(",", inputs));
             measurements.forEach((trap, values) ->
                     writer.printf("%s,%s%n", trap,
                             values.stream().map(v -> v != null ? v.toString() : "unreach")

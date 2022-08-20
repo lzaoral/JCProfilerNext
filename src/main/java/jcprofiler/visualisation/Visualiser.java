@@ -47,11 +47,14 @@ public class Visualiser {
 
         try (Scanner scan = new Scanner(csv)) {
             // parse header
-            profiledMethodSignature = scan.nextLine();
-            atr = scan.findInLine("[^,]+");
-            scan.skip(",");
+            final String[] header = scan.nextLine().split(",(?=[^,]+$)");
+            profiledMethodSignature = header[0];
+            atr = header[1];
+
+            // parse inputs
             inputs = Arrays.asList(scan.nextLine().split(","));
 
+            // parse measurements
             while (scan.hasNextLine()) {
                 final String trap = scan.findInLine("[^,]+");
                 scan.skip(",");
