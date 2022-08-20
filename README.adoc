@@ -26,7 +26,7 @@ Installation
 . Run `./gradlew build` on Unix-like systems or `gradlew.bat build` on Windows.
 . Execute
 .. directly using Gradle: `./gradlew run --args='--help'`.
-.. directly using built JAR: `java -jar build/libs/javacard-profiler-1.0-SNAPSHOT.jar --help`.
+.. directly using built JAR: `java -jar build/libs/JCProfilerNext-1.0-SNAPSHOT.jar --help`.
 .. directly from distribution archives in `build/distributions`.
 
 Example

@@ -57,7 +57,7 @@ def execute_test(test: Dict[str, Any]):
     if clone_git_repo(test['repo'], test['name']):
         modify_repo(test)
 
-    jar = Path('../build/libs/javacard-profiler-1.0-SNAPSHOT.jar').absolute()
+    jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
     jckit = Path(f'jcsdk/jc{test["jckit"]}_kit').absolute()
 
     cmd = f'java -jar {jar} --jckit "{jckit}" --simulator --repeat-count 1000'
