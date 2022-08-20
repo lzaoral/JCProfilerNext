@@ -1,6 +1,7 @@
 #* @vtlvariable name="cardATR" type="java.lang.String" *#
 #* @vtlvariable name="code" type="java.lang.String[]" *#
 #* @vtlvariable name="inputs" type="java.util.List<java.lang.String>" *#
+#* @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>" *#
 #* @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>" *#
 #* @vtlvariable name="methodName" type="java.lang.String" *#
 #* @vtlvariable name="null" type="java.lang.Object" *#
@@ -22,7 +23,7 @@
         const inputs = $inputs;
         let selectedTrap = null;
 
-        function redrawGraph(trapName, vals) {
+        function redrawGraph(trapName, vals, filteredVals) {
             selectedTrap?.classList.remove('trap_select');
             selectedTrap = event.target;
             selectedTrap.classList.add('trap_select');
@@ -52,19 +53,35 @@
 
             const hasTime = vals.some(e => e !== null);
             if (hasTime) {
-                traces.push({
-                    x: vals.filter(e => e !== null),
+                // Histograms
+                const histogramCommon = {
                     type: 'histogram',
                     xaxis: 'x2',
                     yaxis: 'y1',
-                    name: 'time',
-                    showlegend: false,
+                    showlegend: true,
+                    hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>",
+                };
+
+                traces.push({
+                    ...histogramCommon,
+                    x: vals.filter(e => e !== null),
+                    name: 'with outliers',
+                    visible: 'legendonly',
+                    marker: {
+                        color: 'rgb(255,136,0)',
+                        opacity: 0.75
+                    },
+                }, {
+                    ...histogramCommon,
+                    x: filteredVals,
+                    name: 'without outliers',
                     marker: {
                         color: 'rgb(49, 130, 189)',
                         opacity: 0.75
                     },
-                    hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>",
                 });
+
+                // Line graph
 
                 // make dots only on line endings
                 let dot_x = [], dot_y = [];
@@ -82,7 +99,7 @@
                     dot_y.push(vals[i]);
                 }
 
-                const common = {
+                const scatterCommon = {
                     type: 'scatter',
                     xaxis: 'x3',
                     yaxis: 'y2',
@@ -96,12 +113,12 @@
                 };
 
                 traces.push({
-                    ... common,
+                    ...scatterCommon,
                     x: dot_x,
                     y: dot_y,
                     mode: 'markers',
                 }, {
-                    ... common,
+                    ...scatterCommon,
                     x: [...Array(vals.length + 1).keys()].splice(1),
                     y: vals,
                     mode: 'lines',
@@ -250,10 +267,11 @@ h3 {
     #if( $line.trim().startsWith("PM.check(PMC.") )
         #set( $trap = $line.trim().replace("PM.check(PMC.", "").replace(");", "") )
         #set( $vals = $measurements[$trap] )
+        #set( $filteredVals = $filteredMeasurements[$trap] )
         #set( $trap_warn = $vals.contains($null) )
         #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
 <div class="trap #if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end"
-     onclick="redrawGraph( '$trap', $vals )">$line
+     onclick="redrawGraph( '$trap', $vals, $filteredVals )">$line
 </div>#else
 $line
 #end#end        </code>

@@ -4,6 +4,7 @@ import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.processors.InsertMeasurementsProcessor;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -29,6 +30,7 @@ public class Visualiser {
     private String profiledMethodSignature;
     private List<String> inputs;
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
+    private final Map<String, List<Long>> filteredMeasurements = new LinkedHashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(Visualiser.class);
 
@@ -61,6 +63,26 @@ public class Visualiser {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        measurements.forEach((k, v) -> {
+            DescriptiveStatistics ds = new DescriptiveStatistics();
+            v.stream().filter(Objects::nonNull).forEach(l -> ds.addValue(l.doubleValue()));
+
+            if (ds.getN() == 0) {
+                filteredMeasurements.put(k, new ArrayList<>());
+                return;
+            }
+
+            final List<Long> filtered = v.stream().map(l -> {
+                if (l == null || ds.getN() == 1)
+                    return l;
+
+                // replace outliers with null
+                return 3. >= Math.abs(l - ds.getMean()) / ds.getStandardDeviation() ? l : null;
+            }).collect(Collectors.toList());
+
+            filteredMeasurements.put(k, filtered);
+        });
     }
 
     private Long convertTime(final String input) {
@@ -108,6 +130,7 @@ public class Visualiser {
         context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
         context.put("methodName", profiledMethodSignature);
         context.put("measurements", measurements);
+        context.put("filteredMeasurements", filteredMeasurements);
         context.put("null", null);
         context.put("timeUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
 
