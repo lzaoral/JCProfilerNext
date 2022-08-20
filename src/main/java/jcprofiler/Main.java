@@ -38,7 +38,7 @@ public class Main {
         }
 
         log.info("Found JavaCard SDK {} ({})", args.jcSDK.getRelease(), args.jcSDK.getRoot().getAbsolutePath());
-        log.info("Working directory: {}", args.workDir.toAbsolutePath());
+        log.info("Working directory: {}", args.workDir);
 
         try {
             JCProfiler.run(args);

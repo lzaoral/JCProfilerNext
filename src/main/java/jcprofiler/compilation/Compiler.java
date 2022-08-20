@@ -32,7 +32,7 @@ public class Compiler {
     // Inspired by https://stackoverflow.com/questions/6440295/is-it-possible-to-call-ant-or-nsis-scripts-from-java-code/6440342#6440342
     public static void compile(final Args args, final CtClass<?> entryPoint) {
         // create the output directory if it does not exist
-        final Path appletDir = JCProfilerUtil.getAppletOutputDirectory(args.workDir).toAbsolutePath();
+        final Path appletDir = JCProfilerUtil.getAppletOutputDirectory(args.workDir);
         try {
             if (Files.exists(appletDir)) {
                 FileUtils.deleteDirectory(appletDir.toFile());

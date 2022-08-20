@@ -136,7 +136,7 @@ public class Visualiser {
         context.put("timeUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
 
         final Path output = args.workDir.resolve("measurements.html");
-        log.info("Generating {}.", output.toAbsolutePath());
+        log.info("Generating {}.", output);
 
         try (final Writer writer = new FileWriter(output.toFile())) {
             final Template template = velocityEngine.getTemplate("jcprofiler/visualisation/template.vm");
