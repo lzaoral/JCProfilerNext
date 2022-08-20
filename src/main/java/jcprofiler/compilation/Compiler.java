@@ -21,7 +21,6 @@ import spoon.reflect.declaration.CtClass;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Compiler {
     private static final Logger log = LoggerFactory.getLogger(Compiler.class);
@@ -82,8 +81,8 @@ public class Compiler {
         final JCCap cap = jc.createCap();
         cap.setTaskName("JavaCard");
         cap.setProject(p);
-        cap.setClasses("./classes");
-        cap.setSources(Paths.get("..", JCProfilerUtil.INSTR_OUT_DIRNAME).toString());
+        cap.setClasses("classes");
+        cap.setSources(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toString());
         cap.setExport(".");
 
         // TODO: check if this ok
