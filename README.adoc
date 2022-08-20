@@ -84,8 +84,8 @@ $ ./gradlew run --args="--work-dir example --jckit jc222_kit --method example --
 JCProfilerNext will process all sources in the `example` directory and will
 also use this directory to store all intermediate results:
 
-* `applet` - contains the built applet with corresponding CAP and JAR files
-* `measurements.csv` - contains raw measurements
+* `applet` - contains the built applet with corresponding CAP, JAR and JCA files
+* `measurements.csv` - contains the profiled method signature, card ATR, input APDUs and corresponding raw measurements
 * `measurements.html` - contains visualisation of the measurements
 * `sources_instr` - contains instrumented sources
 * `sources_original` - contains original unchanged sources
