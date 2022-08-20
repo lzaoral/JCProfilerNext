@@ -154,18 +154,19 @@
                 const graph = data.points[0];
                 let msg, binInputs;
 
-                switch (graph.fullData.type) {
+                switch (graph.data.type) {
                     // line graph
                     case 'scatter':
                         binInputs = inputs.slice(graph.x - 1, graph.x);
                         msg = 'Round: ' + graph.x + '\n';
                         break;
                     case 'histogram':
-                        const binSizeHalf = graph.fullData.xbins.size / 2;
                         binInputs = graph.pointIndices.map(e => inputs[e]);
 
-                        msg = 'Bin: ' + Math.ceil(graph.x - binSizeHalf) + ' to ' +
-                                        Math.floor(graph.x + binSizeHalf) + '\n';
+                        // Rather hack-ish and not very efficient but the input object does not contain the %{x}
+                        // value from hoverstrings.
+                        const binValues = graph.pointIndices.map(e => vals[e]);
+                        msg = 'Bin: ' + Math.min(...binValues) + ' to ' + Math.max(...binValues) + '\n';
                         break;
                     case 'bar':
                         binInputs = vals.reduce((res, e, i) => {
