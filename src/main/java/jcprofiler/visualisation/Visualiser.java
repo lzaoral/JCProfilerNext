@@ -119,6 +119,7 @@ public class Visualiser {
 
         log.info("Initializing Apache Velocity.");
         final VelocityEngine velocityEngine = new VelocityEngine();
+        velocityEngine.setProperty("runtime.strict_mode.enable", true);
         velocityEngine.setProperty("resource.loaders", "class");
         velocityEngine.setProperty(
                 "resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
