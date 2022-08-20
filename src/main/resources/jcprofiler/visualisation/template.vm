@@ -169,16 +169,16 @@
             plotlyDiv.removeAllListeners('plotly_click');
             plotlyDiv.on('plotly_click', function (data) {
                 const graph = data.points[0];
-                let msg, binInputs;
+                let msg, selectedInputs;
 
                 switch (graph.data.type) {
                     // line graph
                     case 'scatter':
-                        binInputs = inputs.slice(graph.x - 1, graph.x);
+                        selectedInputs = inputs.slice(graph.x - 1, graph.x);
                         msg = 'Round: ' + graph.x + '\n';
                         break;
                     case 'histogram':
-                        binInputs = graph.pointIndices.map(e => inputs[e]);
+                        selectedInputs = graph.pointIndices.map(e => inputs[e]);
 
                         // Rather hack-ish and not very efficient but the input object does not contain the %{x}
                         // value from hoverstrings.
@@ -186,12 +186,12 @@
                         msg = 'Bin: ' + Math.min(...binValues) + ' to ' + Math.max(...binValues) + '\n';
                         break;
                     case 'bar':
-                        binInputs = vals.reduce((res, e, i) => {
+                        selectedInputs = vals.reduce((res, e, i) => {
                             if (e === null)
                                 res.push(inputs[i]);
                             return res;
                         }, []);
-                        console.assert(binInputs.length === graph.y);
+                        console.assert(selectedInputs.length === graph.y);
 
                         msg = 'Unreachable\n';
                         break;
@@ -201,8 +201,8 @@
 
                 msg += 'Inputs:\n';
 
-                const sortedBinInputs = Array.from(new Set(binInputs)).sort();
-                sortedBinInputs.forEach(e => msg += e + '\n');
+                const sortedInputs = Array.from(new Set(selectedInputs)).sort();
+                sortedInputs.forEach(e => msg += e + '\n');
 
                 alert(msg);
             });
