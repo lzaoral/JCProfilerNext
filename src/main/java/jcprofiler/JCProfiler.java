@@ -18,6 +18,8 @@ import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
 
+import java.nio.file.Path;
+
 public class JCProfiler {
     private static final Logger log = LoggerFactory.getLogger(JCProfiler.class);
 
@@ -62,7 +64,9 @@ public class JCProfiler {
         log.info("Validating SPOON model.");
 
         Instrumenter.setupSpoon(spoon, args);
-        spoon.addInputResource(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toString());
+        final Path instrOutput = JCProfilerUtil.getInstrOutputDirectory(args.workDir);
+        JCProfilerUtil.checkDirectory(instrOutput, Stage.instrumentation);
+        spoon.addInputResource(instrOutput.toString());
         spoon.buildModel();
 
         if (args.stopAfter == Stage.instrumentation)

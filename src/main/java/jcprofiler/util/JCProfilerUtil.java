@@ -163,6 +163,31 @@ public class JCProfilerUtil {
         return workDirPath.resolve(SRC_IN_DIRNAME);
     }
 
+    public static Path checkFile(final Path path, final Stage stage) {
+        if (!Files.exists(path))
+            throw new RuntimeException(String.format(
+                    "%s does not exist! Please execute the %s stage first.", path, stage));
+
+        return path;
+    }
+    public static Path checkDirectory(final Path path, final Stage stage) {
+        checkFile(path, stage);
+
+        if (!Files.isDirectory(path))
+            throw new RuntimeException(String.format(
+                    "%s is not a directory! Please execute the %s stage first.", path, stage));
+
+        try (final Stream<Path> files = Files.list(path)) {
+            if (!files.findFirst().isPresent())
+                throw new RuntimeException(String.format(
+                        "The %s directory is empty! Please execute the %s stage first.", path, stage));
+
+            return path;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void moveToSubDirIfNotExists(final Path from, final Path to) {
         if (Files.isDirectory(to)) {
             log.debug("{} already exists. Contents of {} will not be moved.", to, from);

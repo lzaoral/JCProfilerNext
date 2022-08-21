@@ -2,6 +2,7 @@ package jcprofiler.visualisation;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
+import jcprofiler.util.Stage;
 import jcprofiler.visualisation.processors.InsertMeasurementsProcessor;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -42,7 +43,7 @@ public class Visualiser {
     }
 
     private void loadCSV() {
-        final Path csv = args.workDir.resolve("measurements.csv");
+        final Path csv = JCProfilerUtil.checkFile(args.workDir.resolve("measurements.csv"), Stage.profiling);
         log.info("Loading measurements in {} from {}.", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit), csv);
 
         try (Scanner scan = new Scanner(csv)) {

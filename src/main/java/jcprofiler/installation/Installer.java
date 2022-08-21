@@ -14,6 +14,7 @@ import javacard.framework.Applet;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
+import jcprofiler.util.Stage;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -51,6 +52,7 @@ public class Installer {
         final BIBO bibo = CardBIBO.wrap(cardManager.getChannel().getCard());
         final Path capPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                 .resolve(entryPoint.getSimpleName() + ".cap");
+        JCProfilerUtil.checkFile(capPath, Stage.compilation);
 
         String[] gpArgv = new String[]{"--verbose", "--force", "--install", capPath.toString()};
         if (args.debug)
@@ -84,7 +86,8 @@ public class Installer {
         log.info("Configuring jCardSim simulator.");
 
         final Path jarPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
-                .resolve(entryPoint.getPackage().getSimpleName() + ".jar");
+                        .resolve(entryPoint.getPackage().getSimpleName() + ".jar");
+        JCProfilerUtil.checkFile(jarPath, Stage.compilation);
         final CardManager cardManager = new CardManager(true, APPLET_AID);
 
         try {
