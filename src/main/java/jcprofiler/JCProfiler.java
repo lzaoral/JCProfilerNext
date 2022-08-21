@@ -72,8 +72,10 @@ public class JCProfiler {
         if (args.stopAfter == Stage.instrumentation)
             return;
 
-        // get entry point class
-        final CtClass<?> entryPoint = JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
+        // get entry point class (needed from compilation to profiling)
+        final CtClass<?> entryPoint = args.startFrom != Stage.visualisation
+                                            ? JCProfilerUtil.getEntryPoint(spoon, args.entryPoint)
+                                            : null;
 
         // Compilation
         if (args.startFrom.ordinal() <= Stage.compilation.ordinal()) {
