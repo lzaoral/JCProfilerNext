@@ -163,6 +163,13 @@
                     "method": "test_EC_GEN",
                     "inst": "0x40",
                     "input": "00"
+                },
+
+                {
+                    "method": "test_EC_MUL",
+                    "inst": "0x43",
+                    "p1": "0x20",
+                    "input": "[8-9A-F][0-9A-F]{63}046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
                 }
             ]
         }
