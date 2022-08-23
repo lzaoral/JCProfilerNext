@@ -232,6 +232,22 @@ public class SimpleClass {
         PM.check(PMC.TRAP_SimpleClass_terminator10_argb_int_arge_2);
     }
 
+    public int terminator11(int a) {
+        PM.check(PMC.TRAP_SimpleClass_terminator11_argb_int_arge_1);
+        switch (a) {
+            case 0:
+                PM.check(PMC.TRAP_SimpleClass_terminator11_argb_int_arge_2);
+                break;
+            case 1:
+                PM.check(PMC.TRAP_SimpleClass_terminator11_argb_int_arge_3);
+                return a;
+            default:
+                PM.check(PMC.TRAP_SimpleClass_terminator11_argb_int_arge_4);
+                return a;
+        }
+        PM.check(PMC.TRAP_SimpleClass_terminator11_argb_int_arge_5);
+    }
+
     public static class Nest {
         int nest(int a) {
             PM.check(PMC.TRAP_SimpleClass_dol_Nest_nest_argb_int_arge_1);

@@ -145,6 +145,17 @@ public class SimpleClass {
         terminator9(a);
     }
 
+    public int terminator11(int a) {
+        switch (a) {
+            case 0:
+                break;
+            case 1:
+                return a;
+            default:
+                return a;
+        }
+    }
+
     public static class Nest {
         int nest(int a) {
             a++;

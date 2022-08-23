@@ -138,9 +138,28 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
     }
 
     /***
-     * A statement is a terminator iff any statement inserted after it will be unreachable, e.g.:
-     *     1. the statement is a jump
-     *     2. the last statement is not an expression and all its held block statements are terminators, e.g.:
+     * Statement is a terminator iff any statement inserted after in the corresponding block will be unreachable, e.g.:
+     *     1. the statement is a break or continue,
+     *     2. the statement is a complete terminator.
+     * <p>
+     * for (int i = 1; i < 100; i++) {
+     *     if (cond) {
+     *         return true;
+     *         PM.check(...) <- this would be unreachable!
+     *     }
+     *     break;
+     *     PM.check(...) <- this would be unreachable!
+     * }
+     * PM.check(...) <- this is still reachable!
+     */
+    private boolean isTerminator(final CtStatement statement) {
+        return statement instanceof CtCFlowBreak || isCompleteTerminator(statement);
+    }
+
+    /***
+     * Statement is a full terminator iff any statement inserted after it into a given method will be unreachable, e.g.:
+     *     1. the statement is a jump out of the method,
+     *     2. the last statement is not an expression and all its held block statements are full terminators, e.g.:
      * <p>
      * if (cond) {
      *     return true;
@@ -149,32 +168,33 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
      * }
      * PM.check(...) <- this would be unreachable!
      */
-    private boolean isTerminator(final CtStatement statement) {
-        if (statement instanceof CtCFlowBreak || isISOException(statement))
+    private boolean isCompleteTerminator(final CtStatement statement) {
+        if (statement instanceof CtReturn || statement instanceof CtThrow || isISOException(statement))
             return true;
 
         // CtTry is an instance of CtBodyHolder, but we want to process catch and final blocks as well
         if (statement instanceof CtTry) {
             final CtTry t = (CtTry) statement;
-            return isTerminator(t.getBody()) && t.getCatchers().stream().allMatch(c -> isTerminator(c.getBody()))
-                    && (t.getFinalizer() == null || isTerminator(t.getFinalizer()));
+            return isCompleteTerminator(t.getBody()) &&
+                    t.getCatchers().stream().allMatch(c -> isCompleteTerminator(c.getBody())) &&
+                    (t.getFinalizer() == null || isCompleteTerminator(t.getFinalizer()));
         }
 
         if (statement instanceof CtBodyHolder)
-            return isTerminator(((CtBodyHolder) statement).getBody());
+            return isCompleteTerminator(((CtBodyHolder) statement).getBody());
 
         if (statement instanceof CtStatementList) {
             final CtStatementList stl = (CtStatementList) statement;
-            return !stl.getStatements().isEmpty() && isTerminator(stl.getLastStatement());
+            return !stl.getStatements().isEmpty() && isCompleteTerminator(stl.getLastStatement());
         }
 
         if (statement instanceof CtIf) {
             final CtIf i = (CtIf) statement;
-            return isTerminator(i.getThenStatement()) && isTerminator(i.getElseStatement());
+            return isCompleteTerminator(i.getThenStatement()) && isCompleteTerminator(i.getElseStatement());
         }
 
         if (statement instanceof CtSwitch)
-            return ((CtSwitch<?>) statement).getCases().stream().allMatch(this::isTerminator);
+            return ((CtSwitch<?>) statement).getCases().stream().allMatch(this::isCompleteTerminator);
 
         return false;
     }
