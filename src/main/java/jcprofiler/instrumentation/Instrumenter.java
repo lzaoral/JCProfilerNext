@@ -16,6 +16,7 @@ import spoon.reflect.declaration.CtPackage;
 import spoon.support.compiler.VirtualFile;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -33,9 +34,12 @@ public class Instrumenter {
 
     // TODO: logging
     public void process() {
-        Launcher spoon = new Launcher();
+        // always recreate the output directory
+        final Path outputDir = JCProfilerUtil.getInstrOutputDirectory(args.workDir);
+        JCProfilerUtil.recreateDirectory(outputDir);
 
         // prepare and check the model
+        final Launcher spoon = new Launcher();
         addMissingClasses(spoon);
         buildModel(spoon);
         checkArguments(spoon);
@@ -49,7 +53,7 @@ public class Instrumenter {
 
         // save the result
         spoon.getEnvironment().setOutputType(OutputType.CLASSES);
-        spoon.setSourceOutputDirectory(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toFile());
+        spoon.setSourceOutputDirectory(outputDir.toFile());
 
         log.info("Saving instrumented classes.");
         spoon.prettyprint();
