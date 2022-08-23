@@ -90,10 +90,33 @@ public class SimpleClass {
         PM.check(PMC.TRAP_SimpleClass_switchStatement_argb_int_arge_8);
     }
 
-    public int emptyBlock(int a) {
+    public void emptyBlock(int a) {
+        {
+        }
         PM.check(PMC.TRAP_SimpleClass_emptyBlock_argb_int_arge_1);
         a = 1;
         PM.check(PMC.TRAP_SimpleClass_emptyBlock_argb_int_arge_2);
+    }
+
+    public void multipleEmptyBlocks(int a) {
+        {
+            {
+                {
+                }
+            }
+        }
+        PM.check(PMC.TRAP_SimpleClass_multipleEmptyBlocks_argb_int_arge_1);
+        a = 1;
+        PM.check(PMC.TRAP_SimpleClass_multipleEmptyBlocks_argb_int_arge_2);
+    }
+
+    public int emptyBlockWithCommentary(int a) {
+        {
+            // commentary
+        }
+        PM.check(PMC.TRAP_SimpleClass_emptyBlockWithCommentary_argb_int_arge_1);
+        a = 1;
+        PM.check(PMC.TRAP_SimpleClass_emptyBlockWithCommentary_argb_int_arge_2);
     }
 
     public void tryStatement(int a) {

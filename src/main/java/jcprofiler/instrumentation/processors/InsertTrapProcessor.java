@@ -63,21 +63,12 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
     }
 
     private void processBody(final CtStatementList block) {
-        // remove empty stand-alone code blocks to get a consistent behaviour in tests,
-        // SPOON does it automatically only sometimes
-        final List<CtStatement> forDeletion = block.getStatements().stream()
-                .filter(x -> x instanceof CtBlock && ((CtBlock<?>) x).getStatements().isEmpty())
-                .collect(Collectors.toList());
-        forDeletion.forEach(CtStatement::delete);
-
         // copy is needed as we modify the collection
         final List<CtStatement> statements = block.getStatements().stream()
                 // skip comments (SPOON classifies comments as statements)
                 // e.g. JCMathLib/JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java:198
-                .filter(x -> !(x instanceof CtComment))
+                .filter(x -> !(x instanceof CtComment) && !isEmptyBlock(x))
                 .collect(Collectors.toList());
-
-        forDeletion.forEach(CtElement::delete);
 
         for (final CtStatement statement : statements) {
             insertTrapCheck(statement, Insert.BEFORE);
@@ -110,7 +101,6 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
             }
         }
 
-        // TODO: insert trap in an empty block?
         if (!statements.isEmpty()) {
             final CtStatement last = statements.get(statements.size() - 1);
             if (isTerminator(last))
@@ -118,6 +108,14 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
             insertTrapCheck(last, Insert.AFTER);
         }
+    }
+
+    private boolean isEmptyBlock(final CtStatement statement) {
+        if (!(statement instanceof CtBlock))
+            return false;
+
+        final List<CtStatement> blockContents = ((CtBlock<?>) statement).getStatements();
+        return blockContents.isEmpty() || blockContents.stream().allMatch(s -> isEmptyBlock(s) || s instanceof CtComment);
     }
 
     private boolean isISOException(CtStatement statement) {

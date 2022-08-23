@@ -52,8 +52,25 @@ public class SimpleClass {
         }
     }
 
-    public int emptyBlock(int a) {
+    public void emptyBlock(int a) {
         {
+        }
+        a = 1;
+    }
+
+    public void multipleEmptyBlocks(int a) {
+        {
+            {
+                {
+                }
+            }
+        }
+        a = 1;
+    }
+
+    public int emptyBlockWithCommentary(int a) {
+        {
+            // commentary
         }
         a = 1;
     }
