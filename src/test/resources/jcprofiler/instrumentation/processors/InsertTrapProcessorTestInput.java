@@ -2,28 +2,44 @@ import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
 
 public class SimpleClass {
-    public int foo(int a) {
+    public void assignment(int a) {
         a = 1;
-        // commentary
+    }
 
+    public int commentary(int a) {
+        // commentary
+        a = 1;
+    }
+
+    public void ifElseStatement(int a) {
         if (a % 2 == 0)
             a++;
         else
             a--;
+    }
 
+    public void ifStatement(int a) {
         if (a % 2 == 0)
             a++;
+    }
 
+    public void whileStatement(int a) {
         while (a > 0)
             a++;
+    }
 
+    public void forStatement(int a) {
         for (int i = 0; i != 1; i++)
             a--;
+    }
 
+    public void doWhileStatement(int a) {
         do
             a--;
         while (a > 0);
+    }
 
+    public int switchStatement(int a) {
         switch (a) {
             case 1:
                 a--;
@@ -34,10 +50,15 @@ public class SimpleClass {
                 a = 0;
                 return a;
         }
+    }
 
+    public int emptyBlock(int a) {
         {
         }
+        a = 1;
+    }
 
+    public void tryStatement(int a) {
         try {
             a++;
         } catch (RuntimeException e) {
@@ -47,43 +68,63 @@ public class SimpleClass {
         } finally {
             a = 1000;
         }
+    }
 
+    public void foreachStatement() {
         int[] arr = new int[]{1, 2, 3};
         for (int b : arr) {
             b++;
         }
+    }
 
-        for (int i = 0; i != 1; i++) {
-            i++;
+    public void forBreak() {
+        for (int i = 0; i != 1; i++)
             break;
-        }
+    }
 
+    public void forContinue() {
         for (int i = 0; i != 1; i++)
             continue;
+    }
 
+    public void forNoBody() {
         for (int i = 0; i != 1; i++);
+    }
 
+    public void forEmptyBody() {
         for (int i = 0; i != 1; i++) {}
+    }
 
+    public void ifNoBody(int a) {
         if (a != 1);
+    }
 
+    public void ifEmptyBody(int a) {
         if (a != 1) {}
+    }
 
+    public void whileNoBody(int a) {
         while (a != 1);
+    }
 
+    public void whileEmptyBody(int a) {
         while (a != 1) {}
+    }
 
+    public void ifElseNoBody(int a) {
         if (a != 1) {}
         else;
+    }
 
+    public void ifElseEmptyBody(int a) {
         if (a != 1) {}
         else {}
+    }
 
+    public void nonEmptyBlock(int a) {
         {
             a++;
         }
-
-        return a;
     }
 
     public int terminator1(int a) {
