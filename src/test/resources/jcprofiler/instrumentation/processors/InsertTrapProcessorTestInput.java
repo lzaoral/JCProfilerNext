@@ -150,6 +150,20 @@ public class SimpleClass {
         }
     }
 
+    public void empty() {}
+
+    public void emptyWithEmptyBlocks() {
+        {
+            {
+                {
+                }
+                {
+                    // commentary
+                }
+            }
+        }
+    }
+
     public int terminator1(int a) {
         if (a == 0)
             return a;

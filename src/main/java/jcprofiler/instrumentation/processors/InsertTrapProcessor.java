@@ -59,7 +59,13 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
                                 method.getDeclaringType().getQualifiedName(),
                                 method.getSignature())));
 
-        processBody(method.getBody());
+        final CtBlock<?> methodBody = method.getBody();
+        if (isEmptyBlock(methodBody)) {
+            insertTrapCheck(methodBody);
+            return;
+        }
+
+        processBody(methodBody);
     }
 
     private void processBody(final CtStatementList block) {
@@ -197,9 +203,9 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         return false;
     }
 
-    private void insertTrapCheck(final CtStatement statement, Insert where) {
+    private CtInvocation<?> createPmCall(final CtElement element, final Insert where) {
         if (args.maxTraps * methodCount + trapCount >= 0xffff) {
-            final CtMethod<?> parentMethod = statement.getParent(CtMethod.class::isInstance);
+            final CtMethod<?> parentMethod = element.getParent(CtMethod.class::isInstance);
             throw new RuntimeException(
                     String.format("Method %s.%s needs more than %d traps",
                             parentMethod.getDeclaringType().getQualifiedName(),
@@ -223,7 +229,18 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
                 trapFieldRead);
 
         log.debug("Adding {} trap {} {}.",
-                trapField.getSimpleName(), where.toString().toLowerCase(), statement.getPosition());
+                trapField.getSimpleName(), where.toString().toLowerCase(), element.getPosition());
+
+        return pmCall;
+    }
+
+    private void insertTrapCheck(final CtStatementList block) {
+        final CtInvocation<?> pmCall = createPmCall(block, Insert.INTO);
+        block.addStatement(pmCall);
+    }
+
+    private void insertTrapCheck(final CtStatement statement, final Insert where) {
+        final CtInvocation<?> pmCall = createPmCall(statement, where);
 
         if (where == Insert.AFTER)
             statement.insertAfter(pmCall);
@@ -244,6 +261,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     private enum Insert {
         AFTER,
-        BEFORE
+        BEFORE,
+        INTO
     }
 }

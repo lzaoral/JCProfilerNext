@@ -241,6 +241,23 @@ public class SimpleClass {
         PM.check(PMC.TRAP_SimpleClass_nonEmptyBlock_argb_int_arge_4);
     }
 
+    public void empty() {
+        PM.check(PMC.TRAP_SimpleClass_empty_argb_arge_1);
+    }
+
+    public void emptyWithEmptyBlocks() {
+        {
+            {
+                {
+                }
+                {
+                    // commentary
+                }
+            }
+        }
+        PM.check(PMC.TRAP_SimpleClass_emptyWithEmptyBlocks_argb_arge_1);
+    }
+
     public int terminator1(int a) {
         PM.check(PMC.TRAP_SimpleClass_terminator1_argb_int_arge_1);
         if (a == 0) {
