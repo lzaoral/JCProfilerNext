@@ -119,45 +119,45 @@ public class SimpleClass {
     }
 
     public void foreachStatement() {
-        PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb__arge_1);
+        PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb_arge_1);
         int[] arr = new int[]{1, 2, 3};
-        PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb__arge_2);
+        PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb_arge_2);
         for (int b : arr) {
-            PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb__arge_3);
+            PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb_arge_3);
             b++;
-            PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb__arge_4);
+            PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb_arge_4);
         }
-        PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb__arge_5);
+        PM.check(PMC.TRAP_SimpleClass_foreachStatement_argb_arge_5);
     }
 
     public void forBreak() {
-        PM.check(PMC.TRAP_SimpleClass_forBreak_argb__arge_1);
+        PM.check(PMC.TRAP_SimpleClass_forBreak_argb_arge_1);
         for (int i = 0; i != 1; i++) {
-            PM.check(PMC.TRAP_SimpleClass_forBreak_argb__arge_2);
+            PM.check(PMC.TRAP_SimpleClass_forBreak_argb_arge_2);
             break;
         }
-        PM.check(PMC.TRAP_SimpleClass_forBreak_argb__arge_3);
+        PM.check(PMC.TRAP_SimpleClass_forBreak_argb_arge_3);
     }
 
     public void forContinue() {
-        PM.check(PMC.TRAP_SimpleClass_forContinue_argb__arge_1);
+        PM.check(PMC.TRAP_SimpleClass_forContinue_argb_arge_1);
         for (int i = 0; i != 1; i++) {
-            PM.check(PMC.TRAP_SimpleClass_forContinue_argb__arge_2);
+            PM.check(PMC.TRAP_SimpleClass_forContinue_argb_arge_2);
             continue;
         }
-        PM.check(PMC.TRAP_SimpleClass_forContinue_argb__arge_3);
+        PM.check(PMC.TRAP_SimpleClass_forContinue_argb_arge_3);
     }
 
     public void forNoBody() {
-        PM.check(PMC.TRAP_SimpleClass_forNoBody_argb__arge_1);
+        PM.check(PMC.TRAP_SimpleClass_forNoBody_argb_arge_1);
         for (int i = 0; i != 1; i++);
-        PM.check(PMC.TRAP_SimpleClass_forNoBody_argb__arge_2);
+        PM.check(PMC.TRAP_SimpleClass_forNoBody_argb_arge_2);
     }
 
     public void forEmptyBody() {
-        PM.check(PMC.TRAP_SimpleClass_forEmptyBody_argb__arge_1);
+        PM.check(PMC.TRAP_SimpleClass_forEmptyBody_argb_arge_1);
         for (int i = 0; i != 1; i++) {}
-        PM.check(PMC.TRAP_SimpleClass_forEmptyBody_argb__arge_2);
+        PM.check(PMC.TRAP_SimpleClass_forEmptyBody_argb_arge_2);
     }
 
     public void ifNoBody(int a) {

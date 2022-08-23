@@ -137,6 +137,7 @@ public class JCProfilerUtil {
         return prefix.replace('.', '_') // used in qualified types
                 .replace("$", "_dol_") // nested class
                 .replace(",", "__") // args delimiter
+                .replace("()", "_argb_arge")
                 .replace("(", "_argb_")
                 .replace(")", "_arge")
                 .replace("<", "_genb_")
