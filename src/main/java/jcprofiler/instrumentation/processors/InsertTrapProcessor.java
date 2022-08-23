@@ -80,7 +80,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         forDeletion.forEach(CtElement::delete);
 
         for (final CtStatement statement : statements) {
-            insertTrapCheck(statement, INSERT.BEFORE);
+            insertTrapCheck(statement, Insert.BEFORE);
 
             // skip insertion after ISOException calls as all such statements are unreachable
             if (isISOException(statement))
@@ -116,7 +116,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
             if (isTerminator(last))
                 return;
 
-            insertTrapCheck(last, INSERT.AFTER);
+            insertTrapCheck(last, Insert.AFTER);
         }
     }
 
@@ -199,7 +199,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         return false;
     }
 
-    private void insertTrapCheck(final CtStatement statement, INSERT where) {
+    private void insertTrapCheck(final CtStatement statement, Insert where) {
         if (args.maxTraps * methodCount + trapCount >= 0xffff) {
             final CtMethod<?> parentMethod = statement.getParent(CtMethod.class::isInstance);
             throw new RuntimeException(
@@ -227,7 +227,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         log.debug("Adding {} trap {} {}.",
                 trapField.getSimpleName(), where.toString().toLowerCase(), statement.getPosition());
 
-        if (where == INSERT.AFTER)
+        if (where == Insert.AFTER)
             statement.insertAfter(pmCall);
         else
             statement.insertBefore(pmCall);
@@ -244,7 +244,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         return trapField;
     }
 
-    private enum INSERT {
+    private enum Insert {
         AFTER,
         BEFORE
     }
