@@ -123,7 +123,7 @@ public class JCProfilerUtil {
         final CtMethod<?> method = methods.get(0);
         if (method.getBody() == null)
             throw new RuntimeException(String.format(
-                    "Found the %s method but it has empty body! Found in class %s.",
+                    "Found the %s method but it has no body! Found in class %s.",
                     methodName, containingClassNames.get(0)));
 
         return method;

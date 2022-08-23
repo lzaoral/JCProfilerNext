@@ -60,7 +60,7 @@ class JCProfilerUtilTest {
         Exception e = assertThrows(RuntimeException.class,
                 () -> JCProfilerUtil.getProfiledMethod(spoon, "foo"));
 
-        String expected = "Found the foo method but it has empty body! Found in class test.Test.";
+        String expected = "Found the foo method but it has no body! Found in class test.Test.";
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
