@@ -190,11 +190,22 @@ public class SimpleClass {
         PM.check(PMC.TRAP_SimpleClass_ifElseNoBody_argb_int_arge_2);
     }
 
-    public void ifElseEmptyBody(int a) {
-        PM.check(PMC.TRAP_SimpleClass_ifElseEmptyBody_argb_int_arge_1);
+    public void ifElseEmptyBody1(int a) {
+        PM.check(PMC.TRAP_SimpleClass_ifElseEmptyBody1_argb_int_arge_1);
         if (a != 1) {}
         else {}
-        PM.check(PMC.TRAP_SimpleClass_ifElseEmptyBody_argb_int_arge_2);
+        PM.check(PMC.TRAP_SimpleClass_ifElseEmptyBody1_argb_int_arge_2);
+    }
+
+    public void ifElseEmptyBody2(int a) {
+        PM.check(PMC.TRAP_SimpleClass_ifElseEmptyBody2_argb_int_arge_1);
+        if (a != 1) {
+            PM.check(PMC.TRAP_SimpleClass_ifElseEmptyBody2_argb_int_arge_2);
+            a++;
+            PM.check(PMC.TRAP_SimpleClass_ifElseEmptyBody2_argb_int_arge_3);
+        }
+        else {}
+        PM.check(PMC.TRAP_SimpleClass_ifElseEmptyBody2_argb_int_arge_4);
     }
 
     public void nonEmptyBlock(int a) {

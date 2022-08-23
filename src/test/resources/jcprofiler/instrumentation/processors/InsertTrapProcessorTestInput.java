@@ -116,9 +116,15 @@ public class SimpleClass {
         else;
     }
 
-    public void ifElseEmptyBody(int a) {
+    public void ifElseEmptyBody1(int a) {
         if (a != 1) {}
         else {}
+    }
+
+    public void ifElseEmptyBody2(int a) {
+        if (a != 1) {
+            a++
+        } else {}
     }
 
     public void nonEmptyBlock(int a) {
