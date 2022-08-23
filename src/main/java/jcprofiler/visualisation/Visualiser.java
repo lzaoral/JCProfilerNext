@@ -110,8 +110,12 @@ public class Visualiser {
 
     // TODO: aggregate results when there's too many of them
     public void insertMeasurementsToSources() {
+        // always recreate the output directory
+        final Path outputDir = JCProfilerUtil.getPerfOutputDirectory(args.workDir);
+        JCProfilerUtil.recreateDirectory(outputDir);
+
         log.info("Inserting measurements into sources.");
-        spoon.setSourceOutputDirectory(JCProfilerUtil.getPerfOutputDirectory(args.workDir).toFile());
+        spoon.setSourceOutputDirectory(outputDir.toFile());
         spoon.addProcessor(new InsertMeasurementsProcessor(args, atr, measurements));
         spoon.process();
         spoon.prettyprint();
