@@ -3,7 +3,6 @@ package jcprofiler.compilation;
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -18,8 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import spoon.reflect.declaration.CtClass;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Compiler {
@@ -30,19 +27,9 @@ public class Compiler {
 
     // Inspired by https://stackoverflow.com/questions/6440295/is-it-possible-to-call-ant-or-nsis-scripts-from-java-code/6440342#6440342
     public static void compile(final Args args, final CtClass<?> entryPoint) {
-        // create the output directory if it does not exist
+        // always recreate the output directory
         final Path appletDir = JCProfilerUtil.getAppletOutputDirectory(args.workDir);
-        try {
-            if (Files.exists(appletDir)) {
-                FileUtils.deleteDirectory(appletDir.toFile());
-                log.debug("Deleted existing {}.", appletDir);
-            }
-
-            Files.createDirectories(appletDir);
-            log.debug("Created {}.", appletDir);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        JCProfilerUtil.recreateDirectory(appletDir);
 
         log.debug("Generating ANT JavaCard project");
         final Project p = new Project();

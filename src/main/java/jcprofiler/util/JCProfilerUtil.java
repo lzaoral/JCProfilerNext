@@ -2,6 +2,8 @@ package jcprofiler.util;
 
 import javacard.framework.ISO7816;
 
+import org.apache.commons.io.FileUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,6 +213,20 @@ public class JCProfilerUtil {
         }
 
         log.info("Moved contents of {} to {}", from, to);
+    }
+
+    public static void recreateDirectory(Path appletDir) {
+        try {
+            if (Files.exists(appletDir)) {
+                FileUtils.deleteDirectory(appletDir.toFile());
+                log.debug("Deleted existing {}.", appletDir);
+            }
+
+            Files.createDirectories(appletDir);
+            log.debug("Created new {}.", appletDir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String getTimeUnitSymbol(final TimeUnit unit) {
