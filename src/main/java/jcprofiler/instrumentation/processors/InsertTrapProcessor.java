@@ -30,9 +30,8 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     @Override
     public boolean isToBeProcessed(final CtMethod<?> method) {
-        // TODO: comment
-        return method.getBody() != null && !method.getDeclaringType().getSimpleName().matches("PMC?")
-                && method.getSimpleName().equals(args.method);
+        final String actualMethodSignature = method.getDeclaringType().getQualifiedName() + "." + method.getSignature();
+        return actualMethodSignature.equals(args.method);
     }
 
     @Override

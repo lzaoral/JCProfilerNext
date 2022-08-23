@@ -12,6 +12,7 @@ import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtPackage;
 import spoon.support.compiler.VirtualFile;
 
@@ -76,8 +77,9 @@ public class Instrumenter {
         // validate args.entryPoint
         JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
-        // validate args.method
-        JCProfilerUtil.getProfiledMethod(spoon, args.method);
+        // validate and select args.method
+        final CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, args.method);
+        args.method = method.getDeclaringType().getQualifiedName() + "." + method.getSignature();
     }
 
     public static void setupSpoon(final SpoonAPI spoon, final Args args) {
