@@ -15,7 +15,7 @@ public class FilePathConverter extends BaseConverter<Path> {
     @Override
     public Path convert(String value) {
         final Path input = Paths.get(value);
-        if (Files.isDirectory(input))
+        if (!Files.exists(input) || Files.isDirectory(input))
             throw new ParameterException(getErrorString(value, "a path to an existing regular file"));
         return input.toAbsolutePath();
     }
