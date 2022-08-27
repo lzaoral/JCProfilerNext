@@ -220,6 +220,7 @@
 }
 
 .trap_select {
+    background-color: rgba(0, 255, 255, 25%);
     font-style: italic;
 }
 
