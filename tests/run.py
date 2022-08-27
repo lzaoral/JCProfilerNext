@@ -89,7 +89,7 @@ def execute_test(test: Dict[str, Any]):
         if 'p2' in subtest:
             sub_cmd += f' --p2 "{subtest["p2"]}"'
 
-        print('Executing subtest', subtest['method'])
+        print('Executing subtest:', subtest['name'])
 
         for stage in STAGES:
             stage_cmd = sub_cmd
