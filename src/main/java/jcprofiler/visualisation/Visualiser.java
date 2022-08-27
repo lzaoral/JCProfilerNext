@@ -133,9 +133,13 @@ public class Visualiser {
                 "resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         velocityEngine.init();
 
+        // escape for HTML and strip empty lines
+        final List<String> sourceLines = Arrays.stream(StringEscapeUtils.escapeHtml4(method.prettyprint())
+                .split(System.lineSeparator())).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+
         final VelocityContext context = new VelocityContext();
         context.put("cardATR", atr);
-        context.put("code", StringEscapeUtils.escapeHtml4(method.prettyprint()).split(System.lineSeparator()));
+        context.put("code", sourceLines);
         context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
         context.put("methodName", profiledMethodSignature);
         context.put("measurements", measurements);
