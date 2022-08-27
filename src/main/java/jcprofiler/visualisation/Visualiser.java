@@ -140,7 +140,6 @@ public class Visualiser {
         context.put("methodName", profiledMethodSignature);
         context.put("measurements", measurements);
         context.put("filteredMeasurements", filteredMeasurements);
-        context.put("null", null);
         context.put("timeUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
 
         final Path output = args.workDir.resolve("measurements.html");
