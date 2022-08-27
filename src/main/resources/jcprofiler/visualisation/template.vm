@@ -78,7 +78,7 @@
     width: 50%;
 }
 
-#codeWithTraps {
+#codeWithTraps, #graphHelp {
     display: none;
 }
 
@@ -158,7 +158,7 @@ $line
         </div>
         <div class="graph">
             <div class="graph-sticky">
-                <div class="center">
+                <div id="graphHelp" class="center">
                     <p>Click on a bin to get a list of corresponding inputs.</p>
                 </div>
                 <div id="plotly"></div>
@@ -182,6 +182,9 @@ $line
         }
 
         function redrawGraph(trapName, vals, filteredVals) {
+            if (selectedTraps === null)
+                document.getElementById('graphHelp').style.display = 'initial';
+
             selectedTraps?.forEach(t => t.classList.remove('trap_select'));
             selectedTraps = document.querySelectorAll('.' + trapName + ' .trap_contents');
             selectedTraps.forEach(t => t.classList.add('trap_select'));
