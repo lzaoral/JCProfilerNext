@@ -92,11 +92,11 @@ public class Profiler {
             // TODO: These lambdas could be replaced with regular classes if we are going to add more of them.
             InputGenerator inputGen;
             if (args.dataRegex != null) {
-                log.info("Generating inputs from {}.", args.dataRegex);
+                log.info("Generating inputs from regular expression {}.", args.dataRegex);
                 final RgxGen rgxGen = new RgxGen(args.dataRegex);
                 inputGen = () -> rgxGen.generate(rdn);
             } else {
-                log.info("Reading inputs from {}.", args.dataFile);
+                log.info("Choosing inputs from text file {}.", args.dataFile);
                 final List<String> inputs = Files.readAllLines(args.dataFile);
                 inputGen = () -> inputs.get(rdn.nextInt(inputs.size()));
             }
