@@ -15,10 +15,124 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"></script>
+    <script>hljs.highlightAll()</script>
     <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
-    <script>
-        hljs.highlightAll()
+    <style>
+.contents {
+    display: flex;
+    justify-content: space-between;
+}
 
+.trap:hover {
+    cursor: pointer;
+    font-style: italic;
+}
+
+.trap_select {
+    background-color: rgba(0, 255, 255, 25%);
+    font-style: italic;
+}
+
+.trap_err {
+    background-color: rgba(255, 0, 0, 25%);
+}
+
+.trap_warn {
+    background-color: rgba(255, 255, 0, 50%);
+}
+
+.notes  {
+    align-items: center;
+    background-color: rgba(248, 248, 248, 0.97);
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5em;
+}
+
+.note {
+    align-items: center;
+    display: flex;
+    justify-content: left;
+}
+
+.square {
+    display: inline-block;
+    height: 20px;
+    margin-right: 10px;
+    width: 20px;
+}
+
+.graph {
+    align-content: center;
+    width: 46%;
+}
+
+.graph-sticky {
+    top: 0;
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+.code {
+    float: left;
+    width: 50%;
+}
+
+.center {
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <h1>$methodName</h1>
+    <div class="contents">
+        <div class="code">
+            <p><b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a></p>
+            <p><b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a></p>
+            <pre><code class="language-java">
+#foreach( $line in $code )
+    #if( $line.trim().startsWith("PM.check(PMC.") )
+        #set( $trap = $line.trim().replace("PM.check(PMC.", "").replace(");", "") )
+        #set( $vals = $measurements[$trap] )
+        #set( $filteredVals = $filteredMeasurements[$trap] )
+        #set( $trap_warn = $vals.contains($null) )
+        #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
+        #set( $spaceCount = $line.length() - $line.trim().length() )
+<div class="trap #if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end"
+     onclick="redrawGraph( '$trap', $vals, $filteredVals )">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
+</div>#else
+$line
+#end#end        </code>
+            </pre>
+            <div>
+                <h3 class="center">Colour explanation</h3>
+                <div class="notes">
+                    <div class="note">
+                        <div class="square trap_select"></div>
+                        Currently selected trap
+                    </div>
+                    <div class="note">
+                        <div class="square trap_warn"></div>
+                        Trap was never reached
+                    </div>
+                    <div class="note">
+                        <div class="square trap_err"></div>
+                        Trap was reached only sometimes
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="graph">
+            <div class="graph-sticky">
+                <div class="center">
+                    <h3 id="graphName">Select a line to view its histogram.</h3>
+                    <p>Click on a bin to get a list of corresponding inputs.</p>
+                </div>
+                <div id="plotly"></div>
+            </div>
+        </div>
+    </div>
+    <script type="application/javascript">
         const inputs = $inputs;
         let selectedTrap = null;
 
@@ -208,120 +322,5 @@
             });
         }
     </script>
-    <style>
-.contents {
-    display: flex;
-    justify-content: space-between;
-}
-
-.trap:hover {
-    cursor: pointer;
-    font-style: italic;
-}
-
-.trap_select {
-    background-color: rgba(0, 255, 255, 25%);
-    font-style: italic;
-}
-
-.trap_err {
-    background-color: rgba(255, 0, 0, 25%);
-}
-
-.trap_warn {
-    background-color: rgba(255, 255, 0, 50%);
-}
-
-.notes  {
-    align-items: center;
-    background-color: rgba(248, 248, 248, 0.97);
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5em;
-}
-
-.note {
-    align-items: center;
-    display: flex;
-    justify-content: left;
-}
-
-.square {
-    display: inline-block;
-    height: 20px;
-    margin-right: 10px;
-    width: 20px;
-}
-
-.graph {
-    align-content: center;
-    width: 46%;
-}
-
-.graph-sticky {
-    top: 0;
-    position: -webkit-sticky;
-    position: sticky;
-}
-
-.code {
-    float: left;
-    width: 50%;
-}
-
-.center {
-    text-align: center;
-}
-    </style>
-</head>
-<body>
-    <h1>$methodName</h1>
-    <div class="contents">
-        <div class="code">
-            <p><b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a></p>
-            <p><b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a></p>
-            <pre><code class="language-java">
-#foreach( $line in $code )
-    #if( $line.trim().startsWith("PM.check(PMC.") )
-        #set( $trap = $line.trim().replace("PM.check(PMC.", "").replace(");", "") )
-        #set( $vals = $measurements[$trap] )
-        #set( $filteredVals = $filteredMeasurements[$trap] )
-        #set( $trap_warn = $vals.contains($null) )
-        #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
-        #set( $spaceCount = $line.length() - $line.trim().length() )
-<div class="trap #if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end"
-     onclick="redrawGraph( '$trap', $vals, $filteredVals )">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
-</div>#else
-$line
-#end#end        </code>
-            </pre>
-            <div>
-                <h3 class="center">Colour explanation</h3>
-                <div class="notes">
-                    <div class="note">
-                        <div class="square trap_select"></div>
-                        Currently selected trap
-                    </div>
-                    <div class="note">
-                        <div class="square trap_warn"></div>
-                        Trap was never reached
-                    </div>
-                    <div class="note">
-                        <div class="square trap_err"></div>
-                        Trap was reached only sometimes
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="graph">
-            <div class="graph-sticky">
-                <div class="center">
-                    <h3 id="graphName">Select a line to view its histogram.</h3>
-                    <p>Click on a bin to get a list of corresponding inputs.</p>
-                </div>
-                <div id="plotly"></div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
