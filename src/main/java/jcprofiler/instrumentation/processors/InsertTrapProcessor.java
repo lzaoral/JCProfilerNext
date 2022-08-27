@@ -75,9 +75,11 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
                 .filter(x -> !(x instanceof CtComment) && !isEmptyBlock(x))
                 .collect(Collectors.toList());
 
-        for (final CtStatement statement : statements) {
-            insertTrapCheck(statement, Insert.BEFORE);
+        if (!statements.isEmpty())
+            // always insert first trap at the beginning of the ORIGINAL block
+            insertTrapCheck(block.getStatement(0), Insert.BEFORE);
 
+        for (final CtStatement statement : statements) {
             // skip insertion after ISOException calls as all such statements are unreachable
             if (isISOException(statement))
                 return;
@@ -104,14 +106,12 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
             } else if (statement instanceof CtSwitch) {
                 ((CtSwitch<?>) statement).getCases().forEach(this::processBody);
             }
-        }
 
-        if (!statements.isEmpty()) {
             final CtStatement last = statements.get(statements.size() - 1);
-            if (isTerminator(last))
+            if (statement == last && isTerminator(statement))
                 return;
 
-            insertTrapCheck(last, Insert.AFTER);
+            insertTrapCheck(statement, Insert.AFTER);
         }
     }
 
@@ -235,7 +235,10 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     private void insertTrapCheck(final CtStatementList block) {
         final CtInvocation<?> pmCall = createPmCall(block, Insert.INTO);
-        block.addStatement(pmCall);
+        if (block.getStatements().isEmpty())
+            block.addStatement(pmCall);
+        else
+            block.getStatement(0).insertBefore(pmCall);
     }
 
     private void insertTrapCheck(final CtStatement statement, final Insert where) {

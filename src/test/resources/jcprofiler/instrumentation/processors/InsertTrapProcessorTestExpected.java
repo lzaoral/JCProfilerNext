@@ -8,11 +8,112 @@ public class SimpleClass {
         PM.check(PMC.TRAP_SimpleClass_assignment_argb_int_arge_2);
     }
 
-    public int commentary(int a) {
-        PM.check(PMC.TRAP_SimpleClass_commentary_argb_int_arge_1);
-        // commentary
+    public void lineCommentary(int a) {
+        PM.check(PMC.TRAP_SimpleClass_lineCommentary_argb_int_arge_1);
+        // line commentary
         a = 1;
-        PM.check(PMC.TRAP_SimpleClass_commentary_argb_int_arge_2);
+        PM.check(PMC.TRAP_SimpleClass_lineCommentary_argb_int_arge_2);
+    }
+
+    public void lineCommentaryOnly() {
+        PM.check(PMC.TRAP_SimpleClass_lineCommentaryOnly_argb_arge_1);
+        // line commentary only
+    }
+
+    public void lineCommentaryTwice(int a) {
+        PM.check(PMC.TRAP_SimpleClass_lineCommentaryTwice_argb_int_arge_1);
+        // line commentary 1
+        // line commentary 2
+        a = 1;
+        PM.check(PMC.TRAP_SimpleClass_lineCommentaryTwice_argb_int_arge_2);
+    }
+
+    public void lineCommentaryOnlyTwice() {
+        PM.check(PMC.TRAP_SimpleClass_lineCommentaryOnlyTwice_argb_arge_1);
+        // line commentary 1
+        // line commentary 2
+    }
+
+    public void blockCommentary(int a) {
+        PM.check(PMC.TRAP_SimpleClass_blockCommentary_argb_int_arge_1);
+        /* block
+           commentary
+         */
+        a = 1;
+        PM.check(PMC.TRAP_SimpleClass_blockCommentary_argb_int_arge_2);
+    }
+
+    public void blockCommentaryOnly() {
+        PM.check(PMC.TRAP_SimpleClass_blockCommentaryOnly_argb_arge_1);
+        /* block
+           commentary
+         */
+    }
+
+    public void blockCommentaryTwice(int a) {
+        PM.check(PMC.TRAP_SimpleClass_blockCommentaryTwice_argb_int_arge_1);
+        /* block
+           commentary 1
+        */
+        /* block
+           commentary 2
+        */
+        a = 1;
+        PM.check(PMC.TRAP_SimpleClass_blockCommentaryTwice_argb_int_arge_2);
+    }
+
+    public void blockCommentaryOnlyTwice() {
+        PM.check(PMC.TRAP_SimpleClass_blockCommentaryOnlyTwice_argb_arge_1);
+        /* block
+           commentary 1
+         */
+        /* block
+           commentary 2
+         */
+    }
+
+    public void javadocCommentary(int a) {
+        PM.check(PMC.TRAP_SimpleClass_javadocCommentary_argb_int_arge_1);
+        /**
+         * javadoc
+         * commentary
+         */
+        a = 1;
+        PM.check(PMC.TRAP_SimpleClass_javadocCommentary_argb_int_arge_2);
+    }
+
+    public void javadocCommentaryOnly() {
+        PM.check(PMC.TRAP_SimpleClass_javadocCommentaryOnly_argb_arge_1);
+        /**
+         * javadoc
+         * commentary
+         */
+    }
+
+    public void javadocCommentaryTwice(int a) {
+        PM.check(PMC.TRAP_SimpleClass_javadocCommentaryTwice_argb_int_arge_1);
+        /**
+         * javadoc
+         * commentary 1
+         */
+        /**
+         * javadoc
+         * commentary 2
+         */
+        a = 1;
+        PM.check(PMC.TRAP_SimpleClass_javadocCommentaryTwice_argb_int_arge_2);
+    }
+
+    public void javadocCommentaryOnlyTwice() {
+        PM.check(PMC.TRAP_SimpleClass_javadocCommentaryOnlyTwice_argb_arge_1);
+        /**
+         * javadoc
+         * commentary 1
+         */
+        /**
+         * javadoc
+         * commentary 2
+         */
     }
 
     public void ifElseStatement(int a) {
@@ -91,30 +192,30 @@ public class SimpleClass {
     }
 
     public void emptyBlock(int a) {
+        PM.check(PMC.TRAP_SimpleClass_emptyBlock_argb_int_arge_1);
         {
         }
-        PM.check(PMC.TRAP_SimpleClass_emptyBlock_argb_int_arge_1);
         a = 1;
         PM.check(PMC.TRAP_SimpleClass_emptyBlock_argb_int_arge_2);
     }
 
     public void multipleEmptyBlocks(int a) {
+        PM.check(PMC.TRAP_SimpleClass_multipleEmptyBlocks_argb_int_arge_1);
         {
             {
                 {
                 }
             }
         }
-        PM.check(PMC.TRAP_SimpleClass_multipleEmptyBlocks_argb_int_arge_1);
         a = 1;
         PM.check(PMC.TRAP_SimpleClass_multipleEmptyBlocks_argb_int_arge_2);
     }
 
     public int emptyBlockWithCommentary(int a) {
+        PM.check(PMC.TRAP_SimpleClass_emptyBlockWithCommentary_argb_int_arge_1);
         {
             // commentary
         }
-        PM.check(PMC.TRAP_SimpleClass_emptyBlockWithCommentary_argb_int_arge_1);
         a = 1;
         PM.check(PMC.TRAP_SimpleClass_emptyBlockWithCommentary_argb_int_arge_2);
     }
@@ -246,6 +347,7 @@ public class SimpleClass {
     }
 
     public void emptyWithEmptyBlocks() {
+        PM.check(PMC.TRAP_SimpleClass_emptyWithEmptyBlocks_argb_arge_1);
         {
             {
                 {
@@ -255,7 +357,6 @@ public class SimpleClass {
                 }
             }
         }
-        PM.check(PMC.TRAP_SimpleClass_emptyWithEmptyBlocks_argb_arge_1);
     }
 
     public int terminator1(int a) {

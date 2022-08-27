@@ -6,9 +6,94 @@ public class SimpleClass {
         a = 1;
     }
 
-    public int commentary(int a) {
-        // commentary
+    public void lineCommentary(int a) {
+        // line commentary
         a = 1;
+    }
+
+    public void lineCommentaryOnly() {
+        // line commentary only
+    }
+
+    public void lineCommentaryTwice(int a) {
+        // line commentary 1
+        // line commentary 2
+        a = 1;
+    }
+
+    public void lineCommentaryOnlyTwice() {
+        // line commentary 1
+        // line commentary 2
+    }
+
+    public void blockCommentary(int a) {
+        /* block
+           commentary
+         */
+        a = 1;
+    }
+
+    public void blockCommentaryOnly() {
+        /* block
+           commentary
+         */
+    }
+
+    public void blockCommentaryTwice(int a) {
+        /* block
+           commentary 1
+        */
+        /* block
+           commentary 2
+        */
+        a = 1;
+    }
+
+    public void blockCommentaryOnlyTwice() {
+        /* block
+           commentary 1
+         */
+        /* block
+           commentary 2
+         */
+    }
+
+    public void javadocCommentary(int a) {
+        /**
+         * javadoc
+         * commentary
+         */
+        a = 1;
+    }
+
+    public void javadocCommentaryOnly() {
+        /**
+         * javadoc
+         * commentary
+         */
+    }
+
+    public void javadocCommentaryTwice(int a) {
+        /**
+         * javadoc
+         * commentary 1
+         */
+        /**
+         * javadoc
+         * commentary 2
+         */
+        a = 1;
+    }
+
+    public void javadocCommentaryOnlyTwice() {
+        /**
+         * javadoc
+         * commentary 1
+         */
+        /**
+         * javadoc
+         * commentary 2
+         */
     }
 
     public void ifElseStatement(int a) {
