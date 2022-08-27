@@ -94,12 +94,10 @@
     #if( $line.trim().startsWith("PM.check(PMC.") )
         #set( $trap = $line.trim().replace("PM.check(PMC.", "").replace(");", "") )
         #set( $vals = $measurements[$trap] )
-        #set( $filteredVals = $filteredMeasurements[$trap] )
         #set( $trap_warn = $vals.contains($null) )
         #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
         #set( $spaceCount = $line.length() - $line.trim().length() )
-<div class="trap #if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end"
-     onclick="redrawGraph( '$trap', $vals, $filteredVals )">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
+<div class="$trap trap#if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
 </div>#else
 $line
 #end#end        </code>
@@ -136,7 +134,7 @@ $line
         const inputs = $inputs;
         let selectedTrap = null;
 
-        function redrawGraph(trapName, vals, filteredVals) {
+        function redrawGraph(trapName, vals, filteredVals, event) {
             selectedTrap?.classList.remove('trap_select');
             selectedTrap = event.currentTarget.querySelector('.trap_contents');
             selectedTrap.classList.add('trap_select');
@@ -321,6 +319,16 @@ $line
                 alert(msg);
             });
         }
+
+    window.addEventListener('load', _ => {
+    #foreach( $trap in $measurements.keySet() )
+        document.querySelector('.$trap').addEventListener('click', ev => {
+            const vals = $measurements[$trap];
+            const filteredVals = $filteredMeasurements[$trap];
+            redrawGraph('$trap', vals, filteredVals, ev);
+        });
+    #end
+    });
     </script>
 </body>
 </html>
