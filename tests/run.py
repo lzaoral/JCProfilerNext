@@ -4,7 +4,7 @@ from pathlib import Path
 from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict
-from shutil import copytree, rmtree
+from shutil import copytree
 
 import json
 import os
@@ -108,9 +108,6 @@ def execute_test(test: Dict[str, Any]):
                 sys.exit(1)
 
         # TODO: check format and contents of generated profiling reports
-
-        rmtree(test_dir)
-        print('Removed temporary directory', test_dir)
 
 
 def main():
