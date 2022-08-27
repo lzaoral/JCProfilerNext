@@ -95,6 +95,7 @@
 </head>
 <body>
     <h1>$methodName</h1>
+    <h3 id="graphName" class="center">Select a line to view its histogram.</h3>
     <div class="contents">
         <div class="code">
             <div class="codeHeader">
@@ -158,7 +159,6 @@ $line
         <div class="graph">
             <div class="graph-sticky">
                 <div class="center">
-                    <h3 id="graphName">Select a line to view its histogram.</h3>
                     <p>Click on a bin to get a list of corresponding inputs.</p>
                 </div>
                 <div id="plotly"></div>
