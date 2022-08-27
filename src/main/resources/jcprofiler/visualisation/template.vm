@@ -209,10 +209,6 @@
         }
     </script>
     <style>
-h3 {
-    text-align: center;
-}
-
 .contents {
     display: flex;
     justify-content: space-between;
@@ -279,8 +275,10 @@ $line
         </div>
         <div class="graph">
             <div class="graph-sticky">
-                <h3 id="graphName">Select TRAP to view its histogram.</h3>
-                <p class="center">Click on a bin to get a list of corresponding inputs.</p>
+                <div class="center">
+                    <h3 id="graphName">Select a line to view its histogram.</h3>
+                    <p>Click on a bin to get a list of corresponding inputs.</p>
+                </div>
                 <div id="plotly"></div>
             </div>
         </div>
