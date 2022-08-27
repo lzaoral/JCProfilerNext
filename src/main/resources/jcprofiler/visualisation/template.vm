@@ -1,12 +1,11 @@
-#* @vtlvariable name="cardATR" type="java.lang.String" *#
-#* @vtlvariable name="code" type="java.lang.String[]" *#
-#* @vtlvariable name="inputs" type="java.util.List<java.lang.String>" *#
-#* @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>" *#
-#* @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>" *#
-#* @vtlvariable name="methodName" type="java.lang.String" *#
-#* @vtlvariable name="null" type="java.lang.Object" *#
-#* @vtlvariable name="timeUnit" type="java.lang.String" *#
-
+## @vtlvariable name="cardATR" type="java.lang.String"
+## @vtlvariable name="code" type="java.lang.String[]"
+## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
+## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
+## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
+## @vtlvariable name="methodName" type="java.lang.String"
+## @vtlvariable name="null" type="java.lang.Object"
+## @vtlvariable name="timeUnit" type="java.lang.String"
 <!DOCTYPE html>
 <html lang="en">
 <head>
