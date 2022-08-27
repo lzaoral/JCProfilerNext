@@ -186,11 +186,32 @@
                 },
 
                 {
+                    "name": "EC Point Add",
+                    "method": "test_EC_ADD",
+                    "inst": "0x42",
+                    "inputFile": "inputs/ECPointPairs.txt"
+                },
+                {
                     "name": "EC Point Scalar Multiplication",
                     "method": "test_EC_MUL",
                     "inst": "0x43",
                     "p1": "0x20",
                     "input": "[8-9A-F][0-9A-F]{63}046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
+                },
+                {
+                    "name": "EC Point Negation",
+                    "method": "test_EC_NEG",
+                    "inst": "0x44",
+                    "p1": "0x41",
+                    "inputFile": "inputs/ECPoints.txt"
+                },
+                {
+                    "name": "EC Point Comparison",
+                    "method": "test_EC_COMPARE",
+                    "inst": "0x46",
+                    "p1": "0x41",
+                    "p2": "0x41",
+                    "inputFile": "inputs/ECPoints.txt"
                 }
             ]
         }
