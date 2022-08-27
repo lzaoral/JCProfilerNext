@@ -24,7 +24,7 @@
 
         function redrawGraph(trapName, vals, filteredVals) {
             selectedTrap?.classList.remove('trap_select');
-            selectedTrap = event.target;
+            selectedTrap = event.currentTarget.querySelector('.trap_contents');
             selectedTrap.classList.add('trap_select');
 
             let graphName = document.getElementById('graphName');
@@ -288,8 +288,9 @@
         #set( $filteredVals = $filteredMeasurements[$trap] )
         #set( $trap_warn = $vals.contains($null) )
         #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
+        #set( $spaceCount = $line.length() - $line.trim().length() )
 <div class="trap #if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end"
-     onclick="redrawGraph( '$trap', $vals, $filteredVals )">$line
+     onclick="redrawGraph( '$trap', $vals, $filteredVals )">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
 </div>#else
 $line
 #end#end        </code>
