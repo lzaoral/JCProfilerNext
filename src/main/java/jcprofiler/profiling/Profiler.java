@@ -8,6 +8,8 @@ import cz.muni.fi.crocs.rcard.client.Util;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
 
+import org.apache.commons.csv.CSVPrinter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +22,11 @@ import spoon.reflect.declaration.CtMethod;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Lukáš Zaoral and Petr Svenda
@@ -200,15 +201,19 @@ public class Profiler {
         final String atr = Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
         final Path csv = args.workDir.resolve("measurements.csv");
 
-        try (PrintWriter writer = new PrintWriter(csv.toFile())) {
-            writer.printf("%s.%s,%s%n", profiledMethod.getDeclaringType().getQualifiedName(),
-                    profiledMethod.getSignature(), atr);
-            writer.println(String.join(",", inputs));
-            measurements.forEach((trap, values) ->
-                    writer.printf("%s,%s%n", trap,
-                            values.stream().map(v -> v != null ? v.toString() : "unreach")
-                                    .collect(Collectors.joining(",")))
-            );
+        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCsvFormat())) {
+            printer.printComment("class.methodSignature,ATR");
+            printer.print(profiledMethod.getDeclaringType().getQualifiedName() + "." + profiledMethod.getSignature());
+            printer.printRecord(atr);
+
+            printer.printComment("input1,input2,input3,...");
+            printer.printRecord(inputs);
+
+            printer.printComment("trapName,measurement1,measurement2,...");
+            for (final Map.Entry<String, List<Long>> e : measurements.entrySet()) {
+                printer.print(e.getKey());
+                printer.printRecord(e.getValue());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

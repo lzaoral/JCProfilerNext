@@ -2,6 +2,8 @@ package jcprofiler.util;
 
 import javacard.framework.ISO7816;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVFormat.Builder;
 import org.apache.commons.io.FileUtils;
 
 import org.slf4j.Logger;
@@ -228,6 +230,11 @@ public class JCProfilerUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // CSV
+    public static CSVFormat getCsvFormat() {
+        return Builder.create(CSVFormat.DEFAULT).setCommentMarker('#').build();
     }
 
     public static String getTimeUnitSymbol(final TimeUnit unit) {

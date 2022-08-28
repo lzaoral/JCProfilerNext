@@ -5,6 +5,8 @@ import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.util.Stage;
 import jcprofiler.visualisation.processors.InsertMeasurementsProcessor;
 
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
@@ -18,6 +20,7 @@ import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtMethod;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +30,7 @@ public class Visualiser {
     private final Args args;
     private final SpoonAPI spoon;
 
+    // CSV header
     private String atr;
     private String profiledMethodSignature;
     private List<String> inputs;
@@ -46,23 +50,22 @@ public class Visualiser {
         final Path csv = JCProfilerUtil.checkFile(args.workDir.resolve("measurements.csv"), Stage.profiling);
         log.info("Loading measurements in {} from {}.", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit), csv);
 
-        try (Scanner scan = new Scanner(csv)) {
+        try (final CSVParser parser = CSVParser.parse(csv, Charset.defaultCharset(), JCProfilerUtil.getCsvFormat())) {
+            final Iterator<CSVRecord> it = parser.iterator();
+
             // parse header
-            final String[] header = scan.nextLine().split(",(?=[^,]+$)");
-            profiledMethodSignature = header[0];
-            atr = header[1];
+            final List<String> header = it.next().toList();
+            profiledMethodSignature = header.get(0);
+            atr = header.get(1);
 
             // parse inputs
-            inputs = Arrays.asList(scan.nextLine().split(","));
+            inputs = it.next().toList();
 
             // parse measurements
-            while (scan.hasNextLine()) {
-                final String trap = scan.findInLine("[^,]+");
-                scan.skip(",");
-                final List<Long> trapMeasurements = Arrays.stream(scan.nextLine().split(","))
-                        .map(this::convertTime).collect(Collectors.toList());
-
-                measurements.put(trap, trapMeasurements);
+            while (it.hasNext()) {
+                final List<String> line = it.next().toList();
+                final List<Long> values = line.stream().skip(1).map(this::convertTime).collect(Collectors.toList());
+                measurements.put(line.get(0), values);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -90,7 +93,7 @@ public class Visualiser {
     }
 
     private Long convertTime(final String input) {
-        if (input.equals("unreach"))
+        if (input.isEmpty())
             return null;
 
         long nanos = Long.parseLong(input);
