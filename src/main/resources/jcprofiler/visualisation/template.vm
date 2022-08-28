@@ -1,5 +1,6 @@
 ## @vtlvariable name="cardATR" type="java.lang.String"
 ## @vtlvariable name="code" type="java.util.List<java.lang.String>"
+## @vtlvariable name="elapsedTime" type="java.lang.String"
 ## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
 ## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
@@ -103,6 +104,7 @@
                 <div>
                     <b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a><br>
                     <b>Number of rounds:</b> $inputs.size()<br>
+                    <b>Elapsed time:</b> $elapsedTime<br>
                     <b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a>
                 </div>
                 <div>

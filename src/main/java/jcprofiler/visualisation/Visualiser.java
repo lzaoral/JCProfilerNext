@@ -33,6 +33,8 @@ public class Visualiser {
     // CSV header
     private String atr;
     private String profiledMethodSignature;
+    private String elapsedTime;
+
     private List<String> inputs;
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
     private final Map<String, List<Long>> filteredMeasurements = new LinkedHashMap<>();
@@ -57,6 +59,7 @@ public class Visualiser {
             final List<String> header = it.next().toList();
             profiledMethodSignature = header.get(0);
             atr = header.get(1);
+            elapsedTime = header.get(2);
 
             // parse inputs
             inputs = it.next().toList();
@@ -143,6 +146,7 @@ public class Visualiser {
         final VelocityContext context = new VelocityContext();
         context.put("cardATR", atr);
         context.put("code", sourceLines);
+        context.put("elapsedTime", elapsedTime);
         context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
         context.put("methodName", profiledMethodSignature);
         context.put("measurements", measurements);

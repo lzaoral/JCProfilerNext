@@ -9,6 +9,7 @@ import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
 
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Lukáš Zaoral and Petr Svenda
@@ -43,6 +45,8 @@ public class Profiler {
     private final Set<String> unreachedTraps = new LinkedHashSet<>();
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
     private final List<String> inputs = new ArrayList<>();
+
+    private String elapsedTime;
 
     private static final Logger log = LoggerFactory.getLogger(Profiler.class);
 
@@ -101,6 +105,7 @@ public class Profiler {
                 inputGen = () -> inputs.get(rdn.nextInt(inputs.size()));
             }
 
+            final long startTime = System.nanoTime();
             for (int repeat = 1; repeat <= args.repeatCount; repeat++) {
                 final byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
                 final CommandAPDU triggerAPDU = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
@@ -112,6 +117,11 @@ public class Profiler {
                 profileSingleStep(triggerAPDU);
             }
             log.info("Collecting measurements complete.");
+
+            // measure the time spent profiling
+            final long endTimeMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+            elapsedTime = DurationFormatUtils.formatDuration(endTimeMillis, "d' days 'HH:mm:ss.SSS");
+            log.info("Elapsed time: {}", elapsedTime);
 
             // TODO: what difference is between true and false? javax.smartcardio.Card javadoc is now very helpful
             cardManager.disconnect(true);
@@ -202,9 +212,9 @@ public class Profiler {
         final Path csv = args.workDir.resolve("measurements.csv");
 
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCsvFormat())) {
-            printer.printComment("class.methodSignature,ATR");
+            printer.printComment("class.methodSignature,ATR,elapsedTime");
             printer.print(profiledMethod.getDeclaringType().getQualifiedName() + "." + profiledMethod.getSignature());
-            printer.printRecord(atr);
+            printer.printRecord(atr, elapsedTime);
 
             printer.printComment("input1,input2,input3,...");
             printer.printRecord(inputs);
