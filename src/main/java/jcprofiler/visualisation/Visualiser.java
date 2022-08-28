@@ -89,15 +89,19 @@ public class Visualiser {
                 return;
             }
 
-            final List<Long> filtered = v.stream().map(l -> {
-                if (l == null || ds.getN() == 1)
+            final long n = ds.getN();
+            final double mean = ds.getMean();
+            final double standardDeviation = ds.getStandardDeviation();
+
+            final List<Long> filteredValues = v.stream().map(l -> {
+                if (l == null || n == 1)
                     return l;
 
                 // replace outliers with null
-                return 3. >= Math.abs(l - ds.getMean()) / ds.getStandardDeviation() ? l : null;
+                return 3. >= Math.abs(l - mean) / standardDeviation ? l : null;
             }).collect(Collectors.toList());
 
-            filteredMeasurements.put(k, filtered);
+            filteredMeasurements.put(k, filteredValues);
         });
     }
 
