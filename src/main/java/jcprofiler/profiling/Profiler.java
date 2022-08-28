@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -162,8 +161,8 @@ public class Profiler {
     }
 
     private void profileSingleStep(CommandAPDU triggerAPDu) throws CardException {
-        Duration prevTransmitDuration = Duration.ZERO;
-        Duration currentTransmitDuration;
+        long prevTransmitDuration = 0;
+        long currentTransmitDuration;
 
         for (short trapID : trapNameMap.keySet()) {
             // set performance trap
@@ -183,8 +182,8 @@ public class Profiler {
             }
 
             // compute the difference
-            currentTransmitDuration = cardManager.getLastTransmitTimeDuration();
-            final Long diff = currentTransmitDuration.minus(prevTransmitDuration).toNanos();
+            currentTransmitDuration = cardManager.getLastTransmitTimeNano();
+            final long diff = currentTransmitDuration - prevTransmitDuration;
             prevTransmitDuration = currentTransmitDuration;
 
             log.debug("Duration: {} ns", diff);
