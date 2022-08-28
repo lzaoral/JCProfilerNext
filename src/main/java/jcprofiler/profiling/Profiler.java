@@ -212,9 +212,10 @@ public class Profiler {
         final Path csv = args.workDir.resolve("measurements.csv");
 
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCsvFormat())) {
-            printer.printComment("class.methodSignature,ATR,elapsedTime");
+            printer.printComment("class.methodSignature,ATR,elapsedTime,inputType:value");
             printer.print(profiledMethod.getDeclaringType().getQualifiedName() + "." + profiledMethod.getSignature());
-            printer.printRecord(atr, elapsedTime);
+            printer.printRecord(atr, elapsedTime,
+                    args.dataRegex != null ? "regex:" + args.dataRegex : "file:" + args.dataFile);
 
             printer.printComment("input1,input2,input3,...");
             printer.printRecord(inputs);

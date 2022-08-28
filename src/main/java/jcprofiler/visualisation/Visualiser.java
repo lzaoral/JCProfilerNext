@@ -34,6 +34,7 @@ public class Visualiser {
     private String atr;
     private String profiledMethodSignature;
     private String elapsedTime;
+    private String[] inputDescription;
 
     private List<String> inputs;
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
@@ -60,6 +61,7 @@ public class Visualiser {
             profiledMethodSignature = header.get(0);
             atr = header.get(1);
             elapsedTime = header.get(2);
+            inputDescription = header.get(3).split(":", 2);
 
             // parse inputs
             inputs = it.next().toList();
@@ -147,6 +149,7 @@ public class Visualiser {
         context.put("cardATR", atr);
         context.put("code", sourceLines);
         context.put("elapsedTime", elapsedTime);
+        context.put("inputDescription", inputDescription);
         context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
         context.put("methodName", profiledMethodSignature);
         context.put("measurements", measurements);
