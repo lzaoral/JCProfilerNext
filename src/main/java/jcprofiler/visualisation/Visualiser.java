@@ -47,6 +47,7 @@ public class Visualiser {
         this.spoon = spoon;
 
         loadCSV();
+        filterOutliers();
     }
 
     private void loadCSV() {
@@ -75,10 +76,13 @@ public class Visualiser {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private void filterOutliers() {
+        log.info("Filtering outliers from the loaded measurements.");
         measurements.forEach((k, v) -> {
-            DescriptiveStatistics ds = new DescriptiveStatistics();
-            v.stream().filter(Objects::nonNull).forEach(l -> ds.addValue(l.doubleValue()));
+            final DescriptiveStatistics ds = new DescriptiveStatistics();
+            v.stream().filter(Objects::nonNull).map(Long::doubleValue).forEach(ds::addValue);
 
             if (ds.getN() == 0) {
                 filteredMeasurements.put(k, new ArrayList<>());
