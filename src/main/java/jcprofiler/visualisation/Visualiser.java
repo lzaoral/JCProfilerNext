@@ -45,7 +45,9 @@ public class Visualiser {
     public Visualiser(final Args args, final SpoonAPI spoon) {
         this.args = args;
         this.spoon = spoon;
+    }
 
+    public void loadAndProcessMeasuremets() {
         loadCSV();
         filterOutliers();
     }
