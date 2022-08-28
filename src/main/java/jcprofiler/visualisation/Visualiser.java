@@ -100,7 +100,14 @@ public class Visualiser {
                     return l;
 
                 // replace outliers with null
-                return 3. >= Math.abs(l - mean) / standardDeviation ? l : null;
+                double zValue = Math.abs(l - mean) / standardDeviation;
+                if (inputs.size() < 100 && zValue <= 3.)
+                    return l;
+
+                if (inputs.size() < 100000 && zValue <= 2.)
+                    return l;
+
+                return zValue <= 1. ? l : null;
             }).collect(Collectors.toList());
 
             filteredMeasurements.put(k, filteredValues);
