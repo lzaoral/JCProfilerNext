@@ -86,6 +86,7 @@
     align-items: last baseline;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .center {
@@ -100,8 +101,9 @@
         <div class="code">
             <div class="codeHeader">
                 <div>
-                    <p><b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a></p>
-                    <p><b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a></p>
+                    <b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a><br>
+                    <b>Number of rounds:</b> $inputs.size()<br>
+                    <b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a>
                 </div>
                 <div>
                     <input type="checkbox" id="trapSwitch" autocomplete="off"/>
