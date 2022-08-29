@@ -224,7 +224,7 @@ function redrawGraph(evt) {
                 selectedInputs = graph.pointIndices.map(e => inputs[e]);
 
                 // Rather hack-ish and not very efficient but the input object does not contain the %{x}
-                // value from hoverstrings.
+                // value from hovertemplates.
                 const binValues = graph.pointIndices.map(e => vals[e]);
                 msg = 'Bin: ' + Math.min(...binValues) + ' to ' + Math.max(...binValues) + '\n';
                 break;
