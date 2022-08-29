@@ -87,8 +87,9 @@ const layoutCommon = {
  */
 
 function toggleTraps(event) {
-    let divWith = document.getElementById('codeWithTraps')
-    let divWithout = document.getElementById('codeWithoutTraps')
+    const divWith = document.getElementById('codeWithTraps');
+    const divWithout = document.getElementById('codeWithoutTraps');
+
     if (event.currentTarget.checked) {
         divWith.style.display = 'initial';
         divWithout.style.display = 'none';
@@ -161,7 +162,7 @@ function redrawGraph(evt) {
         // Line graph
 
         // make dots only on line endings
-        let dot_x = [], dot_y = [];
+        const dot_x = [], dot_y = [];
         for (let i = 0; i < vals.length; i++) {
             // no value
             if (vals[i] === null)
@@ -205,7 +206,7 @@ function redrawGraph(evt) {
     });
 
     // set click event handler
-    let plotlyDiv = document.getElementById('plotly');
+    const plotlyDiv = document.getElementById('plotly');
 
     // replace the event handler
     plotlyDiv.removeAllListeners('plotly_click');
