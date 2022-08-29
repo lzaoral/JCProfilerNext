@@ -3,8 +3,75 @@
 ## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="timeUnit" type="java.lang.String"
 
+/*
+ * CONSTANTS
+ */
+
 const inputs = $inputs;
-let selectedTraps = null;
+
+const histogramCommon = {
+    type: 'histogram',
+    xaxis: 'x2',
+    yaxis: 'y1',
+    showlegend: true,
+    hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>"
+};
+
+const scatterCommon = {
+    type: 'scatter',
+    xaxis: 'x3',
+    yaxis: 'y2',
+    name: 'timediff',
+    showlegend: false,
+    marker: {
+        color: 'rgb(86, 189, 49)',
+        opacity: 0.75
+    },
+    hovertemplate: "Round: %{x}<br>Time: %{y} $timeUnit<extra></extra>"
+};
+
+const layoutCommon = {
+    bargap: 0.2,
+    height: 700,
+    margin: {
+        l: 60,
+        r: 40,
+        b: 40,
+        t: 40,
+        pad: 5
+    },
+    xaxis1: {
+        anchor: 'y1',
+        title: 'Unreachable'
+    },
+    xaxis2: {
+        anchor: 'y1',
+        // dtick: 1,
+        tickformat: ',d',
+        title: 'Time in $timeUnit'
+    },
+    xaxis3: {
+        anchor: 'y2',
+        domain: [0, 1],
+        tickformat: ',d',
+        title: 'Round'
+    },
+    yaxis1: {
+        anchor: 'x1',
+        domain: [0.55, 1],
+        title: 'Frequency'
+        // type: 'log',
+    },
+    yaxis2: {
+        anchor: 'x3',
+        domain: [0, 0.43],
+        title: 'Time in $timeUnit'
+    }
+};
+
+/*
+ * FUNCTIONS
+ */
 
 function toggleTraps(event) {
     let divWith = document.getElementById('codeWithTraps')
@@ -18,6 +85,7 @@ function toggleTraps(event) {
     }
 }
 
+selectedTraps = null;
 function redrawGraph(trapName, vals, filteredVals) {
     if (selectedTraps === null)
         document.getElementById('graphHelp').style.display = 'initial';
@@ -53,14 +121,6 @@ function redrawGraph(trapName, vals, filteredVals) {
     const hasTime = vals.some(e => e !== null);
     if (hasTime) {
         // Histograms
-        const histogramCommon = {
-            type: 'histogram',
-            xaxis: 'x2',
-            yaxis: 'y1',
-            showlegend: true,
-            hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>"
-        };
-
         traces.push({
             ...histogramCommon,
             x: vals.filter(e => e !== null),
@@ -98,19 +158,6 @@ function redrawGraph(trapName, vals, filteredVals) {
             dot_y.push(vals[i]);
         }
 
-        const scatterCommon = {
-            type: 'scatter',
-            xaxis: 'x3',
-            yaxis: 'y2',
-            name: 'timediff',
-            showlegend: false,
-            marker: {
-                color: 'rgb(86, 189, 49)',
-                opacity: 0.75
-            },
-            hovertemplate: "Round: %{x}<br>Time: %{y} $timeUnit<extra></extra>"
-        };
-
         traces.push({
             ...scatterCommon,
             x: dot_x,
@@ -126,43 +173,14 @@ function redrawGraph(trapName, vals, filteredVals) {
 
     // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
     Plotly.react('plotly', traces, {
-        bargap: 0.2,
-        height: 700,
-        margin: {
-            l: 60,
-            r: 40,
-            b: 40,
-            t: 40,
-            pad: 5
-        },
+        ...layoutCommon,
         xaxis1: {
-            anchor: 'y1',
-            domain: [0, hasTime ? 0.45 : 1],
-            title: 'Unreachable'
+            ...layoutCommon.xaxis1,
+            domain: [0, hasTime ? 0.45 : 1]
         },
         xaxis2: {
-            anchor: 'y1',
-            domain: [hasUnreach ? 0.55 : 0, 1],
-            // dtick: 1,
-            tickformat: ',d',
-            title: 'Time in $timeUnit'
-        },
-        xaxis3: {
-            anchor: 'y2',
-            domain: [0, 1],
-            tickformat: ',d',
-            title: 'Round'
-        },
-        yaxis1: {
-            anchor: 'x1',
-            domain: [0.55, 1],
-            title: 'Frequency'
-            // type: 'log',
-        },
-        yaxis2: {
-            anchor: 'x3',
-            domain: [0, 0.43],
-            title: 'Time in $timeUnit'
+            ...layoutCommon.xaxis2,
+            domain: [hasUnreach ? 0.55 : 0, 1]
         }
     }, {
         responsive: true
