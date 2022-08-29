@@ -73,11 +73,11 @@ public class Visualiser {
             inputs = it.next().toList();
 
             // parse measurements
-            while (it.hasNext()) {
+            do {
                 final List<String> line = it.next().toList();
                 final List<Long> values = line.stream().skip(1).map(this::convertTime).collect(Collectors.toList());
                 measurements.put(line.get(0), values);
-            }
+            } while (it.hasNext());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
