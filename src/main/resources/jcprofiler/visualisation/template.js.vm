@@ -217,7 +217,7 @@ function redrawGraph(evt) {
         switch (graph.data.type) {
             // line graph
             case 'scatter':
-                selectedInputs = inputs.slice(graph.x - 1, graph.x);
+                selectedInputs = [inputs[graph.x]];
                 msg = 'Round: ' + graph.x + '\n';
                 break;
             case 'histogram':
