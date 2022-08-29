@@ -181,7 +181,7 @@ public class Visualiser {
         log.info("Generating {}.", output);
 
         try (final Writer writer = new FileWriter(output.toFile())) {
-            final Template template = velocityEngine.getTemplate("jcprofiler/visualisation/template.vm");
+            final Template template = velocityEngine.getTemplate("jcprofiler/visualisation/template.html.vm");
             template.merge(context, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
