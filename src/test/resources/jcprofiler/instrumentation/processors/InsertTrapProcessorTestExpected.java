@@ -220,6 +220,19 @@ public class SimpleClass {
         PM.check(PMC.TRAP_SimpleClass_emptyBlockWithCommentary_argb_int_arge_2);
     }
 
+    public void stetementWithEmptyBlockWithCommentary(int a) {
+        PM.check(PMC.TRAP_SimpleClass_stetementWithEmptyBlockWithCommentary_argb_int_arge_1);
+        if (a == 1) {
+            PM.check(PMC.TRAP_SimpleClass_stetementWithEmptyBlockWithCommentary_argb_int_arge_2);
+            {
+                // commentary
+            }
+            a = 1;
+            PM.check(PMC.TRAP_SimpleClass_stetementWithEmptyBlockWithCommentary_argb_int_arge_3);
+        }
+        PM.check(PMC.TRAP_SimpleClass_stetementWithEmptyBlockWithCommentary_argb_int_arge_4);
+    }
+
     public void tryStatement(int a) {
         PM.check(PMC.TRAP_SimpleClass_tryStatement_argb_int_arge_1)
         try {

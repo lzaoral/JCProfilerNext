@@ -160,6 +160,15 @@ public class SimpleClass {
         a = 1;
     }
 
+    public void stetementWithEmptyBlockWithCommentary(int a) {
+        if (a == 1) {
+            {
+                // commentary
+            }
+            a = 1;
+        }
+    }
+
     public void tryStatement(int a) {
         try {
             a++;
