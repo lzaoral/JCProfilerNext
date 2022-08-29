@@ -12,6 +12,8 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,11 +153,13 @@ public class Visualiser {
         final CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, profiledMethodSignature);
 
         log.info("Initializing Apache Velocity.");
-        final VelocityEngine velocityEngine = new VelocityEngine();
-        velocityEngine.setProperty("runtime.strict_mode.enable", true);
-        velocityEngine.setProperty("resource.loaders", "class");
-        velocityEngine.setProperty(
-                "resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        final Properties props = new Properties();
+        props.put(RuntimeConstants.RUNTIME_REFERENCES_STRICT, true);
+        props.put(RuntimeConstants.RESOURCE_LOADERS, RuntimeConstants.RESOURCE_LOADER_CLASS);
+        props.put(RuntimeConstants.RESOURCE_LOADER + '.' + RuntimeConstants.RESOURCE_LOADER_CLASS + ".class",
+                ClasspathResourceLoader.class.getName());
+
+        final VelocityEngine velocityEngine = new VelocityEngine(props);
         velocityEngine.init();
 
         // escape for HTML and strip empty lines
