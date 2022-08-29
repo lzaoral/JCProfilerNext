@@ -2,12 +2,9 @@
 ## @vtlvariable name="code" type="java.util.List<java.lang.String>"
 ## @vtlvariable name="elapsedTime" type="java.lang.String"
 ## @vtlvariable name="inputDescription" type="java.lang.String[]"
-## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
-## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="methodName" type="java.lang.String"
 ## @vtlvariable name="null" type="java.lang.Object"
-## @vtlvariable name="timeUnit" type="java.lang.String"
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,81 +17,7 @@
     <script>hljs.highlightAll()</script>
     <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
     <style>
-.contents {
-    display: flex;
-    justify-content: space-between;
-}
-
-.trap:hover {
-    cursor: pointer;
-    font-style: italic;
-}
-
-.trap_select {
-    background-color: rgba(0, 255, 255, 25%);
-    font-style: italic;
-}
-
-.trap_err {
-    background-color: rgba(255, 0, 0, 25%);
-}
-
-.trap_warn {
-    background-color: rgba(255, 255, 0, 50%);
-}
-
-.notes  {
-    align-items: center;
-    background-color: rgba(248, 248, 248, 0.97);
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5em;
-}
-
-.note {
-    align-items: center;
-    display: flex;
-    justify-content: left;
-}
-
-.square {
-    display: inline-block;
-    height: 20px;
-    margin-right: 10px;
-    width: 20px;
-}
-
-.graph {
-    align-content: center;
-    width: 49%;
-}
-
-.graph-sticky {
-    top: 0;
-    position: -webkit-sticky;
-    position: sticky;
-}
-
-.code {
-    float: left;
-    width: 50%;
-}
-
-#codeWithTraps, #graphHelp {
-    display: none;
-}
-
-.codeHeader {
-    align-items: last baseline;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    word-wrap: anywhere;
-}
-
-.center {
-    text-align: center;
-}
+        #include( "template.css" )
     </style>
 </head>
 <body>
@@ -105,7 +28,7 @@
             <div class="codeHeader">
                 <div>
                     <b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a><br>
-                    <b>Number of rounds:</b> $inputs.size()<br>
+                    <b>Number of rounds:</b> $measurements.values().iterator().next().size()<br>
                     #set( $inputType = $inputDescription[0] )
                     #set( $inputValue = $inputDescription[1] )
                     <b>Input $inputType:</b> #if( $inputType == "file" )<a href="$inputValue" target="_blank">$inputValue</a>#else$inputValue#end<br>
@@ -137,7 +60,7 @@ $line
                         #if( !$line.trim().startsWith("PM.check(PMC.") )##
                             #set( $nextIndex = $foreach.index + 1 )##
                             #if( $nextIndex < $code.size() && $code[$nextIndex].trim().startsWith("PM.check(PMC.") )##
-                                #set( $trap =  $code[$nextIndex].trim().replace("PM.check(PMC.", "").replace(");", "") )##
+                                #set( $trap = $code[$nextIndex].trim().replace("PM.check(PMC.", "").replace(");", "") )##
                                 #set( $vals = $measurements[$trap] )##
                                 #set( $trap_warn = $vals.contains($null) )##
                                 #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )##
@@ -175,229 +98,7 @@ $line
         </div>
     </div>
     <script type="application/javascript">
-        const inputs = $inputs;
-        let selectedTraps = null;
-
-        function toggleTraps(event) {
-            let divWith = document.getElementById('codeWithTraps')
-            let divWithout = document.getElementById('codeWithoutTraps')
-            if (event.currentTarget.checked) {
-                divWith.style.display = 'initial';
-                divWithout.style.display = 'none';
-            } else {
-                divWith.style.display = 'none';
-                divWithout.style.display = 'initial';
-            }
-        }
-
-        function redrawGraph(trapName, vals, filteredVals) {
-            if (selectedTraps === null)
-                document.getElementById('graphHelp').style.display = 'initial';
-
-            selectedTraps?.forEach(t => t.classList.remove('trap_select'));
-            selectedTraps = document.querySelectorAll('.' + trapName + ' .trap_contents');
-            selectedTraps.forEach(t => t.classList.add('trap_select'));
-
-            let graphName = document.getElementById('graphName');
-            graphName.textContent = trapName;
-
-            let traces = [];
-
-            const hasUnreach = vals.includes(null);
-            if (hasUnreach) {
-                const y = vals.filter(e => e === null).length;
-                traces.push({
-                    x: [''],
-                    y: [y],
-                    type: 'bar',
-                    xaxis: 'x1',
-                    yaxis: 'y1',
-                    name: 'unreachable',
-                    showlegend: false,
-                    marker: {
-                        color: 'rgb(255, 0, 0)',
-                        opacity: 0.65
-                    },
-                    hovertemplate: "Unreachable<br>Count: %{y} (%{y}/" + vals.length + ")<extra></extra>",
-                });
-            }
-
-            const hasTime = vals.some(e => e !== null);
-            if (hasTime) {
-                // Histograms
-                const histogramCommon = {
-                    type: 'histogram',
-                    xaxis: 'x2',
-                    yaxis: 'y1',
-                    showlegend: true,
-                    hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>",
-                };
-
-                traces.push({
-                    ...histogramCommon,
-                    x: vals.filter(e => e !== null),
-                    name: 'with outliers',
-                    visible: 'legendonly',
-                    marker: {
-                        color: 'rgb(255,136,0)',
-                        opacity: 0.75
-                    },
-                }, {
-                    ...histogramCommon,
-                    x: filteredVals,
-                    name: 'without outliers',
-                    marker: {
-                        color: 'rgb(49, 130, 189)',
-                        opacity: 0.75
-                    },
-                });
-
-                // Line graph
-
-                // make dots only on line endings
-                let dot_x = [], dot_y = [];
-                for (let i = 0; i < vals.length; i++) {
-                    // no value
-                    if (vals[i] === null)
-                        continue;
-
-                    // both neighbouring values are defined or only one is defined on border values
-                    if (vals.length > 1 &&
-                            (i === 0 || vals[i - 1] !== null) && (i === vals.length - 1 || vals[i + 1] != null))
-                        continue;
-
-                    dot_x.push(i + 1);
-                    dot_y.push(vals[i]);
-                }
-
-                const scatterCommon = {
-                    type: 'scatter',
-                    xaxis: 'x3',
-                    yaxis: 'y2',
-                    name: 'timediff',
-                    showlegend: false,
-                    marker: {
-                        color: 'rgb(86, 189, 49)',
-                        opacity: 0.75
-                    },
-                    hovertemplate: "Round: %{x}<br>Time: %{y} $timeUnit<extra></extra>",
-                };
-
-                traces.push({
-                    ...scatterCommon,
-                    x: dot_x,
-                    y: dot_y,
-                    mode: 'markers',
-                }, {
-                    ...scatterCommon,
-                    x: [...Array(vals.length + 1).keys()].splice(1),
-                    y: vals,
-                    mode: 'lines',
-                });
-            }
-
-            // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
-            Plotly.react('plotly', traces, {
-                bargap: 0.2,
-                height: 700,
-                margin: {
-                    l: 60,
-                    r: 40,
-                    b: 40,
-                    t: 40,
-                    pad: 5
-                },
-                xaxis1: {
-                    anchor: 'y1',
-                    domain: [0, hasTime ? 0.45 : 1],
-                    title: 'Unreachable',
-                },
-                xaxis2: {
-                    anchor: 'y1',
-                    domain: [hasUnreach ? 0.55 : 0, 1],
-                    // dtick: 1,
-                    tickformat: ',d',
-                    title: 'Time in $timeUnit',
-                },
-                xaxis3: {
-                    anchor: 'y2',
-                    domain: [0, 1],
-                    tickformat: ',d',
-                    title: 'Round',
-                },
-                yaxis1: {
-                    anchor: 'x1',
-                    domain: [0.55, 1],
-                    title: 'Frequency',
-                    // type: 'log',
-                },
-                yaxis2: {
-                    anchor: 'x3',
-                    domain: [0, 0.43],
-                    title: 'Time in $timeUnit',
-                },
-            }, {
-                responsive: true
-            });
-
-            // set click event handler
-            let plotlyDiv = document.getElementById('plotly');
-
-            // replace the event handler
-            plotlyDiv.removeAllListeners('plotly_click');
-            plotlyDiv.on('plotly_click', function (data) {
-                const graph = data.points[0];
-                let msg, selectedInputs;
-
-                switch (graph.data.type) {
-                    // line graph
-                    case 'scatter':
-                        selectedInputs = inputs.slice(graph.x - 1, graph.x);
-                        msg = 'Round: ' + graph.x + '\n';
-                        break;
-                    case 'histogram':
-                        selectedInputs = graph.pointIndices.map(e => inputs[e]);
-
-                        // Rather hack-ish and not very efficient but the input object does not contain the %{x}
-                        // value from hoverstrings.
-                        const binValues = graph.pointIndices.map(e => vals[e]);
-                        msg = 'Bin: ' + Math.min(...binValues) + ' to ' + Math.max(...binValues) + '\n';
-                        break;
-                    case 'bar':
-                        selectedInputs = vals.reduce((res, e, i) => {
-                            if (e === null)
-                                res.push(inputs[i]);
-                            return res;
-                        }, []);
-                        console.assert(selectedInputs.length === graph.y);
-
-                        msg = 'Unreachable\n';
-                        break;
-                    default:
-                        return;
-                }
-
-                msg += 'Inputs:\n';
-
-                const sortedInputs = Array.from(new Set(selectedInputs)).sort();
-                sortedInputs.forEach(e => msg += e + '\n');
-
-                alert(msg);
-            });
-        }
-
-    window.addEventListener('load', _ => {
-        document.getElementById('trapSwitch').addEventListener('change', toggleTraps);
-        let fun;
-    #foreach( $trap in $measurements.keySet() )
-        fun = _ => {
-            const vals = $measurements[$trap];
-            const filteredVals = $filteredMeasurements[$trap];
-            redrawGraph('$trap', vals, filteredVals);
-        };
-        document.querySelectorAll('.$trap').forEach(elem => elem.addEventListener('click', fun));
-    #end
-    });
+        #parse( "template.js.vm" )
     </script>
 </body>
 </html>

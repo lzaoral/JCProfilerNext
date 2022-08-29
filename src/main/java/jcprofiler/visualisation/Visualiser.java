@@ -12,6 +12,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.app.event.implement.IncludeRelativePath;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
@@ -154,6 +155,7 @@ public class Visualiser {
 
         log.info("Initializing Apache Velocity.");
         final Properties props = new Properties();
+        props.put(RuntimeConstants.EVENTHANDLER_INCLUDE, IncludeRelativePath.class.getName());
         props.put(RuntimeConstants.RUNTIME_REFERENCES_STRICT, true);
         props.put(RuntimeConstants.RESOURCE_LOADERS, RuntimeConstants.RESOURCE_LOADER_CLASS);
         props.put(RuntimeConstants.RESOURCE_LOADER + '.' + RuntimeConstants.RESOURCE_LOADER_CLASS + ".class",
