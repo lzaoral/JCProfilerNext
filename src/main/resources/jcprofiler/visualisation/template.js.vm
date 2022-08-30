@@ -1,4 +1,5 @@
 ## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
+## @vtlvariable name="heatmapValues" type="java.util.List<java.lang.Double>"
 ## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
 ## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="timeUnit" type="java.lang.String"
@@ -18,9 +19,24 @@
  * CONSTANTS
  */
 
+const trapPrefix = '$measurements.keySet().iterator().next().replace('1', '')';
+
 const inputs = $inputs;
 const filteredMeasurements = #object( $filteredMeasurements );
 const measurements = #object( $measurements );
+
+const heatmapValues = {
+    x: [''],
+    y: [...Array(${heatmapValues.size()} + 1).keys()].splice(1).reverse(),
+    z: ${heatmapValues}.map(e => [e]).reverse()
+};
+
+const heatmapValuesFiltered = {
+    x: [''],
+    y: undefined,
+    z: heatmapValues.z.filter((e, i, z) => i === 0 || z[i][0] !== null || z[i - 1][0] === null)
+};
+heatmapValuesFiltered.y = heatmapValues.y.slice($heatmapValues.size() - heatmapValuesFiltered.z.length, $heatmapValues.size());
 
 const histogramCommon = {
     type: 'histogram',
@@ -86,6 +102,88 @@ const layoutCommon = {
  * FUNCTIONS
  */
 
+// heatmap
+Plotly.newPlot('heatmap', [{
+    ...heatmapValuesFiltered,
+    hovertemplate: "Line: %{y}<br>%{z} $timeUnit<extra></extra>",
+    showlegend: false,
+    showscale: false,
+    type: 'heatmap'
+}], {
+    margin: {
+        l: 20,
+        r: 10,
+        b: 6,
+        t: 18,
+        pad: 4
+    },
+    width: 90,
+    xaxis: {
+        fixedrange: true,
+        ticks: '',
+        title: {
+            text: 'Avg time',
+            standoff: 5
+        },
+        showgrid: false,
+        showticklabels: false,
+        zeroline: false
+    },
+    yaxis: {
+        fixedrange: true,
+        ticks: '',
+        title: '',
+        type: 'category',
+        showgrid: false,
+        zeroline: false
+    }
+}, {
+    displayModeBar: false
+});
+
+// this is not very nice but Google didn't help much nor I'm a JS developer ¯\_(ツ)_/¯
+const padding = 12;
+const originalHeight = document.getElementById('codeWithoutTraps') - padding;
+
+// heatmap resize event
+window.addEventListener("resize", _ => {
+    console.log('resize');
+
+    const trapSwitch = document.getElementById('trapSwitch');
+    const divWith = document.getElementById('codeWithTraps');
+
+    if (trapSwitch.checked)
+        Plotly.relayout('heatmap', {
+            height: divWith.clientHeight - padding
+        });
+    else
+        Plotly.relayout('heatmap', {
+            height: originalHeight
+        });
+});
+
+// heatmap click event handler
+const heatmapDiv = document.getElementById('heatmap');
+heatmapDiv.on('plotly_click', function (data) {
+    const graph = data.points[0];
+    // check for a valid value
+    if (graph.z === null)
+        return;
+
+    // compute the correct trap index
+    const z = graph.data.z;
+
+    let trapIdx = 0;
+    for (let i = z.length - 1; i >= z.length - graph.y; i--) {
+        if (z[i][0] !== null)
+            trapIdx++;
+    }
+
+    const trapDiv = document.querySelector('.' + trapPrefix + trapIdx);
+    const event = new MouseEvent('click');
+    trapDiv.dispatchEvent(event);
+});
+
 function toggleTraps(event) {
     const divWith = document.getElementById('codeWithTraps');
     const divWithout = document.getElementById('codeWithoutTraps');
@@ -93,12 +191,32 @@ function toggleTraps(event) {
     if (event.currentTarget.checked) {
         divWith.style.display = 'initial';
         divWithout.style.display = 'none';
-    } else {
-        divWith.style.display = 'none';
-        divWithout.style.display = 'initial';
+
+        Plotly.update('heatmap', {
+            x: [heatmapValues.x],
+            y: [heatmapValues.y],
+            z: [heatmapValues.z]
+        }, {
+            'yaxis.type': 'category',
+            height: divWith.clientHeight - padding
+        });
+        return;
     }
+
+    divWith.style.display = 'none';
+    divWithout.style.display = 'initial';
+
+    Plotly.update('heatmap', {
+        x: [heatmapValuesFiltered.x],
+        y: [heatmapValuesFiltered.y],
+        z: [heatmapValuesFiltered.z]
+    }, {
+        'yaxis.type': 'category',
+        height: originalHeight
+    });
 }
 
+// redraw graph event handler
 function redrawGraph(evt) {
     // enable graph help
     document.getElementById('graphHelp').style.display = 'initial';

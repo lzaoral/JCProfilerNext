@@ -58,6 +58,10 @@
     width: 50%;
 }
 
+#codeWithTraps, #codeWithoutTraps {
+    width: 100%;
+}
+
 #codeWithTraps, #graphHelp {
     display: none;
 }

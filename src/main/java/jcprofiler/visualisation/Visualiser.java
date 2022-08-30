@@ -42,6 +42,7 @@ public class Visualiser {
     private List<String> inputs;
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
     private final Map<String, List<Long>> filteredMeasurements = new LinkedHashMap<>();
+    private final Map<String, DescriptiveStatistics> filteredStatistics = new LinkedHashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(Visualiser.class);
 
@@ -114,6 +115,10 @@ public class Visualiser {
             }).collect(Collectors.toList());
 
             filteredMeasurements.put(k, filteredValues);
+
+            final DescriptiveStatistics filteredDs = new DescriptiveStatistics();
+            filteredValues.stream().filter(Objects::nonNull).map(Long::doubleValue).forEach(filteredDs::addValue);
+            filteredStatistics.put(k, filteredDs);
         });
     }
 
@@ -168,6 +173,22 @@ public class Visualiser {
         final List<String> sourceLines = Arrays.stream(StringEscapeUtils.escapeHtml4(method.prettyprint())
                 .split(System.lineSeparator())).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 
+        // prepare values for the heatmap
+        final List<Double> heatmapValues = sourceLines.stream().map(s -> {
+            if (!s.contains("PM.check(PMC.TRAP"))
+                return null;
+
+            final int beginPos = s.indexOf('(') + 1 + "PMC.".length();
+            final int endPos = s.indexOf(')');
+            final DescriptiveStatistics ds = filteredStatistics.get(s.substring(beginPos, endPos));
+
+            // trap is completely unreachable
+            if (ds == null)
+                return Double.NaN;
+
+            return Math.round(ds.getMean() * 100.) / 100.;
+        }).collect(Collectors.toList());
+
         final VelocityContext context = new VelocityContext();
         context.put("cardATR", atr);
         context.put("code", sourceLines);
@@ -177,6 +198,7 @@ public class Visualiser {
         context.put("methodName", profiledMethodSignature);
         context.put("measurements", measurements);
         context.put("filteredMeasurements", filteredMeasurements);
+        context.put("heatmapValues", heatmapValues);
         context.put("timeUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
 
         final Path output = args.workDir.resolve("measurements.html");

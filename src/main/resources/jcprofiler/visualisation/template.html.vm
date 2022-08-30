@@ -54,24 +54,27 @@ $line
                     <label for="trapSwitch">Show explicit traps</label>
                 </div>
             </div>
-            <div id="codeWithTraps">
-                <pre><code class="language-java">#foreach( $line in $code )
-                        #printLine( $line, $foreach.index )
-                    #end</code></pre>
-            </div>
-            <div id="codeWithoutTraps">
-                ## skip TRAP lines
-                ## velocity does not have #continue and also inserts extra whitespace (that's the reason behind those ##), duh
-                <pre><code class="language-java">#foreach( $line in $code )
-                        #if( !$line.trim().startsWith("PM.check(PMC.") )
-                            #set( $nextIndex = $foreach.index + 1 )
-                            #if( $nextIndex < $code.size() )
-                                #printLine( $line, $nextIndex )
-                            #else
-                                #printLine( $line, $foreach.index )
+            <div class="contents">
+                <div id="heatmap"></div>
+                <div id="codeWithTraps">
+                    <pre><code class="language-java">#foreach( $line in $code )
+                            #printLine( $line, $foreach.index )
+                        #end</code></pre>
+                </div>
+                <div id="codeWithoutTraps">
+                    ## skip TRAP lines
+                    ## velocity does not have #continue and also inserts extra whitespace (that's the reason behind those ##), duh
+                    <pre><code class="language-java">#foreach( $line in $code )
+                            #if( !$line.trim().startsWith("PM.check(PMC.") )
+                                #set( $nextIndex = $foreach.index + 1 )
+                                #if( $nextIndex < $code.size() )
+                                    #printLine( $line, $nextIndex )
+                                #else
+                                    #printLine( $line, $foreach.index )
+                                #end
                             #end
-                        #end
-                    #end</code></pre>
+                        #end</code></pre>
+                </div>
             </div>
             <div>
                 <h3 class="center">Colour explanation</h3>
