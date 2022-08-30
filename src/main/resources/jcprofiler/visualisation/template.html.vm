@@ -5,6 +5,20 @@
 ## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="methodName" type="java.lang.String"
 ## @vtlvariable name="null" type="java.lang.Object"
+
+#macro( printLine $line $trapIdx )
+    #set( $trapLine = $code[$trapIdx].trim() )
+    #if( $trapLine.startsWith("PM.check(PMC.") )
+        #set( $trap = $trapLine.replace("PM.check(PMC.", "").replace(");", "") )
+        #set( $vals = $measurements[$trap] )
+        #set( $trap_warn = $vals.contains($null) )
+        #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
+        #set( $spaceCount = $line.length() - $line.trim().length() )
+<div class="$trap trap#if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn#end">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
+</div>#else
+$line
+#end#end
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,33 +56,22 @@
             </div>
             <div id="codeWithTraps">
                 <pre><code class="language-java">#foreach( $line in $code )
-                        #if( $line.trim().startsWith("PM.check(PMC.") )
-                            #set( $trap = $line.trim().replace("PM.check(PMC.", "").replace(");", "") )
-                            #set( $vals = $measurements[$trap] )
-                            #set( $trap_warn = $vals.contains($null) )
-                            #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
-                            #set( $spaceCount = $line.length() - $line.trim().length() )
-<div class="$trap trap#if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn #end">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
-</div>#else
-$line
-#end#end</code></pre>
+                        #printLine( $line, $foreach.index )
+                    #end</code></pre>
             </div>
             <div id="codeWithoutTraps">
                 ## skip TRAP lines
                 ## velocity does not have #continue and also inserts extra whitespace (that's the reason behind those ##), duh
                 <pre><code class="language-java">#foreach( $line in $code )
-                        #if( !$line.trim().startsWith("PM.check(PMC.") )##
-                            #set( $nextIndex = $foreach.index + 1 )##
-                            #if( $nextIndex < $code.size() && $code[$nextIndex].trim().startsWith("PM.check(PMC.") )##
-                                #set( $trap = $code[$nextIndex].trim().replace("PM.check(PMC.", "").replace(");", "") )##
-                                #set( $vals = $measurements[$trap] )##
-                                #set( $trap_warn = $vals.contains($null) )##
-                                #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )##
-                                #set( $spaceCount = $line.length() - $line.trim().length() )##
-<div class="$trap trap#if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn#end">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
-</div>#else
-$line
-#end#end#end</code></pre>
+                        #if( !$line.trim().startsWith("PM.check(PMC.") )
+                            #set( $nextIndex = $foreach.index + 1 )
+                            #if( $nextIndex < $code.size() )
+                                #printLine( $line, $nextIndex )
+                            #else
+                                #printLine( $line, $foreach.index )
+                            #end
+                        #end
+                    #end</code></pre>
             </div>
             <div>
                 <h3 class="center">Colour explanation</h3>
