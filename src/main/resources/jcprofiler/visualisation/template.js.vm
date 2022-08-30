@@ -147,8 +147,6 @@ const originalHeight = document.getElementById('codeWithoutTraps') - padding;
 
 // heatmap resize event
 window.addEventListener("resize", _ => {
-    console.log('resize');
-
     const trapSwitch = document.getElementById('trapSwitch');
     const divWith = document.getElementById('codeWithTraps');
 

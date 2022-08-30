@@ -16,6 +16,17 @@ STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
           'visualisation']
 
 
+def rebuild_jar() -> None:
+    suffix = '.bat' if os.name == 'nt' else ''
+    script_path = Path('../gradlew' + suffix)
+
+    print('Rebuilding project')
+    ret = call([script_path.absolute(), '--project-dir=..', 'build'])
+    if ret != 0:
+        print('JAR rebuild failed with return code', ret)
+        sys.exit(1)
+
+
 def clone_git_repo(repo: str, target: str) -> bool:
     if os.path.exists(target):
         print(repo, 'seems to be already cloned')
@@ -114,6 +125,8 @@ def main():
     root = Path(__file__).parent.resolve()
     print('Test root:', root)
     os.chdir(root)
+
+    rebuild_jar()
 
     with open('test_data.json') as f:
         data = json.load(f)
