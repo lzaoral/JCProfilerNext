@@ -34,7 +34,7 @@ def clone_git_repo(repo: str, target: str) -> bool:
 
     print(target, 'is not cloned yet', flush=True)
 
-    ret = call(f'git clone --depth 1 {repo} {target}', shell=True)
+    ret = call(['git', 'clone', '--depth=1', repo, target])
     if ret != 0:
         print('Cloning failed with return code', ret)
         sys.exit(1)
@@ -71,17 +71,18 @@ def execute_test(test: Dict[str, Any]):
     jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
     jckit = Path(f'jcsdk/jc{test["jckit"]}_kit').absolute()
 
-    cmd = f'java -jar {jar} --jckit "{jckit}" --simulator --repeat-count 1000'
+    cmd = ['java', '-jar', str(jar), '--jckit', str(jckit), '--simulator',
+                                     '--repeat-count', '1000']
 
     if 'entryPoint' in test:
-        cmd += f' --entry-point "{test["entryPoint"]}"'
+        cmd += ['--entry-point', test['entryPoint']]
     if 'resetInst' in test:
-        cmd += f' --reset-inst "{test["resetInst"]}"'
+        cmd += ['--reset-inst', test['resetInst']]
     if 'cla' in test:
-        cmd += f' --cla "{test["cla"]}"'
+        cmd += ['--cla', test['cla']]
 
     for subtest in test['subtests']:
-        sub_cmd = cmd
+        sub_cmd = cmd.copy()
 
         test_dir = Path(mkdtemp(prefix=f'{test["name"]}_{subtest["method"]}_',
                         dir='.')).absolute()
@@ -90,30 +91,31 @@ def execute_test(test: Dict[str, Any]):
         copytree(Path(test['name']) / test['path'], test_dir,
                  dirs_exist_ok=True)
 
-        sub_cmd += f' --work-dir "{test_dir}"'
-        sub_cmd += f' --method "{subtest["method"]}"'
-        sub_cmd += f' --inst "{subtest["inst"]}"'
+        sub_cmd += ['--work-dir', str(test_dir)]
+        sub_cmd += ['--method', subtest['method']]
+        sub_cmd += ['--inst', subtest['inst']]
 
         if 'input' in subtest:
-            sub_cmd += f' --data-regex "{subtest["input"]}"'
+            sub_cmd += ['--data-regex', subtest['input']]
         else:
-            sub_cmd += f' --data-file "{Path(subtest["inputFile"]).absolute()}"'
+            input_file = Path(subtest['inputFile']).absolute()
+            sub_cmd += ['--data-file', str(input_file)]
 
         if 'p1' in subtest:
-            sub_cmd += f' --p1 "{subtest["p1"]}"'
+            sub_cmd += ['--p1', subtest['p1']]
         if 'p2' in subtest:
-            sub_cmd += f' --p2 "{subtest["p2"]}"'
+            sub_cmd += ['--p2', subtest['p2']]
 
         print('Executing subtest:', subtest['name'])
 
         for stage in STAGES:
-            stage_cmd = sub_cmd
-            stage_cmd += f' --start-from "{stage}"'
-            stage_cmd += f' --stop-after "{stage}"'
+            stage_cmd = sub_cmd.copy()
+            stage_cmd += ['--start-from', str(stage)]
+            stage_cmd += ['--stop-after', str(stage)]
 
             print('Excecuting stage', stage)
-            print('Command:', stage_cmd, flush=True)
-            ret = call(stage_cmd, shell=True)
+            print('Command:', " ".join(stage_cmd), flush=True)
+            ret = call(stage_cmd)
             if ret != 0:
                 print('Command failed with return code', ret)
                 sys.exit(1)
