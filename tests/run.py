@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+from shutil import copytree
 from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict
-from shutil import copytree
 
 import json
 import os
