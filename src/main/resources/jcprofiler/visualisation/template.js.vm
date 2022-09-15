@@ -110,19 +110,20 @@ Plotly.newPlot('heatmap', [{
     showscale: false,
     type: 'heatmap'
 }], {
+    paper_bgcolor: 'rgba(0, 0, 0, 0)',
     margin: {
         l: 20,
-        r: 10,
+        r: 110,
         b: 6,
         t: 18,
         pad: 4
     },
-    width: 90,
+    width: 160,
     xaxis: {
         fixedrange: true,
         ticks: '',
         title: {
-            text: 'Avg time',
+            text: 'Avg $timeUnit',
             standoff: 5
         },
         showgrid: false,

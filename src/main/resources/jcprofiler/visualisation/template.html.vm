@@ -54,7 +54,7 @@ $line
                     <label for="trapSwitch">Show explicit traps</label>
                 </div>
             </div>
-            <div class="contents">
+            <div class="codeContainer">
                 <div id="heatmap"></div>
                 <div id="codeWithTraps">
                     <pre><code class="language-java">#foreach( $line in $code )
