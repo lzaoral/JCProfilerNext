@@ -44,6 +44,11 @@ public class JCProfilerUtil {
     private JCProfilerUtil() {}
 
     // entry points
+    public static boolean isClsEntryPoint(final CtClass<?> cls) {
+        final CtTypeReference<?> parent = cls.getSuperclass();
+        return parent != null && parent.getQualifiedName().equals("javacard.framework.Applet");
+    }
+
     public static CtClass<?> getEntryPoint(final SpoonAPI spoon, final String className) {
         final List<CtClass<?>> entryPoints = spoon.getModel().getElements(JCProfilerUtil::isClsEntryPoint);
         if (entryPoints.isEmpty())
@@ -145,11 +150,6 @@ public class JCProfilerUtil {
                 .replace("<", "_genb_")
                 .replace(">", "_gene_")
                 .replace("[]", "arr"); // used in arrays
-    }
-
-    public static boolean isClsEntryPoint(final CtClass<?> cls) {
-        final CtTypeReference<?> parent = cls.getSuperclass();
-        return parent != null && parent.getQualifiedName().equals("javacard.framework.Applet");
     }
 
     public static Path getInstrOutputDirectory(final Path workDirPath) {
