@@ -65,7 +65,7 @@ $line
                 </div>
                 <div id="codeWithoutTraps">
                     ## skip TRAP lines
-                    ## velocity does not have #continue and also inserts extra whitespace (that's the reason behind those ##), duh
+                    ## velocity does not have #continue
                     <pre><code class="language-java">#foreach( $line in $code )
                             #if( !$line.trim().startsWith("PM.check(PMC.") )
                                 #set( $nextIndex = $foreach.index + 1 )

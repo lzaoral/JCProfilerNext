@@ -143,7 +143,6 @@ public class Visualiser {
         }
     }
 
-    // TODO: aggregate results when there's too many of them
     public void insertMeasurementsToSources() {
         // always recreate the output directory
         final Path outputDir = JCProfilerUtil.getPerfOutputDirectory(args.workDir);

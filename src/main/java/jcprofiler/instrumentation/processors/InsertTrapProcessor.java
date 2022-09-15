@@ -49,8 +49,6 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
             throw new RuntimeException(String.format("Class has more than %d (%d)",
                     (int) Math.ceil((float) 0xffff / args.maxTraps), methodCount));
 
-        // TODO: make it possible to instrument constructors?
-
         log.debug("Adding {} trap.", trapNamePrefix);
         addTrapField(trapNamePrefix, "(short) " + (args.maxTraps * methodCount++))
                 .addComment(getFactory().createInlineComment(

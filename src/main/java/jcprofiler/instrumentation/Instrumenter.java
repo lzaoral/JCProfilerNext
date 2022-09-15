@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+// TODO: support already instrumented stuff
 public class Instrumenter {
     private final Args args;
 
@@ -33,7 +34,6 @@ public class Instrumenter {
         this.args = args;
     }
 
-    // TODO: logging
     public void process() {
         // always recreate the output directory
         final Path outputDir = JCProfilerUtil.getInstrOutputDirectory(args.workDir);
@@ -70,7 +70,6 @@ public class Instrumenter {
         spoon.buildModel();
     }
 
-    // TODO: better exception handling
     private void checkArguments(final Launcher spoon) {
         log.info("Validating '--entry-point' and '--method' arguments.");
 
@@ -103,7 +102,6 @@ public class Instrumenter {
         buildModel(tmpSpoon);
 
         final List<CtClass<?>> classes = tmpSpoon.getModel().getElements(CtClass.class::isInstance);
-        // TODO: will this always work? what about nested classes?
 
         final List<CtPackage> pkgs = classes.stream().map(CtClass::getPackage).distinct().collect(Collectors.toList());
         log.debug("Found following packages in sources: {}", pkgs);

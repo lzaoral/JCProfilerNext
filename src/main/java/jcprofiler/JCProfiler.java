@@ -54,7 +54,6 @@ public class JCProfiler {
             log.info("Instrumentation started.");
             JCProfilerUtil.moveToSubDirIfNotExists(args.workDir, JCProfilerUtil.getSourceInputDirectory(args.workDir));
 
-            // TODO: support already instrumented stuff
             new Instrumenter(args).process();
             log.info("Instrumentation complete.");
         }
