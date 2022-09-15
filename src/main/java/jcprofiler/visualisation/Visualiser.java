@@ -37,6 +37,7 @@ public class Visualiser {
     private String atr;
     private String profiledMethodSignature;
     private String elapsedTime;
+    private String apduHeader;
     private String[] inputDescription;
 
     private List<String> inputs;
@@ -68,7 +69,8 @@ public class Visualiser {
             profiledMethodSignature = header.get(0);
             atr = header.get(1);
             elapsedTime = header.get(2);
-            inputDescription = header.get(3).split(":", 2);
+            apduHeader = header.get(3);
+            inputDescription = header.get(4).split(":", 2);
 
             // parse inputs
             inputs = it.next().toList();

@@ -209,12 +209,13 @@ public class Profiler {
 
     public void generateCSV() {
         final String atr = Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
-        final Path csv = args.workDir.resolve("measurements.csv");
+        final String apduHeader = Util.bytesToHex(new byte[]{args.cla, args.inst, args.p1, args.p2});
 
+        final Path csv = args.workDir.resolve("measurements.csv");
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCsvFormat())) {
-            printer.printComment("class.methodSignature,ATR,elapsedTime,inputType:value");
+            printer.printComment("class.methodSignature,ATR,elapsedTime,APDUHeader,inputType:value");
             printer.print(profiledMethod.getDeclaringType().getQualifiedName() + "." + profiledMethod.getSignature());
-            printer.printRecord(atr, elapsedTime,
+            printer.printRecord(atr, elapsedTime, apduHeader,
                     args.dataRegex != null ? "regex:" + args.dataRegex : "file:" + args.dataFile);
 
             printer.printComment("input1,input2,input3,...");
