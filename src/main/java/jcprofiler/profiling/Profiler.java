@@ -110,7 +110,7 @@ public class Profiler {
                 final byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
                 final CommandAPDU triggerAPDU = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
 
-                final String input =  Util.bytesToHex(triggerAPDU.getBytes());
+                final String input = Util.bytesToHex(triggerAPDU.getBytes());
                 inputs.add(input);
 
                 log.info("Round: {}/{} APDU: {}", repeat, args.repeatCount, input);

@@ -108,21 +108,21 @@ public class JCProfilerUtil {
         if (containingClassNames.size() > 1 && methodSignatures.size() == 1)
             throw new RuntimeException(String.format(
                     "More of the provided classes contain the %s method!%n" +
-                            "Please, specify the --method parameter in the 'class.%s' format where class is one of:%n%s",
+                    "Please, specify the --method parameter in the 'class.%s' format where class is one of:%n%s",
                     methodName, methodName, containingClassNames));
 
         // overloaded methods are in a single class
         if (containingClassNames.size() == 1 && methodSignatures.size() > 1)
             throw new RuntimeException(String.format(
                     "More %s methods with distinct signatures found in the %s class!%n" +
-                            "Please, add the corresponding signature to the --method parameter%nFound: %s",
+                    "Please, add the corresponding signature to the --method parameter%nFound: %s",
                     split[split.length - 1], containingClassNames.get(0), methodSignatures));
 
         // overloaded methods in more classes
         if (containingClassNames.size() > 1 && methodSignatures.size() > 1)
             throw new RuntimeException(String.format(
                     "More %s methods with distinct signatures found in more classes!%n" +
-                            "Please, use one of the following values as an argument to the --method parameter:%n%s",
+                    "Please, use one of the following values as an argument to the --method parameter:%n%s",
                     methodName, methods.stream().map(m -> m.getDeclaringType().getQualifiedName() + "." + m.getSignature())
                             .sorted().collect(Collectors.toList())));
 
