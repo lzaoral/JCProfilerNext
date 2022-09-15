@@ -135,6 +135,7 @@ public class SimpleClass {
                 a = 0;
                 return a;
         }
+        return a;
     }
 
     public void emptyBlock(int a) {
@@ -153,7 +154,7 @@ public class SimpleClass {
         a = 1;
     }
 
-    public int emptyBlockWithCommentary(int a) {
+    public void emptyBlockWithCommentary(int a) {
         {
             // commentary
         }
@@ -288,11 +289,11 @@ public class SimpleClass {
     }
 
     public int terminator5(int a) {
-        while (a)
+        while (true)
             return a;
     }
 
-    public int terminator6(int a) {
+    public void terminator6(int a) {
         ISOException.throwIt(ISO7816.SW_NO_ERROR);
     }
 
@@ -307,13 +308,14 @@ public class SimpleClass {
     public int terminator8(int a) {
         if (a == 0)
             return a;
+        return a;
     }
 
-    public static int terminator9(int a) {
+    public static void terminator9(int a) {
         terminator8(a);
     }
 
-    public int terminator10(int a) {
+    public void terminator10(int a) {
         terminator9(a);
     }
 
@@ -326,10 +328,11 @@ public class SimpleClass {
             default:
                 return a;
         }
+        return a;
     }
 
     public static class Nest {
-        int nest(int a) {
+        void nest(int a) {
             a++;
         }
     }

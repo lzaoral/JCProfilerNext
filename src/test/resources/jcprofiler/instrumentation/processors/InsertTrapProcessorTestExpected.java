@@ -189,6 +189,7 @@ public class SimpleClass {
                 return a;
         }
         PM.check(PMC.TRAP_SimpleClass_switchStatement_argb_int_arge_8);
+        return a;
     }
 
     public void emptyBlock(int a) {
@@ -211,7 +212,7 @@ public class SimpleClass {
         PM.check(PMC.TRAP_SimpleClass_multipleEmptyBlocks_argb_int_arge_2);
     }
 
-    public int emptyBlockWithCommentary(int a) {
+    public void emptyBlockWithCommentary(int a) {
         PM.check(PMC.TRAP_SimpleClass_emptyBlockWithCommentary_argb_int_arge_1);
         {
             // commentary
@@ -416,13 +417,13 @@ public class SimpleClass {
 
     public int terminator5(int a) {
         PM.check(PMC.TRAP_SimpleClass_terminator5_argb_int_arge_1);
-        while (a) {
+        while (true) {
             PM.check(PMC.TRAP_SimpleClass_terminator5_argb_int_arge_2);
             return a;
         }
     }
 
-    public int terminator6(int a) {
+    public void terminator6(int a) {
         PM.check(PMC.TRAP_SimpleClass_terminator6_argb_int_arge_1);
         ISOException.throwIt(ISO7816.SW_NO_ERROR);
     }
@@ -445,15 +446,16 @@ public class SimpleClass {
             return a;
         }
         PM.check(PMC.TRAP_SimpleClass_terminator8_argb_int_arge_3);
+        return a;
     }
 
-    public static int terminator9(int a) {
+    public static void terminator9(int a) {
         PM.check(PMC.TRAP_SimpleClass_terminator9_argb_int_arge_1);
         terminator8(a);
         PM.check(PMC.TRAP_SimpleClass_terminator9_argb_int_arge_2);
     }
 
-    public int terminator10(int a) {
+    public void terminator10(int a) {
         PM.check(PMC.TRAP_SimpleClass_terminator10_argb_int_arge_1);
         terminator9(a);
         PM.check(PMC.TRAP_SimpleClass_terminator10_argb_int_arge_2);
@@ -473,10 +475,11 @@ public class SimpleClass {
                 return a;
         }
         PM.check(PMC.TRAP_SimpleClass_terminator11_argb_int_arge_5);
+        return a;
     }
 
     public static class Nest {
-        int nest(int a) {
+        void nest(int a) {
             PM.check(PMC.TRAP_SimpleClass_dol_Nest_nest_argb_int_arge_1);
             a++;
             PM.check(PMC.TRAP_SimpleClass_dol_Nest_nest_argb_int_arge_2);
