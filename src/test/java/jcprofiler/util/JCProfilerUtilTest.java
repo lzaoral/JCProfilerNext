@@ -375,6 +375,19 @@ class JCProfilerUtilTest {
         assertEquals("test.Test", method.getDeclaringType().getQualifiedName());
     }
 
+    @Test
+    void getTrapNamePrefix() {
+        final String input = "package test;" +
+                "public class Test { public class Test1 {}; public class Test2 {" +
+                "void foo(Test1 a, Long b, int[] c) {};" +
+                "} };";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtMethod<?> method = spoon.getModel().filterChildren(CtMethod.class::isInstance).first();
+
+        assertEquals("TRAP_test_Test_dol_Test2_foo_argb_test_Test_dol_Test1__java_lang_Long__int_arr_arge",
+                JCProfilerUtil.getTrapNamePrefix(method));
+    }
+
     private static SpoonAPI prepareSpoon(final String cls) {
         final Launcher spoon = new Launcher();
         spoon.addInputResource(new VirtualFile(cls));

@@ -149,7 +149,7 @@ public class JCProfilerUtil {
                 .replace(")", "_arge")
                 .replace("<", "_genb_")
                 .replace(">", "_gene_")
-                .replace("[]", "arr"); // used in arrays
+                .replace("[]", "_arr"); // used in arrays
     }
 
     public static Path getInstrOutputDirectory(final Path workDirPath) {
