@@ -192,6 +192,7 @@ public class Visualiser {
         }).collect(Collectors.toList());
 
         final VelocityContext context = new VelocityContext();
+        context.put("apduHeader", apduHeader);
         context.put("cardATR", atr);
         context.put("code", sourceLines);
         context.put("elapsedTime", elapsedTime);
