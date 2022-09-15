@@ -135,7 +135,7 @@ public class Instrumenter {
 
             log.debug("Class {} not found.", className);
             try {
-                final String filename = String.format("%s.java", className);
+                final String filename = className + ".java";
                 // getClass().getResource() does not work when executed from JAR
                 final InputStream is = Objects.requireNonNull(getClass().getResourceAsStream(filename));
                 try (final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {

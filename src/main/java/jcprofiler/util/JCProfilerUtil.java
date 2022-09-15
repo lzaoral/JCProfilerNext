@@ -56,9 +56,9 @@ public class JCProfilerUtil {
 
         if (className.isEmpty()) {
             if (entryPoints.size() > 1)
-                throw new RuntimeException("More entry points detected but none was specified to be used! " +
-                        "Use the -e/--entry-point argument." +
-                        String.format("%nDetected entry points: %s", entryPoints));
+                throw new RuntimeException(String.format(
+                        "More entry points detected but none was specified to be used! " +
+                        "Use the -e/--entry-point argument.%nDetected entry points: %s", entryPoints));
 
             return entryPoints.get(0);
         }

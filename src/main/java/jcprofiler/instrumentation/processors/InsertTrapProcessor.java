@@ -52,11 +52,9 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         // TODO: make it possible to instrument constructors?
 
         log.debug("Adding {} trap.", trapNamePrefix);
-        addTrapField(trapNamePrefix, String.format("(short) %d", args.maxTraps * methodCount++))
+        addTrapField(trapNamePrefix, "(short) " + (args.maxTraps * methodCount++))
                 .addComment(getFactory().createInlineComment(
-                        String.format("%s.%s",
-                                method.getDeclaringType().getQualifiedName(),
-                                method.getSignature())));
+                        method.getDeclaringType().getQualifiedName() + "." + method.getSignature()));
 
         final CtBlock<?> methodBody = method.getBody();
         if (isEmptyBlock(methodBody)) {

@@ -63,7 +63,7 @@ public class Installer {
         log.debug("GlobalPlatformPro argv: {}", Arrays.toString(gpArgv));
         int ret = gp.run(bibo, gpArgv);
         if (ret != 0)
-            throw new RuntimeException(String.format("GlobalPlatformPro exited with non-zero code: %d", ret));
+            throw new RuntimeException("GlobalPlatformPro exited with non-zero code: " + ret);
 
         try {
             log.info("Selecting installed applet on card.");
