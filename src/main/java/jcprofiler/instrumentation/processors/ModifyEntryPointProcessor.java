@@ -207,7 +207,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
                             .collect(Collectors.joining(System.lineSeparator()))));
         }
 
-        CtSwitch<Byte> ctSwitch = ctSwitches.get(0);
+        final CtSwitch<Byte> ctSwitch = ctSwitches.get(0);
 
         // get case with the same value as JCProfilerUtil.INS_PERF_SETSTOP
         final Optional<CtCase<? super Byte>> maybeExistingPerfStopCase = ctSwitch.getCases().stream().filter(
@@ -231,7 +231,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
                 return;
 
             // check that the value in label corresponds to a read of INS_PERF_SETSTOP field
-            CtExpression<?> expr = existingPerfStopCase.getCaseExpression();
+            final CtExpression<?> expr = existingPerfStopCase.getCaseExpression();
             if (!(expr instanceof CtFieldRead) ||
                     !((CtFieldRead<?>) expr).getVariable().equals(insPerfSetStop.getReference()))
                 throw new RuntimeException(String.format(

@@ -119,7 +119,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         return blockContents.isEmpty() || blockContents.stream().allMatch(s -> isEmptyBlock(s) || s instanceof CtComment);
     }
 
-    private boolean isISOException(CtStatement statement) {
+    private boolean isISOException(final CtStatement statement) {
         // can be the last statement a commentary?
         if (!(statement instanceof CtInvocation))
             return false;
