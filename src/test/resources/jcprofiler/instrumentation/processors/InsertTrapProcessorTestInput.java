@@ -331,6 +331,18 @@ public class SimpleClass {
         return a;
     }
 
+    public int terminator12(int a) {
+        switch (a) {
+            case 0:
+                return a;
+            default:
+                if (a == 0)
+                    return a;
+                else
+                    return a;
+        }
+    }
+
     public static class Nest {
         void nest(int a) {
             a++;

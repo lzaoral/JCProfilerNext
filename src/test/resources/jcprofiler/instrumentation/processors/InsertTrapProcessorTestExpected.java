@@ -478,6 +478,24 @@ public class SimpleClass {
         return a;
     }
 
+    public int terminator12(int a) {
+        PM.check(PMC.TRAP_SimpleClass_terminator12_argb_int_arge_1);
+        switch (a) {
+            case 0:
+                PM.check(PMC.TRAP_SimpleClass_terminator12_argb_int_arge_2);
+                return a;
+            default:
+                PM.check(PMC.TRAP_SimpleClass_terminator12_argb_int_arge_3);
+                if (a == 0) {
+                    PM.check(PMC.TRAP_SimpleClass_terminator12_argb_int_arge_4);
+                    return a;
+                } else {
+                    PM.check(PMC.TRAP_SimpleClass_terminator12_argb_int_arge_5);
+                    return a;
+                }
+        }
+    }
+
     public static class Nest {
         void nest(int a) {
             PM.check(PMC.TRAP_SimpleClass_dol_Nest_nest_argb_int_arge_1);
