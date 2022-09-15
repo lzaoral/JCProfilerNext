@@ -122,7 +122,7 @@ public class JCProfiler {
         // Visualisation
         log.info("Visualising results.");
         final Visualiser vis = new Visualiser(args, spoon);
-        vis.loadAndProcessMeasuremets();
+        vis.loadAndProcessMeasurements();
         vis.generateHTML();
         vis.insertMeasurementsToSources();
         log.info("Visualising results complete.");

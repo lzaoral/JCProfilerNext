@@ -52,7 +52,7 @@ public class Visualiser {
         this.spoon = spoon;
     }
 
-    public void loadAndProcessMeasuremets() {
+    public void loadAndProcessMeasurements() {
         loadCSV();
         filterOutliers();
     }
