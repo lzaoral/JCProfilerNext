@@ -79,7 +79,7 @@ public class JCProfilerUtil {
         return entryPoint;
     }
 
-    // profiled method
+    // profiled method detection
     public static CtMethod<?> getProfiledMethod(final SpoonAPI spoon, final String methodName) {
         if (methodName == null)
             throw new RuntimeException("--method argument was not provided!");
@@ -152,6 +152,7 @@ public class JCProfilerUtil {
                 .replace("[]", "_arr"); // used in arrays
     }
 
+    // Path utils
     public static Path getInstrOutputDirectory(final Path workDirPath) {
         return workDirPath.resolve(INSTR_OUT_DIRNAME);
     }
