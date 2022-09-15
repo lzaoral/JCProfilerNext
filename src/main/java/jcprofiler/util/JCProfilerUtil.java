@@ -176,6 +176,7 @@ public class JCProfilerUtil {
 
         return path;
     }
+
     public static Path checkDirectory(final Path path, final Stage stage) {
         checkFile(path, stage);
 
