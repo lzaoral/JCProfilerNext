@@ -29,6 +29,12 @@
     background-color: rgba(255, 255, 0, 50%);
 }
 
+.trapSwitch {
+    bottom: 0;
+    position: absolute;
+    right: 0;
+}
+
 .notes  {
     align-items: center;
     background-color: rgba(248, 248, 248, 0.97);
@@ -77,9 +83,7 @@
 }
 
 .codeHeader {
-    align-items: last baseline;
-    display: flex;
-    justify-content: space-between;
+    position: relative;
     margin-bottom: 20px;
     word-wrap: anywhere;
 }

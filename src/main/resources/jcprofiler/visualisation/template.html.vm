@@ -51,7 +51,7 @@ $line
                     <b>Elapsed time:</b> $elapsedTime<br>
                     <b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a>
                 </div>
-                <div>
+                <div class="trapSwitch">
                     <input type="checkbox" id="trapSwitch" autocomplete="off"/>
                     <label for="trapSwitch">Show explicit traps</label>
                 </div>
