@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spoon.SpoonAPI;
+import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtLiteral;
-import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
 
@@ -38,7 +38,6 @@ public class Profiler {
     private final Args args;
     private final CardManager cardManager;
     private final CtMethod<?> profiledMethod;
-    private final SpoonAPI spoon;
 
     // use LinkedHashX to preserve insertion order
     private final Map<Short, String> trapNameMap = new LinkedHashMap<>();
@@ -54,7 +53,6 @@ public class Profiler {
         this.args = args;
         this.cardManager = cardManager;
         this.profiledMethod = JCProfilerUtil.getProfiledMethod(spoon, args.method);
-        this.spoon = spoon;
 
         buildPerfMapping();
     }
@@ -67,14 +65,12 @@ public class Profiler {
         log.info("Looking for traps in the {} method.", args.method);
         final String trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(profiledMethod) + "_";
 
-        // TODO: what about more classes with such name?
-        // idea: make PM and PMC both inherit from our special and empty abstract class
-        final CtClass<?> pmc = spoon.getModel().filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
-
-        final List<CtField<Short>> traps = pmc.getElements((CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix));
+        final List<CtField<Short>> traps = profiledMethod.filterChildren(CtFieldAccess.class::isInstance)
+                .map((CtFieldAccess<Short> fa) -> fa.getVariable().getFieldDeclaration())
+                .filterChildren((CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix)).list();
         if (traps.isEmpty())
             throw new RuntimeException(String.format(
-                    "Extraction of traps from PM for %s failed!", args.method));
+                    "Extraction of traps from %s failed!", args.method));
 
         for (final CtField<Short> f : traps) {
             final CtLiteral<Integer> evaluated = f.getDefaultExpression().partiallyEvaluate();
