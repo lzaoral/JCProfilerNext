@@ -216,6 +216,8 @@ function toggleTraps(event) {
 }
 
 // redraw graph event handler
+let selectedTraps;
+
 function redrawGraph(evt) {
     // enable graph help
     document.getElementById('graphHelp').style.display = 'initial';
