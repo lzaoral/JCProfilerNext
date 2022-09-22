@@ -21,7 +21,6 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     private CtClass<?> PMC;
     private String trapNamePrefix;
-    private int methodCount = 1;
     private int trapCount;
 
     public InsertTrapProcessor(final Args args) {
@@ -42,17 +41,8 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         if (PMC == null)
             PMC = method.getDeclaringType().getPackage().getType("PMC");
 
-        trapCount = 1;
+        trapCount = 0;
         trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(method);
-
-        if (args.maxTraps * methodCount >= 0xffff)
-            throw new RuntimeException(String.format("Class has more than %d (%d)",
-                    (int) Math.ceil((float) 0xffff / args.maxTraps), methodCount));
-
-        log.debug("Adding {} trap.", trapNamePrefix);
-        addTrapField(trapNamePrefix, "(short) " + (args.maxTraps * methodCount++))
-                .addComment(getFactory().createInlineComment(
-                        method.getDeclaringType().getQualifiedName() + "." + method.getSignature()));
 
         final CtBlock<?> methodBody = method.getBody();
         if (isEmptyBlock(methodBody)) {
@@ -199,19 +189,15 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
     }
 
     private CtInvocation<?> createPmCall(final CtElement element, final Insert where) {
-        if (args.maxTraps * methodCount + trapCount >= 0xffff) {
-            final CtMethod<?> parentMethod = element.getParent(CtMethod.class::isInstance);
-            throw new RuntimeException(
-                    String.format("Method %s.%s needs more than %d traps",
-                            parentMethod.getDeclaringType().getQualifiedName(),
-                            parentMethod.getSignature(),
-                            args.maxTraps));
+        final String trapName = String.format("%s_%d", trapNamePrefix, ++trapCount);
+
+        final CtField<Short> trapField = addTrapField(trapName);
+        if (trapCount == 1) {
+            final CtMethod<?> method = element.getParent(CtMethod.class::isInstance);
+            trapField.addComment(getFactory().createInlineComment(
+                    method.getDeclaringType().getQualifiedName() + "." + method.getSignature()));
         }
 
-        final String trapName = String.format("%s_%d", trapNamePrefix, trapCount);
-        final String initializer = String.format("(short) (%s + %d)", trapNamePrefix, trapCount++);
-
-        final CtField<Short> trapField = addTrapField(trapName, initializer);
         final CtFieldRead<Short> trapFieldRead = getFactory().createFieldRead();
         trapFieldRead.setTarget(getFactory().createTypeAccess(trapField.getDeclaringType().getReference()));
         trapFieldRead.setVariable(trapField.getReference());
@@ -246,11 +232,30 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
             statement.insertBefore(pmCall);
     }
 
-    private CtField<Short> addTrapField(String trapFieldName, String initializer) {
+    private CtField<Short> addTrapField(String trapFieldName) {
         final CtTypeReference<Short> shortType = getFactory().createCtTypeReference(Short.TYPE);
+
+        final CtField<?> previousTrap = PMC.getFields().get(PMC.getFields().size() - 1);
+        if (!previousTrap.getType().equals(shortType))
+            throw new RuntimeException(String.format(
+                    "PMC.%s has type %s! Expected: short",
+                    previousTrap.getSimpleName(), previousTrap.getType().getQualifiedName()));
+
+        @SuppressWarnings("unchecked") // the runtime check is above
+        final CtField<Short> previousTrapCasted = (CtField<Short>) previousTrap;
+        final CtFieldRead<Short> previousTrapRead = getFactory().createFieldRead();
+        previousTrapRead.setTarget(getFactory().createTypeAccess(PMC.getReference(), true));
+        previousTrapRead.setVariable(previousTrapCasted.getReference());
+
         final CtField<Short> trapField = getFactory().createCtField(
-                trapFieldName, shortType, initializer,
-                ModifierKind.PUBLIC, ModifierKind.STATIC, ModifierKind.FINAL);
+                trapFieldName, shortType, "", ModifierKind.PUBLIC, ModifierKind.STATIC, ModifierKind.FINAL);
+
+        // (short) (previousTrap + 1)
+        final CtExpression<Short> sum = getFactory().createBinaryOperator(
+                previousTrapRead, getFactory().createLiteral(1), BinaryOperatorKind.PLUS);
+        sum.setType(getFactory().createCtTypeReference(Integer.TYPE));
+        sum.addTypeCast(shortType);
+        trapField.setAssignment(sum);
 
         PMC.addField(trapField);
 

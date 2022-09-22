@@ -36,11 +36,6 @@ public class Args {
                converter = StageConverter.class)
     public Stage stopAfter = Stage.visualisation;
 
-    @Parameter(names = {"--max-traps-per-method"},
-               description = "Maximum number of traps to be inserted in a method",
-               validateWith = PositiveInteger.class)
-    public int maxTraps = 100;
-
 //    @Parameter(names = {"-u", "--update"},
 //               description = "Update already instrumented files")
 //    public boolean update = false;

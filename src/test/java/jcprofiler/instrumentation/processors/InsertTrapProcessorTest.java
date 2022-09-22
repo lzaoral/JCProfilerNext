@@ -38,8 +38,10 @@ class InsertTrapProcessorTest {
         final Launcher spoon = new Launcher();
 
         // add PM stub
-        spoon.addInputResource(new VirtualFile("public class PM { public static void check(short s) {} }"));
-        spoon.addInputResource(new VirtualFile("public class PMC {}"));
+        spoon.addInputResource(new VirtualFile(
+                "public class PM { public static void check(short s) {} }"));
+        spoon.addInputResource(new VirtualFile(
+                "public class PMC { public static final short PERF_START = (short) 0x1; }"));
 
         // add the input
         spoon.addInputResource(Objects.requireNonNull(getClass().getResource(fileName)).getPath());

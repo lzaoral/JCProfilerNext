@@ -63,7 +63,7 @@ public class Profiler {
 
     private void buildPerfMapping() {
         log.info("Looking for traps in the {} method.", args.method);
-        final String trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(profiledMethod) + "_";
+        final String trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(profiledMethod);
 
         final List<CtField<Short>> traps = profiledMethod.filterChildren(CtFieldAccess.class::isInstance)
                 .map((CtFieldAccess<Short> fa) -> fa.getVariable().getFieldDeclaration())
