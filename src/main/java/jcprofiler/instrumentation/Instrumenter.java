@@ -11,11 +11,9 @@ import org.slf4j.LoggerFactory;
 import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
-import spoon.reflect.code.CtLiteral;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtField;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtPackage;
+import spoon.reflect.code.*;
+import spoon.reflect.declaration.*;
+import spoon.reflect.reference.CtFieldReference;
 import spoon.support.compiler.VirtualFile;
 
 import java.io.*;
@@ -166,5 +164,20 @@ public class Instrumenter {
                     "PMC class sanity check failed!%nThe following trap fields have the same values: %s",
                     valueFieldsMap));
         }
+
+        // check that every trap constant is used exactly once
+        final List<CtInvocation<?>> traps = spoon.getModel().getElements(
+                (CtInvocation<?> i) -> i.getTarget() instanceof CtTypeAccess &&
+                        ((CtTypeAccess<?>) i.getTarget()).getAccessedType().getSimpleName().equals("PM") &&
+                        i.getExecutable().getSignature().equals("check(short)"));
+        final Set<CtField<?>> trapFields = traps.stream().flatMap(x -> x.getArguments().stream())
+                .map(x -> (CtFieldRead<?>) x).map(CtFieldRead::getVariable).map(CtFieldReference::getDeclaration)
+                .collect(Collectors.toSet());
+
+        if (traps.size() != trapFields.size())
+            throw new RuntimeException("More traps called with the same PMC field!");
+
+        if (trapFields.size() != fieldValuesMap.size() - /* PERF_START */ 1)
+            throw new RuntimeException("Some PMC trap fields are unused!");
     }
 }
