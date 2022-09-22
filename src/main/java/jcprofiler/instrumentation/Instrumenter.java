@@ -11,16 +11,16 @@ import org.slf4j.LoggerFactory;
 import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
+import spoon.reflect.code.CtLiteral;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtPackage;
 import spoon.support.compiler.VirtualFile;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // TODO: support already instrumented stuff
@@ -59,7 +59,8 @@ public class Instrumenter {
         log.info("Saving instrumented classes.");
         spoon.prettyprint();
 
-        // TODO sanity check that all PMC members are unique
+        // check that all PMC members are unique
+        checkPMC(spoon);
     }
 
     private void buildModel(final Launcher spoon) {
@@ -146,6 +147,24 @@ public class Instrumenter {
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void checkPMC(final SpoonAPI spoon) {
+        // check that all trap constants have unique values
+        final CtClass<?> pmc = spoon.getModel().filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
+        final Map<CtField<?>, Short> fieldValuesMap = pmc.getFields().stream().map(f -> {
+            final CtLiteral<? extends Number> lit = f.getAssignment().partiallyEvaluate();
+            return new AbstractMap.SimpleEntry<>(f, lit.getValue().shortValue());
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        if (fieldValuesMap.size() != fieldValuesMap.values().stream().distinct().count()) {
+            final Map<Short, List<CtField<?>>> valueFieldsMap = new HashMap<>();
+            fieldValuesMap.forEach((k, v) -> valueFieldsMap.computeIfAbsent(v, e -> new ArrayList<>()).add(k));
+
+            throw new RuntimeException(String.format(
+                    "PMC class sanity check failed!%nThe following trap fields have the same values: %s",
+                    valueFieldsMap));
         }
     }
 }
