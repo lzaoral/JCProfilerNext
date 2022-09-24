@@ -10,9 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spoon.SpoonAPI;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtType;
+import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.io.IOException;
@@ -58,7 +56,8 @@ public class JCProfilerUtil {
             if (entryPoints.size() > 1)
                 throw new RuntimeException(String.format(
                         "More entry points detected but none was specified to be used! " +
-                        "Use the -e/--entry-point argument.%nDetected entry points: %s", entryPoints));
+                        "Use the -e/--entry-point argument.%nDetected entry points: %s",
+                        entryPoints.stream().map(CtTypeInformation::getQualifiedName).collect(Collectors.toList())));
 
             return entryPoints.get(0);
         }
