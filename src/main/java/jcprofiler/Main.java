@@ -14,7 +14,7 @@ public class Main {
     public static void main(final String[] argv) {
         Configurator.setRootLevel(Level.INFO);
         // TODO: add proper versioning info as well
-        log.info("Welcome to JCProfiler Next!");
+        log.info("Welcome to JCProfilerNext!");
 
         Args args = new Args();
         JCommander jc = JCommander.newBuilder().addObject(args).build();
