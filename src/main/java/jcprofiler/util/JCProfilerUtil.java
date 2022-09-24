@@ -1,5 +1,6 @@
 package jcprofiler.util;
 
+import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 
 import org.apache.commons.csv.CSVFormat;
@@ -16,6 +17,7 @@ import spoon.reflect.reference.CtTypeReference;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,9 +44,33 @@ public class JCProfilerUtil {
     private JCProfilerUtil() {}
 
     // entry points
+
+    /**
+     * Checks that a class in an entry point:
+     *   1. Inherits from the javacard.framework.Applet abstract class
+     *   2. At least on the classes in the inheritance chain implements
+     *      the void process(javacard.framework.APDU) method.
+     *
+     * @param cls - class to be checked
+     * @return true if the class in an applet entry point otherwise false
+     */
     public static boolean isClsEntryPoint(final CtClass<?> cls) {
-        final CtTypeReference<?> parent = cls.getSuperclass();
-        return parent != null && parent.getQualifiedName().equals("javacard.framework.Applet");
+        final List<CtTypeReference<?>> inheritanceChain = new ArrayList<>();
+
+        CtTypeReference<?> clsRef = cls.getReference();
+        while (clsRef != null) {
+            inheritanceChain.add(clsRef);
+            clsRef = clsRef.getSuperclass();
+        }
+
+        return inheritanceChain.stream().anyMatch(c -> c.getQualifiedName().equals("javacard.framework.Applet")) &&
+               inheritanceChain.stream().anyMatch(c -> {
+                   final CtTypeReference<?> APDURef = c.getFactory().createCtTypeReference(APDU.class);
+                   final CtMethod<APDU> processMethod = c.getTypeDeclaration().getMethod("process", APDURef);
+
+                   return processMethod != null && !processMethod.isAbstract() &&
+                          processMethod.getType().equals(c.getFactory().createCtTypeReference(Void.TYPE));
+               });
     }
 
     public static CtClass<?> getEntryPoint(final SpoonAPI spoon, final String className) {

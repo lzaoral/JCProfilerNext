@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import spoon.Launcher;
 import spoon.SpoonAPI;
+import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.support.compiler.VirtualFile;
 
@@ -386,6 +387,99 @@ class JCProfilerUtilTest {
 
         assertEquals("TRAP_test_Test_dol_Test2_foo_argb_test_Test_dol_Test1__java_lang_Long__int_arr_arge",
                 JCProfilerUtil.getTrapNamePrefix(method));
+    }
+
+    @Test
+    void isClsEntryPointRegularClass() {
+        final String input = "package test;" +
+                "public class Test {};";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointSimple() {
+        final String input = "package test;" +
+                "public class Entry extends javacard.framework.Applet {" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertTrue(JCProfilerUtil.isClsEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointNoProcess() {
+        final String input = "package test;" +
+                "public class Entry extends javacard.framework.Applet {}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointAbstractProcess() {
+        final String input = "package test;" +
+                "public abstract class Entry extends javacard.framework.Applet {}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointInherited1() {
+        final String input = "package test;" +
+                "public class Test extends javacard.framework.Applet {}" +
+                "public class Entry extends Test {" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertTrue(JCProfilerUtil.isClsEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointInherited2() {
+        final String input = "package test;" +
+                "public class Test extends javacard.framework.Applet {" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "}" +
+                "public class Entry extends Test {}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertTrue(JCProfilerUtil.isClsEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointInheritedNoProcess() {
+        final String input = "package test;" +
+                "public class Test extends javacard.framework.Applet {}" +
+                "public class Entry extends Test {}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointInheritedAbstractProcess() {
+        final String input = "package test;" +
+                "public abstract class Test extends javacard.framework.Applet {}" +
+                "public abstract class Entry extends Test {}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
     }
 
     private static SpoonAPI prepareSpoon(final String cls) {
