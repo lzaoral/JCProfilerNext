@@ -8,6 +8,8 @@ import jcprofiler.util.JCProfilerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pro.javacard.JavaCardSDK;
+
 import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
@@ -101,19 +103,27 @@ public class Instrumenter {
         buildModel(tmpSpoon);
 
         final List<CtClass<?>> classes = tmpSpoon.getModel().getElements(CtClass.class::isInstance);
-
-        final List<CtPackage> pkgs = classes.stream().map(CtClass::getPackage).distinct().collect(Collectors.toList());
+        final Set<CtPackage> pkgs = classes.stream().map(CtClass::getPackage).collect(Collectors.toSet());
         log.debug("Found following packages in sources: {}", pkgs);
 
-        // TODO: does even javacard allow more?
-        if (pkgs.size() != 1)
-            throw new RuntimeException("Only one package is allowed! Found: " + pkgs);
-
-        final String packageName = pkgs.get(0).getQualifiedName();
-        if (packageName.isEmpty())
+        if (pkgs.stream().anyMatch(CtPackage::isUnnamedPackage))
             throw new RuntimeException("Usage of the default package detected! " +
                     "This is unsupported by the CAP converter.");
 
+        // Only JavaCard 3.0.1 and newer support multi package CAP files.
+        // https://docs.oracle.com/en/java/javacard/3.1/guide/programming-multi-package-large-cap-files.html
+        if (pkgs.size() != 1) {
+            JavaCardSDK.Version jcVersion = args.jcSDK.getVersion();
+            if (!jcVersion.isOneOf(JavaCardSDK.Version.V310)) {
+                throw new RuntimeException(String.format(
+                        "Only one package is allowed with JavaCard %s! Found: %s", jcVersion, pkgs));
+            }
+
+            // TODO: add support for such projects
+            throw new RuntimeException("JavaCard 3.1+ multi package projects are unsupported at the moment!");
+        }
+
+        final String packageName = pkgs.iterator().next().getQualifiedName();
         for (final String className : generatedClasses) {
             log.debug("Looking for existing {} class.", className);
             final long count = classes.stream().filter(c -> c.getSimpleName().equals(className)).count();
@@ -137,7 +147,9 @@ public class Instrumenter {
                 final InputStream is = Objects.requireNonNull(getClass().getResourceAsStream(filename));
                 try (final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                     final String src = br.lines()
+                            // fix newlines
                             .collect(Collectors.joining(System.lineSeparator()))
+                            // set package name
                             .replace("@PACKAGE@", packageName);
                     spoon.addInputResource(new VirtualFile(src, filename));
                 }
