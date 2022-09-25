@@ -31,7 +31,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     private CtClass<?> getClass(final String simpleName) {
         final CtClass<?> cls = getFactory().getModel().filterChildren(
-                (CtType<?> c) -> c.getSimpleName().equals(simpleName)).first();
+                (CtType<?> c) -> c.isTopLevel() && c.getSimpleName().equals(simpleName)).first();
         if (cls == null)
             throw new RuntimeException("Class " + simpleName + " not found!");
 

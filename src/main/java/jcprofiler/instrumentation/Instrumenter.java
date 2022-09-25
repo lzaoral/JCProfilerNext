@@ -126,7 +126,7 @@ public class Instrumenter {
         final String packageName = pkgs.iterator().next().getQualifiedName();
         for (final String className : generatedClasses) {
             log.debug("Looking for existing {} class.", className);
-            final long count = classes.stream().filter(c -> c.getSimpleName().equals(className)).count();
+            final long count = classes.stream().filter(c -> c.isTopLevel() && c.getSimpleName().equals(className)).count();
 //            if (count > 1)
             if (count > 0)
                 throw new RuntimeException(String.format("Code contains %d classes named %s", count, className));
@@ -162,7 +162,8 @@ public class Instrumenter {
 
     private void checkPMC(final SpoonAPI spoon) {
         // check that all trap constants have unique values
-        final CtClass<?> pmc = spoon.getModel().filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
+        final CtClass<?> pmc = spoon.getModel().filterChildren(
+                (CtClass<?> c) -> c.isTopLevel() && c.getSimpleName().equals("PMC")).first();
         final Map<CtField<?>, Short> fieldValuesMap = pmc.getFields().stream().map(f -> {
             final CtLiteral<? extends Number> lit = f.getAssignment().partiallyEvaluate();
             return new AbstractMap.SimpleEntry<>(f, lit.getValue().shortValue());
@@ -179,9 +180,14 @@ public class Instrumenter {
 
         // check that every trap constant is used exactly once
         final List<CtInvocation<?>> traps = spoon.getModel().getElements(
-                (CtInvocation<?> i) -> i.getTarget() instanceof CtTypeAccess &&
-                        ((CtTypeAccess<?>) i.getTarget()).getAccessedType().getSimpleName().equals("PM") &&
-                        i.getExecutable().getSignature().equals("check(short)"));
+                (CtInvocation<?> i) -> {
+                    if (!(i.getTarget() instanceof CtTypeAccess))
+                        return false;
+                    final CtType<?> cls = ((CtTypeAccess<?>) i.getTarget()).getAccessedType().getDeclaration();
+                    return cls != null && cls.isTopLevel() && cls.getSimpleName().equals("PM") &&
+                           i.getType().equals(i.getFactory().createCtTypeReference(Void.TYPE)) &&
+                           i.getExecutable().getSignature().equals("check(short)");
+        });
         final Set<CtField<?>> trapFields = traps.stream().flatMap(x -> x.getArguments().stream())
                 .map(x -> (CtFieldRead<?>) x).map(CtFieldRead::getVariable).map(CtFieldReference::getDeclaration)
                 .collect(Collectors.toSet());
