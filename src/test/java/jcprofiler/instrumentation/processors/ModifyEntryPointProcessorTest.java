@@ -2,7 +2,9 @@ package jcprofiler.instrumentation.processors;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
+
 import org.junit.jupiter.api.Test;
+
 import spoon.Launcher;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtClass;
@@ -147,14 +149,7 @@ class ModifyEntryPointProcessorTest {
         // delete the process method
         input.getMethodsByName("process").get(0).delete();
 
-        Exception e = assertThrows(
-                RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
-
-        String expected = "Class Example inherits from javacard.framework.Applet but does not implement the 'process' method!";
-        String actual = e.getMessage();
-
-        assertEquals(expected, actual);
+        assertFalse(new ModifyEntryPointProcessor(new Args()).isToBeProcessed(input));
     }
 
     @Test
@@ -176,6 +171,19 @@ class ModifyEntryPointProcessorTest {
     }
 
     @Test
+    public void inheritedProcessMethod() {
+        final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestInput.java");
+        final CtClass<?> expected = parseClass("ModifyEntryPointProcessorTestExpected.java");
+
+        final CtClass<?> extendedInput = input.getFactory().createClass("ExtendedExample");
+        extendedInput.setSuperclass(input.getReference());
+        final CtClass<?> extendedInputExpected = extendedInput.clone();
+
+        assertThat(extendedInput).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(extendedInputExpected);
+        assertThat(input).isEqualTo(expected);
+    }
+
+    @Test
     public void noSwitchesInProcess() {
         // Using already instrumented file for input is NOT a bug!
         final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
@@ -189,8 +197,9 @@ class ModifyEntryPointProcessorTest {
                 () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = String.format(
-                "No switch statement with byte selector found in Example.process method!%nPlease adapt your " +
-                "applet so that it uses a single switch statement to determine the instruction to execute.");
+                "No switch statement with byte selector found in Example.process(javacard.framework.APDU) method!%n" +
+                "Please adapt your applet so that it uses a single switch statement to determine the instruction to " +
+                "execute.");
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
@@ -213,9 +222,9 @@ class ModifyEntryPointProcessorTest {
                 () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = String.format(
-                "More switch statements with byte selector found in Example.process method!%nPlease adapt your " +
-                "applet so that it uses a single switch statement to determine the instruction to execute.%n" +
-                "Found:%n%s%n%s%n", originalSwitch.prettyprint(), newSwitch.prettyprint());
+                "More switch statements with byte selector found in Example.process(javacard.framework.APDU) " +
+                "method!%nPlease adapt your applet so that it uses a single switch statement to determine the " +
+                "instruction to execute.%nFound:%n%s%n%s%n", originalSwitch.prettyprint(), newSwitch.prettyprint());
         String actual = e.getMessage();
 
         assertEquals(expected, actual);

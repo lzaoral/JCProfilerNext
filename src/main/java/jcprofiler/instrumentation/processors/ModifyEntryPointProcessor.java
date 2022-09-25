@@ -36,18 +36,40 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
                 (args.entryPoint.isEmpty() || cls.getQualifiedName().equals(args.entryPoint));
     }
 
+    private CtMethod<Void> getProcessMethod(final CtClass<?> cls) {
+        CtMethod<Void> processMethod;
+        CtTypeReference<?> clsRef = cls.getReference();
+
+        do {
+            processMethod = clsRef.getTypeDeclaration().filterChildren(
+                    (CtMethod<Void> m) -> m.getSignature().equals("process(javacard.framework.APDU)") &&
+                            m.getType().equals(getFactory().createCtTypeReference(Void.TYPE)) &&
+                            !m.isAbstract() && m.getBody() != null).first();
+            clsRef = clsRef.getSuperclass();
+        } while (clsRef != null && processMethod == null);
+
+        if (processMethod == null)
+            throw new RuntimeException(String.format(
+                    "Class %s inherits from %s but does not implement the 'process' method!",
+                    cls.getQualifiedName(), cls.getSuperclass().getQualifiedName()));
+        return processMethod;
+    }
+
     @Override
     public void process(final CtClass<?> cls) {
         log.info("Instrumenting entry point class {}.", cls.getQualifiedName());
-        final CtField<Byte> insPerfSetStop = addInsPerfSetStopField(cls);
-        addInsPerfSetStopSwitchCase(cls, insPerfSetStop);
+        final CtMethod<Void> processMethod = getProcessMethod(cls);
+        final CtField<Byte> insPerfSetStop = addInsPerfSetStopField(processMethod);
+        addInsPerfSetStopSwitchCase(processMethod, insPerfSetStop);
     }
 
-    private CtField<Byte> addInsPerfSetStopField(final CtClass<?> cls) {
+    private CtField<Byte> addInsPerfSetStopField(final CtMethod<Void> processMethod) {
+        final CtType<?> declaringCls = processMethod.getDeclaringType();
+
         // private static final byte INS_PERF_STOP = (byte) 0xf5
         final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
 
-        Optional<CtField<?>> existingInsPerfSetStop = cls.getFields().stream().filter(
+        Optional<CtField<?>> existingInsPerfSetStop = declaringCls.getFields().stream().filter(
                 f -> f.getSimpleName().equals("INS_PERF_SETSTOP")).findFirst();
         if (existingInsPerfSetStop.isPresent()) {
             final CtField<?> insPerfSetStop = existingInsPerfSetStop.get();
@@ -93,8 +115,8 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         insPerfSetStop.setAssignment(initializerCasted);
 
         // insert the field
-        cls.addField(0, insPerfSetStop);
-        log.debug("Added INS_PERF_SETSTOP field to {}.", cls.getQualifiedName());
+        declaringCls.addField(0, insPerfSetStop);
+        log.debug("Added INS_PERF_SETSTOP field to {}.", declaringCls.getQualifiedName());
         return insPerfSetStop;
     }
 
@@ -174,19 +196,9 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         return ctCase;
     }
 
-    private CtMethod<Void> getProcessMethod(CtClass<?> cls) {
-        final CtMethod<Void> processMethod = cls.filterChildren(
-                (CtMethod<Void> m) -> m.getSignature().equals("process(javacard.framework.APDU)") &&
-                        m.getType().equals(getFactory().createCtTypeReference(Void.TYPE))).first();
-        if (processMethod == null || processMethod.getBody() == null)
-            throw new RuntimeException(String.format(
-                    "Class %s inherits from %s but does not implement the 'process' method!",
-                    cls.getQualifiedName(), cls.getSuperclass().getQualifiedName()));
-        return processMethod;
-    }
-
-    private void addInsPerfSetStopSwitchCase(CtClass<?> cls, CtField<Byte> insPerfSetStop) {
-        final CtMethod<Void> processMethod = getProcessMethod(cls);
+    private void addInsPerfSetStopSwitchCase(final CtMethod<Void> processMethod, final CtField<Byte> insPerfSetStop) {
+        final String processSignature =
+                processMethod.getDeclaringType().getQualifiedName() + "." + processMethod.getSignature();
 
         final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
         final List<CtSwitch<Byte>> ctSwitches = processMethod.getElements(
@@ -198,12 +210,11 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
             if (ctSwitches.isEmpty())
                 throw new RuntimeException(String.format(
-                        "No switch statement with byte selector found in %s.process method!%n%s",
-                        cls.getQualifiedName(), msg));
+                        "No switch statement with byte selector found in %s method!%n%s", processSignature, msg));
 
             throw new RuntimeException(String.format(
-                    "More switch statements with byte selector found in %s.process method!%n%s%nFound:%n%s%n",
-                    cls.getQualifiedName(), msg, ctSwitches.stream().map(CtSwitch::prettyprint)
+                    "More switch statements with byte selector found in %s method!%n%s%nFound:%n%s%n",
+                    processSignature, msg, ctSwitches.stream().map(CtSwitch::prettyprint)
                             .collect(Collectors.joining(System.lineSeparator()))));
         }
 
@@ -245,7 +256,6 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         }
 
         ctSwitch.addCaseAt(0, newPerfStopCase);
-        log.debug("Added INS_PERF_SETSTOP switch case statement to {}.{}.",
-                cls.getQualifiedName(), processMethod.getSignature());
+        log.debug("Added INS_PERF_SETSTOP switch case statement to {}.", processSignature);
     }
 }
