@@ -19,12 +19,30 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     private final Args args;
 
+    private CtClass<?> PM;
     private CtClass<?> PMC;
+
     private String trapNamePrefix;
     private int trapCount;
 
     public InsertTrapProcessor(final Args args) {
         this.args = args;
+    }
+
+    private CtClass<?> getClass(final String simpleName) {
+        final CtClass<?> cls = getFactory().getModel().filterChildren(
+                (CtType<?> c) -> c.getSimpleName().equals(simpleName)).first();
+        if (cls == null)
+            throw new RuntimeException("Class " + simpleName + " not found!");
+
+        return cls;
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        PM = getClass("PM");
+        PMC = getClass("PMC");
     }
 
     @Override
@@ -36,10 +54,6 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
     @Override
     public void process(final CtMethod<?> method) {
         log.info("Instrumenting {}.{}.", method.getDeclaringType().getQualifiedName(), method.getSignature());
-
-        // TODO: this is not ideal solution
-        if (PMC == null)
-            PMC = method.getDeclaringType().getPackage().getType("PMC");
 
         trapCount = 0;
         trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(method);
@@ -202,11 +216,9 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         trapFieldRead.setTarget(getFactory().createTypeAccess(trapField.getDeclaringType().getReference()));
         trapFieldRead.setVariable(trapField.getReference());
 
-        final CtClass<?> pm = getFactory().getModel()
-                .getElements((CtClass<?> c) -> c.getSimpleName().equals("PM")).get(0);
         final CtInvocation<?> pmCall = getFactory().createInvocation(
-                getFactory().createTypeAccess(pm.getReference()),
-                pm.getMethod("check", getFactory().createCtTypeReference(Short.TYPE)).getReference(),
+                getFactory().createTypeAccess(PM.getReference()),
+                PM.getMethod("check", getFactory().createCtTypeReference(Short.TYPE)).getReference(),
                 trapFieldRead);
 
         log.debug("Adding {} trap {} {}.",
