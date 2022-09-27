@@ -1,7 +1,7 @@
 package jcprofiler.instrumentation;
 
 import jcprofiler.args.Args;
-import jcprofiler.instrumentation.processors.FixNestedClassImportProcessor;
+import jcprofiler.instrumentation.processors.SpoonWorkarounds;
 import jcprofiler.instrumentation.processors.InsertTrapProcessor;
 import jcprofiler.instrumentation.processors.ModifyEntryPointProcessor;
 import jcprofiler.util.JCProfilerUtil;
@@ -49,7 +49,11 @@ public class Instrumenter {
         // instrument the model
         spoon.addProcessor(new ModifyEntryPointProcessor(args));
         spoon.addProcessor(new InsertTrapProcessor(args));
-        spoon.addProcessor(new FixNestedClassImportProcessor());
+
+        // add workarounds for bugs in SPOON
+        spoon.addProcessor(new SpoonWorkarounds.FixNestedClassImportProcessor());
+        spoon.addProcessor(new SpoonWorkarounds.FixStaticMethodImportProcessor());
+        spoon.addProcessor(new SpoonWorkarounds.FixStaticFieldImportProcessor());
 
         log.info("Instrumenting existing classes.");
         spoon.process();
