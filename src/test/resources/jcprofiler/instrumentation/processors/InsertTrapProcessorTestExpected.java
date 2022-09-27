@@ -496,6 +496,21 @@ public class SimpleClass {
         }
     }
 
+    public void terminator13(int a) {
+        PM.check(PMC.TRAP_SimpleClass_terminator13_argb_int_arge_1);
+        switch (a) {
+            case 1:
+                PM.check(PMC.TRAP_SimpleClass_terminator13_argb_int_arge_2);
+                {
+                    PM.check(PMC.TRAP_SimpleClass_terminator13_argb_int_arge_3);
+                    a++;
+                    PM.check(PMC.TRAP_SimpleClass_terminator13_argb_int_arge_4);
+                    break;
+                }
+        }
+        PM.check(PMC.TRAP_SimpleClass_terminator13_argb_int_arge_5);
+    }
+
     public static class Nest {
         void nest(int a) {
             PM.check(PMC.TRAP_SimpleClass_dol_Nest_nest_argb_int_arge_1);

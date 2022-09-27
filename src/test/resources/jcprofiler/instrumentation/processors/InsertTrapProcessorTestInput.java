@@ -343,6 +343,16 @@ public class SimpleClass {
         }
     }
 
+    public void terminator13(int a) {
+        switch (a) {
+            case 1:
+                {
+                    a++;
+                    break;
+                }
+        }
+    }
+
     public static class Nest {
         void nest(int a) {
             a++;

@@ -143,7 +143,8 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
     /***
      * Statement is a terminator iff any statement inserted after in the corresponding block will be unreachable, e.g.:
      *     1. the statement is a break or continue,
-     *     2. the statement is a complete terminator.
+     *     2. the statement is a code block ending with a statement that is a terminator,
+     *     3. the statement is a complete terminator.
      * <p>
      * for (int i = 1; i < 100; i++) {
      *     if (cond) {
@@ -156,6 +157,12 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
      * PM.check(...) <- this is still reachable!
      */
     private boolean isTerminator(final CtStatement statement) {
+        // if the statement is a block just go inside
+        if (statement instanceof CtBlock) {
+            final CtBlock<?> block = (CtBlock<?>) statement;
+            return !block.getStatements().isEmpty() && isTerminator(block.getLastStatement());
+        }
+
         return statement instanceof CtCFlowBreak || isCompleteTerminator(statement);
     }
 
