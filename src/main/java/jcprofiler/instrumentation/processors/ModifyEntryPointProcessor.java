@@ -60,7 +60,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         log.info("Instrumenting entry point class {}.", cls.getQualifiedName());
         final CtMethod<Void> processMethod = getProcessMethod(cls);
         final CtField<Byte> insPerfSetStop = addInsPerfSetStopField(processMethod);
-        addInsPerfSetStopSwitchCase(processMethod, insPerfSetStop);
+        addInsPerfSetStopHandler(processMethod, insPerfSetStop);
     }
 
     private CtField<Byte> addInsPerfSetStopField(final CtMethod<Void> processMethod) {
@@ -120,24 +120,13 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         return insPerfSetStop;
     }
 
-    private CtCase<Byte> createPerfStopSwitchCase(final CtMethod<?> processMethod, final CtField<Byte> insPerfSetStop) {
-        final CtClass<?> cls = processMethod.getParent(CtClass.class::isInstance);
-        final CtCase<Byte> ctCase = getFactory().createCase();
-
+    private void addInsPerfSetStopHandler(CtMethod<Void> processMethod, CtField<Byte> insPerfSetStop) {
         final CtTypeReference<Short> shortRef = getFactory().createCtTypeReference(Short.TYPE);
-
-        // case INS_PERF_SETSTOP:
-        {
-            final CtFieldRead<Byte> fieldAccess = getFactory().createFieldRead();
-            fieldAccess.setTarget(getFactory().createTypeAccess(cls.getReference(), true));
-            fieldAccess.setVariable(insPerfSetStop.getReference());
-            ctCase.setCaseExpression(fieldAccess);
-        }
 
         // PM.m_perfStop
         final CtFieldWrite<Short> fieldWrite = getFactory().createFieldWrite();
         {
-            final CtClass<?> pmClass = cls.getPackage().getType("PM");
+            final CtClass<?> pmClass = processMethod.getDeclaringType().getPackage().getType("PM");
             final CtField<?> perfStopField = pmClass.getField("m_perfStop");
 
             if (!perfStopField.getType().equals(shortRef))
@@ -151,17 +140,21 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
             fieldWrite.setVariable(perfStopFieldCasted.getReference());
         }
 
-        // Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA)
-        CtInvocation<Short> makeShortInvocation;
+        // get ${param}.getBuffer()
+        CtInvocation<?> getBufferInvocation;
         try {
-            // get ${param}.getBuffer()
             final Method getBufferMethod = APDU.class.getMethod("getBuffer");
             final CtParameter<?> apduParam = processMethod.getParameters().get(0);
             final CtVariableAccess<?> apduParamRead = getFactory().createVariableRead(apduParam.getReference(), false);
+            getBufferInvocation = getFactory().createInvocation(
+                    apduParamRead, getFactory().Method().createReference(getBufferMethod));
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
 
-            final CtInvocation<?> getBufferInvocation = getFactory()
-                    .createInvocation(apduParamRead, getFactory().Method().createReference(getBufferMethod));
-
+        // Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA)
+        CtInvocation<Short> makeShortInvocation;
+        try {
             // get javacard.framework.ISO7816.OFFSET_CDATA
             final Class<?> iso7816Class = ISO7816.class;
             final Field offsetCdata = iso7816Class.getField("OFFSET_CDATA");
@@ -183,79 +176,84 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
             throw new RuntimeException(e);
         }
 
-        // PM.m_perfStop = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
-        final CtAssignment<Short, Short> perfStopAssign = getFactory().createAssignment();
-        perfStopAssign.setType(shortRef);
-        perfStopAssign.setAssigned(fieldWrite);
-        perfStopAssign.setAssignment(makeShortInvocation);
+        // {
+        //     PM.m_perfStop = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
+        //     return;
+        // }
+        final CtBlock<Void> perfStopBlock = getFactory().createBlock();
+        {
+            final CtAssignment<Short, Short> perfStopAssign = getFactory().createAssignment();
+            perfStopAssign.setType(shortRef);
+            perfStopAssign.setAssigned(fieldWrite);
+            perfStopAssign.setAssignment(makeShortInvocation);
 
-        ctCase.addStatement(perfStopAssign);
-
-        // break;
-        ctCase.addStatement(getFactory().createBreak());
-        return ctCase;
-    }
-
-    private void addInsPerfSetStopSwitchCase(final CtMethod<Void> processMethod, final CtField<Byte> insPerfSetStop) {
-        final String processSignature =
-                processMethod.getDeclaringType().getQualifiedName() + "." + processMethod.getSignature();
-
-        final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
-        final List<CtSwitch<Byte>> ctSwitches = processMethod.getElements(
-                (CtSwitch<Byte> s) -> s.getSelector().getType().equals(byteRef));
-
-        if (ctSwitches.size() != 1) {
-            final String msg = "Please adapt your applet so that it uses a single switch statement" +
-                    " to determine the instruction to execute.";
-
-            if (ctSwitches.isEmpty())
-                throw new RuntimeException(String.format(
-                        "No switch statement with byte selector found in %s method!%n%s", processSignature, msg));
-
-            throw new RuntimeException(String.format(
-                    "More switch statements with byte selector found in %s method!%n%s%nFound:%n%s%n",
-                    processSignature, msg, ctSwitches.stream().map(CtSwitch::prettyprint)
-                            .collect(Collectors.joining(System.lineSeparator()))));
+            perfStopBlock.addStatement(perfStopAssign);
+            perfStopBlock.addStatement(getFactory().createReturn());
         }
 
-        final CtSwitch<Byte> ctSwitch = ctSwitches.get(0);
+        // apdu.getBuffer()[ISO7816.OFFSET_INS]
+        CtArrayRead<Byte> apduBufferRead;
+        try {
+            // get javacard.framework.ISO7816.OFFSET_INS
+            final Class<?> iso7816Class = ISO7816.class;
+            final Field offsetIns = iso7816Class.getField("OFFSET_INS");
 
-        // get case with the same value as JCProfilerUtil.INS_PERF_SETSTOP
-        final Optional<CtCase<? super Byte>> maybeExistingPerfStopCase = ctSwitch.getCases().stream().filter(
-                c -> {
-                    final CtExpression<? super Byte> e = c.getCaseExpression();
-                    if (e == null) // default case
-                        return false;
+            final CtFieldRead<Integer> offsetFieldRead = getFactory().createFieldRead();
+            offsetFieldRead.setTarget(getFactory().createTypeAccess(getFactory().createCtTypeReference(iso7816Class)));
+            offsetFieldRead.setVariable(getFactory().Field().createReference(offsetIns));
 
-                    final CtLiteral<? extends Number> lit = e.partiallyEvaluate();
-                    return lit.getValue().byteValue() == JCProfilerUtil.INS_PERF_SETSTOP;
-                }).findAny();
-
-        final CtCase<Byte> newPerfStopCase = createPerfStopSwitchCase(processMethod, insPerfSetStop);
-
-        if (maybeExistingPerfStopCase.isPresent()) {
-            final CtCase<? super Byte> existingPerfStopCase = maybeExistingPerfStopCase.get();
-            log.info("Existing INS_PERF_SETSTOP switch case statement found at {}.", insPerfSetStop.getPosition());
-
-            // cases are equal
-            if (existingPerfStopCase.equals(newPerfStopCase))
-                return;
-
-            // check that the value in label corresponds to a read of INS_PERF_SETSTOP field
-            final CtExpression<?> expr = existingPerfStopCase.getCaseExpression();
-            if (!(expr instanceof CtFieldRead) ||
-                    !((CtFieldRead<?>) expr).getVariable().equals(insPerfSetStop.getReference()))
-                throw new RuntimeException(String.format(
-                        "The switch in process method already contains a case for 0x%02X distinct from the " +
-                        "INS_PERF_SETSTOP field:%n%s", JCProfilerUtil.INS_PERF_SETSTOP, expr.prettyprint()));
-
-            newPerfStopCase.setParent(ctSwitch);
-            throw new RuntimeException(String.format(
-                    "The body of the INS_PERF_SETSTOP switch case has unexpected contents:%n%s%nExpected:%n%s%n",
-                    existingPerfStopCase.prettyprint(), newPerfStopCase.prettyprint()));
+            apduBufferRead = getFactory().createArrayRead();
+            apduBufferRead.setIndexExpression(offsetFieldRead);
+            apduBufferRead.setTarget(getBufferInvocation);
+            apduBufferRead.setType(getFactory().createCtTypeReference(Byte.TYPE));
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
         }
 
-        ctSwitch.addCaseAt(0, newPerfStopCase);
-        log.debug("Added INS_PERF_SETSTOP switch case statement to {}.", processSignature);
+        // apdu.getBuffer()[ISO7816.OFFSET_INS] == INS_PERF_SETSTOP
+        CtBinaryOperator<Boolean> insEqCond;
+        {
+            CtTypeReference<?> processMethodDeclTypeRed = processMethod.getDeclaringType().getReference();
+            CtTypeReference<?> insPerfSetStopDeclTypeRef = insPerfSetStop.getDeclaringType().getReference();
+
+            final CtFieldRead<Byte> insPerfSetStopFieldRead = getFactory().createFieldRead();
+            insPerfSetStopFieldRead.setTarget(getFactory().createTypeAccess(insPerfSetStopDeclTypeRef,
+                    /* implicit */ processMethodDeclTypeRed.equals(insPerfSetStopDeclTypeRef)));
+            insPerfSetStopFieldRead.setVariable(getFactory().Field().createReference(insPerfSetStop));
+
+            insEqCond = getFactory().createBinaryOperator(apduBufferRead, insPerfSetStopFieldRead, BinaryOperatorKind.EQ);
+            insEqCond.setType(getFactory().createCtTypeReference(Boolean.TYPE));
+        }
+
+        // if (apdu.getBuffer()[ISO7816.OFFSET_INS] == INS_PERF_SETSTOP) {
+        //     PM.m_perfStop = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
+        //     return;
+        // }
+        CtIf ifStatement = getFactory().createIf();
+        ifStatement.setCondition(insEqCond);
+        ifStatement.setThenStatement(perfStopBlock);
+
+        CtBlock<Void> processMethodBody = processMethod.getBody();
+
+        Optional<CtIf> maybeExistingIfStatement = processMethodBody.getStatements().stream()
+                .filter(ifStatement::equals).map(CtIf.class::cast).findAny();
+        if (maybeExistingIfStatement.isPresent()) {
+            log.info("Existing INS_PERF_SETSTOP handler found at {}.", maybeExistingIfStatement.get().getPosition());
+            return;
+        }
+
+        maybeExistingIfStatement = processMethodBody.getStatements().stream().filter(CtIf.class::isInstance)
+                .map(CtIf.class::cast).filter(i -> i.getCondition().equals(ifStatement.getCondition())).findAny();
+        if (maybeExistingIfStatement.isPresent()) {
+            CtIf existingIf = maybeExistingIfStatement.get();
+            log.info("Existing INS_PERF_SETSTOP handler found at {}.", existingIf.getPosition());
+            throw new RuntimeException(String.format(
+                    "The body of the INS_PERF_SETSTOP handle has unexpected contents:%n%s%nExpected:%n%s%n",
+                    existingIf.getThenStatement().prettyprint(), ifStatement.getThenStatement().prettyprint()));
+        }
+
+        processMethodBody.addStatement(0, ifStatement);
+        log.debug("Added INS_PERF_SETSTOP handler as the first statement to {}.{}.",
+                processMethod.getDeclaringType().getQualifiedName(), processMethod.getSignature());
     }
 }
