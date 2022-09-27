@@ -66,7 +66,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     private CtField<Byte> addInsPerfSetStopField(final CtMethod<Void> processMethod) {
         final CtType<?> declaringCls = processMethod.getDeclaringType();
 
-        // private static final byte INS_PERF_STOP = (byte) 0xf5
+        // private static final byte INS_PERF_SETSTOP = (byte) 0xf5
         final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
 
         Optional<CtField<?>> existingInsPerfSetStop = declaringCls.getFields().stream().filter(
