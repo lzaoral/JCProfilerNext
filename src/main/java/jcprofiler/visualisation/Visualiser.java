@@ -94,6 +94,7 @@ public class Visualiser {
 
             if (ds.getN() == 0) {
                 filteredMeasurements.put(k, new ArrayList<>());
+                filteredStatistics.put(k, ds);
                 return;
             }
 
@@ -150,7 +151,7 @@ public class Visualiser {
 
         log.info("Inserting measurements into sources.");
         spoon.setSourceOutputDirectory(outputDir.toFile());
-        spoon.addProcessor(new InsertMeasurementsProcessor(args, atr, measurements));
+        spoon.addProcessor(new InsertMeasurementsProcessor(args, measurements, filteredStatistics));
         spoon.process();
         spoon.prettyprint();
     }
