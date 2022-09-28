@@ -9,6 +9,8 @@ import jcprofiler.util.TimeUnit;
 import pro.javacard.JavaCardSDK;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Args {
     @Parameter(names = {"-h", "--help"},
@@ -45,6 +47,12 @@ public class Args {
                description = "Path to the root directory with JavaCard development kit",
                converter = JCKitConverter.class)
     public JavaCardSDK jcSDK;
+
+    @Parameter(names = {"--jar"},
+               description = "Path to a JAR file to be added to the JavaCard class path " +
+                             "(can be specified multiple times)",
+               converter = FilePathConverter.class)
+    public List<Path> jars = new ArrayList<>();
 
     @Parameter(names = {"--simulator"},
                description = "Use jCardSim simulator instead of a real card")

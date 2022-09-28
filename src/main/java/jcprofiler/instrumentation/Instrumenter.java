@@ -14,6 +14,7 @@ import pro.javacard.JavaCardSDK;
 import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
+import spoon.compiler.ModelBuildingException;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtFieldReference;
@@ -74,7 +75,15 @@ public class Instrumenter {
         spoon.addInputResource(JCProfilerUtil.getSourceInputDirectory(args.workDir).toString());
 
         log.debug("Building SPOON model.");
-        spoon.buildModel();
+        try {
+            spoon.buildModel();
+        } catch (ModelBuildingException e) {
+            if (!e.getMessage().matches("The import .* cannot be resolved at .*"))
+                throw e;
+
+            throw new RuntimeException(
+                    "Import resolution failed! Use the --jar option to add the corresponding JAR file with imports.", e);
+        }
     }
 
     private void checkArguments(final Launcher spoon) {
@@ -97,8 +106,16 @@ public class Instrumenter {
         spoon.getEnvironment().setNoClasspath(false);
         spoon.getEnvironment().setAutoImports(true);
         spoon.getEnvironment().setCopyResources(false);
-        spoon.getEnvironment().setSourceClasspath(args.jcSDK.getApiJars()
-                .stream().map(File::getAbsolutePath).toArray(String[]::new));
+
+        // construct the list of JavaCard API JAR files
+        final List<String> apiJars = args.jcSDK.getApiJars().stream()
+                .map(File::getAbsolutePath).collect(Collectors.toList());
+        apiJars.addAll(args.jars.stream().map(j -> {
+            log.debug("Adding {} to SPOON's path.", j);
+            return j.toString();
+        }).collect(Collectors.toSet()));
+
+        spoon.getEnvironment().setSourceClasspath(apiJars.toArray(new String[0]));
     }
 
     private void addMissingClasses(final Launcher spoon) {

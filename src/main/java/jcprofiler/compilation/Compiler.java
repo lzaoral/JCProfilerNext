@@ -84,6 +84,11 @@ public class Compiler {
         final JCApplet app = cap.createApplet();
         app.setClass(entryPoint.getQualifiedName());
 
+        for (final Path jar : args.jars) {
+            log.debug("Adding {} as in import for the CAP file.", jar);
+            cap.createImport().setJar(jar.toString());
+        }
+
         log.debug("Compiling into {}.cap", entryPoint.getSimpleName());
         p.executeTarget(p.getDefaultTarget());
     }

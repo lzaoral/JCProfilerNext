@@ -23,15 +23,12 @@ import org.slf4j.LoggerFactory;
 import spoon.reflect.declaration.CtClass;
 
 import javax.smartcardio.*;
-import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
@@ -93,8 +90,21 @@ public class Installer {
         try {
             log.debug("Loading {} from {}.", entryPoint.getQualifiedName(), jarPath);
 
+            // get a list of all classes that must be loaded for the simulator
+            final Set<Path> jarList = new HashSet<>();
+            jarList.add(jarPath);
+            jarList.addAll(args.jars);
+
+            final URL[] jarURLArray = jarList.stream().map(Path::toUri).map(u -> {
+                try {
+                    return u.toURL();
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }).toArray(URL[]::new);
+
             // FIXME: this leak is intentional so that the simulator can access every class in the loaded JAR
-            final URLClassLoader classLoader = new URLClassLoader(new URL[]{jarPath.toUri().toURL()});
+            final URLClassLoader classLoader = new URLClassLoader(jarURLArray);
             final Class<? extends Applet> cls = classLoader.loadClass(entryPoint.getQualifiedName())
                     .asSubclass(Applet.class);
             final RunConfig runCfg = RunConfig.getDefaultConfig()
@@ -112,7 +122,7 @@ public class Installer {
 
             System.setOut(stdout);
             return cardManager;
-        } catch (ClassNotFoundException | CardException | IOException e) {
+        } catch (ClassNotFoundException | CardException e) {
             throw new RuntimeException(e);
         }
     }
