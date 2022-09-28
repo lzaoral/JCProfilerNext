@@ -34,7 +34,8 @@ public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<
         final CtExecutableReference<?> executable = statement.getExecutable();
         return executable.getDeclaringType().getSimpleName().equals("PM")
                 && executable.getSignature().equals("check(short)")
-                && executable.getType().equals(getFactory().createCtTypeReference(Void.TYPE));
+                && executable.getType().equals(getFactory().createCtTypeReference(Void.TYPE))
+                && executable.isStatic();
     }
 
     @Override
