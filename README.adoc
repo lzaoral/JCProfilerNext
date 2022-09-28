@@ -85,7 +85,7 @@ JCProfilerNext will process all sources in the `example` directory and will
 also use this directory to store all intermediate results:
 
 * `applet` - contains the built applet with corresponding CAP, JAR and JCA files
-* `measurements.csv` - contains the profiled method signature, card ATR, input APDUs and corresponding raw measurements
+* `measurements.csv` - contains the profiled method signature, card ATR, elapsed time, input APDUs and corresponding raw measurements
 * `measurements.html` - contains visualisation of the measurements
 * `sources_instr` - contains instrumented sources
 * `sources_original` - contains original unchanged sources

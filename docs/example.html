@@ -1,12 +1,6 @@
 
 
 
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,206 +9,20 @@
         <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"></script>
+    <script>hljs.highlightAll()</script>
     <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
-    <script>
-        hljs.highlightAll()
-
-        const inputs = ['00EE00000200C8', '00EE0000020099', '00EE00000200F8', '00EE0000020081', '00EE0000020055', '00EE000002009E', '00EE00000200D9', '00EE00000200CC', '00EE000002003C', '00EE00000200E3', '00EE00000200D2', '00EE00000200FE', '00EE00000200D3', '00EE00000200A4', '00EE000002009A', '00EE000002007C', '00EE0000020036', '00EE00000200ED', '00EE0000020000', '00EE00000200EC', '00EE000002003A', '00EE00000200C0', '00EE00000200F8', '00EE000002008F', '00EE000002000D', '00EE0000020005', '00EE000002001A', '00EE00000200D6', '00EE0000020054', '00EE00000200DE', '00EE00000200F4', '00EE0000020041', '00EE00000200F8', '00EE00000200CD', '00EE00000200C7', '00EE00000200D0', '00EE00000200CB', '00EE0000020047', '00EE0000020048', '00EE00000200FC', '00EE00000200B8', '00EE0000020009', '00EE0000020026', '00EE0000020083', '00EE00000200DD', '00EE00000200D4', '00EE00000200FB', '00EE000002000B', '00EE0000020061', '00EE00000200B1', '00EE0000020035', '00EE00000200D8', '00EE0000020059', '00EE00000200B5', '00EE00000200A6', '00EE0000020075', '00EE000002002E', '00EE0000020091', '00EE0000020049', '00EE0000020058', '00EE0000020088', '00EE0000020003', '00EE0000020077', '00EE0000020006', '00EE000002005D', '00EE00000200EC', '00EE0000020025', '00EE0000020055', '00EE0000020036', '00EE00000200CA', '00EE000002003E', '00EE0000020069', '00EE0000020031', '00EE00000200CD', '00EE00000200E1', '00EE0000020001', '00EE00000200A9', '00EE0000020033', '00EE000002006E', '00EE00000200EA', '00EE00000200F0', '00EE0000020070', '00EE00000200C8', '00EE000002005C', '00EE00000200E9', '00EE0000020070', '00EE0000020039', '00EE0000020004', '00EE0000020079', '00EE0000020068', '00EE0000020022', '00EE0000020018', '00EE000002006B', '00EE0000020053', '00EE0000020059', '00EE000002007D', '00EE000002008D', '00EE00000200C3', '00EE0000020053', '00EE00000200CB'];
-        let selectedTrap = null;
-
-        function redrawGraph(trapName, vals, filteredVals) {
-            selectedTrap?.classList.remove('trap_select');
-            selectedTrap = event.target;
-            selectedTrap.classList.add('trap_select');
-
-            let graphName = document.getElementById('graphName');
-            graphName.textContent = trapName;
-
-            let traces = [];
-
-            const hasUnreach = vals.includes(null);
-            if (hasUnreach) {
-                traces.push({
-                    x: [''],
-                    y: [vals.filter(e => e === null).length],
-                    type: 'bar',
-                    xaxis: 'x1',
-                    yaxis: 'y1',
-                    name: 'unreachable',
-                    showlegend: false,
-                    marker: {
-                        color: 'rgb(255, 0, 0)',
-                        opacity: 0.65
-                    },
-                    hovertemplate: "Unreachable<br>Count: %{y}<extra></extra>",
-                });
-            }
-
-            const hasTime = vals.some(e => e !== null);
-            if (hasTime) {
-                // Histograms
-                const histogramCommon = {
-                    type: 'histogram',
-                    xaxis: 'x2',
-                    yaxis: 'y1',
-                    showlegend: true,
-                    hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>",
-                };
-
-                traces.push({
-                    ...histogramCommon,
-                    x: vals.filter(e => e !== null),
-                    name: 'with outliers',
-                    visible: 'legendonly',
-                    marker: {
-                        color: 'rgb(255,136,0)',
-                        opacity: 0.75
-                    },
-                }, {
-                    ...histogramCommon,
-                    x: filteredVals,
-                    name: 'without outliers',
-                    marker: {
-                        color: 'rgb(49, 130, 189)',
-                        opacity: 0.75
-                    },
-                });
-
-                // Line graph
-
-                // make dots only on line endings
-                let dot_x = [], dot_y = [];
-                for (let i = 0; i < vals.length; i++) {
-                    // no value
-                    if (vals[i] === null)
-                        continue;
-
-                    // both neighbouring values are defined or only one is defined on border values
-                    if (vals.length > 1 &&
-                            (i === 0 || vals[i - 1] !== null) && (i === vals.length - 1 || vals[i + 1] != null))
-                        continue;
-
-                    dot_x.push(i + 1);
-                    dot_y.push(vals[i]);
-                }
-
-                const scatterCommon = {
-                    type: 'scatter',
-                    xaxis: 'x3',
-                    yaxis: 'y2',
-                    name: 'timediff',
-                    showlegend: false,
-                    marker: {
-                        color: 'rgb(86, 189, 49)',
-                        opacity: 0.75
-                    },
-                    hovertemplate: "Round: %{x}<br>Time: %{y} μs<extra></extra>",
-                };
-
-                traces.push({
-                    ...scatterCommon,
-                    x: dot_x,
-                    y: dot_y,
-                    mode: 'markers',
-                }, {
-                    ...scatterCommon,
-                    x: [...Array(vals.length + 1).keys()].splice(1),
-                    y: vals,
-                    mode: 'lines',
-                });
-            }
-
-            // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
-            Plotly.react('plotly', traces, {
-                bargap: 0.2,
-                height: 700,
-                xaxis1: {
-                    anchor: 'y1',
-                    domain: [0, hasTime ? 0.45 : 1],
-                    title: 'Unreachable',
-                },
-                xaxis2: {
-                    anchor: 'y1',
-                    domain: [hasUnreach ? 0.55 : 0, 1],
-                    // dtick: 1,
-                    tickformat: ',d',
-                    title: 'Time in μs',
-                },
-                xaxis3: {
-                    anchor: 'y2',
-                    domain: [0, 1],
-                    tickformat: ',d',
-                    title: 'Round',
-                },
-                yaxis1: {
-                    anchor: 'x1',
-                    domain: [0.55, 1],
-                    title: 'Frequency',
-                    // type: 'log',
-                },
-                yaxis2: {
-                    anchor: 'x3',
-                    domain: [0, 0.43],
-                    title: 'Time in μs',
-                },
-            }, {
-                responsive: true
-            });
-
-            // set click event handler
-            let plotlyDiv = document.getElementById('plotly');
-
-            // replace the event handler
-            plotlyDiv.removeAllListeners('plotly_click');
-            plotlyDiv.on('plotly_click', function (data) {
-                const graph = data.points[0];
-                let msg, selectedInputs;
-
-                switch (graph.data.type) {
-                    // line graph
-                    case 'scatter':
-                        selectedInputs = inputs.slice(graph.x - 1, graph.x);
-                        msg = 'Round: ' + graph.x + '\n';
-                        break;
-                    case 'histogram':
-                        selectedInputs = graph.pointIndices.map(e => inputs[e]);
-
-                        // Rather hack-ish and not very efficient but the input object does not contain the %{x}
-                        // value from hoverstrings.
-                        const binValues = graph.pointIndices.map(e => vals[e]);
-                        msg = 'Bin: ' + Math.min(...binValues) + ' to ' + Math.max(...binValues) + '\n';
-                        break;
-                    case 'bar':
-                        selectedInputs = vals.reduce((res, e, i) => {
-                            if (e === null)
-                                res.push(inputs[i]);
-                            return res;
-                        }, []);
-                        console.assert(selectedInputs.length === graph.y);
-
-                        msg = 'Unreachable\n';
-                        break;
-                    default:
-                        return;
-                }
-
-                msg += 'Inputs:\n';
-
-                const sortedInputs = Array.from(new Set(selectedInputs)).sort();
-                sortedInputs.forEach(e => msg += e + '\n');
-
-                alert(msg);
-            });
-        }
-    </script>
     <style>
-h3 {
-    text-align: center;
-}
-
 .contents {
     display: flex;
     justify-content: space-between;
+}
+
+.main-svg {
+    z-index: 1;
+}
+
+.trap {
+    position: relative;
 }
 
 .trap:hover {
@@ -223,6 +31,7 @@ h3 {
 }
 
 .trap_select {
+    background-color: rgba(0, 255, 255, 25%);
     font-style: italic;
 }
 
@@ -234,9 +43,36 @@ h3 {
     background-color: rgba(255, 255, 0, 50%);
 }
 
+.trapSwitch {
+    bottom: 0;
+    position: absolute;
+    right: 0;
+}
+
+.notes  {
+    align-items: center;
+    background-color: rgba(248, 248, 248, 0.97);
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5em;
+}
+
+.note {
+    align-items: center;
+    display: flex;
+    justify-content: left;
+}
+
+.square {
+    display: inline-block;
+    height: 20px;
+    margin-right: 10px;
+    width: 20px;
+}
+
 .graph {
     align-content: center;
-    width: 46%;
+    width: 49%;
 }
 
 .graph-sticky {
@@ -250,6 +86,27 @@ h3 {
     width: 50%;
 }
 
+#codeWithTraps, #codeWithoutTraps {
+    margin-left: -100px;
+    flex: 1;
+    overflow: scroll;
+}
+
+#codeWithTraps, #graphHelp {
+    display: none;
+}
+
+.codeHeader {
+    position: relative;
+    margin-bottom: 20px;
+    word-wrap: anywhere;
+}
+
+.codeContainer {
+    display: flex;
+    justify-content: flex-start;
+}
+
 .center {
     text-align: center;
 }
@@ -257,46 +114,469 @@ h3 {
 </head>
 <body>
     <h1>example.Example.example(javacard.framework.APDU)</h1>
+    <h3 id="graphName" class="center">Select a line to view its histogram.</h3>
     <div class="contents">
         <div class="code">
-            <p><b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=3B80800101" target="_blank">3B80800101</a></p>
-            <p><b>Source measurements:</b> <a href="example.csv" target="_blank">measurements.csv</a></p>
-            <pre><code class="language-java">
-private void example(APDU apdu) {
-<div class="trap "
-     onclick="redrawGraph( 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_1', [92136, 92348, 91683, 91859, 91959, 91933, 91775, 91712, 91587, 91930, 91737, 91902, 91480, 91830, 91462, 91635, 91726, 91994, 91699, 91231, 91688, 91312, 91701, 91551, 91636, 91627, 91367, 91520, 91700, 91702, 91232, 91351, 91601, 91642, 91563, 91604, 91523, 91571, 91491, 91695, 91790, 91801, 91670, 91623, 91959, 91720, 91615, 91718, 91638, 91608, 91814, 91588, 91725, 91686, 91613, 91450, 91608, 91503, 91501, 91621, 91459, 91606, 91486, 91513, 91768, 91754, 91628, 91644, 91183, 91653, 91707, 91714, 91527, 91653, 91530, 91619, 91760, 91773, 91696, 91548, 91582, 91428, 91468, 91627, 91637, 91509, 91564, 91706, 91858, 91613, 91548, 91554, 92042, 91540, 91491, 91605, 91615, 91806, 91482, 91589], [92136, null, 91683, 91859, 91959, 91933, 91775, 91712, 91587, 91930, 91737, 91902, 91480, 91830, 91462, 91635, 91726, 91994, 91699, 91231, 91688, 91312, 91701, 91551, 91636, 91627, 91367, 91520, 91700, 91702, 91232, 91351, 91601, 91642, 91563, 91604, 91523, 91571, 91491, 91695, 91790, 91801, 91670, 91623, 91959, 91720, 91615, 91718, 91638, 91608, 91814, 91588, 91725, 91686, 91613, 91450, 91608, 91503, 91501, 91621, 91459, 91606, 91486, 91513, 91768, 91754, 91628, 91644, 91183, 91653, 91707, 91714, 91527, 91653, 91530, 91619, 91760, 91773, 91696, 91548, 91582, 91428, 91468, 91627, 91637, 91509, 91564, 91706, 91858, 91613, 91548, 91554, 92042, 91540, 91491, 91605, 91615, 91806, 91482, 91589] )">    PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_1);
+            <div class="codeHeader">
+                <div>
+                    <b>Card ATR:</b> <a href="https://smartcard-atr.apdu.fr/parse?ATR=3B80800101" target="_blank">3B80800101</a><br>
+                    <b>Number of rounds:</b> 100<br>
+                    <b>APDU header:</b> 00EE0000<br>
+                    <b>Input regex:</b> 00[0-9A-F]{2}<br>
+                    <b>Elapsed time:</b> 0 days 00:00:50.896<br>
+                    <b>Source measurements:</b> <a href="example.csv" target="_blank">measurements.csv</a>
+                </div>
+                <div class="trapSwitch">
+                    <input type="checkbox" id="trapSwitch" autocomplete="off"/>
+                    <label for="trapSwitch">Show explicit traps</label>
+                </div>
+            </div>
+            <div class="codeContainer">
+                <div id="heatmap"></div>
+                <div id="codeWithTraps">
+                    <pre><code class="language-java">private void example(APDU apdu) {
+<div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_1 trap">    <span class="trap_contents">PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_1);</span>
 </div>    short count = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
-<div class="trap "
-     onclick="redrawGraph( 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_2', [282, 31, 714, 270, 134, 227, 801, 489, 448, -42, 122, 45, 497, 264, 690, 205, 189, -224, 143, 306, 402, 769, 296, 410, 330, 295, 418, 205, 205, 190, 725, 586, 602, 280, 489, 276, 679, 483, 655, 196, 196, 272, 155, 250, -58, 242, 234, 489, 134, 276, 244, 228, 105, 211, 181, 212, 342, 461, 416, 438, 323, 338, 526, 932, -46, 185, 189, 212, 980, 389, 228, 116, 236, 197, 116, 264, 77, 72, 266, 300, 210, 413, 232, 162, 206, 325, 271, 159, -88, 89, 539, 222, -212, 448, 511, 410, 214, 34, 208, 258], [282, 31, 714, 270, 134, 227, 801, 489, 448, -42, 122, 45, 497, 264, 690, 205, 189, -224, 143, 306, 402, 769, 296, 410, 330, 295, 418, 205, 205, 190, 725, 586, 602, 280, 489, 276, 679, 483, 655, 196, 196, 272, 155, 250, -58, 242, 234, 489, 134, 276, 244, 228, 105, 211, 181, 212, 342, 461, 416, 438, 323, 338, 526, 932, -46, 185, 189, 212, null, 389, 228, 116, 236, 197, 116, 264, 77, 72, 266, 300, 210, 413, 232, 162, 206, 325, 271, 159, -88, 89, 539, 222, -212, 448, 511, 410, 214, 34, 208, 258] )">    PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_2);
+<div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_2 trap">    <span class="trap_contents">PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_2);</span>
 </div>    for (short i = 0; i &lt; count; i++) {
-<div class="trap  trap_err "
-     onclick="redrawGraph( 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_3', [162, 35, 130, 194, 267, 213, -416, -256, -6, 161, 241, 224, 403, 135, -198, 438, 315, 59, null, 55, 24, 95, 128, 273, 6, 154, 414, -74, 383, 199, 11, 58, -293, -39, -22, 105, 49, -46, -276, 60, 127, -144, 184, 169, 168, 132, 284, 37, 318, -9, -141, 121, 317, 69, -16, 54, -27, -150, 136, 19, 91, 77, 16, -498, 176, -16, 236, 144, -21, -115, 242, 46, 455, 359, 201, 8, 82, 313, -192, -81, 121, 64, 116, 85, -43, 68, 82, 34, 106, 577, -154, 244, 308, -54, -79, -20, 211, 439, 54, 147], [162, 35, 130, 194, 267, 213, -416, -256, -6, 161, 241, 224, 403, 135, -198, 438, 315, 59, null, 55, 24, 95, 128, 273, 6, 154, 414, -74, 383, 199, 11, 58, -293, -39, -22, 105, 49, -46, -276, 60, 127, -144, 184, 169, 168, 132, 284, 37, 318, -9, -141, 121, 317, 69, -16, 54, -27, -150, 136, 19, 91, 77, 16, null, 176, -16, 236, 144, -21, -115, 242, 46, 455, 359, 201, 8, 82, 313, -192, -81, 121, 64, 116, 85, -43, 68, 82, 34, 106, 577, -154, 244, 308, -54, -79, -20, 211, 439, 54, 147] )">        PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_3);
+<div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_3 trap trap_err ">        <span class="trap_contents">PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_3);</span>
 </div>        short tmp = 0;
-<div class="trap  trap_err "
-     onclick="redrawGraph( 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_4', [159, 179, -233, -97, 26, -21, 163, 652, 316, 422, 249, -303, -219, 59, 374, -546, -402, 46, null, 357, 42, -140, 7, -60, 199, 94, 64, 73, -56, 5, 82, 68, -29, 189, 293, 133, -105, 165, 300, 26, -105, 131, -40, 85, 67, -232, -39, -363, 144, 149, 172, 283, 53, 191, 308, 338, 153, 239, 125, 65, 563, 165, 213, 247, 308, 209, -38, 403, -107, 39, -94, -145, -179, -23, 247, 71, 149, -118, 61, 520, 659, 224, 107, 153, 248, 157, 208, 260, 171, -310, 43, 110, -11, 64, 467, 98, 63, -239, 304, 404], [159, 179, -233, -97, 26, -21, 163, 652, 316, 422, 249, -303, -219, 59, 374, null, -402, 46, null, 357, 42, -140, 7, -60, 199, 94, 64, 73, -56, 5, 82, 68, -29, 189, 293, 133, -105, 165, 300, 26, -105, 131, -40, 85, 67, -232, -39, -363, 144, 149, 172, 283, 53, 191, 308, 338, 153, 239, 125, 65, 563, 165, 213, 247, 308, 209, -38, 403, -107, 39, -94, -145, -179, -23, 247, 71, 149, -118, 61, 520, 659, 224, 107, 153, 248, 157, 208, 260, 171, -310, 43, 110, -11, 64, 467, 98, 63, -239, 304, 404] )">        PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_4);
+<div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_4 trap trap_err ">        <span class="trap_contents">PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_4);</span>
 </div>        for (short k = 0; k &lt; 50; k++) {
-<div class="trap  trap_err "
-     onclick="redrawGraph( 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_5', [156, -174, 192, 242, 212, 101, 75, -263, 127, 48, -79, 350, 231, -48, 13, 48, 297, 341, null, 541, 106, -215, 280, 45, 151, 28, 46, 369, 89, 173, 203, 140, 404, 261, 66, -101, -320, -2, 36, 222, 160, 251, -12, -64, 176, 595, -20, 367, 100, 75, 12, -64, 20, -17, 80, 144, 117, 112, -15, 136, -245, 9, -13, 37, 90, 19, 233, -395, -195, 61, 58, 300, 243, -163, -118, 186, 331, 213, 114, -20, -428, -8, 24, 194, 285, 129, -2, 15, 149, 185, 166, 9, -119, 219, -370, -24, 363, 147, 74, -300], [156, -174, 192, 242, 212, 101, 75, -263, 127, 48, -79, 350, 231, -48, 13, 48, 297, 341, null, 541, 106, -215, 280, 45, 151, 28, 46, 369, 89, 173, 203, 140, 404, 261, 66, -101, -320, -2, 36, 222, 160, 251, -12, -64, 176, 595, -20, 367, 100, 75, 12, -64, 20, -17, 80, 144, 117, 112, -15, 136, -245, 9, -13, 37, 90, 19, 233, -395, -195, 61, 58, 300, 243, -163, -118, 186, 331, 213, 114, -20, -428, -8, 24, 194, 285, 129, -2, 15, 149, 185, 166, 9, -119, 219, -370, -24, 363, 147, 74, -300] )">            PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_5);
+<div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_5 trap trap_err ">            <span class="trap_contents">PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_5);</span>
 </div>            tmp++;
-<div class="trap  trap_err "
-     onclick="redrawGraph( 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_6', [-209, 275, 221, -213, 107, 264, 38, 138, 140, 246, 844, 300, 4, 316, 22, 276, 135, -116, null, -275, 196, 292, -273, -136, 291, 317, -115, 88, -5, 38, 122, -9, 38, -95, -8, 299, 380, 256, 20, 19, 178, 68, 486, 97, 12, -335, 1053, 214, 86, 161, 180, 186, 139, 110, 139, 38, 62, 87, 83, 61, 108, 137, -105, 196, -58, 328, -70, 321, 79, 197, -25, 192, -20, 245, 186, 196, -175, -224, 341, -275, -10, -49, 384, 76, -2, 94, 101, 117, 40, -36, 62, -6, 190, 176, 2011, 212, -243, 100, 560, 264], [-209, 275, 221, -213, 107, 264, 38, 138, 140, 246, 844, 300, 4, 316, 22, 276, 135, -116, null, -275, 196, 292, -273, -136, 291, 317, -115, 88, -5, 38, 122, -9, 38, -95, -8, 299, 380, 256, 20, 19, 178, 68, 486, 97, 12, -335, null, 214, 86, 161, 180, 186, 139, 110, 139, 38, 62, 87, 83, 61, 108, 137, -105, 196, -58, 328, -70, 321, 79, 197, -25, 192, -20, 245, 186, 196, -175, -224, 341, -275, -10, -49, 384, 76, -2, 94, 101, 117, 40, -36, 62, -6, 190, 176, null, 212, -243, 100, 560, 264] )">            PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_6);
+<div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_6 trap trap_err ">            <span class="trap_contents">PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_6);</span>
 </div>        }
-<div class="trap  trap_err "
-     onclick="redrawGraph( 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_7', [10058, 10118, 9953, 10391, 10030, 10227, 10096, 10232, 10349, 9876, 8924, 9869, 9927, 10240, 10196, 10080, 10071, 10290, null, 10145, 10101, 10422, 10104, 10187, 9921, 9846, 10343, 10353, 10023, 10194, 10094, 10216, 10205, 10344, 10268, 10027, 10264, 10115, 10291, 10257, 9960, 10109, 10041, 10038, 10040, 10271, 9221, 10209, 10018, 10053, 10073, 10057, 10050, 10108, 10135, 10280, 10210, 10101, 10322, 9979, 10100, 10016, 10251, 10076, 10254, 9855, 10365, 10077, 10241, 10115, 10562, 10081, 10050, 10116, 10597, 9845, 10508, 10335, 10176, 10345, 10273, 10353, 9872, 10238, 10311, 10187, 10136, 10084, 10148, 9855, 10262, 10262, 10210, 9875, 8363, 10108, 10338, 10213, 9752, 9988], [10058, 10118, 9953, 10391, 10030, 10227, 10096, 10232, 10349, 9876, null, 9869, 9927, 10240, 10196, 10080, 10071, 10290, null, 10145, 10101, 10422, 10104, 10187, 9921, 9846, 10343, 10353, 10023, 10194, 10094, 10216, 10205, 10344, 10268, 10027, 10264, 10115, 10291, 10257, 9960, 10109, 10041, 10038, 10040, 10271, null, 10209, 10018, 10053, 10073, 10057, 10050, 10108, 10135, 10280, 10210, 10101, 10322, 9979, 10100, 10016, 10251, 10076, 10254, 9855, 10365, 10077, 10241, 10115, 10562, 10081, 10050, 10116, 10597, 9845, 10508, 10335, 10176, 10345, 10273, 10353, 9872, 10238, 10311, 10187, 10136, 10084, 10148, 9855, 10262, 10262, 10210, 9875, null, 10108, 10338, 10213, 9752, 9988] )">        PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_7);
+<div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_7 trap trap_err ">        <span class="trap_contents">PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_7);</span>
 </div>    }
-<div class="trap "
-     onclick="redrawGraph( 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_8', [7915981, 6052095, 9793650, 5116123, 3368397, 6278103, 8613625, 8048144, 2334185, 8976787, 8369692, 10118409, 8380971, 6514893, 6067631, 4895026, 2101144, 9426464, -267, 9330338, 2314246, 7583265, 9886323, 5694955, 469471, 128123, 1034792, 8499752, 3274249, 8841360, 9673134, 2559928, 9886875, 8148499, 7914024, 8266213, 8041716, 2794540, 2805212, 10015229, 7327683, 341471, 1504080, 5226851, 8746363, 8394553, 10005419, 362372, 3839816, 6997686, 2091172, 8608311, 3498448, 7211181, 6624225, 4650786, 1759852, 5717585, 2901426, 3488546, 5365451, 107135, 4672097, 224105, 3712360, 9419184, 1408297, 3370942, 2101770, 8032807, 2442722, 4182002, 1877519, 8150056, 8960719, 340, 6742021, 1983898, 4320099, 9312491, 9547367, 4426938, 7926309, 3616119, 9302188, 4427015, 2218935, 117376, 4778910, 4086162, 1290692, 928096, 4203083, 3264403, 3498915, 4992633, 5589871, 7787432, 3264353, 8043671], [7915981, 6052095, 9793650, 5116123, 3368397, 6278103, 8613625, 8048144, 2334185, 8976787, 8369692, 10118409, 8380971, 6514893, 6067631, 4895026, 2101144, 9426464, -267, 9330338, 2314246, 7583265, 9886323, 5694955, 469471, 128123, 1034792, 8499752, 3274249, 8841360, 9673134, 2559928, 9886875, 8148499, 7914024, 8266213, 8041716, 2794540, 2805212, 10015229, 7327683, 341471, 1504080, 5226851, 8746363, 8394553, 10005419, 362372, 3839816, 6997686, 2091172, 8608311, 3498448, 7211181, 6624225, 4650786, 1759852, 5717585, 2901426, 3488546, 5365451, 107135, 4672097, 224105, 3712360, 9419184, 1408297, 3370942, 2101770, 8032807, 2442722, 4182002, 1877519, 8150056, 8960719, 340, 6742021, 1983898, 4320099, 9312491, 9547367, 4426938, 7926309, 3616119, 9302188, 4427015, 2218935, 117376, 4778910, 4086162, 1290692, 928096, 4203083, 3264403, 3498915, 4992633, 5589871, 7787432, 3264353, 8043671] )">    PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_8);
+<div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_8 trap">    <span class="trap_contents">PM.check(PMC.TRAP_example_Example_example_argb_javacard_framework_APDU_arge_8);</span>
 </div>}
-        </code>
-            </pre>
+</code></pre>
+                </div>
+                <div id="codeWithoutTraps">
+                                                            <pre><code class="language-java"><div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_1 trap"><span class="trap_contents">private void example(APDU apdu) {</span>
+</div><div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_2 trap">    <span class="trap_contents">short count = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);</span>
+</div><div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_3 trap trap_err ">    <span class="trap_contents">for (short i = 0; i &lt; count; i++) {</span>
+</div><div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_4 trap trap_err ">        <span class="trap_contents">short tmp = 0;</span>
+</div><div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_5 trap trap_err ">        <span class="trap_contents">for (short k = 0; k &lt; 50; k++) {</span>
+</div><div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_6 trap trap_err ">            <span class="trap_contents">tmp++;</span>
+</div><div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_7 trap trap_err ">        <span class="trap_contents">}</span>
+</div><div class="TRAP_example_Example_example_argb_javacard_framework_APDU_arge_8 trap">    <span class="trap_contents">}</span>
+</div>}
+</code></pre>
+                </div>
+            </div>
+            <div>
+                <h3 class="center">Colour explanation</h3>
+                <div class="notes">
+                    <div class="note">
+                        <div class="square trap_select"></div>
+                        Currently selected trap
+                    </div>
+                    <div class="note">
+                        <div class="square trap_warn"></div>
+                        Trap was never reached
+                    </div>
+                    <div class="note">
+                        <div class="square trap_err"></div>
+                        Trap was reached only sometimes
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="graph">
             <div class="graph-sticky">
-                <h3 id="graphName">Select TRAP to view its histogram.</h3>
-                <p class="center">Click on a bin to get a list of corresponding inputs.</p>
+                <div id="graphHelp" class="center">
+                    <p>Click on a bin to get a list of corresponding inputs.</p>
+                </div>
                 <div id="plotly"></div>
             </div>
         </div>
     </div>
+    <script type="application/javascript">
+
+/*
+ * MACROS
+ */
+
+
+/*
+ * CONSTANTS
+ */
+
+const trapPrefix = 'TRAP_example_Example_example_argb_javacard_framework_APDU_arge_';
+
+const inputs = ['00EE00000200C8', '00EE0000020099', '00EE00000200F8', '00EE0000020081', '00EE0000020055', '00EE000002009E', '00EE00000200D9', '00EE00000200CC', '00EE000002003C', '00EE00000200E3', '00EE00000200D2', '00EE00000200FE', '00EE00000200D3', '00EE00000200A4', '00EE000002009A', '00EE000002007C', '00EE0000020036', '00EE00000200ED', '00EE0000020000', '00EE00000200EC', '00EE000002003A', '00EE00000200C0', '00EE00000200F8', '00EE000002008F', '00EE000002000D', '00EE0000020005', '00EE000002001A', '00EE00000200D6', '00EE0000020054', '00EE00000200DE', '00EE00000200F4', '00EE0000020041', '00EE00000200F8', '00EE00000200CD', '00EE00000200C7', '00EE00000200D0', '00EE00000200CB', '00EE0000020047', '00EE0000020048', '00EE00000200FC', '00EE00000200B8', '00EE0000020009', '00EE0000020026', '00EE0000020083', '00EE00000200DD', '00EE00000200D4', '00EE00000200FB', '00EE000002000B', '00EE0000020061', '00EE00000200B1', '00EE0000020035', '00EE00000200D8', '00EE0000020059', '00EE00000200B5', '00EE00000200A6', '00EE0000020075', '00EE000002002E', '00EE0000020091', '00EE0000020049', '00EE0000020058', '00EE0000020088', '00EE0000020003', '00EE0000020077', '00EE0000020006', '00EE000002005D', '00EE00000200EC', '00EE0000020025', '00EE0000020055', '00EE0000020036', '00EE00000200CA', '00EE000002003E', '00EE0000020069', '00EE0000020031', '00EE00000200CD', '00EE00000200E1', '00EE0000020001', '00EE00000200A9', '00EE0000020033', '00EE000002006E', '00EE00000200EA', '00EE00000200F0', '00EE0000020070', '00EE00000200C8', '00EE000002005C', '00EE00000200E9', '00EE0000020070', '00EE0000020039', '00EE0000020004', '00EE0000020079', '00EE0000020068', '00EE0000020022', '00EE0000020018', '00EE000002006B', '00EE0000020053', '00EE0000020059', '00EE000002007D', '00EE000002008D', '00EE00000200C3', '00EE0000020053', '00EE00000200CB'];
+const filteredMeasurements = {
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_1: [null, null, 91683, 91859, 91959, 91933, 91775, 91712, 91587, 91930, 91737, 91902, 91480, 91830, 91462, 91635, 91726, 91994, 91699, null, 91688, 91312, 91701, 91551, 91636, 91627, 91367, 91520, 91700, 91702, null, 91351, 91601, 91642, 91563, 91604, 91523, 91571, 91491, 91695, 91790, 91801, 91670, 91623, 91959, 91720, 91615, 91718, 91638, 91608, 91814, 91588, 91725, 91686, 91613, 91450, 91608, 91503, 91501, 91621, 91459, 91606, 91486, 91513, 91768, 91754, 91628, 91644, null, 91653, 91707, 91714, 91527, 91653, 91530, 91619, 91760, 91773, 91696, 91548, 91582, 91428, 91468, 91627, 91637, 91509, 91564, 91706, 91858, 91613, 91548, 91554, null, 91540, 91491, 91605, 91615, 91806, 91482, 91589],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_2: [282, 31, 714, 270, 134, 227, null, 489, 448, -42, 122, 45, 497, 264, 690, 205, 189, null, 143, 306, 402, null, 296, 410, 330, 295, 418, 205, 205, 190, 725, 586, 602, 280, 489, 276, 679, 483, 655, 196, 196, 272, 155, 250, -58, 242, 234, 489, 134, 276, 244, 228, 105, 211, 181, 212, 342, 461, 416, 438, 323, 338, 526, null, -46, 185, 189, 212, null, 389, 228, 116, 236, 197, 116, 264, 77, 72, 266, 300, 210, 413, 232, 162, 206, 325, 271, 159, -88, 89, 539, 222, null, 448, 511, 410, 214, 34, 208, 258],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_3: [162, 35, 130, 194, 267, 213, null, -256, -6, 161, 241, 224, 403, 135, -198, 438, 315, 59, null, 55, 24, 95, 128, 273, 6, 154, 414, -74, 383, 199, 11, 58, null, -39, -22, 105, 49, -46, -276, 60, 127, -144, 184, 169, 168, 132, 284, 37, 318, -9, -141, 121, 317, 69, -16, 54, -27, -150, 136, 19, 91, 77, 16, null, 176, -16, 236, 144, -21, -115, 242, 46, 455, 359, 201, 8, 82, 313, -192, -81, 121, 64, 116, 85, -43, 68, 82, 34, 106, null, -154, 244, 308, -54, -79, -20, 211, 439, 54, 147],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_4: [159, 179, -233, -97, 26, -21, 163, null, 316, 422, 249, -303, -219, 59, 374, null, null, 46, null, 357, 42, -140, 7, -60, 199, 94, 64, 73, -56, 5, 82, 68, -29, 189, 293, 133, -105, 165, 300, 26, -105, 131, -40, 85, 67, -232, -39, null, 144, 149, 172, 283, 53, 191, 308, 338, 153, 239, 125, 65, null, 165, 213, 247, 308, 209, -38, 403, -107, 39, -94, -145, -179, -23, 247, 71, 149, -118, 61, 520, null, 224, 107, 153, 248, 157, 208, 260, 171, -310, 43, 110, -11, 64, 467, 98, 63, -239, 304, 404],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_5: [156, -174, 192, 242, 212, 101, 75, -263, 127, 48, -79, 350, 231, -48, 13, 48, 297, 341, null, null, 106, -215, 280, 45, 151, 28, 46, 369, 89, 173, 203, 140, 404, 261, 66, -101, null, -2, 36, 222, 160, 251, -12, -64, 176, null, -20, 367, 100, 75, 12, -64, 20, -17, 80, 144, 117, 112, -15, 136, -245, 9, -13, 37, 90, 19, 233, null, -195, 61, 58, 300, 243, -163, -118, 186, 331, 213, 114, -20, null, -8, 24, 194, 285, 129, -2, 15, 149, 185, 166, 9, -119, 219, null, -24, 363, 147, 74, null],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_6: [-209, 275, 221, -213, 107, 264, 38, 138, 140, 246, null, 300, 4, 316, 22, 276, 135, -116, null, -275, 196, 292, -273, -136, 291, 317, -115, 88, -5, 38, 122, -9, 38, -95, -8, 299, 380, 256, 20, 19, 178, 68, 486, 97, 12, -335, null, 214, 86, 161, 180, 186, 139, 110, 139, 38, 62, 87, 83, 61, 108, 137, -105, 196, -58, 328, -70, 321, 79, 197, -25, 192, -20, 245, 186, 196, -175, -224, 341, -275, -10, -49, 384, 76, -2, 94, 101, 117, 40, -36, 62, -6, 190, 176, null, 212, -243, 100, 560, 264],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_7: [10058, 10118, 9953, 10391, 10030, 10227, 10096, 10232, 10349, 9876, null, 9869, 9927, 10240, 10196, 10080, 10071, 10290, null, 10145, 10101, 10422, 10104, 10187, 9921, 9846, 10343, 10353, 10023, 10194, 10094, 10216, 10205, 10344, 10268, 10027, 10264, 10115, 10291, 10257, 9960, 10109, 10041, 10038, 10040, 10271, null, 10209, 10018, 10053, 10073, 10057, 10050, 10108, 10135, 10280, 10210, 10101, 10322, 9979, 10100, 10016, 10251, 10076, 10254, 9855, 10365, 10077, 10241, 10115, 10562, 10081, 10050, 10116, 10597, 9845, 10508, 10335, 10176, 10345, 10273, 10353, 9872, 10238, 10311, 10187, 10136, 10084, 10148, 9855, 10262, 10262, 10210, 9875, null, 10108, 10338, 10213, 9752, 9988],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_8: [7915981, 6052095, 9793650, 5116123, 3368397, 6278103, 8613625, 8048144, 2334185, 8976787, 8369692, 10118409, 8380971, 6514893, 6067631, 4895026, 2101144, 9426464, -267, 9330338, 2314246, 7583265, 9886323, 5694955, 469471, 128123, 1034792, 8499752, 3274249, 8841360, 9673134, 2559928, 9886875, 8148499, 7914024, 8266213, 8041716, 2794540, 2805212, 10015229, 7327683, 341471, 1504080, 5226851, 8746363, 8394553, 10005419, 362372, 3839816, 6997686, 2091172, 8608311, 3498448, 7211181, 6624225, 4650786, 1759852, 5717585, 2901426, 3488546, 5365451, 107135, 4672097, 224105, 3712360, 9419184, 1408297, 3370942, 2101770, 8032807, 2442722, 4182002, 1877519, 8150056, 8960719, 340, 6742021, 1983898, 4320099, 9312491, 9547367, 4426938, 7926309, 3616119, 9302188, 4427015, 2218935, 117376, 4778910, 4086162, 1290692, 928096, 4203083, 3264403, 3498915, 4992633, 5589871, 7787432, 3264353, 8043671]
+};
+const measurements = {
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_1: [92136, 92348, 91683, 91859, 91959, 91933, 91775, 91712, 91587, 91930, 91737, 91902, 91480, 91830, 91462, 91635, 91726, 91994, 91699, 91231, 91688, 91312, 91701, 91551, 91636, 91627, 91367, 91520, 91700, 91702, 91232, 91351, 91601, 91642, 91563, 91604, 91523, 91571, 91491, 91695, 91790, 91801, 91670, 91623, 91959, 91720, 91615, 91718, 91638, 91608, 91814, 91588, 91725, 91686, 91613, 91450, 91608, 91503, 91501, 91621, 91459, 91606, 91486, 91513, 91768, 91754, 91628, 91644, 91183, 91653, 91707, 91714, 91527, 91653, 91530, 91619, 91760, 91773, 91696, 91548, 91582, 91428, 91468, 91627, 91637, 91509, 91564, 91706, 91858, 91613, 91548, 91554, 92042, 91540, 91491, 91605, 91615, 91806, 91482, 91589],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_2: [282, 31, 714, 270, 134, 227, 801, 489, 448, -42, 122, 45, 497, 264, 690, 205, 189, -224, 143, 306, 402, 769, 296, 410, 330, 295, 418, 205, 205, 190, 725, 586, 602, 280, 489, 276, 679, 483, 655, 196, 196, 272, 155, 250, -58, 242, 234, 489, 134, 276, 244, 228, 105, 211, 181, 212, 342, 461, 416, 438, 323, 338, 526, 932, -46, 185, 189, 212, 980, 389, 228, 116, 236, 197, 116, 264, 77, 72, 266, 300, 210, 413, 232, 162, 206, 325, 271, 159, -88, 89, 539, 222, -212, 448, 511, 410, 214, 34, 208, 258],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_3: [162, 35, 130, 194, 267, 213, -416, -256, -6, 161, 241, 224, 403, 135, -198, 438, 315, 59, null, 55, 24, 95, 128, 273, 6, 154, 414, -74, 383, 199, 11, 58, -293, -39, -22, 105, 49, -46, -276, 60, 127, -144, 184, 169, 168, 132, 284, 37, 318, -9, -141, 121, 317, 69, -16, 54, -27, -150, 136, 19, 91, 77, 16, -498, 176, -16, 236, 144, -21, -115, 242, 46, 455, 359, 201, 8, 82, 313, -192, -81, 121, 64, 116, 85, -43, 68, 82, 34, 106, 577, -154, 244, 308, -54, -79, -20, 211, 439, 54, 147],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_4: [159, 179, -233, -97, 26, -21, 163, 652, 316, 422, 249, -303, -219, 59, 374, -546, -402, 46, null, 357, 42, -140, 7, -60, 199, 94, 64, 73, -56, 5, 82, 68, -29, 189, 293, 133, -105, 165, 300, 26, -105, 131, -40, 85, 67, -232, -39, -363, 144, 149, 172, 283, 53, 191, 308, 338, 153, 239, 125, 65, 563, 165, 213, 247, 308, 209, -38, 403, -107, 39, -94, -145, -179, -23, 247, 71, 149, -118, 61, 520, 659, 224, 107, 153, 248, 157, 208, 260, 171, -310, 43, 110, -11, 64, 467, 98, 63, -239, 304, 404],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_5: [156, -174, 192, 242, 212, 101, 75, -263, 127, 48, -79, 350, 231, -48, 13, 48, 297, 341, null, 541, 106, -215, 280, 45, 151, 28, 46, 369, 89, 173, 203, 140, 404, 261, 66, -101, -320, -2, 36, 222, 160, 251, -12, -64, 176, 595, -20, 367, 100, 75, 12, -64, 20, -17, 80, 144, 117, 112, -15, 136, -245, 9, -13, 37, 90, 19, 233, -395, -195, 61, 58, 300, 243, -163, -118, 186, 331, 213, 114, -20, -428, -8, 24, 194, 285, 129, -2, 15, 149, 185, 166, 9, -119, 219, -370, -24, 363, 147, 74, -300],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_6: [-209, 275, 221, -213, 107, 264, 38, 138, 140, 246, 844, 300, 4, 316, 22, 276, 135, -116, null, -275, 196, 292, -273, -136, 291, 317, -115, 88, -5, 38, 122, -9, 38, -95, -8, 299, 380, 256, 20, 19, 178, 68, 486, 97, 12, -335, 1053, 214, 86, 161, 180, 186, 139, 110, 139, 38, 62, 87, 83, 61, 108, 137, -105, 196, -58, 328, -70, 321, 79, 197, -25, 192, -20, 245, 186, 196, -175, -224, 341, -275, -10, -49, 384, 76, -2, 94, 101, 117, 40, -36, 62, -6, 190, 176, 2011, 212, -243, 100, 560, 264],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_7: [10058, 10118, 9953, 10391, 10030, 10227, 10096, 10232, 10349, 9876, 8924, 9869, 9927, 10240, 10196, 10080, 10071, 10290, null, 10145, 10101, 10422, 10104, 10187, 9921, 9846, 10343, 10353, 10023, 10194, 10094, 10216, 10205, 10344, 10268, 10027, 10264, 10115, 10291, 10257, 9960, 10109, 10041, 10038, 10040, 10271, 9221, 10209, 10018, 10053, 10073, 10057, 10050, 10108, 10135, 10280, 10210, 10101, 10322, 9979, 10100, 10016, 10251, 10076, 10254, 9855, 10365, 10077, 10241, 10115, 10562, 10081, 10050, 10116, 10597, 9845, 10508, 10335, 10176, 10345, 10273, 10353, 9872, 10238, 10311, 10187, 10136, 10084, 10148, 9855, 10262, 10262, 10210, 9875, 8363, 10108, 10338, 10213, 9752, 9988],
+        TRAP_example_Example_example_argb_javacard_framework_APDU_arge_8: [7915981, 6052095, 9793650, 5116123, 3368397, 6278103, 8613625, 8048144, 2334185, 8976787, 8369692, 10118409, 8380971, 6514893, 6067631, 4895026, 2101144, 9426464, -267, 9330338, 2314246, 7583265, 9886323, 5694955, 469471, 128123, 1034792, 8499752, 3274249, 8841360, 9673134, 2559928, 9886875, 8148499, 7914024, 8266213, 8041716, 2794540, 2805212, 10015229, 7327683, 341471, 1504080, 5226851, 8746363, 8394553, 10005419, 362372, 3839816, 6997686, 2091172, 8608311, 3498448, 7211181, 6624225, 4650786, 1759852, 5717585, 2901426, 3488546, 5365451, 107135, 4672097, 224105, 3712360, 9419184, 1408297, 3370942, 2101770, 8032807, 2442722, 4182002, 1877519, 8150056, 8960719, 340, 6742021, 1983898, 4320099, 9312491, 9547367, 4426938, 7926309, 3616119, 9302188, 4427015, 2218935, 117376, 4778910, 4086162, 1290692, 928096, 4203083, 3264403, 3498915, 4992633, 5589871, 7787432, 3264353, 8043671]
+};
+
+const heatmapValues = {
+    x: [''],
+    y: [...Array(17 + 1).keys()].splice(1).reverse(),
+    z: [null, 91641.05, null, 282.71, null, 99.71, null, 100.68, null, 94.28, null, 94.17, null, 10147.99, null, 5285276.06, null].map(e => [e]).reverse()
+};
+
+const heatmapValuesFiltered = {
+    x: [''],
+    y: undefined,
+    z: heatmapValues.z.filter((e, i, z) => i === 0 || z[i][0] !== null || z[i - 1][0] === null)
+};
+heatmapValuesFiltered.y = heatmapValues.y.slice(17 - heatmapValuesFiltered.z.length, 17);
+
+const histogramCommon = {
+    type: 'histogram',
+    xaxis: 'x2',
+    yaxis: 'y1',
+    showlegend: true,
+    hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>"
+};
+
+const scatterCommon = {
+    type: 'scatter',
+    xaxis: 'x3',
+    yaxis: 'y2',
+    name: 'timediff',
+    showlegend: false,
+    marker: {
+        color: 'rgb(86, 189, 49)',
+        opacity: 0.75
+    },
+    hovertemplate: "Round: %{x}<br>Time: %{y} μs<extra></extra>"
+};
+
+const layoutCommon = {
+    bargap: 0.2,
+    height: 700,
+    margin: {
+        l: 60,
+        r: 40,
+        b: 40,
+        t: 40,
+        pad: 5
+    },
+    xaxis1: {
+        anchor: 'y1',
+        title: 'Unreachable'
+    },
+    xaxis2: {
+        anchor: 'y1',
+        // dtick: 1,
+        tickformat: ',d',
+        title: 'Time in μs'
+    },
+    xaxis3: {
+        anchor: 'y2',
+        domain: [0, 1],
+        tickformat: ',d',
+        title: 'Round'
+    },
+    yaxis1: {
+        anchor: 'x1',
+        domain: [0.55, 1],
+        title: 'Frequency'
+        // type: 'log',
+    },
+    yaxis2: {
+        anchor: 'x3',
+        domain: [0, 0.43],
+        title: 'Time in μs'
+    }
+};
+
+/*
+ * FUNCTIONS
+ */
+
+// heatmap
+Plotly.newPlot('heatmap', [{
+    ...heatmapValuesFiltered,
+    hovertemplate: "Line: %{y}<br>%{z} μs<extra></extra>",
+    showlegend: false,
+    showscale: false,
+    type: 'heatmap'
+}], {
+    paper_bgcolor: 'rgba(0, 0, 0, 0)',
+    margin: {
+        l: 20,
+        r: 110,
+        b: 6,
+        t: 18,
+        pad: 4
+    },
+    width: 160,
+    xaxis: {
+        fixedrange: true,
+        ticks: '',
+        title: {
+            text: 'Avg μs',
+            standoff: 5
+        },
+        showgrid: false,
+        showticklabels: false,
+        zeroline: false
+    },
+    yaxis: {
+        fixedrange: true,
+        ticks: '',
+        title: '',
+        type: 'category',
+        showgrid: false,
+        zeroline: false
+    }
+}, {
+    displayModeBar: false
+});
+
+// this is not very nice but Google didn't help much nor I'm a JS developer ¯\_(ツ)_/¯
+const padding = 12;
+const originalHeight = document.getElementById('codeWithoutTraps') - padding;
+
+// heatmap resize event
+window.addEventListener("resize", _ => {
+    const trapSwitch = document.getElementById('trapSwitch');
+    const divWith = document.getElementById('codeWithTraps');
+
+    if (trapSwitch.checked)
+        Plotly.relayout('heatmap', {
+            height: divWith.clientHeight - padding
+        });
+    else
+        Plotly.relayout('heatmap', {
+            height: originalHeight
+        });
+});
+
+// heatmap click event handler
+const heatmapDiv = document.getElementById('heatmap');
+heatmapDiv.on('plotly_click', function (data) {
+    const graph = data.points[0];
+    // check for a valid value
+    if (graph.z === null)
+        return;
+
+    // compute the correct trap index
+    const z = graph.data.z;
+
+    let trapIdx = 0;
+    for (let i = z.length - 1; i >= z.length - graph.y; i--) {
+        if (z[i][0] !== null)
+            trapIdx++;
+    }
+
+    const trapDiv = document.querySelector('.' + trapPrefix + trapIdx);
+    const event = new MouseEvent('click');
+    trapDiv.dispatchEvent(event);
+});
+
+function toggleTraps(event) {
+    const divWith = document.getElementById('codeWithTraps');
+    const divWithout = document.getElementById('codeWithoutTraps');
+
+    if (event.currentTarget.checked) {
+        divWith.style.display = 'initial';
+        divWithout.style.display = 'none';
+
+        Plotly.update('heatmap', {
+            x: [heatmapValues.x],
+            y: [heatmapValues.y],
+            z: [heatmapValues.z]
+        }, {
+            'yaxis.type': 'category',
+            height: divWith.clientHeight - padding
+        });
+        return;
+    }
+
+    divWith.style.display = 'none';
+    divWithout.style.display = 'initial';
+
+    Plotly.update('heatmap', {
+        x: [heatmapValuesFiltered.x],
+        y: [heatmapValuesFiltered.y],
+        z: [heatmapValuesFiltered.z]
+    }, {
+        'yaxis.type': 'category',
+        height: originalHeight
+    });
+}
+
+// redraw graph event handler
+let selectedTraps;
+
+function redrawGraph(evt) {
+    // enable graph help
+    document.getElementById('graphHelp').style.display = 'initial';
+
+    // attribute with trap name is always the first
+    const trapName = evt.currentTarget.classList[0];
+
+    // update highlight of the selected trap
+    document.querySelectorAll('.trap_select').forEach(t => t.classList.remove('trap_select'));
+    selectedTraps = document.querySelectorAll('.' + trapName + ' .trap_contents');
+    selectedTraps.forEach(t => t.classList.add('trap_select'));
+
+    // update trap title
+    document.getElementById('graphName').textContent = trapName;
+
+    const vals = measurements[trapName];
+    const traces = [];
+
+    // bar graph visualising number of unreachable rounds
+    const hasUnreach = vals.includes(null);
+    if (hasUnreach) {
+        const y = vals.filter(e => e === null).length;
+        traces.push({
+            x: [''],
+            y: [y],
+            type: 'bar',
+            xaxis: 'x1',
+            yaxis: 'y1',
+            name: 'unreachable',
+            showlegend: false,
+            marker: {
+                color: 'rgb(255, 0, 0)',
+                opacity: 0.65
+            },
+            hovertemplate: "Unreachable<br>Count: %{y} (%{y}/" + vals.length + ")<extra></extra>"
+        });
+    }
+
+    const hasTime = vals.some(e => e !== null);
+    if (hasTime) {
+        // Histograms
+        traces.push({
+            ...histogramCommon,
+            x: vals,
+            name: 'with outliers',
+            visible: 'legendonly',
+            marker: {
+                color: 'rgb(255,136,0)',
+                opacity: 0.75
+            }
+        }, {
+            ...histogramCommon,
+            x: filteredMeasurements[trapName],
+            name: 'without outliers',
+            marker: {
+                color: 'rgb(49, 130, 189)',
+                opacity: 0.75
+            }
+        });
+
+        // Line graph
+
+        // make dots only on line endings
+        const dot_x = [], dot_y = [];
+        for (let i = 0; i < vals.length; i++) {
+            // no value
+            if (vals[i] === null)
+                continue;
+
+            // both neighbouring values are defined or only one is defined on border values
+            if (vals.length > 1 &&
+                (i === 0 || vals[i - 1] !== null) && (i === vals.length - 1 || vals[i + 1] != null))
+                continue;
+
+            dot_x.push(i + 1);
+            dot_y.push(vals[i]);
+        }
+
+        traces.push({
+            ...scatterCommon,
+            x: dot_x,
+            y: dot_y,
+            mode: 'markers'
+        }, {
+            ...scatterCommon,
+            x: [...Array(vals.length + 1).keys()].splice(1),
+            y: vals,
+            mode: 'lines'
+        });
+    }
+
+    // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
+    Plotly.react('plotly', traces, {
+        ...layoutCommon,
+        xaxis1: {
+            ...layoutCommon.xaxis1,
+            domain: [0, hasTime ? 0.45 : 1]
+        },
+        xaxis2: {
+            ...layoutCommon.xaxis2,
+            domain: [hasUnreach ? 0.55 : 0, 1]
+        }
+    }, {
+        responsive: true
+    });
+
+    // set click event handler
+    const plotlyDiv = document.getElementById('plotly');
+
+    // replace the event handler
+    plotlyDiv.removeAllListeners('plotly_click');
+    plotlyDiv.on('plotly_click', function (data) {
+        const graph = data.points[0];
+        let msg, selectedInputs;
+
+        switch (graph.data.type) {
+            // line graph
+            case 'scatter':
+                selectedInputs = [inputs[graph.x]];
+                msg = 'Round: ' + graph.x + '\n';
+                break;
+            case 'histogram':
+                selectedInputs = graph.pointIndices.map(e => inputs[e]);
+
+                // Rather hack-ish and not very efficient but the input object does not contain the %{x}
+                // value from hovertemplates.
+                const binValues = graph.pointIndices.map(e => vals[e]);
+                msg = 'Bin: ' + Math.min(...binValues) + ' to ' + Math.max(...binValues) + '\n';
+                break;
+            case 'bar':
+                selectedInputs = vals.reduce((res, e, i) => {
+                    if (e === null)
+                        res.push(inputs[i]);
+                    return res;
+                }, []);
+                console.assert(selectedInputs.length === graph.y);
+
+                msg = 'Unreachable\n';
+                break;
+            default:
+                return;
+        }
+
+        msg += 'Inputs:\n';
+
+        const sortedInputs = Array.from(new Set(selectedInputs)).sort();
+        sortedInputs.forEach(e => msg += e + '\n');
+
+        alert(msg);
+    });
+}
+
+window.addEventListener('load', _ => {
+    document.getElementById('trapSwitch').addEventListener('change', toggleTraps);
+    document.querySelectorAll('.trap').forEach(elem => elem.addEventListener('click', evt => redrawGraph(evt)));
+});
+    </script>
 </body>
 </html>
