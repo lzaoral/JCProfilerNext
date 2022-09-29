@@ -23,10 +23,10 @@ dependencies {
     implementation 'fr.inria.gforge.spoon:spoon-core:9.1.0'
 
     // for logging
-    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-api:2.0.3'
     implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
-    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.19.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.19.0'
 
     // for input generation
     implementation 'com.github.curious-odd-man:rgxgen:1.4'
