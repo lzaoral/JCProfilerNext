@@ -63,9 +63,10 @@ jar {
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.MF'
 
-    manifest {
-        attributes 'Main-Class': 'jcprofiler.Main'
-    }
+    manifest.attributes(
+        'Main-Class': 'jcprofiler.Main',
+        'Multi-Release': 'true'
+    )
 }
 
 test {
