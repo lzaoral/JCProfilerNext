@@ -1,11 +1,12 @@
 package jcprofiler.args;
 
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.validators.PositiveInteger;
+
 import jcprofiler.args.converters.*;
-import jcprofiler.args.validators.RegexValidator;
+import jcprofiler.args.validators.*;
 import jcprofiler.util.Stage;
 import jcprofiler.util.TimeUnit;
+
 import pro.javacard.JavaCardSDK;
 
 import java.nio.file.Path;
@@ -68,7 +69,7 @@ public class Args {
 
     @Parameter(names = {"--repeat-count"},
                description = "Number of profiling rounds",
-               validateWith = PositiveInteger.class)
+               validateWith = PositiveIntegerValidator.class)
     public int repeatCount = 1000;
 
     @Parameter(names = {"--reset-inst"},
