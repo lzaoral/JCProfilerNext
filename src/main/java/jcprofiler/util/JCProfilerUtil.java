@@ -109,8 +109,7 @@ public class JCProfilerUtil {
         if (methodName == null)
             throw new RuntimeException("--method argument was not provided!");
 
-        // either split on the last . not followed by any . or (), or on the last . before the opening (
-        final String[] split = methodName.split("[.](?=[^.()]*$|[^.]+[(].*$)");
+        final String[] split = methodName.split("#");
         final int lastIdx = split.length - 1;
 
         final List<CtMethod<?>> methods = spoon.getModel().getElements((CtMethod<?> m) -> {
@@ -133,7 +132,7 @@ public class JCProfilerUtil {
         if (containingClassNames.size() > 1 && methodSignatures.size() == 1)
             throw new RuntimeException(String.format(
                     "More of the provided classes contain the %s method!%n" +
-                    "Please, specify the --method parameter in the 'class.%s' format where class is one of:%n%s",
+                    "Please, specify the --method parameter in the 'class#%s' format where class is one of:%n%s",
                     methodName, methodName, containingClassNames));
 
         // overloaded methods are in a single class
@@ -162,7 +161,7 @@ public class JCProfilerUtil {
     }
 
     static public String getFullSignature(final CtMethod<?> method) {
-        return method.getDeclaringType().getQualifiedName() + "." + method.getSignature();
+        return method.getDeclaringType().getQualifiedName() + "#" + method.getSignature();
     }
 
     // trap mangling
@@ -171,6 +170,7 @@ public class JCProfilerUtil {
 
         // list may not be exhaustive
         return prefix.replace('.', '_') // used in qualified types
+                .replace("#", "_hash_") // method member
                 .replace("$", "_dol_") // nested class
                 .replace(",", "__") // args delimiter
                 .replace("()", "_argb_arge")

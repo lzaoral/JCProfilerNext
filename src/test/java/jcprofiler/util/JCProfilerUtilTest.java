@@ -79,17 +79,17 @@ class JCProfilerUtilTest {
 
         String expected = String.format(
                 "More of the provided classes contain the foo method!%n" +
-                "Please, specify the --method parameter in the 'class.foo' format where class is one of:%n" +
+                "Please, specify the --method parameter in the 'class#foo' format where class is one of:%n" +
                 "[test.Test1, test.Test2]");
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
 
-        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo");
+        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo");
         assertEquals("foo()", method.getSignature());
         assertEquals("test.Test1", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2.foo");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2#foo");
         assertEquals("foo()", method.getSignature());
         assertEquals("test.Test2", method.getDeclaringType().getQualifiedName());
     }
@@ -106,17 +106,17 @@ class JCProfilerUtilTest {
 
         String expected = String.format(
                 "More of the provided classes contain the foo(java.lang.Integer) method!%n" +
-                "Please, specify the --method parameter in the 'class.foo(java.lang.Integer)' format where class is one of:%n" +
-                "[test.Test1, test.Test2]");
+                "Please, specify the --method parameter in the 'class#foo(java.lang.Integer)' format where class " +
+                "is one of:%n[test.Test1, test.Test2]");
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
 
-        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo(java.lang.Integer)");
+        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo(java.lang.Integer)");
         assertEquals("foo(java.lang.Integer)", method.getSignature());
         assertEquals("test.Test1", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2.foo(java.lang.Integer)");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2#foo(java.lang.Integer)");
         assertEquals("foo(java.lang.Integer)", method.getSignature());
         assertEquals("test.Test2", method.getDeclaringType().getQualifiedName());
     }
@@ -185,8 +185,8 @@ class JCProfilerUtilTest {
         String expected = String.format(
                 "More foo methods with distinct signatures found in more classes!%n" +
                 "Please, use one of the following values as an argument to the --method parameter:%n" +
-                "[test.Test1.foo(double), test.Test1.foo(int)," +
-                " test.Test2.foo(double), test.Test2.foo(int)]");
+                "[test.Test1#foo(double), test.Test1#foo(int)," +
+                " test.Test2#foo(double), test.Test2#foo(int)]");
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
@@ -197,7 +197,7 @@ class JCProfilerUtilTest {
 
         expected = String.format(
                 "More of the provided classes contain the foo(double) method!%n" +
-                "Please, specify the --method parameter in the 'class.foo(double)' format where class is one of:%n" +
+                "Please, specify the --method parameter in the 'class#foo(double)' format where class is one of:%n" +
                 "[test.Test1, test.Test2]");
         actual = e.getMessage();
 
@@ -205,7 +205,7 @@ class JCProfilerUtilTest {
 
         // specified class
         e = assertThrows(RuntimeException.class,
-                () -> JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo"));
+                () -> JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo"));
 
         expected = String.format(
                 "More foo methods with distinct signatures found in the test.Test1 class!%n" +
@@ -216,19 +216,19 @@ class JCProfilerUtilTest {
         assertEquals(expected, actual);
 
         // specified signature
-        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo(double)");
+        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo(double)");
         assertEquals("foo(double)", method.getSignature());
         assertEquals("test.Test1", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo(int)");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo(int)");
         assertEquals("foo(int)", method.getSignature());
         assertEquals("test.Test1", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2.foo(double)");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2#foo(double)");
         assertEquals("foo(double)", method.getSignature());
         assertEquals("test.Test2", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2.foo(int)");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2#foo(int)");
         assertEquals("foo(int)", method.getSignature());
         assertEquals("test.Test2", method.getDeclaringType().getQualifiedName());
     }
@@ -247,8 +247,8 @@ class JCProfilerUtilTest {
         String expected = String.format(
                 "More foo methods with distinct signatures found in more classes!%n" +
                 "Please, use one of the following values as an argument to the --method parameter:%n" +
-                "[test.Test1.foo(java.lang.Double), test.Test1.foo(java.lang.Integer)," +
-                " test.Test2.foo(java.lang.Double), test.Test2.foo(java.lang.Integer)]");
+                "[test.Test1#foo(java.lang.Double), test.Test1#foo(java.lang.Integer)," +
+                " test.Test2#foo(java.lang.Double), test.Test2#foo(java.lang.Integer)]");
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
@@ -259,7 +259,7 @@ class JCProfilerUtilTest {
 
         expected = String.format(
                 "More of the provided classes contain the foo(java.lang.Double) method!%n" +
-                "Please, specify the --method parameter in the 'class.foo(java.lang.Double)' format where class is one of:%n" +
+                "Please, specify the --method parameter in the 'class#foo(java.lang.Double)' format where class is one of:%n" +
                 "[test.Test1, test.Test2]");
         actual = e.getMessage();
 
@@ -267,7 +267,7 @@ class JCProfilerUtilTest {
 
         // specified class
         e = assertThrows(RuntimeException.class,
-                () -> JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo"));
+                () -> JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo"));
 
         expected = String.format(
                 "More foo methods with distinct signatures found in the test.Test1 class!%n" +
@@ -278,19 +278,19 @@ class JCProfilerUtilTest {
         assertEquals(expected, actual);
 
         // specified signature
-        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo(java.lang.Double)");
+        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo(java.lang.Double)");
         assertEquals("foo(java.lang.Double)", method.getSignature());
         assertEquals("test.Test1", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo(java.lang.Integer)");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo(java.lang.Integer)");
         assertEquals("foo(java.lang.Integer)", method.getSignature());
         assertEquals("test.Test1", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2.foo(java.lang.Double)");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2#foo(java.lang.Double)");
         assertEquals("foo(java.lang.Double)", method.getSignature());
         assertEquals("test.Test2", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2.foo(java.lang.Integer)");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test2#foo(java.lang.Integer)");
         assertEquals("foo(java.lang.Integer)", method.getSignature());
         assertEquals("test.Test2", method.getDeclaringType().getQualifiedName());
     }
@@ -307,17 +307,17 @@ class JCProfilerUtilTest {
 
         String expected = String.format(
                 "More of the provided classes contain the foo method!%n" +
-                "Please, specify the --method parameter in the 'class.foo' format where class is one of:%n" +
+                "Please, specify the --method parameter in the 'class#foo' format where class is one of:%n" +
                 "[test.Test1, test.Test1$Test2]");
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
 
-        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo");
+        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo");
         assertEquals("foo()", method.getSignature());
         assertEquals("test.Test1", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1$Test2.foo");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1$Test2#foo");
         assertEquals("foo()", method.getSignature());
         assertEquals("test.Test1$Test2", method.getDeclaringType().getQualifiedName());
     }
@@ -334,17 +334,17 @@ class JCProfilerUtilTest {
 
         String expected = String.format(
                 "More of the provided classes contain the foo(java.lang.Integer) method!%n" +
-                "Please, specify the --method parameter in the 'class.foo(java.lang.Integer)' format where class is one of:%n" +
-                "[test.Test1, test.Test1$Test2]");
+                "Please, specify the --method parameter in the 'class#foo(java.lang.Integer)' format where class " +
+                "is one of:%n[test.Test1, test.Test1$Test2]");
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
 
-        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1.foo(java.lang.Integer)");
+        CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1#foo(java.lang.Integer)");
         assertEquals("foo(java.lang.Integer)", method.getSignature());
         assertEquals("test.Test1", method.getDeclaringType().getQualifiedName());
 
-        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1$Test2.foo(java.lang.Integer)");
+        method = JCProfilerUtil.getProfiledMethod(spoon, "test.Test1$Test2#foo(java.lang.Integer)");
         assertEquals("foo(java.lang.Integer)", method.getSignature());
         assertEquals("test.Test1$Test2", method.getDeclaringType().getQualifiedName());
     }
@@ -385,7 +385,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtMethod<?> method = spoon.getModel().filterChildren(CtMethod.class::isInstance).first();
 
-        assertEquals("TRAP_test_Test_dol_Test2_foo_argb_test_Test_dol_Test1__java_lang_Long__int_arr_arge",
+        assertEquals("TRAP_test_Test_dol_Test2_hash_foo_argb_test_Test_dol_Test1__java_lang_Long__int_arr_arge",
                 JCProfilerUtil.getTrapNamePrefix(method));
     }
 
