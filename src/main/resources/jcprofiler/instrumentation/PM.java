@@ -4,7 +4,7 @@ import javacard.framework.ISOException;
 
 public class PM {
     // Performance measurement stop indicator
-    public static short m_perfStop = -1;
+    public static short m_perfStop = PMC.PERF_START;
 
     // if m_perfStop equals to stopCondition, exception is thrown (trap hit)
     public static void check(short stopCondition) {
