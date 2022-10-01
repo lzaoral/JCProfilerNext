@@ -24,7 +24,7 @@ class ModifyEntryPointProcessorTest {
         final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestInput.java");
         final CtClass<?> expected = parseClass("ModifyEntryPointProcessorTestExpected.java");
 
-        assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(expected);
+        assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(expected);
     }
 
     @Test
@@ -33,7 +33,7 @@ class ModifyEntryPointProcessorTest {
         final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
         final CtClass<?> expected = parseClass("ModifyEntryPointProcessorTestExpected.java");
 
-        assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(expected);
+        assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(expected);
     }
 
     @Test
@@ -46,7 +46,7 @@ class ModifyEntryPointProcessorTest {
 
         Exception e = assertThrows(
                 RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
+                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = "Existing INS_PERF_SETSTOP field has type short! Expected: byte";
         String actual = e.getMessage();
@@ -64,7 +64,7 @@ class ModifyEntryPointProcessorTest {
 
         Exception e = assertThrows(
                 RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
+                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = "Existing INS_PERF_SETSTOP field is not static and final! Got: [public, static]";
         String actual = e.getMessage();
@@ -82,7 +82,7 @@ class ModifyEntryPointProcessorTest {
 
         Exception e = assertThrows(
                 RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
+                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = "Existing INS_PERF_SETSTOP field is not static and final! Got: [public, final]";
         String actual = e.getMessage();
@@ -111,7 +111,7 @@ class ModifyEntryPointProcessorTest {
 
         Exception e = assertThrows(
                 RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
+                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = String.format(
                 "Existing INS_PERF_SETSTOP field has ((byte) (0xff)) as initializer! Expected: (byte) 0x%02x",
@@ -133,7 +133,7 @@ class ModifyEntryPointProcessorTest {
 
         Exception e = assertThrows(
                 RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
+                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = "PM.m_perfStop has type byte! Expected: short";
         String actual = e.getMessage();
@@ -149,7 +149,7 @@ class ModifyEntryPointProcessorTest {
         // delete the process method
         input.getMethodsByName("process").get(0).delete();
 
-        assertFalse(new ModifyEntryPointProcessor(new Args()).isToBeProcessed(input));
+        assertFalse(new ModifyTimeEntryPointProcessor(new Args()).isToBeProcessed(input));
     }
 
     @Test
@@ -162,7 +162,7 @@ class ModifyEntryPointProcessorTest {
 
         Exception e = assertThrows(
                 RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
+                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = "Class Example inherits from javacard.framework.Applet but does not implement the " +
                 "'process(javacard.framework.APDU)' method!";
@@ -180,7 +180,7 @@ class ModifyEntryPointProcessorTest {
         extendedInput.setSuperclass(input.getReference());
         final CtClass<?> extendedInputExpected = extendedInput.clone();
 
-        assertThat(extendedInput).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(extendedInputExpected);
+        assertThat(extendedInput).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(extendedInputExpected);
         assertThat(input).isEqualTo(expected);
     }
 
@@ -197,7 +197,7 @@ class ModifyEntryPointProcessorTest {
 
         Exception e = assertThrows(
                 RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
+                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
 
         String expected = String.format(
                 "The body of the INS_PERF_SETSTOP handle has unexpected contents:%n%s%nExpected:%n%s%n",
