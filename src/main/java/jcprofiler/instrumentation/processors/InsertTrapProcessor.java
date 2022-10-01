@@ -6,7 +6,6 @@ import jcprofiler.util.JCProfilerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
@@ -14,35 +13,14 @@ import spoon.reflect.reference.CtTypeReference;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
+public class InsertTrapProcessor extends AbstractProfilerProcessor<CtMethod<?>> {
     private static final Logger log = LoggerFactory.getLogger(InsertTrapProcessor.class);
-
-    private final Args args;
-
-    private CtClass<?> PM;
-    private CtClass<?> PMC;
 
     private String trapNamePrefix;
     private int trapCount;
 
     public InsertTrapProcessor(final Args args) {
-        this.args = args;
-    }
-
-    private CtClass<?> getClass(final String simpleName) {
-        final CtClass<?> cls = getFactory().getModel().filterChildren(
-                (CtType<?> c) -> c.isTopLevel() && c.getSimpleName().equals(simpleName)).first();
-        if (cls == null)
-            throw new RuntimeException("Class " + simpleName + " not found!");
-
-        return cls;
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        PM = getClass("PM");
-        PMC = getClass("PMC");
+        super(args);
     }
 
     @Override

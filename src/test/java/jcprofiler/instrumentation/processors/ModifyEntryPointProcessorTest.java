@@ -210,9 +210,10 @@ class ModifyEntryPointProcessorTest {
     public CtClass<?> parseClass(final String fileName) {
         final Launcher spoon = new Launcher();
 
-        // add PM stub
+        // add PM and PMC stubs
         spoon.addInputResource(new VirtualFile(
                 "public class PM { public static short m_perfStop = -1; }", "PM.java"));
+        spoon.addInputResource(new VirtualFile("public class PMC { }", "PMC.java"));
 
         // add the input
         spoon.addInputResource(Objects.requireNonNull(getClass().getResource(fileName)).getPath());

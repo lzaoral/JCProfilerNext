@@ -10,7 +10,6 @@ import jcprofiler.args.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
@@ -20,13 +19,11 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
-    final Args args;
-
+public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass<?>> {
     private static final Logger log = LoggerFactory.getLogger(ModifyEntryPointProcessor.class);
 
     public ModifyEntryPointProcessor(final Args args) {
-        this.args = args;
+        super(args);
     }
 
     @Override
@@ -126,8 +123,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         // PM.m_perfStop
         final CtFieldWrite<Short> fieldWrite = getFactory().createFieldWrite();
         {
-            final CtClass<?> pmClass = processMethod.getDeclaringType().getPackage().getType("PM");
-            final CtField<?> perfStopField = pmClass.getField("m_perfStop");
+            final CtField<?> perfStopField = PM.getField("m_perfStop");
 
             if (!perfStopField.getType().equals(shortRef))
                 throw new RuntimeException(String.format(
@@ -136,7 +132,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
             @SuppressWarnings("unchecked") // the runtime check is above
             final CtField<Short> perfStopFieldCasted = (CtField<Short>) perfStopField;
 
-            fieldWrite.setTarget(getFactory().createTypeAccess(pmClass.getReference()));
+            fieldWrite.setTarget(getFactory().createTypeAccess(PM.getReference()));
             fieldWrite.setVariable(perfStopFieldCasted.getReference());
         }
 
