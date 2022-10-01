@@ -47,13 +47,12 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
 
     @Override
     public boolean isToBeProcessed(final CtMethod<?> method) {
-        final String actualMethodSignature = method.getDeclaringType().getQualifiedName() + "." + method.getSignature();
-        return actualMethodSignature.equals(args.method);
+        return JCProfilerUtil.getFullSignature(method).equals(args.method);
     }
 
     @Override
     public void process(final CtMethod<?> method) {
-        log.info("Instrumenting {}.{}.", method.getDeclaringType().getQualifiedName(), method.getSignature());
+        log.info("Instrumenting {}.", JCProfilerUtil.getFullSignature(method));
 
         trapCount = 0;
         trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(method);
@@ -215,8 +214,7 @@ public class InsertTrapProcessor extends AbstractProcessor<CtMethod<?>> {
         final CtField<Short> trapField = addTrapField(trapName);
         if (trapCount == 1) {
             final CtMethod<?> method = element.getParent(CtMethod.class::isInstance);
-            trapField.addComment(getFactory().createInlineComment(
-                    method.getDeclaringType().getQualifiedName() + "." + method.getSignature()));
+            trapField.addComment(getFactory().createInlineComment(JCProfilerUtil.getFullSignature(method)));
         }
 
         final CtFieldRead<Short> trapFieldRead = getFactory().createFieldRead();

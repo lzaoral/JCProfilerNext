@@ -253,7 +253,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
         }
 
         processMethodBody.addStatement(0, ifStatement);
-        log.debug("Added INS_PERF_SETSTOP handler as the first statement to {}.{}.",
-                processMethod.getDeclaringType().getQualifiedName(), processMethod.getSignature());
+        log.debug("Added INS_PERF_SETSTOP handler as the first statement to {}.",
+                JCProfilerUtil.getFullSignature(processMethod));
     }
 }

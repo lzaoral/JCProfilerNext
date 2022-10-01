@@ -23,7 +23,7 @@ class InsertTrapProcessorTest {
         final CtClass<?> expected = parseExpectedClass(input, "InsertTrapProcessorTestExpected.java");
 
         final List<String> methods = input.filterChildren(CtMethod.class::isInstance)
-                .map((CtMethod<?> m) -> m.getDeclaringType().getQualifiedName() + "." + m.getSignature()).list();
+                .map(JCProfilerUtil::getFullSignature).list();
 
         AbstractCtElementAssert <?> assertThat = assertThat(input);
         for (String method : methods) {

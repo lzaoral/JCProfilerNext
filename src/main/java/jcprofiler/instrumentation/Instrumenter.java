@@ -94,7 +94,7 @@ public class Instrumenter {
 
         // validate and select args.method
         final CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, args.method);
-        args.method = method.getDeclaringType().getQualifiedName() + "." + method.getSignature();
+        args.method = JCProfilerUtil.getFullSignature(method);
     }
 
     public static void setupSpoon(final SpoonAPI spoon, final Args args) {

@@ -148,8 +148,8 @@ public class JCProfilerUtil {
             throw new RuntimeException(String.format(
                     "More %s methods with distinct signatures found in more classes!%n" +
                     "Please, use one of the following values as an argument to the --method parameter:%n%s",
-                    methodName, methods.stream().map(m -> m.getDeclaringType().getQualifiedName() + "." + m.getSignature())
-                            .sorted().collect(Collectors.toList())));
+                    methodName, methods.stream().map(JCProfilerUtil::getFullSignature).sorted()
+                            .collect(Collectors.toList())));
 
         // only a single method with such name exists
         final CtMethod<?> method = methods.get(0);
@@ -161,9 +161,13 @@ public class JCProfilerUtil {
         return method;
     }
 
+    static public String getFullSignature(final CtMethod<?> method) {
+        return method.getDeclaringType().getQualifiedName() + "." + method.getSignature();
+    }
+
     // trap mangling
     static public String getTrapNamePrefix(final CtMethod<?> method) {
-        final String prefix = "TRAP_" + method.getDeclaringType().getQualifiedName() + "_" + method.getSignature();
+        final String prefix = "TRAP_" + getFullSignature(method);
 
         // list may not be exhaustive
         return prefix.replace('.', '_') // used in qualified types
