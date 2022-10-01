@@ -117,7 +117,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
         return insPerfSetStop;
     }
 
-    private void addInsPerfSetStopHandler(CtMethod<Void> processMethod, CtField<Byte> insPerfSetStop) {
+    private void addInsPerfSetStopHandler(final CtMethod<Void> processMethod, final CtField<Byte> insPerfSetStop) {
         final CtTypeReference<Short> shortRef = getFactory().createCtTypeReference(Short.TYPE);
 
         // PM.m_perfStop
@@ -209,8 +209,8 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
         // ${param}.getBuffer()[ISO7816.OFFSET_INS] == INS_PERF_SETSTOP
         CtBinaryOperator<Boolean> insEqCond;
         {
-            CtTypeReference<?> processMethodDeclTypeRed = processMethod.getDeclaringType().getReference();
-            CtTypeReference<?> insPerfSetStopDeclTypeRef = insPerfSetStop.getDeclaringType().getReference();
+            final CtTypeReference<?> processMethodDeclTypeRed = processMethod.getDeclaringType().getReference();
+            final CtTypeReference<?> insPerfSetStopDeclTypeRef = insPerfSetStop.getDeclaringType().getReference();
 
             final CtFieldRead<Byte> insPerfSetStopFieldRead = getFactory().createFieldRead();
             insPerfSetStopFieldRead.setTarget(getFactory().createTypeAccess(insPerfSetStopDeclTypeRef,
@@ -225,11 +225,11 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
         //     PM.m_perfStop = Util.getShort(${param}.getBuffer(), ISO7816.OFFSET_CDATA);
         //     return;
         // }
-        CtIf ifStatement = getFactory().createIf();
+        final CtIf ifStatement = getFactory().createIf();
         ifStatement.setCondition(insEqCond);
         ifStatement.setThenStatement(perfStopBlock);
 
-        CtBlock<Void> processMethodBody = processMethod.getBody();
+        final CtBlock<Void> processMethodBody = processMethod.getBody();
 
         Optional<CtIf> maybeExistingIfStatement = processMethodBody.getStatements().stream()
                 .filter(ifStatement::equals).map(CtIf.class::cast).findAny();
@@ -241,7 +241,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
         maybeExistingIfStatement = processMethodBody.getStatements().stream().filter(CtIf.class::isInstance)
                 .map(CtIf.class::cast).filter(i -> i.getCondition().equals(ifStatement.getCondition())).findAny();
         if (maybeExistingIfStatement.isPresent()) {
-            CtIf existingIf = maybeExistingIfStatement.get();
+            final CtIf existingIf = maybeExistingIfStatement.get();
             log.info("Existing INS_PERF_SETSTOP handler found at {}.", existingIf.getPosition());
             throw new RuntimeException(String.format(
                     "The body of the INS_PERF_SETSTOP handle has unexpected contents:%n%s%nExpected:%n%s%n",
