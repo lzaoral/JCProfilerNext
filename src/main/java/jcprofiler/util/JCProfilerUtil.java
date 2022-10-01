@@ -45,25 +45,25 @@ public class JCProfilerUtil {
 
     // entry points
 
-    /**
-     * Checks that a class in an entry point:
-     *   1. Inherits from the javacard.framework.Applet abstract class
-     *   2. At least on the classes in the inheritance chain implements
-     *      the void process(javacard.framework.APDU) method.
-     *
-     * @param cls - class to be checked
-     * @return true if the class in an applet entry point otherwise false
-     */
-    public static boolean isClsEntryPoint(final CtClass<?> cls) {
+   /**
+    * Checks that a type in an entry point:
+    *   1. It inherits from the javacard.framework.Applet abstract class,
+    *   2. At least one of the classes in the inheritance chain implements
+    *      the void process(javacard.framework.APDU) method.
+    *
+    * @param type - type to be checked
+    * @return true if the type in an applet entry point otherwise false
+    */
+    public static boolean isTypeEntryPoint(final CtType<?> type) {
         final List<CtTypeReference<?>> inheritanceChain = new ArrayList<>();
-
-        CtTypeReference<?> clsRef = cls.getReference();
-        while (clsRef != null) {
-            inheritanceChain.add(clsRef);
-            clsRef = clsRef.getSuperclass();
+        CtTypeReference<?> typeRef = type.getReference();
+        while (typeRef != null) {
+            inheritanceChain.add(typeRef);
+            typeRef = typeRef.getSuperclass();
         }
 
-        return inheritanceChain.stream().anyMatch(c -> c.getQualifiedName().equals("javacard.framework.Applet")) &&
+        return inheritanceChain.stream().allMatch(CtTypeInformation::isClass) &&
+               inheritanceChain.stream().anyMatch(c -> c.getQualifiedName().equals("javacard.framework.Applet")) &&
                inheritanceChain.stream().anyMatch(c -> {
                    final CtTypeReference<?> APDURef = c.getFactory().createCtTypeReference(APDU.class);
                    final CtMethod<APDU> processMethod = c.getTypeDeclaration().getMethod("process", APDURef);
@@ -74,7 +74,7 @@ public class JCProfilerUtil {
     }
 
     public static CtClass<?> getEntryPoint(final SpoonAPI spoon, final String className) {
-        final List<CtClass<?>> entryPoints = spoon.getModel().getElements(JCProfilerUtil::isClsEntryPoint);
+        final List<CtClass<?>> entryPoints = spoon.getModel().getElements(JCProfilerUtil::isTypeEntryPoint);
         if (entryPoints.isEmpty())
             throw new RuntimeException("None of the provided classes is an entry point!");
 

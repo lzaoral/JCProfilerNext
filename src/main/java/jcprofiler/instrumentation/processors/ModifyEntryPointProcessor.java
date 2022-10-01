@@ -32,7 +32,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
     @Override
     public boolean isToBeProcessed(final CtClass<?> cls) {
         // isEntryPoint && (!entryPointArg.isEmpty() => cls.SimpleName == entryPointArg)
-        return JCProfilerUtil.isClsEntryPoint(cls) &&
+        return JCProfilerUtil.isTypeEntryPoint(cls) &&
                 (args.entryPoint.isEmpty() || cls.getQualifiedName().equals(args.entryPoint));
     }
 

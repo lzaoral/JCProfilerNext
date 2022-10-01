@@ -396,7 +396,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
-        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+        assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
     }
 
     @Test
@@ -409,7 +409,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
-        assertTrue(JCProfilerUtil.isClsEntryPoint(cls));
+        assertTrue(JCProfilerUtil.isTypeEntryPoint(cls));
     }
 
     @Test
@@ -419,7 +419,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
-        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+        assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
     }
 
     @Test
@@ -429,7 +429,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
-        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+        assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
     }
 
     @Test
@@ -443,7 +443,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
-        assertTrue(JCProfilerUtil.isClsEntryPoint(cls));
+        assertTrue(JCProfilerUtil.isTypeEntryPoint(cls));
     }
 
     @Test
@@ -457,7 +457,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
-        assertTrue(JCProfilerUtil.isClsEntryPoint(cls));
+        assertTrue(JCProfilerUtil.isTypeEntryPoint(cls));
     }
 
     @Test
@@ -468,7 +468,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
-        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+        assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
     }
 
     @Test
@@ -479,7 +479,7 @@ class JCProfilerUtilTest {
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
-        assertFalse(JCProfilerUtil.isClsEntryPoint(cls));
+        assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
     }
 
     private static SpoonAPI prepareSpoon(final String cls) {
