@@ -89,10 +89,10 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
                         insPerfSetStopCasted.getModifiers().stream().sorted().collect(Collectors.toList()));
 
             final CtLiteral<? extends Number> lit = insPerfSetStopCasted.getAssignment().partiallyEvaluate();
-            if (lit.getValue().byteValue() != JCProfilerUtil.INS_PERF_SETSTOP)
+            if (lit.getValue().byteValue() != JCProfilerUtil.INS_PERF_HANDLER)
                 throw new RuntimeException(String.format(
                         "Existing INS_PERF_SETSTOP field has %s as initializer! Expected: (byte) 0x%02x",
-                        insPerfSetStopCasted.getAssignment().prettyprint(), JCProfilerUtil.INS_PERF_SETSTOP));
+                        insPerfSetStopCasted.getAssignment().prettyprint(), JCProfilerUtil.INS_PERF_HANDLER));
 
             return insPerfSetStopCasted;
         }
@@ -102,7 +102,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
                 "INS_PERF_SETSTOP", byteRef, "", ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC);
 
         // create and set the initializer
-        final CtLiteral<Integer> initializer = getFactory().createLiteral(Byte.toUnsignedInt(JCProfilerUtil.INS_PERF_SETSTOP));
+        final CtLiteral<Integer> initializer = getFactory().createLiteral(Byte.toUnsignedInt(JCProfilerUtil.INS_PERF_HANDLER));
         initializer.setBase(LiteralBase.HEXADECIMAL);
         initializer.addTypeCast(byteRef);
 

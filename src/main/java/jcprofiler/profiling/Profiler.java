@@ -147,7 +147,7 @@ public class Profiler {
     private void setTrap(short trapID) throws CardException {
         log.debug("Setting next trap to {}.", getTrapName(trapID));
 
-        CommandAPDU setTrap = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_SETSTOP, 0, 0,
+        CommandAPDU setTrap = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_HANDLER, 0, 0,
                                               Util.shortToByteArray(trapID));
         ResponseAPDU response = cardManager.transmit(setTrap);
         if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)

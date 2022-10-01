@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JCProfilerUtil {
-    public static final byte INS_PERF_SETSTOP = (byte) 0xf5;
+    public static final byte INS_PERF_HANDLER = (byte) 0xf5;
 
     // Needed to fix a SNAFU, where ISO7816.SW_NO_ERROR is a short, ResponseAPDU::getSW returns int
     // and (short) 0x9000 != 0x9000 ...

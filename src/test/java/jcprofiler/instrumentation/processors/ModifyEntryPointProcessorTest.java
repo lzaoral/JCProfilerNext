@@ -96,7 +96,7 @@ class ModifyEntryPointProcessorTest {
         final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
 
         // sanity check
-        assertNotEquals(JCProfilerUtil.INS_PERF_SETSTOP, 0xFF);
+        assertNotEquals(JCProfilerUtil.INS_PERF_HANDLER, 0xFF);
 
         @SuppressWarnings("unchecked") // we know that the field is a byte
         // change initializer from (byte) 0xF5 to (byte) 0xFF
@@ -115,7 +115,7 @@ class ModifyEntryPointProcessorTest {
 
         String expected = String.format(
                 "Existing INS_PERF_SETSTOP field has ((byte) (0xff)) as initializer! Expected: (byte) 0x%02x",
-                JCProfilerUtil.INS_PERF_SETSTOP);
+                JCProfilerUtil.INS_PERF_HANDLER);
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
