@@ -50,7 +50,7 @@ public class ModifyEntryPointProcessor extends AbstractProcessor<CtClass<?>> {
 
         if (processMethod == null)
             throw new RuntimeException(String.format(
-                    "Class %s inherits from %s but does not implement the 'process' method!",
+                    "Class %s inherits from %s but does not implement the 'process(javacard.framework.APDU)' method!",
                     cls.getQualifiedName(), cls.getSuperclass().getQualifiedName()));
         return processMethod;
     }

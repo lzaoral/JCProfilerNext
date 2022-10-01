@@ -164,7 +164,8 @@ class ModifyEntryPointProcessorTest {
                 RuntimeException.class,
                 () -> assertThat(input).withProcessor(new ModifyEntryPointProcessor(new Args())).isEqualTo(input));
 
-        String expected = "Class Example inherits from javacard.framework.Applet but does not implement the 'process' method!";
+        String expected = "Class Example inherits from javacard.framework.Applet but does not implement the " +
+                "'process(javacard.framework.APDU)' method!";
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
