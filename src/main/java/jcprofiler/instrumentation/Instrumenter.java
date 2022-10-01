@@ -130,7 +130,7 @@ public class Instrumenter {
         log.debug("Found following packages in sources: {}", pkgs);
 
         if (pkgs.stream().anyMatch(CtPackage::isUnnamedPackage))
-            throw new RuntimeException("Usage of the default package detected! " +
+            throw new UnsupportedOperationException("Usage of the default package detected! " +
                     "This is unsupported by the CAP converter.");
 
         // Only JavaCard 3.0.1 and newer support multi package CAP files.
@@ -138,12 +138,13 @@ public class Instrumenter {
         if (pkgs.size() != 1) {
             JavaCardSDK.Version jcVersion = args.jcSDK.getVersion();
             if (!jcVersion.isOneOf(JavaCardSDK.Version.V310)) {
-                throw new RuntimeException(String.format(
+                throw new UnsupportedOperationException(String.format(
                         "Only one package is allowed with JavaCard %s! Found: %s", jcVersion, pkgs));
             }
 
             // TODO: add support for such projects
-            throw new RuntimeException("JavaCard 3.1+ multi package projects are unsupported at the moment!");
+            throw new UnsupportedOperationException(
+                    "JavaCard 3.1+ multi package projects are unsupported at the moment!");
         }
 
         final String packageName = pkgs.iterator().next().getQualifiedName();
@@ -151,7 +152,9 @@ public class Instrumenter {
             log.debug("Looking for existing {} class.", className);
             final long count = classes.stream().filter(c -> c.isTopLevel() && c.getSimpleName().equals(className)).count();
             if (count > 0)
-                throw new RuntimeException(String.format("Code contains %d classes named %s", count, className));
+                throw new UnsupportedOperationException(String.format(
+                        "Code contains %d classes named %s! Updating already instrumented sources is unsupported " +
+                        "at the moment!", count, className));
 
             log.debug("Class {} not found.", className);
             try {

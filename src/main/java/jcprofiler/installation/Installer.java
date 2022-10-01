@@ -41,7 +41,7 @@ public class Installer {
 
     public static CardManager installOnCard(final Args args, final CtClass<?> entryPoint) {
         if (args.useSimulator)
-            throw new RuntimeException("Installation on a simulator is not possible");
+            throw new UnsupportedOperationException("Installation on a simulator is not possible");
 
         final CardManager cardManager = connectToCard();
 
