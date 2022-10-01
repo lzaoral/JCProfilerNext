@@ -150,18 +150,8 @@ public class Instrumenter {
         for (final String className : generatedClasses) {
             log.debug("Looking for existing {} class.", className);
             final long count = classes.stream().filter(c -> c.isTopLevel() && c.getSimpleName().equals(className)).count();
-//            if (count > 1)
             if (count > 0)
                 throw new RuntimeException(String.format("Code contains %d classes named %s", count, className));
-
-//            if (count == 1) {
-//                if (!args.update)
-//                    throw new RuntimeException(String.format(
-//                            "Code already contains %s class and -u or --update was not specified!", className));
-//
-//                System.out.printf("Will update existing %s class.%n", className);
-//                continue;
-//            }
 
             log.debug("Class {} not found.", className);
             try {

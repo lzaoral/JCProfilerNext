@@ -39,10 +39,6 @@ public class Args {
                converter = StageConverter.class)
     public Stage stopAfter = Stage.visualisation;
 
-//    @Parameter(names = {"-u", "--update"},
-//               description = "Update already instrumented files")
-//    public boolean update = false;
-
     @Parameter(names = {"--jckit"},
                required = true,
                description = "Path to the root directory with JavaCard development kit",
