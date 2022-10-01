@@ -63,7 +63,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
     private CtField<Byte> addInsPerfSetStopField(final CtMethod<Void> processMethod) {
         final CtType<?> declaringCls = processMethod.getDeclaringType();
 
-        // private static final byte INS_PERF_SETSTOP = (byte) 0xf5
+        // private static final byte INS_PERF_SETSTOP = (byte) ${JCProfilerUtil.INS_PERF_SETSTOP}
         final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
 
         Optional<CtField<?>> existingInsPerfSetStop = declaringCls.getFields().stream().filter(
@@ -136,7 +136,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
             fieldWrite.setVariable(perfStopFieldCasted.getReference());
         }
 
-        // get ${param}.getBuffer()
+        // ${param}.getBuffer()
         CtInvocation<?> getBufferInvocation;
         try {
             final Method getBufferMethod = APDU.class.getMethod("getBuffer");
@@ -148,7 +148,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
             throw new RuntimeException(e);
         }
 
-        // Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA)
+        // Util.getShort(${param}.getBuffer(), ISO7816.OFFSET_CDATA)
         CtInvocation<Short> makeShortInvocation;
         try {
             // get javacard.framework.ISO7816.OFFSET_CDATA
@@ -163,7 +163,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
             final Class<?> utilClass = Util.class;
             final Method getShortMethod = utilClass.getMethod("getShort", byte[].class, Short.TYPE);
 
-            // create Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA)
+            // create Util.getShort(${apdu}.getBuffer(), ISO7816.OFFSET_CDATA)
             makeShortInvocation = getFactory().createInvocation(
                     getFactory().createTypeAccess(getFactory().Class().createReference(utilClass)),
                     getFactory().Method().createReference(getShortMethod),
@@ -173,7 +173,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
         }
 
         // {
-        //     PM.m_perfStop = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
+        //     PM.m_perfStop = Util.getShort(${param}.getBuffer(), ISO7816.OFFSET_CDATA);
         //     return;
         // }
         final CtBlock<Void> perfStopBlock = getFactory().createBlock();
@@ -187,7 +187,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
             perfStopBlock.addStatement(getFactory().createReturn());
         }
 
-        // apdu.getBuffer()[ISO7816.OFFSET_INS]
+        // ${param}.getBuffer()[ISO7816.OFFSET_INS]
         CtArrayRead<Byte> apduBufferRead;
         try {
             // get javacard.framework.ISO7816.OFFSET_INS
@@ -206,7 +206,7 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
             throw new RuntimeException(e);
         }
 
-        // apdu.getBuffer()[ISO7816.OFFSET_INS] == INS_PERF_SETSTOP
+        // ${param}.getBuffer()[ISO7816.OFFSET_INS] == INS_PERF_SETSTOP
         CtBinaryOperator<Boolean> insEqCond;
         {
             CtTypeReference<?> processMethodDeclTypeRed = processMethod.getDeclaringType().getReference();
@@ -221,8 +221,8 @@ public class ModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass
             insEqCond.setType(getFactory().createCtTypeReference(Boolean.TYPE));
         }
 
-        // if (apdu.getBuffer()[ISO7816.OFFSET_INS] == INS_PERF_SETSTOP) {
-        //     PM.m_perfStop = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
+        // if (${param}.getBuffer()[ISO7816.OFFSET_INS] == INS_PERF_SETSTOP) {
+        //     PM.m_perfStop = Util.getShort(${param}.getBuffer(), ISO7816.OFFSET_CDATA);
         //     return;
         // }
         CtIf ifStatement = getFactory().createIf();
