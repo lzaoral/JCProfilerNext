@@ -29,7 +29,7 @@ class InsertTrapProcessorTest {
         for (String method : methods) {
             final Args args = new Args();
             args.method = method;
-            assertThat = assertThat.withProcessor(new InsertTrapProcessor(args));
+            assertThat = assertThat.withProcessor(new InsertTimeTrapProcessor(args));
         }
         assertThat.isEqualTo(expected);
     }

@@ -13,35 +13,33 @@ import spoon.reflect.reference.CtTypeReference;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class InsertTrapProcessor extends AbstractProfilerProcessor<CtMethod<?>> {
-    private static final Logger log = LoggerFactory.getLogger(InsertTrapProcessor.class);
+// Unfortunately, CtConstructor<?> and CtMethod<?> do not have a common base class just for these two and
+// <T extends CtExecutable<?> & CtTypeMember> cannot be used.  More details are here:
+// https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6946211
+public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends AbstractProfilerProcessor<T> {
+    private static final Logger log = LoggerFactory.getLogger(AbstractInsertTrapProcessor.class);
 
-    private String trapNamePrefix;
-    private int trapCount;
+    protected String fullSignature;
+    protected String trapNamePrefix;
+    protected int trapCount;
 
-    public InsertTrapProcessor(final Args args) {
+    protected AbstractInsertTrapProcessor(final Args args) {
         super(args);
     }
 
-    @Override
-    public boolean isToBeProcessed(final CtMethod<?> method) {
-        return JCProfilerUtil.getFullSignature(method).equals(args.method);
-    }
-
-    @Override
-    public void process(final CtMethod<?> method) {
-        log.info("Instrumenting {}.", JCProfilerUtil.getFullSignature(method));
-
+    protected void process(final CtExecutable<?> executable) {
+        fullSignature = JCProfilerUtil.getFullSignature(executable);
         trapCount = 0;
-        trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(method);
+        trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(executable);
 
-        final CtBlock<?> methodBody = method.getBody();
-        if (isEmptyBlock(methodBody)) {
-            insertTrapCheck(methodBody);
+        log.info("Instrumenting {}.", fullSignature);
+        final CtBlock<?> body = executable.getBody();
+        if (isEmptyBlock(body)) {
+            insertTrapCheck(body);
             return;
         }
 
-        processBody(methodBody);
+        processBody(body);
     }
 
     private void processBody(final CtStatementList block) {
@@ -190,10 +188,8 @@ public class InsertTrapProcessor extends AbstractProfilerProcessor<CtMethod<?>> 
         final String trapName = String.format("%s_%d", trapNamePrefix, ++trapCount);
 
         final CtField<Short> trapField = addTrapField(trapName);
-        if (trapCount == 1) {
-            final CtMethod<?> method = element.getParent(CtMethod.class::isInstance);
-            trapField.addComment(getFactory().createInlineComment(JCProfilerUtil.getFullSignature(method)));
-        }
+        if (trapCount == 1)
+            trapField.addComment(getFactory().createInlineComment(fullSignature));
 
         final CtFieldRead<Short> trapFieldRead = getFactory().createFieldRead();
         trapFieldRead.setTarget(getFactory().createTypeAccess(trapField.getDeclaringType().getReference()));

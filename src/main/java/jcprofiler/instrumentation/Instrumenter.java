@@ -1,7 +1,7 @@
 package jcprofiler.instrumentation;
 
 import jcprofiler.args.Args;
-import jcprofiler.instrumentation.processors.InsertTrapProcessor;
+import jcprofiler.instrumentation.processors.InsertTimeTrapProcessor;
 import jcprofiler.instrumentation.processors.ModifyTimeEntryPointProcessor;
 import jcprofiler.instrumentation.processors.SpoonWorkarounds;
 import jcprofiler.util.JCProfilerUtil;
@@ -49,7 +49,7 @@ public class Instrumenter {
 
         // instrument the model
         spoon.addProcessor(new ModifyTimeEntryPointProcessor(args));
-        spoon.addProcessor(new InsertTrapProcessor(args));
+        spoon.addProcessor(new InsertTimeTrapProcessor(args));
 
         // add workarounds for bugs in SPOON
         spoon.addProcessor(new SpoonWorkarounds.FixNestedClassImportProcessor());
