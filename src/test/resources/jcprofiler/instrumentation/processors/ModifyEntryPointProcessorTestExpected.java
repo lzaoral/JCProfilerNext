@@ -13,7 +13,7 @@ public class Example extends Applet {
     @Override
     public void process(APDU apdu) throws ISOException {
         if (apdu.getBuffer()[ISO7816.OFFSET_INS] == INS_PERF_SETSTOP) {
-            PM.m_perfStop = Util.getShort(apdu.getBuffer(), ISO7816.OFFSET_CDATA);
+            PM.set(apdu);
             return;
         }
 

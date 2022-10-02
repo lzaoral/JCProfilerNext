@@ -163,9 +163,13 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         // if (${param}.getBuffer()[ISO7816.OFFSET_INS] == ${insPerfField}) {
         //     ${createInsHandlerBody}
         // }
+        final CtBlock<Void> insHandlerBody = createInsHandlerBody(apduParam);
+        if (!(insHandlerBody.getLastStatement() instanceof CtReturn))
+            throw new RuntimeException("The handler body must end with a return statement!");
+
         final CtIf ifStatement = getFactory().createIf();
         ifStatement.setCondition(insEqCond);
-        ifStatement.setThenStatement(createInsHandlerBody(apduParam));
+        ifStatement.setThenStatement(insHandlerBody);
 
         final String fieldName = insPerfField.getSimpleName();
 

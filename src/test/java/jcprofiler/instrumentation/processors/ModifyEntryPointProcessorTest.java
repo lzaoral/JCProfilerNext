@@ -122,26 +122,6 @@ class ModifyEntryPointProcessorTest {
     }
 
     @Test
-    public void pmWrongTrapType() {
-        // Using already instrumented file for input is NOT a bug!
-        final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
-        final CtClass<?> pmClass = input.getPackage().getType("PM");
-        final CtField<?> perfStopField = pmClass.getField("m_perfStop");
-
-        // change type of PM.m_perfStop from short to byte
-        perfStopField.setType(input.getFactory().createCtTypeReference(Byte.TYPE));
-
-        Exception e = assertThrows(
-                RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
-
-        String expected = "PM.m_perfStop has type byte! Expected: short";
-        String actual = e.getMessage();
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void missingProcessMethod() {
         // Using already instrumented file for input is NOT a bug!
         final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
@@ -212,7 +192,8 @@ class ModifyEntryPointProcessorTest {
 
         // add PM and PMC stubs
         spoon.addInputResource(new VirtualFile(
-                "public class PM { public static short m_perfStop = -1; }", "PM.java"));
+                "import javacard.framework.APDU;" +
+                "public class PM { public static void set(APDU apdu) {} }", "PM.java"));
         spoon.addInputResource(new VirtualFile("public class PMC { }", "PMC.java"));
 
         // add the input
