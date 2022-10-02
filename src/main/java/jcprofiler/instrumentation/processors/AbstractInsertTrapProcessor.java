@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
+import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.util.List;
@@ -50,9 +51,14 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
                 .filter(x -> !(x instanceof CtComment) && !isEmptyBlock(x))
                 .collect(Collectors.toList());
 
-        if (!statements.isEmpty())
-            // always insert first trap at the beginning of the ORIGINAL block
-            insertTrapCheck(block.getStatement(0), Insert.BEFORE);
+        if (!statements.isEmpty()) {
+            CtStatement first = block.getStatement(0);
+
+            // always insert first trap at the beginning of the ORIGINAL block unless it's a super(...) call
+            if (first.getParent(CtConstructor.class) == null || !(first instanceof CtInvocation) ||
+                    !((CtInvocation<?>)first).getExecutable().getSimpleName().startsWith(CtExecutableReference.CONSTRUCTOR_NAME))
+                insertTrapCheck(first, Insert.BEFORE);
+        }
 
         for (final CtStatement statement : statements) {
             // skip insertion after ISOException calls as all such statements are unreachable
