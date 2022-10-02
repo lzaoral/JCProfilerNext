@@ -160,13 +160,19 @@ public class JCProfilerUtil {
         return method;
     }
 
-    static public String getFullSignature(final CtMethod<?> method) {
-        return method.getDeclaringType().getQualifiedName() + "#" + method.getSignature();
+    public static String getFullSignature(final CtExecutable<?> executable) {
+        final String signature = executable.getSignature();
+        if (executable instanceof CtConstructor)
+            return signature;
+
+        return (executable instanceof CtTypeMember)
+                ? ((CtTypeMember) executable).getDeclaringType().getQualifiedName() + "#" + signature
+                : signature;
     }
 
     // trap mangling
-    static public String getTrapNamePrefix(final CtMethod<?> method) {
-        final String prefix = "TRAP_" + getFullSignature(method);
+    public static String getTrapNamePrefix(final CtExecutable<?> executable) {
+        final String prefix = "TRAP_" + getFullSignature(executable);
 
         // list may not be exhaustive
         return prefix.replace('.', '_') // used in qualified types
