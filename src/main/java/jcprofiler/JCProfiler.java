@@ -6,7 +6,7 @@ import jcprofiler.args.Args;
 import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
 import jcprofiler.instrumentation.Instrumenter;
-import jcprofiler.profiling.Profiler;
+import jcprofiler.profiling.AbstractProfiler;
 import jcprofiler.util.Stage;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.Visualiser;
@@ -111,7 +111,7 @@ public class JCProfiler {
                 cardManager = Installer.connect(args, entryPoint);
 
             log.info("Profiling started.");
-            final Profiler profiler = new Profiler(args, cardManager, spoon);
+            final AbstractProfiler profiler = new AbstractProfiler(args, cardManager, spoon);
             profiler.profile();
             profiler.generateCSV();
             log.info("Profiling complete.");

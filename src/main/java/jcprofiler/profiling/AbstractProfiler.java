@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Lukáš Zaoral and Petr Svenda
  */
-public class Profiler {
+public class AbstractProfiler {
     private static final short PERF_START = 0x0001;
     private final Args args;
     private final CardManager cardManager;
@@ -47,9 +47,9 @@ public class Profiler {
 
     private String elapsedTime;
 
-    private static final Logger log = LoggerFactory.getLogger(Profiler.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractProfiler.class);
 
-    public Profiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
+    public AbstractProfiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         this.args = args;
         this.cardManager = cardManager;
         this.profiledMethod = JCProfilerUtil.getProfiledMethod(spoon, args.method);
