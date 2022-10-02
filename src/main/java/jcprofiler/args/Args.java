@@ -4,6 +4,7 @@ import com.beust.jcommander.Parameter;
 
 import jcprofiler.args.converters.*;
 import jcprofiler.args.validators.*;
+import jcprofiler.util.Mode;
 import jcprofiler.util.Stage;
 import jcprofiler.util.TimeUnit;
 
@@ -62,6 +63,11 @@ public class Args {
     @Parameter(names = {"--entry-point"},
                description = "Qualified name of a class to be used as an entry point (useful when there are more)")
     public String entryPoint = "";
+
+    @Parameter(names = {"--measure"},
+               description = "Measure the selected characteristic",
+               converter = ModeConverter.class)
+    public Mode mode = Mode.time;
 
     @Parameter(names = {"--repeat-count"},
                description = "Number of profiling rounds",

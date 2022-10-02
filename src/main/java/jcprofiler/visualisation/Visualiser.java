@@ -2,6 +2,7 @@ package jcprofiler.visualisation;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
+import jcprofiler.util.Mode;
 import jcprofiler.util.Stage;
 import jcprofiler.visualisation.processors.InsertMeasurementsProcessor;
 
@@ -34,6 +35,7 @@ public class Visualiser {
     private final SpoonAPI spoon;
 
     // CSV header
+    private Mode mode;
     private String atr;
     private String profiledMethodSignature;
     private String elapsedTime;
@@ -66,11 +68,12 @@ public class Visualiser {
 
             // parse header
             final List<String> header = it.next().toList();
-            profiledMethodSignature = header.get(0);
-            atr = header.get(1);
-            elapsedTime = header.get(2);
-            apduHeader = header.get(3);
-            inputDescription = header.get(4).split(":", 2);
+            mode = Mode.valueOf(header.get(0));
+            profiledMethodSignature = header.get(1);
+            atr = header.get(2);
+            elapsedTime = header.get(3);
+            apduHeader = header.get(4);
+            inputDescription = header.get(5).split(":", 2);
 
             // parse inputs
             inputs = it.next().toList();

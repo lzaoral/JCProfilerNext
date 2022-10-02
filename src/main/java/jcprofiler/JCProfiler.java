@@ -29,6 +29,7 @@ public class JCProfiler {
     public static void run(final Args args) {
         log.info("Start from: {}", args.startFrom);
         log.info("Stop after: {}", args.stopAfter);
+        log.info("Executed in {} mode.", args.mode);
 
         // this is practically a noop but probably not a deliberate one
         if (args.startFrom.ordinal() > args.stopAfter.ordinal())

@@ -48,8 +48,14 @@ public class Instrumenter {
         checkArguments(spoon);
 
         // instrument the model
-        spoon.addProcessor(new ModifyTimeEntryPointProcessor(args));
-        spoon.addProcessor(new InsertTimeTrapProcessor(args));
+        switch (args.mode) {
+            case time:
+                spoon.addProcessor(new ModifyTimeEntryPointProcessor(args));
+                spoon.addProcessor(new InsertTimeTrapProcessor(args));
+                break;
+            default:
+                throw new RuntimeException("Unreachable statement reached!");
+        }
 
         // add workarounds for bugs in SPOON
         spoon.addProcessor(new SpoonWorkarounds.FixNestedClassImportProcessor());
@@ -93,8 +99,15 @@ public class Instrumenter {
         JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
         // validate and select args.method
-        final CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, args.method);
-        args.method = JCProfilerUtil.getFullSignature(method);
+        final CtExecutable<?> executable;
+        switch (args.mode) {
+            case time:
+                executable = JCProfilerUtil.getProfiledMethod(spoon, args.method);
+                break;
+            default:
+                throw new RuntimeException("Unreachable statement reached!");
+        }
+        args.method = JCProfilerUtil.getFullSignature(executable);
     }
 
     public static void setupSpoon(final SpoonAPI spoon, final Args args) {
@@ -160,7 +173,10 @@ public class Instrumenter {
             try {
                 final String filename = className + ".java";
                 // getClass().getResource() does not work when executed from JAR
-                final InputStream is = Objects.requireNonNull(getClass().getResourceAsStream(filename));
+                InputStream is = getClass().getResourceAsStream(filename);
+                if (is == null)
+                    is = Objects.requireNonNull(getClass().getResourceAsStream(args.mode + "/" + filename));
+
                 try (final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                     final String src = br.lines()
                             // fix newlines
