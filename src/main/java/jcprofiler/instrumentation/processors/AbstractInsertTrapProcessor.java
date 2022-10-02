@@ -33,16 +33,16 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(executable);
 
         log.info("Instrumenting {}.", fullSignature);
-        final CtBlock<?> body = executable.getBody();
-        if (isEmptyBlock(body)) {
-            insertTrapCheck(body);
+        final CtBlock<?> block = executable.getBody();
+        if (isEmptyBlock(block)) {
+            insertTrapCheck(block);
             return;
         }
 
-        processBody(body);
+        processBlock(block);
     }
 
-    private void processBody(final CtStatementList block) {
+    private void processBlock(final CtStatementList block) {
         // copy is needed as we modify the collection
         final List<CtStatement> statements = block.getStatements().stream()
                 // skip comments (SPOON classifies comments as statements)
@@ -62,24 +62,24 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
             // CtTry is an instance of CtBodyHolder, but we want to process catch and final blocks as well
             if (statement instanceof CtTry) {
                 final CtTry t = (CtTry) statement;
-                processBody(t.getBody());
-                t.getCatchers().forEach(c -> processBody(c.getBody()));
+                processBlock(t.getBody());
+                t.getCatchers().forEach(c -> processBlock(c.getBody()));
                 if (t.getFinalizer() != null)
-                    processBody(t.getFinalizer());
+                    processBlock(t.getFinalizer());
             } else if (statement instanceof CtBodyHolder) {
                 final CtBodyHolder b = (CtBodyHolder) statement;
                 if (b.getBody() != null)
-                    processBody((CtBlock<?>) b.getBody());
+                    processBlock((CtBlock<?>) b.getBody());
             } else if (statement instanceof CtIf) {
                 final CtIf i = (CtIf) statement;
                 if (i.getThenStatement() != null)
-                    processBody(i.getThenStatement());
+                    processBlock(i.getThenStatement());
                 if (i.getElseStatement() != null)
-                    processBody(i.getElseStatement());
+                    processBlock(i.getElseStatement());
             } else if (statement instanceof CtBlock) {
-                processBody((CtBlock<?>) statement);
+                processBlock((CtBlock<?>) statement);
             } else if (statement instanceof CtSwitch) {
-                ((CtSwitch<?>) statement).getCases().forEach(this::processBody);
+                ((CtSwitch<?>) statement).getCases().forEach(this::processBlock);
             }
 
             final CtStatement last = statements.get(statements.size() - 1);
@@ -184,7 +184,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         return false;
     }
 
-    private CtInvocation<?> createPmCall(final CtElement element, final Insert where) {
+    private CtInvocation<?> insertPMCall(final CtElement element, final Insert where) {
         final String trapName = String.format("%s_%d", trapNamePrefix, ++trapCount);
 
         final CtField<Short> trapField = addTrapField(trapName);
@@ -207,7 +207,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
     }
 
     private void insertTrapCheck(final CtStatementList block) {
-        final CtInvocation<?> pmCall = createPmCall(block, Insert.INTO);
+        final CtInvocation<?> pmCall = insertPMCall(block, Insert.INTO);
         if (block.getStatements().isEmpty())
             block.addStatement(pmCall);
         else
@@ -215,7 +215,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
     }
 
     private void insertTrapCheck(final CtStatement statement, final Insert where) {
-        final CtInvocation<?> pmCall = createPmCall(statement, where);
+        final CtInvocation<?> pmCall = insertPMCall(statement, where);
 
         if (where == Insert.AFTER)
             statement.insertAfter(pmCall);
