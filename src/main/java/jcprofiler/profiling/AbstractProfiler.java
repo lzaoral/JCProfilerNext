@@ -17,8 +17,9 @@ import org.slf4j.LoggerFactory;
 import spoon.SpoonAPI;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtLiteral;
+import spoon.reflect.declaration.CtConstructor;
+import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtField;
-import spoon.reflect.declaration.CtMethod;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
@@ -33,44 +34,56 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Lukáš Zaoral and Petr Svenda
  */
-public class AbstractProfiler {
-    private static final short PERF_START = 0x0001;
-    private final Args args;
-    private final CardManager cardManager;
-    private final CtMethod<?> profiledMethod;
+public abstract class AbstractProfiler {
+    protected static final short PERF_START = 0x0001;
+    protected final Args args;
+    protected final CardManager cardManager;
+    protected final CtExecutable<?> profiledExecutable;
+    protected final String profiledExecutableSignature;
 
     // use LinkedHashX to preserve insertion order
-    private final Map<Short, String> trapNameMap = new LinkedHashMap<>();
-    private final Set<String> unreachedTraps = new LinkedHashSet<>();
-    private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
-    private final List<String> inputs = new ArrayList<>();
+    protected final Map<Short, String> trapNameMap = new LinkedHashMap<>();
+    protected final Set<String> unreachedTraps = new LinkedHashSet<>();
+    protected final List<String> inputs = new ArrayList<>();
 
     private String elapsedTime;
+    private InputGenerator inputGenerator;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractProfiler.class);
 
-    public AbstractProfiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
+    protected AbstractProfiler(final Args args, final CardManager cardManager, final CtExecutable<?> executable) {
         this.args = args;
         this.cardManager = cardManager;
-        this.profiledMethod = JCProfilerUtil.getProfiledMethod(spoon, args.method);
+
+        profiledExecutable = executable;
+        profiledExecutableSignature = JCProfilerUtil.getFullSignature(executable);
 
         buildPerfMapping();
     }
 
-    private String getTrapName(final short trapID) {
+    public static AbstractProfiler create(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
+        switch (args.mode) {
+            case time:
+                return new TimeProfiler(args, cardManager, spoon);
+            default:
+                throw new RuntimeException("Unreachable statement reached!");
+        }
+    }
+
+    protected String getTrapName(final short trapID) {
         return trapID == PERF_START ? "PERF_START" : trapNameMap.get(trapID);
     }
 
     private void buildPerfMapping() {
-        log.info("Looking for traps in the {} method.", args.method);
-        final String trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(profiledMethod);
+        log.info("Looking for traps in the {}.", profiledExecutableSignature);
+        final String trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(profiledExecutable);
 
-        final List<CtField<Short>> traps = profiledMethod.filterChildren(CtFieldAccess.class::isInstance)
+        final List<CtField<Short>> traps = profiledExecutable.filterChildren(CtFieldAccess.class::isInstance)
                 .map((CtFieldAccess<Short> fa) -> fa.getVariable().getFieldDeclaration())
                 .filterChildren((CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix)).list();
         if (traps.isEmpty())
             throw new RuntimeException(String.format(
-                    "Extraction of traps from %s failed!", args.method));
+                    "Extraction of traps from %s failed!", profiledExecutableSignature));
 
         for (final CtField<Short> f : traps) {
             final CtLiteral<Integer> evaluated = f.getDefaultExpression().partiallyEvaluate();
@@ -79,83 +92,40 @@ public class AbstractProfiler {
         }
     }
 
-    public void profile() {
+    private void initializeInputGenerator() {
         try {
-            // reset if possible and erase any previous performance stop
-            resetApplet();
-            setTrap(PERF_START);
-
             // TODO: more formats? hamming weight?
             // TODO: print seed for reproducibility
             final Random rdn = new Random();
 
             // TODO: These lambdas could be replaced with regular classes if we are going to add more of them.
-            InputGenerator inputGen;
             if (args.dataRegex != null) {
                 log.info("Generating inputs from regular expression {}.", args.dataRegex);
                 final RgxGen rgxGen = new RgxGen(args.dataRegex);
-                inputGen = () -> rgxGen.generate(rdn);
+                inputGenerator = () -> rgxGen.generate(rdn);
             } else {
                 log.info("Choosing inputs from text file {}.", args.dataFile);
+
                 final List<String> inputs = Files.readAllLines(args.dataFile);
-                inputGen = () -> inputs.get(rdn.nextInt(inputs.size()));
+                inputGenerator = () -> inputs.get(rdn.nextInt(inputs.size()));
             }
-
-            final long startTime = System.nanoTime();
-            for (int repeat = 1; repeat <= args.repeatCount; repeat++) {
-                final byte[] arr = Util.hexStringToByteArray(inputGen.getInput());
-                final CommandAPDU triggerAPDU = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
-
-                final String input = Util.bytesToHex(triggerAPDU.getBytes());
-                inputs.add(input);
-
-                log.info("Round: {}/{} APDU: {}", repeat, args.repeatCount, input);
-                profileSingleStep(triggerAPDU);
-            }
-            log.info("Collecting measurements complete.");
-
-            // measure the time spent profiling
-            final long endTimeMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-            elapsedTime = DurationFormatUtils.formatDuration(endTimeMillis, "d' days 'HH:mm:ss.SSS");
-            log.info("Elapsed time: {}", elapsedTime);
-
-            // TODO: what difference is between true and false? javax.smartcardio.Card javadoc is now very helpful
-            cardManager.disconnect(true);
-            log.info("Disconnected from card.");
-
-            // sanity check
-            log.debug("Checking that no measurements are missing.");
-            measurements.forEach((k, v) -> {
-                if (v.size() != args.repeatCount)
-                    throw new RuntimeException(k + ".size() != " + args.repeatCount);
-            });
-            if (inputs.size() != args.repeatCount)
-                throw new RuntimeException("inputs.size() != " + args.repeatCount);
-
-            if (!unreachedTraps.isEmpty()) {
-                log.warn("Some traps were not always reached:");
-                unreachedTraps.forEach(System.out::println);
-                return;
-            }
-
-            log.info("All traps reached correctly.");
-        } catch (CardException | IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void setTrap(short trapID) throws CardException {
-        log.debug("Setting next trap to {}.", getTrapName(trapID));
+    protected CommandAPDU getRandomAPDU() {
+        if (inputGenerator == null)
+            initializeInputGenerator();
 
-        CommandAPDU setTrap = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_HANDLER, 0, 0,
-                                              Util.shortToByteArray(trapID));
-        ResponseAPDU response = cardManager.transmit(setTrap);
-        if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
-            throw new RuntimeException(String.format(
-                    "Setting \"%s\" trap failed with SW %d", getTrapName(trapID), response.getSW()));
+        final byte[] arr = Util.hexStringToByteArray(inputGenerator.getInput());
+        final CommandAPDU apdu = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
+        inputs.add(Util.bytesToHex(apdu.getBytes()));
+
+        return apdu;
     }
 
-    private void resetApplet() throws CardException {
+    protected void resetApplet() throws CardException {
         if (args.cleanupInst == null)
             return;
 
@@ -167,64 +137,74 @@ public class AbstractProfiler {
             throw new RuntimeException("Resetting the applet failed with SW " + response.getSW());
     }
 
-    private void profileSingleStep(CommandAPDU triggerAPDu) throws CardException {
-        long prevTransmitDuration = 0;
-        long currentTransmitDuration;
+    public void profile() {
+        try {
+            final long startTime = System.nanoTime();
 
-        for (short trapID : trapNameMap.keySet()) {
-            // set performance trap
-            setTrap(trapID);
+            log.info("Executing profiler in {} mode.", args.mode);
+            log.info("Profiling {}.", profiledExecutableSignature);
 
-            // execute target operation
-            log.debug("Measuring {}.", getTrapName(trapID));
-            ResponseAPDU response = cardManager.transmit(triggerAPDu);
-
-            // Check expected error to be equal performance trap
-            if (response.getSW() != Short.toUnsignedInt(trapID)) {
-                // we have not reached expected performance trap
-                unreachedTraps.add(getTrapName(trapID));
-                measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>()).add(null);
-                log.debug("Duration: unreachable");
-                continue;
+            if (profiledExecutable instanceof CtConstructor) {
+                inputs.add("measured during installation");
+                log.info("{} was already profiled during installation.", profiledExecutableSignature);
             }
 
-            // compute the difference
-            currentTransmitDuration = cardManager.getLastTransmitTimeNano();
-            final long diff = currentTransmitDuration - prevTransmitDuration;
-            prevTransmitDuration = currentTransmitDuration;
+            profileImpl();
+            log.info("Collecting measurements complete.");
 
-            log.debug("Duration: {} ns", diff);
+            // measure the time spent profiling
+            final long endTimeMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+            elapsedTime = DurationFormatUtils.formatDuration(endTimeMillis, "d' days 'HH:mm:ss.SSS");
+            log.info("Elapsed time: {}", elapsedTime);
 
-            // store the difference
-            measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>()).add(diff);
+            // TODO: what difference is between true and false? javax.smartcardio.Card javadoc is now very helpful
+            cardManager.disconnect(true);
+            log.info("Disconnected from card.");
 
-            // free memory after command
-            resetApplet();
+            if (!unreachedTraps.isEmpty()) {
+                log.warn("Some traps were not always reached:");
+                unreachedTraps.forEach(System.out::println);
+                return;
+            }
+
+            log.info("All traps reached correctly.");
+        } catch (CardException e) {
+            throw new RuntimeException(e);
         }
     }
 
+    protected abstract void profileImpl() throws CardException;
+
     public void generateCSV() {
         final String atr = Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
-        final String apduHeader = Util.bytesToHex(new byte[]{args.cla, args.inst, args.p1, args.p2});
+
+        String apduHeader, dataSource;
+        if (profiledExecutable instanceof CtConstructor) {
+            apduHeader = dataSource = "install";
+        } else {
+            apduHeader = Util.bytesToHex(new byte[]{args.cla, args.inst, args.p1, args.p2});
+            dataSource = args.dataRegex != null ? "regex:" + args.dataRegex
+                                                : "file:" + args.dataFile;
+        }
+
+        if (inputs.isEmpty())
+            throw new RuntimeException("The list of input values is empty!");
 
         final Path csv = args.workDir.resolve("measurements.csv");
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCsvFormat())) {
             printer.printComment("mode,class#methodSignature,ATR,elapsedTime,APDUHeader,inputType:value");
-            printer.printRecord(args.mode, JCProfilerUtil.getFullSignature(profiledMethod), atr, elapsedTime,
-                    apduHeader, args.dataRegex != null ? "regex:" + args.dataRegex : "file:" + args.dataFile);
+            printer.printRecord(args.mode, profiledExecutableSignature, atr, elapsedTime, apduHeader, dataSource);
 
             printer.printComment("input1,input2,input3,...");
             printer.printRecord(inputs);
 
-            printer.printComment("trapName,measurement1,measurement2,...");
-            for (final Map.Entry<String, List<Long>> e : measurements.entrySet()) {
-                printer.print(e.getKey());
-                printer.printRecord(e.getValue());
-            }
+            saveMeasurements(printer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         log.info("Measurements saved to {}.", csv);
     }
+
+    protected abstract void saveMeasurements(final CSVPrinter printer) throws IOException;
 }

@@ -64,7 +64,7 @@ public class Args {
                description = "Qualified name of a class to be used as an entry point (useful when there are more)")
     public String entryPoint = "";
 
-    @Parameter(names = {"--measure"},
+    @Parameter(names = {"--mode"},
                description = "Measure the selected characteristic",
                converter = ModeConverter.class)
     public Mode mode = Mode.time;

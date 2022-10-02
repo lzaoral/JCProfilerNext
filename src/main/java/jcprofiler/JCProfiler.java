@@ -111,7 +111,7 @@ public class JCProfiler {
                 cardManager = Installer.connect(args, entryPoint);
 
             log.info("Profiling started.");
-            final AbstractProfiler profiler = new AbstractProfiler(args, cardManager, spoon);
+            final AbstractProfiler profiler = AbstractProfiler.create(args, cardManager, spoon);
             profiler.profile();
             profiler.generateCSV();
             log.info("Profiling complete.");
