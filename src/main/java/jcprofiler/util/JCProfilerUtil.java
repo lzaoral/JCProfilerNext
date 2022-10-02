@@ -11,7 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spoon.SpoonAPI;
+import spoon.reflect.code.CtAbstractInvocation;
+import spoon.reflect.code.CtConstructorCall;
 import spoon.reflect.declaration.*;
+import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.io.IOException;
@@ -104,7 +107,65 @@ public class JCProfilerUtil {
         return entryPoint;
     }
 
-    // profiled method detection
+    // profiled constructor/method detection
+    public static CtExecutable<?> getProfiledExecutable(final SpoonAPI spoon, final String fullSignature) {
+        final List<CtExecutable<?>> executables = spoon.getModel().getElements(
+                (CtExecutable<?> e) -> JCProfilerUtil.getFullSignature(e).equals(fullSignature));
+
+        if (executables.isEmpty())
+            throw new RuntimeException(
+                    "SPOON model does not contain an executable with " + fullSignature + " signature!");
+
+        if (executables.size() > 1)
+            throw new RuntimeException(String.format(
+                    "SPOON contains more executables with %s signature! %s", fullSignature, executables.stream()
+                            .map(JCProfilerUtil::getFullSignature).collect(Collectors.toList())));
+
+        return executables.get(0);
+    }
+
+    public static CtExecutable<?> getProfiledExecutable(final SpoonAPI spoon, final String entryPoint,
+                                                        final String executableName) {
+        final CtConstructor<?> constructor = getProfiledConstructor(spoon, entryPoint, executableName);
+        return constructor != null ? constructor
+                                   : getProfiledMethod(spoon, executableName);
+    }
+
+    public static CtConstructor<?> getProfiledConstructor(final SpoonAPI spoon, final String entryPoint,
+                                                          final String constructorName) {
+        final CtClass<?> entryPointClass = getEntryPoint(spoon, entryPoint);
+
+        // get public static void install(byte[] bArray, short bOffset, byte bLength) throws ISOException
+        final CtTypeReference<Byte> byteRef = spoon.getFactory().createCtTypeReference(Byte.TYPE);
+        final CtMethod<?> installMethod = entryPointClass.getMethod("install",
+                spoon.getFactory().createArrayReference(byteRef), spoon.getFactory().createCtTypeReference(Short.TYPE),
+                byteRef);
+
+        // get all entryPoint class constructor invocations in the install method
+        final List<CtConstructorCall<?>> constructorCalls = installMethod.getElements(
+                (CtConstructorCall<?> c) -> c.getExecutable().getDeclaringType().equals(entryPointClass.getReference()));
+        if (constructorCalls.isEmpty())
+            throw new RuntimeException(String.format(
+                    "The %s method does not call any constructor of the %s class!",
+                    getFullSignature(installMethod), entryPointClass.getQualifiedName()));
+
+        if (constructorCalls.size() > 1)
+            throw new RuntimeException(String.format(
+                    "The %s method calls more than one constructor of the %s class: %s",
+                    getFullSignature(installMethod), entryPointClass.getQualifiedName(), constructorCalls.stream()
+                            .map(CtAbstractInvocation::getExecutable).map(CtExecutableReference::getSignature)
+                            .collect(Collectors.toList())));
+
+        final CtConstructor<?> constructor = (CtConstructor<?>) constructorCalls.get(0).getExecutable().getDeclaration();
+
+        // TODO: Not the nicest piece of code.  If args.method is set and does not equal to the constructor signature,
+        // assume that we're profiling a method instead.
+        if (constructorName != null && !constructor.getSignature().equals(constructorName))
+            return null;
+
+        return constructor;
+    }
+
     public static CtMethod<?> getProfiledMethod(final SpoonAPI spoon, final String methodName) {
         if (methodName == null)
             throw new RuntimeException("--method argument was not provided!");
