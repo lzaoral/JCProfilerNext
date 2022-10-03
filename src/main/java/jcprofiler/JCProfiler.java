@@ -111,7 +111,7 @@ public class JCProfiler {
             // noop for --simulator
             if (args.useSimulator) {
                 log.info("Skipping installation because simulator is used.");
-            } else{
+            } else {
                 log.info("Installation started.");
                 cardManager = Installer.installOnCard(args, entryPoint);
                 log.info("Installation complete.");
