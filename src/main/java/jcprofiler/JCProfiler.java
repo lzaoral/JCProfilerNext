@@ -7,7 +7,6 @@ import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
 import jcprofiler.instrumentation.Instrumenter;
 import jcprofiler.profiling.AbstractProfiler;
-import jcprofiler.util.Mode;
 import jcprofiler.util.Stage;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.Visualiser;
@@ -31,42 +30,6 @@ public class JCProfiler {
         log.info("Start from: {}", args.startFrom);
         log.info("Stop after: {}", args.stopAfter);
         log.info("Executed in {} mode.", args.mode);
-
-        // this is practically a noop but probably not a deliberate one
-        if (args.startFrom.ordinal() > args.stopAfter.ordinal())
-            throw new UnsupportedOperationException(String.format(
-                   "Nothing to do! Cannot start with %s and end with %s.",
-                    args.startFrom, args.stopAfter));
-
-        // validate memory mode
-        if (args.mode == Mode.memory && args.stopAfter == Stage.visualisation)
-            throw new UnsupportedOperationException("Memory measurements visualisation is unsupported at the moment!");
-
-        // validate custom mode
-        if (args.mode == Mode.custom) {
-            // --custom-pm must be set
-            if (args.customPM == null)
-                throw new UnsupportedOperationException("Option --custom-pm must be set in custom mode!");
-
-            // TODO: We may agree on a subset of customizable profiling strategies.
-            if (args.stopAfter.ordinal() > Stage.installation.ordinal())
-                throw new UnsupportedOperationException(
-                        "Profiling and visualisation of applet instrumented in custom mode are unsupported!");
-        }
-
-        // validate --data-regex and --data-file
-        if ((args.dataRegex == null) == (args.dataFile == null)) {
-            if (args.dataRegex != null)
-                throw new UnsupportedOperationException(
-                        "Options --data-file or --data-regex cannot be specified simultaneously.");
-
-            // following check is applicable only for the profiling stage when we're not memory profiling a constructor
-            final int profilingStage = Stage.profiling.ordinal();
-            if (args.startFrom.ordinal() <= profilingStage && profilingStage <= args.stopAfter.ordinal() &&
-                    (args.mode != Mode.memory || args.method != null))
-                throw new UnsupportedOperationException(
-                        "Either --data-file or --data-regex options must be specified for the profiling stage!");
-        }
 
         // Instrumentation
         if (args.startFrom.ordinal() <= Stage.instrumentation.ordinal()) {
