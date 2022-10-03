@@ -42,6 +42,18 @@ public class JCProfiler {
         if (args.mode == Mode.memory && args.stopAfter == Stage.visualisation)
             throw new UnsupportedOperationException("Memory measurements visualisation is unsupported at the moment!");
 
+        // validate custom mode
+        if (args.mode == Mode.custom) {
+            // --custom-pm must be set
+            if (args.customPM == null)
+                throw new UnsupportedOperationException("Option --custom-pm must be set in custom mode!");
+
+            // TODO: We may agree on a subset of customizable profiling strategies.
+            if (args.stopAfter.ordinal() > Stage.installation.ordinal())
+                throw new UnsupportedOperationException(
+                        "Profiling and visualisation of applet instrumented in custom mode are unsupported!");
+        }
+
         // validate --data-regex and --data-file
         if ((args.dataRegex == null) == (args.dataFile == null)) {
             if (args.dataRegex != null)

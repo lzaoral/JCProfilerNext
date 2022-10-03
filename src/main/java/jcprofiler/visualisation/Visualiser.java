@@ -69,6 +69,9 @@ public class Visualiser {
             // parse header
             final List<String> header = it.next().toList();
             mode = Mode.valueOf(header.get(0));
+            if (mode == Mode.custom)
+                throw new UnsupportedOperationException("Visualisation of CSV files with custom mode is unsupported!");
+
             profiledMethodSignature = header.get(1);
             atr = header.get(2);
             elapsedTime = header.get(3);

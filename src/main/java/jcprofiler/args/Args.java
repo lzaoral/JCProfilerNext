@@ -57,7 +57,8 @@ public class Args {
     public boolean useSimulator = false;
 
     @Parameter(names = {"--method"},
-               description = "Method to profile or leave unset to instrument constructor (memory profiling only)")
+               description = "Method to profile or leave unset to instrument constructor " +
+                             "(custom and memory profiling only)")
     public String method;
 
     @Parameter(names = {"--entry-point"},
@@ -68,6 +69,16 @@ public class Args {
                description = "Measure the selected characteristic",
                converter = ModeConverter.class)
     public Mode mode = Mode.time;
+
+    @Parameter(names = {"--custom-pm"},
+               description = "Custom PM class (custom profiling only)",
+               converter = FilePathConverter.class)
+    public Path customPM;
+
+    @Parameter(names = {"--custom-handler"},
+               description = "INS_PERF_CUSTOM handler block without return statement (custom profiling only)",
+               converter = FilePathConverter.class)
+    public Path customHandler;
 
     @Parameter(names = {"--repeat-count"},
                description = "Number of profiling rounds (time profiling only)",

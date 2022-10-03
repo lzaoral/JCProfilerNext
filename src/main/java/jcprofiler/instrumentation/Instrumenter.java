@@ -55,6 +55,10 @@ public class Instrumenter {
                 spoon.addProcessor(new ModifyTimeEntryPointProcessor(args));
                 spoon.addProcessor(new InsertTimeTrapProcessor(args));
                 break;
+            case custom:
+                spoon.addProcessor(new ModifyCustomEntryPointProcessor(args));
+                spoon.addProcessor(new InsertCustomTrapProcessor(args));
+                break;
             default:
                 throw new RuntimeException("Unreachable statement reached!");
         }
@@ -103,6 +107,7 @@ public class Instrumenter {
         // validate and select args.method
         CtExecutable<?> executable;
         switch (args.mode) {
+            case custom:
             case memory:
                 executable = JCProfilerUtil.getProfiledExecutable(spoon, args.entryPoint, args.method);
                 break;
@@ -176,6 +181,12 @@ public class Instrumenter {
 
             log.debug("Class {} not found.", className);
             try {
+                if (className.equals("PM") && args.customPM != null) {
+                    log.info("Using custom PM class from {}.", args.customPM);
+                    spoon.addInputResource(args.customPM.toString());
+                    continue;
+                }
+
                 final String filename = className + ".java";
                 // getClass().getResource() does not work when executed from JAR
                 InputStream is = getClass().getResourceAsStream(filename);
