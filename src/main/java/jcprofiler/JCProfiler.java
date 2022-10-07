@@ -7,6 +7,7 @@ import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
 import jcprofiler.instrumentation.Instrumenter;
 import jcprofiler.profiling.AbstractProfiler;
+import jcprofiler.util.Mode;
 import jcprofiler.util.Stage;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.Visualiser;
@@ -36,6 +37,11 @@ public class JCProfiler {
             throw new UnsupportedOperationException(String.format(
                    "Nothing to do! Cannot start with %s and end with %s.",
                     args.startFrom, args.stopAfter));
+
+        // validate memory mode
+        if (args.mode == Mode.memory && args.stopAfter.ordinal() >= Stage.profiling.ordinal())
+            throw new UnsupportedOperationException(
+                    "Memory profiling and measurements visualisation is unsupported at the moment!");
 
         // validate --data-regex and --data-file
         if ((args.dataRegex == null) == (args.dataFile == null)) {

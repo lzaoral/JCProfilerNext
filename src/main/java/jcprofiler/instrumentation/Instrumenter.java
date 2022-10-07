@@ -1,9 +1,7 @@
 package jcprofiler.instrumentation;
 
 import jcprofiler.args.Args;
-import jcprofiler.instrumentation.processors.InsertTimeTrapProcessor;
-import jcprofiler.instrumentation.processors.ModifyTimeEntryPointProcessor;
-import jcprofiler.instrumentation.processors.SpoonWorkarounds;
+import jcprofiler.instrumentation.processors.*;
 import jcprofiler.util.JCProfilerUtil;
 
 import org.slf4j.Logger;
@@ -49,6 +47,10 @@ public class Instrumenter {
 
         // instrument the model
         switch (args.mode) {
+            case memory:
+                spoon.addProcessor(new ModifyMemoryEntryPointProcessor(args));
+                spoon.addProcessor(new InsertMemoryTrapProcessor(args));
+                break;
             case time:
                 spoon.addProcessor(new ModifyTimeEntryPointProcessor(args));
                 spoon.addProcessor(new InsertTimeTrapProcessor(args));
@@ -99,8 +101,11 @@ public class Instrumenter {
         JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
 
         // validate and select args.method
-        final CtExecutable<?> executable;
+        CtExecutable<?> executable;
         switch (args.mode) {
+            case memory:
+                executable = JCProfilerUtil.getProfiledExecutable(spoon, args.entryPoint, args.method);
+                break;
             case time:
                 executable = JCProfilerUtil.getProfiledMethod(spoon, args.method);
                 break;

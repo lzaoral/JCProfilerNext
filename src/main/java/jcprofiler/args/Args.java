@@ -57,7 +57,7 @@ public class Args {
     public boolean useSimulator = false;
 
     @Parameter(names = {"--method"},
-               description = "Method to profile")
+               description = "Method to profile or leave unset to instrument constructor (memory profiling only)")
     public String method;
 
     @Parameter(names = {"--entry-point"},
