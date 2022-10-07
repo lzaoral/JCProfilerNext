@@ -41,8 +41,12 @@ public class Main {
             log.info("LogLevel set to DEBUG.");
         }
 
+        // Log basic info
         log.info("Found JavaCard SDK {} ({})", args.jcSDK.getRelease(), args.jcSDK.getRoot().getAbsolutePath());
         log.info("Working directory: {}", args.workDir);
+        log.info("Start from: {}", args.startFrom);
+        log.info("Stop after: {}", args.stopAfter);
+        log.info("Executed in {} mode.", args.mode);
 
         try {
             validateArgs(args);

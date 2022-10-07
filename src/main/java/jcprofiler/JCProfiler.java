@@ -27,10 +27,6 @@ public class JCProfiler {
     private JCProfiler() {}
 
     public static void run(final Args args) {
-        log.info("Start from: {}", args.startFrom);
-        log.info("Stop after: {}", args.stopAfter);
-        log.info("Executed in {} mode.", args.mode);
-
         // Instrumentation
         if (args.startFrom.ordinal() <= Stage.instrumentation.ordinal()) {
             log.info("Instrumentation started.");
