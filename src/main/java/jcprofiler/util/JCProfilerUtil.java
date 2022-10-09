@@ -331,7 +331,7 @@ public class JCProfilerUtil {
     }
 
     // CSV
-    public static CSVFormat getCsvFormat() {
+    public static CSVFormat getCSVFormat() {
         return Builder.create(CSVFormat.DEFAULT).setCommentMarker('#').build();
     }
 

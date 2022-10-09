@@ -193,7 +193,7 @@ public abstract class AbstractProfiler {
             throw new RuntimeException("The list of input values is empty!");
 
         final Path csv = args.workDir.resolve("measurements.csv");
-        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCsvFormat())) {
+        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCSVFormat())) {
             printer.printComment("mode,class#methodSignature,ATR,elapsedTime,APDUHeader,inputType:value");
             printer.printRecord(args.mode, profiledExecutableSignature, atr, elapsedTime, apduHeader, dataSource);
 
