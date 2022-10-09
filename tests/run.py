@@ -4,13 +4,15 @@ from pathlib import Path
 from shutil import copytree
 from subprocess import call
 from tempfile import mkdtemp
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import json
 import os
 import re
 import sys
 
+
+MODES = ['memory', 'time']
 
 STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
           'visualisation', 'all']
@@ -61,6 +63,41 @@ def modify_repo(test: Dict[str, Any]):
                     f.write(regex.sub('', lines))
 
 
+def execute_cmd(cmd: List[str]) -> None:
+    for stage in STAGES:
+        stage_cmd = cmd.copy()
+
+        if stage != 'all':
+            stage_cmd += ['--start-from', str(stage)]
+            stage_cmd += ['--stop-after', str(stage)]
+
+        print('Excecuting stage', stage)
+        print('Command:', " ".join(stage_cmd), flush=True)
+        ret = call(stage_cmd)
+        if ret != 0:
+            print('Command failed with return code', ret)
+            sys.exit(1)
+
+
+def prepare_workdir(test: Dict[str, Any], subtest_name: str) -> Path:
+    test_dir = Path(mkdtemp(prefix=f'{test["name"]}_{subtest_name}_',
+                    dir='.')).absolute()
+    print('Created temporary directory', test_dir)
+
+    copytree(Path(test['name']) / test['path'], test_dir,
+             dirs_exist_ok=True)
+    return test_dir
+
+
+def test_ctor(test: Dict[str, Any], cmd: List[str]) -> None:
+    ctor_cmd = cmd.copy()
+    test_dir = prepare_workdir(test, 'ctor')
+
+    ctor_cmd += ['--work-dir', str(test_dir)]
+    ctor_cmd += ['--mode', 'memory']
+    execute_cmd(ctor_cmd)
+
+
 def execute_test(test: Dict[str, Any]):
     name = test['name']
     print('Running test', name)
@@ -81,15 +118,12 @@ def execute_test(test: Dict[str, Any]):
     if 'cla' in test:
         cmd += ['--cla', test['cla']]
 
+    # test memory measurement in constructor
+    test_ctor(test, cmd)
+
     for subtest in test['subtests']:
         sub_cmd = cmd.copy()
-
-        test_dir = Path(mkdtemp(prefix=f'{test["name"]}_{subtest["method"]}_',
-                        dir='.')).absolute()
-        print('Created temporary directory', test_dir)
-
-        copytree(Path(test['name']) / test['path'], test_dir,
-                 dirs_exist_ok=True)
+        test_dir = prepare_workdir(test, subtest["method"])
 
         sub_cmd += ['--work-dir', str(test_dir)]
         sub_cmd += ['--method', subtest['method']]
@@ -107,20 +141,12 @@ def execute_test(test: Dict[str, Any]):
             sub_cmd += ['--p2', subtest['p2']]
 
         print('Executing subtest:', subtest['name'])
+        for mode in MODES:
+            print('Excecuting mode', mode)
+            mode_cmd = sub_cmd.copy()
+            mode_cmd += ['--mode', mode]
 
-        for stage in STAGES:
-            stage_cmd = sub_cmd.copy()
-
-            if stage != "all":
-                stage_cmd += ['--start-from', str(stage)]
-                stage_cmd += ['--stop-after', str(stage)]
-
-            print('Excecuting stage', stage)
-            print('Command:', " ".join(stage_cmd), flush=True)
-            ret = call(stage_cmd)
-            if ret != 0:
-                print('Command failed with return code', ret)
-                sys.exit(1)
+            execute_cmd(mode_cmd)
 
         # TODO: check format and contents of generated profiling reports
 
