@@ -17,15 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class InsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<Void>> {
+public class AbstractInsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<Void>> {
     private final Args args;
     private final Map<String, List<Long>> measurements;
     private final Map<String, DescriptiveStatistics> statisticsMap;
 
-    private static final Logger log = LoggerFactory.getLogger(InsertMeasurementsProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractInsertMeasurementsProcessor.class);
 
-    public InsertMeasurementsProcessor(final Args args, final Map<String, List<Long>> measurements,
-                                       final Map<String, DescriptiveStatistics> statisticsMap) {
+    public AbstractInsertMeasurementsProcessor(final Args args, final Map<String, List<Long>> measurements,
+                                               final Map<String, DescriptiveStatistics> statisticsMap) {
         this.args = args;
         this.measurements = measurements;
         this.statisticsMap = statisticsMap;

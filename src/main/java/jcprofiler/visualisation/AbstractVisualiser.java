@@ -4,7 +4,7 @@ import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.util.Mode;
 import jcprofiler.util.Stage;
-import jcprofiler.visualisation.processors.InsertMeasurementsProcessor;
+import jcprofiler.visualisation.processors.AbstractInsertMeasurementsProcessor;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class Visualiser {
+public class AbstractVisualiser {
     private final Args args;
     private final SpoonAPI spoon;
 
@@ -47,9 +47,9 @@ public class Visualiser {
     private final Map<String, List<Long>> filteredMeasurements = new LinkedHashMap<>();
     private final Map<String, DescriptiveStatistics> filteredStatistics = new LinkedHashMap<>();
 
-    private static final Logger log = LoggerFactory.getLogger(Visualiser.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractVisualiser.class);
 
-    public Visualiser(final Args args, final SpoonAPI spoon) {
+    public AbstractVisualiser(final Args args, final SpoonAPI spoon) {
         this.args = args;
         this.spoon = spoon;
     }
@@ -157,7 +157,7 @@ public class Visualiser {
 
         log.info("Inserting measurements into sources.");
         spoon.setSourceOutputDirectory(outputDir.toFile());
-        spoon.addProcessor(new InsertMeasurementsProcessor(args, measurements, filteredStatistics));
+        spoon.addProcessor(new AbstractInsertMeasurementsProcessor(args, measurements, filteredStatistics));
         spoon.process();
         spoon.prettyprint();
     }

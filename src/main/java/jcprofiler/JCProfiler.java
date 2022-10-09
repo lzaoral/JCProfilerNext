@@ -9,7 +9,7 @@ import jcprofiler.instrumentation.Instrumenter;
 import jcprofiler.profiling.AbstractProfiler;
 import jcprofiler.util.Stage;
 import jcprofiler.util.JCProfilerUtil;
-import jcprofiler.visualisation.Visualiser;
+import jcprofiler.visualisation.AbstractVisualiser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ public class JCProfiler {
 
         // Visualisation
         log.info("Visualising results.");
-        final Visualiser vis = new Visualiser(args, spoon);
+        final AbstractVisualiser vis = new AbstractVisualiser(args, spoon);
         vis.loadAndProcessMeasurements();
         vis.generateHTML();
         vis.insertMeasurementsToSources();
