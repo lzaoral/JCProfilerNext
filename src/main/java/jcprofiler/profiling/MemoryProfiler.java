@@ -3,6 +3,8 @@ package jcprofiler.profiling;
 import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.Util;
 
+import javacard.framework.JCSystem;
+
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 
@@ -33,14 +35,42 @@ public class MemoryProfiler extends AbstractProfiler {
         super(args, cardManager, JCProfilerUtil.getProfiledExecutable(spoon, args.entryPoint, args.method));
     }
 
-    private void processMeasurement(final Map<String, Integer> map, final String key,
-                                    final byte[] array, final int offset) {
-        Integer val = Short.toUnsignedInt(Util.getShort(array, offset));
-        if (val == 0) {
-            unreachedTraps.add(key);
-            val = null;
+    private void getMeasurements(final Map<String, Integer> map, final byte memType) throws CardException {
+        final int arrayLength = trapNameMap.size() * Short.BYTES;
+        final byte[] buffer = new byte[arrayLength];
+
+        int part = 0;
+        int remainingLength = arrayLength;
+
+        while (remainingLength > 0) {
+            final int nextLength = Math.min(remainingLength, 256);
+
+            final CommandAPDU getMeasurements = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_HANDLER, memType, part++);
+            final ResponseAPDU response = cardManager.transmit(getMeasurements);
+            if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
+                throw new RuntimeException("Getting memory measurements failed with SW " + response.getSW());
+
+            final byte[] responseData = response.getData();
+            if (responseData.length != nextLength)
+                throw new RuntimeException(String.format(
+                        "The incoming measurement data have incorrect length! Expected: %d Actual: %d",
+                        arrayLength, responseData.length));
+
+
+            System.arraycopy(responseData, 0, buffer, arrayLength - remainingLength, responseData.length);
+            remainingLength -= nextLength;
         }
-        map.put(key, val);
+
+        trapNameMap.forEach((trapID, trapName) -> {
+            int idx = (Short.toUnsignedInt(trapID) - /* PERF_START */ 2) * Short.BYTES;
+
+            Integer val = Short.toUnsignedInt(Util.getShort(buffer, idx));
+            if (val == 0) {
+                unreachedTraps.add(trapName);
+                val = null;
+            }
+            map.put(trapName, val);
+        });
     }
 
     @Override
@@ -58,33 +88,11 @@ public class MemoryProfiler extends AbstractProfiler {
             log.info("Measuring {} complete.", profiledExecutableSignature);
         }
 
-        final int arrayLength = trapNameMap.size() * Short.BYTES;
-        if (arrayLength * 3 > 256)
-            throw new UnsupportedOperationException(JCProfilerUtil.getFullSignature(profiledExecutable) +
-                    " has too many traps! This is temporarily unsupported!");
-
         log.info("Retrieving measurements from the card.");
-
-        final CommandAPDU getMeasurements = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_HANDLER, 0, 0);
-        final ResponseAPDU response = cardManager.transmit(getMeasurements);
-        if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
-            throw new RuntimeException("Getting memory measurements failed with SW " + response.getSW());
-
-        final byte[] responseData = response.getData();
-        if (responseData.length != arrayLength * 3)
-            throw new RuntimeException(String.format(
-                    "The incoming measurement data have incorrect length! Expected: %d Actual: %d",
-                    arrayLength * 3, responseData.length));
-
+        getMeasurements(memoryUsageTransientDeselect, JCSystem.MEMORY_TYPE_TRANSIENT_DESELECT);
+        getMeasurements(memoryUsageTransientReset, JCSystem.MEMORY_TYPE_TRANSIENT_RESET);
+        getMeasurements(memoryUsagePersistent, JCSystem.MEMORY_TYPE_PERSISTENT);
         log.info("Measurements retrieved successfully.");
-
-        trapNameMap.forEach((k ,v) -> {
-            int arrayIdx = (Short.toUnsignedInt(k) - /* PERF_START */ 2) * Short.BYTES;
-
-            processMeasurement(memoryUsageTransientDeselect, v, responseData, arrayIdx);
-            processMeasurement(memoryUsageTransientReset, v, responseData, arrayIdx + arrayLength);
-            processMeasurement(memoryUsagePersistent, v, responseData, arrayIdx + arrayLength * 2);
-        });
     }
 
     @Override
