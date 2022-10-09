@@ -39,9 +39,8 @@ public class JCProfiler {
                     args.startFrom, args.stopAfter));
 
         // validate memory mode
-        if (args.mode == Mode.memory && args.stopAfter.ordinal() >= Stage.profiling.ordinal())
-            throw new UnsupportedOperationException(
-                    "Memory profiling and measurements visualisation is unsupported at the moment!");
+        if (args.mode == Mode.memory && args.stopAfter == Stage.visualisation)
+            throw new UnsupportedOperationException("Memory measurements visualisation is unsupported at the moment!");
 
         // validate --data-regex and --data-file
         if ((args.dataRegex == null) == (args.dataFile == null)) {
@@ -49,9 +48,10 @@ public class JCProfiler {
                 throw new UnsupportedOperationException(
                         "Options --data-file or --data-regex cannot be specified simultaneously.");
 
-            // following check is applicable only for the profiling stage
+            // following check is applicable only for the profiling stage when we're not memory profiling a constructor
             final int profilingStage = Stage.profiling.ordinal();
-            if (args.startFrom.ordinal() <= profilingStage && profilingStage <= args.stopAfter.ordinal())
+            if (args.startFrom.ordinal() <= profilingStage && profilingStage <= args.stopAfter.ordinal() &&
+                    (args.mode != Mode.memory || args.method != null))
                 throw new UnsupportedOperationException(
                         "Either --data-file or --data-regex options must be specified for the profiling stage!");
         }

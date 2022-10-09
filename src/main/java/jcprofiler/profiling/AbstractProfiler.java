@@ -63,6 +63,8 @@ public abstract class AbstractProfiler {
 
     public static AbstractProfiler create(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         switch (args.mode) {
+            case memory:
+                return new MemoryProfiler(args, cardManager, spoon);
             case time:
                 return new TimeProfiler(args, cardManager, spoon);
             default:
