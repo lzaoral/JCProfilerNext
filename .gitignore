@@ -34,8 +34,10 @@ hs_err_pid*
 build
 
 # temporary test files
-tests/jcsdk
-tests/JCMathLib*
+tests
+!tests/run.py
+!tests/test_data.json
+!tests/inputs
 
 # python
 .mypy_cache
