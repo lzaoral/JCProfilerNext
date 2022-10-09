@@ -178,7 +178,8 @@ public abstract class AbstractProfiler {
     protected abstract void profileImpl() throws CardException;
 
     public void generateCSV() {
-        final String atr = Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
+        final String atr = args.useSimulator ? "jCardSim"
+                                             : Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
 
         String apduHeader, dataSource;
         if (profiledExecutable instanceof CtConstructor) {
