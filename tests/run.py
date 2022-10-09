@@ -13,7 +13,7 @@ import sys
 
 
 STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
-          'visualisation']
+          'visualisation', 'all']
 
 
 def rebuild_jar() -> None:
@@ -110,8 +110,10 @@ def execute_test(test: Dict[str, Any]):
 
         for stage in STAGES:
             stage_cmd = sub_cmd.copy()
-            stage_cmd += ['--start-from', str(stage)]
-            stage_cmd += ['--stop-after', str(stage)]
+
+            if stage != "all":
+                stage_cmd += ['--start-from', str(stage)]
+                stage_cmd += ['--stop-after', str(stage)]
 
             print('Excecuting stage', stage)
             print('Command:', " ".join(stage_cmd), flush=True)
