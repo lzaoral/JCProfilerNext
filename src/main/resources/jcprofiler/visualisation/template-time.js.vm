@@ -1,29 +1,15 @@
 ## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="heatmapValues" type="java.util.List<java.lang.Double>"
-## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
-## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="timeUnit" type="java.lang.String"
 
-/*
- * MACROS
- */
-
-#macro( object $map )
-{
-    #foreach( $pair in $map.entrySet() )
-        $pair.getKey(): $pair.getValue()#if($foreach.hasNext),#end
-    #end
-}#end
+## include common code
+#parse( "template-common.js.vm" )
 
 /*
  * CONSTANTS
  */
 
-const trapPrefix = '$measurements.keySet().iterator().next().replace('1', '')';
-
-const inputs = $inputs;
 const filteredMeasurements = #object( $filteredMeasurements );
-const measurements = #object( $measurements );
 
 const heatmapValues = {
     x: [''],
@@ -215,9 +201,10 @@ function toggleTraps(event) {
     });
 }
 
-// redraw graph event handler
-let selectedTraps;
+// set default heading
+document.getElementById('graphName').innerText = 'Select a line to view its histogram.';
 
+// redraw graph event handler
 function redrawGraph(evt) {
     // enable graph help
     document.getElementById('graphHelp').style.display = 'initial';
@@ -226,9 +213,7 @@ function redrawGraph(evt) {
     const trapName = evt.currentTarget.classList[0];
 
     // update highlight of the selected trap
-    document.querySelectorAll('.trap_select').forEach(t => t.classList.remove('trap_select'));
-    selectedTraps = document.querySelectorAll('.' + trapName + ' .trap_contents');
-    selectedTraps.forEach(t => t.classList.add('trap_select'));
+    selectTraps(trapName);
 
     // update trap title
     document.getElementById('graphName').textContent = trapName;

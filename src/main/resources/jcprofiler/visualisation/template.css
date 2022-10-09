@@ -73,7 +73,6 @@
 }
 
 #codeWithTraps, #codeWithoutTraps {
-    margin-left: -100px;
     flex: 1;
     overflow: scroll;
 }

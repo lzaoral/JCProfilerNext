@@ -99,7 +99,7 @@ public class JCProfiler {
 
         // Visualisation
         log.info("Visualising results.");
-        final AbstractVisualiser vis = new AbstractVisualiser(args, spoon);
+        final AbstractVisualiser vis = AbstractVisualiser.create(args, spoon);
         vis.loadAndProcessMeasurements();
         vis.generateHTML();
         vis.insertMeasurementsToSources();

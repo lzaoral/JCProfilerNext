@@ -1,9 +1,6 @@
 package jcprofiler.visualisation.processors;
 
 import jcprofiler.args.Args;
-import jcprofiler.util.JCProfilerUtil;
-
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,20 +12,16 @@ import spoon.reflect.reference.CtExecutableReference;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-public class AbstractInsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<Void>> {
-    private final Args args;
-    private final Map<String, List<Long>> measurements;
-    private final Map<String, DescriptiveStatistics> statisticsMap;
+public abstract class AbstractInsertMeasurementsProcessor extends AbstractProcessor<CtInvocation<Void>> {
+    protected final Args args;
+    protected final Map<String, List<Long>> measurements;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractInsertMeasurementsProcessor.class);
 
-    public AbstractInsertMeasurementsProcessor(final Args args, final Map<String, List<Long>> measurements,
-                                               final Map<String, DescriptiveStatistics> statisticsMap) {
+    protected AbstractInsertMeasurementsProcessor(final Args args, final Map<String, List<Long>> measurements) {
         this.args = args;
         this.measurements = measurements;
-        this.statisticsMap = statisticsMap;
     }
 
     @Override
@@ -40,6 +33,8 @@ public class AbstractInsertMeasurementsProcessor extends AbstractProcessor<CtInv
                 && executable.isStatic();
     }
 
+    protected abstract String getCommentString(final String fieldName);
+
     @Override
     public void process(final CtInvocation<Void> invocation) {
         final CtFieldRead<?> trapFieldRead = (CtFieldRead<?>) invocation.getArguments().get(0);
@@ -49,19 +44,7 @@ public class AbstractInsertMeasurementsProcessor extends AbstractProcessor<CtInv
         if (!measurements.containsKey(fieldName))
             return;
 
-        final List<Long> values = measurements.get(fieldName);
-        final DescriptiveStatistics statistics = statisticsMap.get(fieldName);
-        final String unitSymbol = JCProfilerUtil.getTimeUnitSymbol(args.timeUnit);
-        final long unreachableCount = values.stream().filter(Objects::isNull).count();
-
-        final String commentContents = String.format(
-                "Mean: %.2f %s, Std Dev: %.2f %s, Max: %d %s, Min: %d %s, Unreachable: %d/%d, %d outliers skipped",
-                statistics.getMean(), unitSymbol,
-                statistics.getStandardDeviation(), unitSymbol,
-                (int) statistics.getMax(), unitSymbol,
-                (int) statistics.getMin(), unitSymbol,
-                unreachableCount, values.size(),
-                values.size() - unreachableCount - statistics.getN());
+        final String commentContents = getCommentString(fieldName);
 
         log.debug("Inserting comment with measurements at {}.", invocation.getPosition());
         invocation.replace(getFactory().createInlineComment(commentContents));

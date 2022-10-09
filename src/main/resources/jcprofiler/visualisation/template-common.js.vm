@@ -1,0 +1,32 @@
+## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
+## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
+
+/*
+ * MACROS
+ */
+
+#macro( object $map )
+{
+    #foreach( $pair in $map.entrySet() )
+        $pair.getKey(): $pair.getValue()#if($foreach.hasNext),#end
+    #end
+}#end
+
+/*
+ * CONSTANTS
+ */
+
+const trapPrefix = '$measurements.keySet().iterator().next().replace('1', '')';
+
+const inputs = $inputs;
+const measurements = #object( $measurements );
+
+
+/*
+ * FUNCTIONS
+ */
+function selectTraps(trapName) {
+    // update highlight of the selected trap
+    document.querySelectorAll('.trap_select').forEach(t => t.classList.remove('trap_select'));
+    document.querySelectorAll('.' + trapName + ' .trap_contents').forEach(t => t.classList.add('trap_select'));
+}

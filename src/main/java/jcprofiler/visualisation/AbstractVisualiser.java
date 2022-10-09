@@ -8,7 +8,6 @@ import jcprofiler.visualisation.processors.AbstractInsertMeasurementsProcessor;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -21,47 +20,55 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spoon.SpoonAPI;
-import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtExecutable;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class AbstractVisualiser {
-    private final Args args;
-    private final SpoonAPI spoon;
+public abstract class AbstractVisualiser {
+    protected final Args args;
+    protected final SpoonAPI spoon;
 
     // CSV header
-    private Mode mode;
-    private String atr;
-    private String profiledMethodSignature;
-    private String elapsedTime;
-    private String apduHeader;
-    private String[] inputDescription;
+    protected Mode mode;
+    protected String atr;
+    protected String profiledExecutableSignature;
+    protected String elapsedTime;
+    protected String apduHeader;
+    protected String[] inputDescription;
 
-    private List<String> inputs;
-    private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
-    private final Map<String, List<Long>> filteredMeasurements = new LinkedHashMap<>();
-    private final Map<String, DescriptiveStatistics> filteredStatistics = new LinkedHashMap<>();
+    protected List<String> inputs;
+    protected final Map<String, List<Long>> measurements = new LinkedHashMap<>();
+
+    protected List<String> sourceCode;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractVisualiser.class);
 
-    public AbstractVisualiser(final Args args, final SpoonAPI spoon) {
+    protected AbstractVisualiser(final Args args, final SpoonAPI spoon) {
         this.args = args;
         this.spoon = spoon;
     }
 
+    public static AbstractVisualiser create(final Args args, final SpoonAPI spoon) {
+        switch (args.mode) {
+            case time:
+                return new TimeVisualiser(args, spoon);
+            default:
+                throw new RuntimeException("Unreachable statement reached!");
+        }
+    }
+
     public void loadAndProcessMeasurements() {
         loadCSV();
-        filterOutliers();
+        loadSourceCode();
     }
 
     private void loadCSV() {
         final Path csv = JCProfilerUtil.checkFile(args.workDir.resolve("measurements.csv"), Stage.profiling);
-        log.info("Loading measurements in {} from {}.", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit), csv);
+        log.info("Loading measurements from {}.", csv);
 
         try (final CSVParser parser = CSVParser.parse(csv, Charset.defaultCharset(), JCProfilerUtil.getCSVFormat())) {
             final Iterator<CSVRecord> it = parser.iterator();
@@ -69,10 +76,11 @@ public class AbstractVisualiser {
             // parse header
             final List<String> header = it.next().toList();
             mode = Mode.valueOf(header.get(0));
-            if (mode == Mode.custom)
-                throw new UnsupportedOperationException("Visualisation of CSV files with custom mode is unsupported!");
+            if (args.mode != mode)
+                throw new RuntimeException(String.format(
+                        "Visualisation executed in %s mode but CSV was generated in %s mode.", args.mode, mode));
 
-            profiledMethodSignature = header.get(1);
+            profiledExecutableSignature = header.get(1);
             atr = header.get(2);
             elapsedTime = header.get(3);
             apduHeader = header.get(4);
@@ -84,7 +92,7 @@ public class AbstractVisualiser {
             // parse measurements
             do {
                 final List<String> line = it.next().toList();
-                final List<Long> values = line.stream().skip(1).map(this::convertTime).collect(Collectors.toList());
+                final List<Long> values = line.stream().skip(1).map(this::convertValues).collect(Collectors.toList());
                 measurements.put(line.get(0), values);
             } while (it.hasNext());
         } catch (IOException e) {
@@ -92,63 +100,21 @@ public class AbstractVisualiser {
         }
     }
 
-    private void filterOutliers() {
-        log.info("Filtering outliers from the loaded measurements.");
-        measurements.forEach((k, v) -> {
-            final DescriptiveStatistics ds = new DescriptiveStatistics();
-            v.stream().filter(Objects::nonNull).map(Long::doubleValue).forEach(ds::addValue);
-
-            if (ds.getN() == 0) {
-                filteredMeasurements.put(k, new ArrayList<>());
-                filteredStatistics.put(k, ds);
-                return;
-            }
-
-            final long n = ds.getN();
-            final double mean = ds.getMean();
-            final double standardDeviation = ds.getStandardDeviation();
-
-            final List<Long> filteredValues = v.stream().map(l -> {
-                if (l == null || n == 1)
-                    return l;
-
-                // replace outliers with null
-                double zValue = Math.abs(l - mean) / standardDeviation;
-                if (inputs.size() < 100 && zValue <= 3.)
-                    return l;
-
-                if (inputs.size() < 100000 && zValue <= 2.)
-                    return l;
-
-                return zValue <= 1. ? l : null;
-            }).collect(Collectors.toList());
-
-            filteredMeasurements.put(k, filteredValues);
-
-            final DescriptiveStatistics filteredDs = new DescriptiveStatistics();
-            filteredValues.stream().filter(Objects::nonNull).map(Long::doubleValue).forEach(filteredDs::addValue);
-            filteredStatistics.put(k, filteredDs);
-        });
+    private void loadSourceCode() {
+        // get source code, escape it for HTML and strip empty lines
+        final CtExecutable<?> executable = JCProfilerUtil.getProfiledExecutable(spoon, profiledExecutableSignature);
+        sourceCode = Arrays.stream(StringEscapeUtils.escapeHtml4(executable.prettyprint())
+                .split(System.lineSeparator())).filter(x -> !x.isEmpty()).collect(Collectors.toList());
     }
 
-    private Long convertTime(final String input) {
+    protected Long convertValues(final String input) {
         if (input.isEmpty())
             return null;
 
-        long nanos = Long.parseLong(input);
-        switch (args.timeUnit) {
-            case nano:
-                return nanos; // noop
-            case micro:
-                return TimeUnit.NANOSECONDS.toMicros(nanos);
-            case milli:
-                return TimeUnit.NANOSECONDS.toMillis(nanos);
-            case sec:
-                return TimeUnit.NANOSECONDS.toSeconds(nanos);
-            default:
-                throw new RuntimeException("Unreachable statement reached!");
-        }
+        return Long.parseLong(input);
     }
+
+    public abstract AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor();
 
     public void insertMeasurementsToSources() {
         // always recreate the output directory
@@ -157,15 +123,15 @@ public class AbstractVisualiser {
 
         log.info("Inserting measurements into sources.");
         spoon.setSourceOutputDirectory(outputDir.toFile());
-        spoon.addProcessor(new AbstractInsertMeasurementsProcessor(args, measurements, filteredStatistics));
+        spoon.addProcessor(getInsertMeasurementsProcessor());
         spoon.process();
         spoon.prettyprint();
     }
 
+    public abstract void prepareVelocityContext(final VelocityContext context);
+
     // TODO: must be executed before insertMeasurementsToSources()
     public void generateHTML() {
-        final CtMethod<?> method = JCProfilerUtil.getProfiledMethod(spoon, profiledMethodSignature);
-
         log.info("Initializing Apache Velocity.");
         final Properties props = new Properties();
         props.put(RuntimeConstants.EVENTHANDLER_INCLUDE, IncludeRelativePath.class.getName());
@@ -177,38 +143,20 @@ public class AbstractVisualiser {
         final VelocityEngine velocityEngine = new VelocityEngine(props);
         velocityEngine.init();
 
-        // escape for HTML and strip empty lines
-        final List<String> sourceLines = Arrays.stream(StringEscapeUtils.escapeHtml4(method.prettyprint())
-                .split(System.lineSeparator())).filter(x -> !x.isEmpty()).collect(Collectors.toList());
-
-        // prepare values for the heatmap
-        final List<Double> heatmapValues = sourceLines.stream().map(s -> {
-            if (!s.contains("PM.check(PMC.TRAP"))
-                return null;
-
-            final int beginPos = s.indexOf('(') + 1 + "PMC.".length();
-            final int endPos = s.indexOf(')');
-            final DescriptiveStatistics ds = filteredStatistics.get(s.substring(beginPos, endPos));
-
-            // trap is completely unreachable
-            if (ds == null)
-                return Double.NaN;
-
-            return Math.round(ds.getMean() * 100.) / 100.;
-        }).collect(Collectors.toList());
-
         final VelocityContext context = new VelocityContext();
         context.put("apduHeader", apduHeader);
         context.put("cardATR", atr);
-        context.put("code", sourceLines);
+        context.put("code", sourceCode);
         context.put("elapsedTime", elapsedTime);
+        context.put("executableName", profiledExecutableSignature);
         context.put("inputDescription", inputDescription);
         context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
-        context.put("methodName", profiledMethodSignature);
         context.put("measurements", measurements);
-        context.put("filteredMeasurements", filteredMeasurements);
-        context.put("heatmapValues", heatmapValues);
+        context.put("mode", args.mode);
         context.put("timeUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
+
+        // add mode specific stuff
+        prepareVelocityContext(context);
 
         final Path output = args.workDir.resolve("measurements.html");
         log.info("Generating {}.", output);

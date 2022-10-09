@@ -2,10 +2,14 @@
 ## @vtlvariable name="cardATR" type="java.lang.String"
 ## @vtlvariable name="code" type="java.util.List<java.lang.String>"
 ## @vtlvariable name="elapsedTime" type="java.lang.String"
+## @vtlvariable name="executableName" type="java.lang.String"
+## @vtlvariable name="heatmapValues" type="java.util.List<java.lang.Double>"
 ## @vtlvariable name="inputDescription" type="java.lang.String[]"
+## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
 ## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
-## @vtlvariable name="methodName" type="java.lang.String"
+## @vtlvariable name="mode" type="jcprofiler.util.Mode"
 ## @vtlvariable name="null" type="java.lang.Object"
+## @vtlvariable name="roundCount" type="java.lang.Integer"
 
 #macro( printLine $line $trapIdx )
     #set( $trapLine = $code[$trapIdx].trim() )
@@ -24,7 +28,7 @@ $line
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Measurements - $methodName</title>
+    <title>Measurements - $executableName</title>
     ## highlight.js 11+ ignores and strips HTML tags inside <code> element
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
@@ -36,20 +40,28 @@ $line
     </style>
 </head>
 <body>
-    <h1>$methodName</h1>
-    <h3 id="graphName" class="center">Select a line to view its histogram.</h3>
+    <h1>$executableName</h1>
+    <h3 id="graphName" class="center"></h3>
     <div class="contents">
         <div class="code">
             <div class="codeHeader">
                 <div>
+                    <b>Mode:</b> $mode<br>
                     <b>Card ATR:</b> #if( $cardATR == "jCardSim" ) $cardATR#else
                         <a href="https://smartcard-atr.apdu.fr/parse?ATR=$cardATR" target="_blank">$cardATR</a>
                     #end<br>
-                    <b>Number of rounds:</b> $measurements.values().iterator().next().size()<br>
-                    <b>APDU header:</b> $apduHeader<br>
-                    #set( $inputType = $inputDescription[0] )
-                    #set( $inputValue = $inputDescription[1] )
-                    <b>Input $inputType:</b> #if( $inputType == "file" )<a href="$inputValue" target="_blank">$inputValue</a>#else$inputValue#end<br>
+                    #if( $roundCount )
+                        <b>Number of rounds:</b> $roundCount<br>
+                    #end
+                    <b>APDU header:</b>#if( $apduHeader == "install" ) measured during installation#else $apduHeader#end<br>
+                    #if( $inputs.size() == 1 )
+                        <b>Input:</b> $inputs.get(0).replace("'", "")
+                    #else
+                        #set( $inputType = $inputDescription[0] )
+                        #set( $inputValue = $inputDescription[1] )
+                        <b>Input $inputType:</b>
+                        #if( $inputType == "file" )<a href="$inputValue" target="_blank">$inputValue</a>#else$inputValue#end
+                    #end<br>
                     <b>Elapsed time:</b> $elapsedTime<br>
                     <b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a>
                 </div>
@@ -59,13 +71,13 @@ $line
                 </div>
             </div>
             <div class="codeContainer">
-                <div id="heatmap"></div>
-                <div id="codeWithTraps">
+                #if( $heatmapValues )<div id="heatmap"></div>#end
+                <div id="codeWithTraps"#if( $heatmapValues ) style="margin-left: -100px;"#end>
                     <pre><code class="language-java">#foreach( $line in $code )
                             #printLine( $line, $foreach.index )
                         #end</code></pre>
                 </div>
-                <div id="codeWithoutTraps">
+                <div id="codeWithoutTraps"#if( $heatmapValues ) style="margin-left: -100px;"#end>
                     ## skip TRAP lines
                     ## velocity does not have #continue
                     <pre><code class="language-java">#foreach( $line in $code )
@@ -101,14 +113,14 @@ $line
         <div class="graph">
             <div class="graph-sticky">
                 <div id="graphHelp" class="center">
-                    <p>Click on a bin to get a list of corresponding inputs.</p>
+                    <p>Click on a graph item to get a list of corresponding inputs.</p>
                 </div>
                 <div id="plotly"></div>
             </div>
         </div>
     </div>
     <script type="application/javascript">
-        #parse( "template.js.vm" )
+        #parse( "template-${mode}.js.vm" )
     </script>
 </body>
 </html>
