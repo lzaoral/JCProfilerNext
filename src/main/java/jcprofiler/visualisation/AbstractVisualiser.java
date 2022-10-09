@@ -54,6 +54,8 @@ public abstract class AbstractVisualiser {
 
     public static AbstractVisualiser create(final Args args, final SpoonAPI spoon) {
         switch (args.mode) {
+            case memory:
+                return new MemoryVisualiser(args, spoon);
             case time:
                 return new TimeVisualiser(args, spoon);
             default:

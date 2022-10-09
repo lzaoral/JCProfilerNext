@@ -1,0 +1,157 @@
+## include common code
+#parse( "template-common.js.vm" )
+
+/*
+ * CONSTANTS
+ */
+
+const memoryTypes = ['transient deselect', 'transient reset', 'persistent']
+
+const scatterCommon = {
+    connectgaps: true,
+    type: 'scatter'
+};
+
+const xaxisCommon = {
+    // dtick: 1,
+    tickformat: ',d',
+    title: 'Trap ID'
+};
+
+const yaxisCommon = {
+    title: 'Free memory in B',
+    tickformat: ',d'
+};
+
+const layoutCommon = {
+    bargap: 0.2,
+    grid: {
+        rows: 2,
+        columns: 1,
+        pattern: 'independent'
+    },
+    height: 700,
+    margin: {
+        l: 80,
+        r: 40,
+        b: 80,
+        t: 40,
+        pad: 5
+    },
+    xaxis1: xaxisCommon,
+    xaxis2: xaxisCommon,
+    yaxis1: yaxisCommon,
+    yaxis2: yaxisCommon
+};
+
+/*
+ * FUNCTIONS
+ */
+function toggleTraps(event) {
+    const divWith = document.getElementById('codeWithTraps');
+    const divWithout = document.getElementById('codeWithoutTraps');
+
+    if (event.currentTarget.checked) {
+        divWith.style.display = 'initial';
+        divWithout.style.display = 'none';
+        return;
+    }
+
+    divWith.style.display = 'none';
+    divWithout.style.display = 'initial';
+}
+
+// set default heading
+document.getElementById('graphName').innerText = 'Select a line to highlight corresponding values.';
+
+// Line graphs
+const persistentEqual = Object.keys(measurements).every(e => measurements[e][0] === measurements[e][1]);
+
+const traces = [];
+for (var i = 0; i < 3; i++) {
+    let vals = Object.values(measurements).map(e => e[i]);
+
+    traces.push({
+        ...scatterCommon,
+        x: [...Array(vals.length + 1).keys()].splice(1),
+        y: vals,
+        xaxis: i < 2 ? 'x1' : 'x2',
+        yaxis: i < 2 ? 'y1' : 'y2',
+        name: memoryTypes[i],
+        hovertemplate: 'Trap ID: %{x}<br>Free ' + memoryTypes[i] + ' memory: %{y} B<extra></extra>',
+        mode: i === 2 || !persistentEqual ? 'lines+markers' : i === 0 ? 'markers' : 'lines'
+    });
+}
+
+// WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
+function redrawGraphs(annotations = []) {
+    Plotly.newPlot('plotly', traces, {
+        ...layoutCommon,
+        annotations: annotations
+    }, {
+        responsive: true
+    });
+
+    // set click event handler
+    const plotlyDiv = document.getElementById('plotly');
+
+    // replace the event handler
+    plotlyDiv.removeAllListeners('plotly_click');
+    plotlyDiv.on('plotly_click', function (data) {
+        const graph = data.points[0];
+        highlightTrap(trapPrefix + graph.x);
+    });
+}
+
+// initial draw
+redrawGraphs();
+
+// redraw graph event handler
+function highlightTrap(trapName) {
+    selectTraps(trapName);
+
+    // update trap title
+    document.getElementById('graphName').textContent = trapName;
+
+    const trapID = trapName.split('_').at(-1);
+    const annotation = {
+        x: trapID,
+        showarrow: true,
+        arrowhead: 5,
+        ax: 0,
+        ay: -35
+    };
+
+    const annotations = [];
+    for (var i = 0; i < 3; i++) {
+        if (i === 1)
+            continue;
+
+        let val = measurements[trapName][i];
+        if (val === null) {
+            for (const elem of Object.keys(measurements)) {
+                if (elem === trapName)
+                    break;
+
+                if (measurements[elem][i] !== null)
+                    val = measurements[elem][i];
+            }
+        }
+
+        annotations.push({
+            ...annotation,
+            y: val,
+            xref: i < 2 ? 'x1' : 'x2',
+            yref: i < 2 ? 'y1' : 'y2'
+        });
+    }
+
+    redrawGraphs(annotations);
+}
+
+window.addEventListener('load', _ => {
+    document.getElementById('trapSwitch').addEventListener('change', toggleTraps);
+    document.querySelectorAll('.trap').forEach(elem => elem.addEventListener('click',
+            // attribute with trap name is always the first
+            evt => highlightTrap(evt.currentTarget.classList[0])))
+});

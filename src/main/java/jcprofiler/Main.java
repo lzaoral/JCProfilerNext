@@ -65,10 +65,6 @@ public class Main {
                     "Nothing to do! Cannot start with %s and end with %s.",
                     args.startFrom, args.stopAfter));
 
-        // validate memory mode
-        if (args.mode == Mode.memory && args.stopAfter == Stage.visualisation)
-            throw new UnsupportedOperationException("Memory measurements visualisation is unsupported at the moment!");
-
         // validate custom mode
         if (args.mode == Mode.custom) {
             // --custom-pm must be set
