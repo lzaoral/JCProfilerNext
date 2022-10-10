@@ -3,6 +3,7 @@ package jcprofiler;
 import com.beust.jcommander.JCommander;
 
 import jcprofiler.args.Args;
+import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.util.Mode;
 import jcprofiler.util.Stage;
 
@@ -90,5 +91,11 @@ public class Main {
                 throw new UnsupportedOperationException(
                         "Either --data-file or --data-regex options must be specified for the profiling stage!");
         }
+
+        // fail if --inst equals to JCProfilerUtil.INS_PERF_HANDLER
+        if (args.inst == JCProfilerUtil.INS_PERF_HANDLER)
+            throw new UnsupportedOperationException(String.format(
+                    "Applet instruction byte has the same value as profiler's custom internal instruction: %d%n" +
+                    "This is temporarily unsupported!", Short.toUnsignedInt(JCProfilerUtil.INS_PERF_HANDLER)));
     }
 }
