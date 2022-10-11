@@ -45,19 +45,23 @@ public class Instrumenter {
         buildModel(spoon);
         checkArguments(spoon);
 
-        // instrument the model
+        // Instrument the model
+
+        // The insertion of traps must be done BEFORE instrumentation of the entry point class, otherwise the custom
+        // instruction handler could be unreachable due to the trap inserted before its invocation which will break
+        // selection of e.g. next fatal trap.
         switch (args.mode) {
             case memory:
-                spoon.addProcessor(new ModifyMemoryEntryPointProcessor(args));
                 spoon.addProcessor(new InsertMemoryTrapProcessor(args));
+                spoon.addProcessor(new ModifyMemoryEntryPointProcessor(args));
                 break;
             case time:
-                spoon.addProcessor(new ModifyTimeEntryPointProcessor(args));
                 spoon.addProcessor(new InsertTimeTrapProcessor(args));
+                spoon.addProcessor(new ModifyTimeEntryPointProcessor(args));
                 break;
             case custom:
-                spoon.addProcessor(new ModifyCustomEntryPointProcessor(args));
                 spoon.addProcessor(new InsertCustomTrapProcessor(args));
+                spoon.addProcessor(new ModifyCustomEntryPointProcessor(args));
                 break;
             default:
                 throw new RuntimeException("Unreachable statement reached!");
