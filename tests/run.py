@@ -127,7 +127,6 @@ def execute_test(test: Dict[str, Any]):
 
         sub_cmd += ['--work-dir', str(test_dir)]
         sub_cmd += ['--method', subtest['method']]
-        sub_cmd += ['--inst', subtest['inst']]
 
         if 'input' in subtest:
             sub_cmd += ['--data-regex', subtest['input']]
@@ -135,6 +134,8 @@ def execute_test(test: Dict[str, Any]):
             input_file = Path(subtest['inputFile']).absolute()
             sub_cmd += ['--data-file', str(input_file)]
 
+        if 'inst' in subtest:
+            sub_cmd += ['--inst', subtest['inst']]
         if 'p1' in subtest:
             sub_cmd += ['--p1', subtest['p1']]
         if 'p2' in subtest:
