@@ -76,7 +76,7 @@ public class Compiler {
         cap.setDebug(false);
         cap.setStrip(false);
 
-        cap.setAID(JCProfilerUtil.APPLET_AID);
+        cap.setAID(JCProfilerUtil.PACKAGE_AID);
         cap.setJca(entryPoint.getPackage().getSimpleName() + ".jca");
         cap.setPackage(entryPoint.getPackage().getQualifiedName());
         cap.setOutput(entryPoint.getSimpleName() + ".cap");

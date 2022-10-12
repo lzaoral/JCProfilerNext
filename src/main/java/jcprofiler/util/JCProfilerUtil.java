@@ -38,8 +38,8 @@ public class JCProfilerUtil {
     public static final String PERF_OUT_DIRNAME   = "sources_perf";
     public static final String SRC_IN_DIRNAME     = "sources_original";
 
-    public static final String APPLET_AID  = "123456789001";
-    public static final String PACKAGE_AID = APPLET_AID + "01";
+    public static final String PACKAGE_AID = "123456789001";
+    public static final String APPLET_AID = PACKAGE_AID + "01";
 
     private static final Logger log = LoggerFactory.getLogger(JCProfilerUtil.class);
 

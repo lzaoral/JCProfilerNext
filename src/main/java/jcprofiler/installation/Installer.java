@@ -34,7 +34,7 @@ import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
 public class Installer {
     private static final Logger log = LoggerFactory.getLogger(Installer.class);
-    private static final byte[] APPLET_AID = Util.hexStringToByteArray(JCProfilerUtil.PACKAGE_AID);
+    private static final byte[] APPLET_AID = Util.hexStringToByteArray(JCProfilerUtil.APPLET_AID);
 
     // static class
     private Installer() {}
