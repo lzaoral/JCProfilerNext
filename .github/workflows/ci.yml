@@ -23,6 +23,13 @@ jobs:
             name: Ubuntu
           - os: windows-latest
             name: Windows
+          - jdk: 8
+            min_jckit: 211
+          - jdk: 11
+            min_jckit: 304
+          - jdk: 17
+            min_jckit: 310r20210706
+
 
     steps:
       - uses: actions/checkout@v3
@@ -40,4 +47,4 @@ jobs:
         run: ./gradlew build
 
       - name: Execute profiling tests
-        run: python3 tests/run.py
+        run: python3 tests/run.py --min-jckit '${{ matrix.min_jckit }}'

@@ -6,6 +6,7 @@ from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict, List
 
+import argparse
 import json
 import os
 import re
@@ -147,7 +148,7 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         # TODO: check format and contents of generated profiling reports
 
 
-def execute_test(test: Dict[str, Any]):
+def execute_test(test: Dict[str, Any], min_jckit: str) -> None:
     print('Running test', test['name'])
 
     test['name'] = test['name'].replace(' ', '_')
@@ -155,7 +156,10 @@ def execute_test(test: Dict[str, Any]):
         modify_repo(test)
 
     jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
-    jckit = Path(f'jcsdk/jc{test["jckit"]}_kit').absolute()
+
+    jckit_version = \
+        min_jckit if min_jckit and min_jckit > test['jckit'] else test['jckit']
+    jckit = Path(f'jcsdk/jc{jckit_version}_kit').absolute()
 
     cmd = ['java', '-jar', str(jar), '--jckit', str(jckit), '--simulator',
                                      '--repeat-count', '1000']
@@ -169,7 +173,7 @@ def execute_test(test: Dict[str, Any]):
         test_applet(test, cmd.copy(), entry_point)
 
 
-def main():
+def main(args) -> None:
     root = Path(__file__).parent.resolve()
     print('Test root:', root)
     os.chdir(root)
@@ -181,8 +185,14 @@ def main():
 
     clone_git_repo(data['jcsdkRepo'], 'jcsdk')
     for t in data['tests']:
-        execute_test(t)
+        execute_test(t, args.min_jckit)
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+            description='JCProfilerNext integration test suite')
+
+    parser.add_argument('--min-jckit', action='store', dest='min_jckit',
+                        help='Minimal JCKit version used during testing')
+
+    main(parser.parse_args())
