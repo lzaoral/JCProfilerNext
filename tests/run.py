@@ -89,41 +89,36 @@ def prepare_workdir(test: Dict[str, Any], subtest_name: str) -> Path:
     return test_dir
 
 
-def test_ctor(test: Dict[str, Any], cmd: List[str]) -> None:
+def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str) -> None:
     ctor_cmd = cmd.copy()
-    test_dir = prepare_workdir(test, 'ctor')
+    test_dir = prepare_workdir(test, dir_prefix + 'ctor')
 
     ctor_cmd += ['--work-dir', str(test_dir)]
     ctor_cmd += ['--mode', 'memory']
     execute_cmd(ctor_cmd)
 
 
-def execute_test(test: Dict[str, Any]):
-    name = test['name']
-    print('Running test', name)
+def test_applet(test: Dict[str, Any], cmd: List[str],
+                entry_point: Dict[str, Any] = {}) -> None:
+    dir_prefix: str = ''
+    test_desc = test
 
-    if clone_git_repo(test['repo'], test['name']):
-        modify_repo(test)
+    if entry_point:
+        test_desc = entry_point
+        cmd += ['--entry-point', entry_point['name']]
+        dir_prefix = entry_point['name'] + '_'
 
-    jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
-    jckit = Path(f'jcsdk/jc{test["jckit"]}_kit').absolute()
-
-    cmd = ['java', '-jar', str(jar), '--jckit', str(jckit), '--simulator',
-                                     '--repeat-count', '1000']
-
-    if 'entryPoint' in test:
-        cmd += ['--entry-point', test['entryPoint']]
-    if 'resetInst' in test:
-        cmd += ['--reset-inst', test['resetInst']]
-    if 'cla' in test:
-        cmd += ['--cla', test['cla']]
+    if 'resetInst' in test_desc:
+        cmd += ['--reset-inst', test_desc['resetInst']]
+    if 'cla' in test_desc:
+        cmd += ['--cla', test_desc['cla']]
 
     # test memory measurement in constructor
-    test_ctor(test, cmd)
+    test_ctor(test, cmd, dir_prefix)
 
-    for subtest in test['subtests']:
+    for subtest in test_desc['subtests']:
         sub_cmd = cmd.copy()
-        test_dir = prepare_workdir(test, subtest["method"])
+        test_dir = prepare_workdir(test, dir_prefix + subtest["method"])
 
         sub_cmd += ['--work-dir', str(test_dir)]
         sub_cmd += ['--method', subtest['method']]
@@ -150,6 +145,28 @@ def execute_test(test: Dict[str, Any]):
             execute_cmd(mode_cmd)
 
         # TODO: check format and contents of generated profiling reports
+
+
+def execute_test(test: Dict[str, Any]):
+    print('Running test', test['name'])
+
+    test['name'] = test['name'].replace(' ', '_')
+    if clone_git_repo(test['repo'], test['name']):
+        modify_repo(test)
+
+    jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
+    jckit = Path(f'jcsdk/jc{test["jckit"]}_kit').absolute()
+
+    cmd = ['java', '-jar', str(jar), '--jckit', str(jckit), '--simulator',
+                                     '--repeat-count', '1000']
+
+    if 'entryPoints' not in test:
+        test_applet(test, cmd)
+        return
+
+    for entry_point in test['entryPoints']:
+        print('Using', entry_point['name'], 'entry point.')
+        test_applet(test, cmd.copy(), entry_point)
 
 
 def main():
