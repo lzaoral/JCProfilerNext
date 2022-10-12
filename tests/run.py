@@ -162,7 +162,7 @@ def execute_test(test: Dict[str, Any], min_jckit: str) -> None:
     jckit = Path(f'jcsdk/jc{jckit_version}_kit').absolute()
 
     cmd = ['java', '-jar', str(jar), '--jckit', str(jckit), '--simulator',
-                                     '--repeat-count', '1000']
+                                     '--repeat-count', '100']
 
     if 'entryPoints' not in test:
         test_applet(test, cmd)
