@@ -29,6 +29,9 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
     }
 
     protected void process(final CtExecutable<?> executable) {
+        // make e.g. default constructor visible
+        executable.setImplicit(false);
+
         fullSignature = JCProfilerUtil.getFullSignature(executable);
         trapCount = 0;
         trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(executable);
