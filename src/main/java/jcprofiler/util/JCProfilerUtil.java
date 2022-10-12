@@ -11,10 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spoon.SpoonAPI;
-import spoon.reflect.code.CtAbstractInvocation;
 import spoon.reflect.code.CtConstructorCall;
 import spoon.reflect.declaration.*;
-import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.io.IOException;
@@ -142,8 +140,10 @@ public class JCProfilerUtil {
                 byteRef);
 
         // get all entryPoint class constructor invocations in the install method
-        final List<CtConstructorCall<?>> constructorCalls = installMethod.getElements(
-                (CtConstructorCall<?> c) -> c.getExecutable().getDeclaringType().equals(entryPointClass.getReference()));
+        final List<CtConstructor<?>> constructorCalls = installMethod.getElements(
+                (CtConstructorCall<?> c) -> c.getExecutable().getDeclaringType().equals(entryPointClass.getReference()))
+                .stream().map(c -> (CtConstructor<?>) c.getExecutable().getDeclaration()).distinct()
+                .collect(Collectors.toList());
         if (constructorCalls.isEmpty())
             throw new RuntimeException(String.format(
                     "The %s method does not call any constructor of the %s class!",
@@ -153,10 +153,9 @@ public class JCProfilerUtil {
             throw new RuntimeException(String.format(
                     "The %s method calls more than one constructor of the %s class: %s",
                     getFullSignature(installMethod), entryPointClass.getQualifiedName(), constructorCalls.stream()
-                            .map(CtAbstractInvocation::getExecutable).map(CtExecutableReference::getSignature)
-                            .collect(Collectors.toList())));
+                            .map(CtConstructor::getSignature).collect(Collectors.toList())));
 
-        final CtConstructor<?> constructor = (CtConstructor<?>) constructorCalls.get(0).getExecutable().getDeclaration();
+        final CtConstructor<?> constructor = constructorCalls.get(0);
 
         // TODO: Not the nicest piece of code.  If args.method is set and does not equal to the constructor signature,
         // assume that we're profiling a method instead.
