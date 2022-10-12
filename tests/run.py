@@ -184,7 +184,12 @@ def main(args) -> None:
         data = json.load(f)
 
     clone_git_repo(data['jcsdkRepo'], 'jcsdk')
-    for t in data['tests']:
+
+    tests = data['tests']
+    if args.filter:
+        tests = filter(lambda x: x['name'] in args.filter, tests)
+
+    for t in tests:
         execute_test(t, args.min_jckit)
 
 
@@ -194,5 +199,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--min-jckit', action='store', dest='min_jckit',
                         help='Minimal JCKit version used during testing')
+    parser.add_argument('filter', nargs='*', action='store',
+                        help='List of applet names (see ./test_data.json)')
 
     main(parser.parse_args())
