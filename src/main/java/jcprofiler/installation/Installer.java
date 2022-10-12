@@ -110,7 +110,8 @@ public class Installer {
             final RunConfig runCfg = RunConfig.getDefaultConfig()
                     .setTestCardType(CardType.JCARDSIMLOCAL)
                     .setAppletToSimulate(cls)
-                    .setbReuploadApplet(true);
+                    .setbReuploadApplet(true)
+                    .setInstallData(ArrayUtils.insert(0, APPLET_AID, (byte) APPLET_AID.length));
 
             // Simulator may print unrelated messages to stdout during initialization (happens with JCMathLib)
             PrintStream stdout = System.out;
