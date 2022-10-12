@@ -20,10 +20,10 @@ STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
 
 def rebuild_jar() -> None:
     suffix = '.bat' if os.name == 'nt' else ''
-    script_path = Path('../gradlew' + suffix)
+    script_path = Path('../gradlew' + suffix).absolute()
 
     print('Rebuilding project')
-    ret = call([script_path.absolute(), '--project-dir=..', 'build'])
+    ret = call([script_path, '--project-dir=..', 'build'])
     if ret != 0:
         print('JAR rebuild failed with return code', ret)
         sys.exit(1)
