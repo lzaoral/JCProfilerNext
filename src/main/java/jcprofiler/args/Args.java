@@ -65,6 +65,11 @@ public class Args {
                description = "Qualified name of a class to be used as an entry point (useful when there are more)")
     public String entryPoint = "";
 
+    @Parameter(names = {"--install-params"},
+               description = "Parameters for applet's install method",
+               converter = ByteArrayConverter.class)
+    public byte[] installParams;
+
     @Parameter(names = {"--mode"},
                description = "Measure the selected characteristic",
                converter = ModeConverter.class)

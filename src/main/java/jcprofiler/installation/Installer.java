@@ -54,6 +54,8 @@ public class Installer {
         String[] gpArgv = new String[]{"--verbose", "--force", "--install", capPath.toString()};
         if (args.debug)
             gpArgv = ArrayUtils.add(gpArgv, "--debug");
+        if (args.installParams != null)
+            gpArgv = ArrayUtils.insert(gpArgv.length, gpArgv, "--params", Util.bytesToHex(args.installParams));
 
         // TODO: be very careful to not destroy the card!!!
         log.info("Executing GlobalPlatformPro to install {}.", capPath);
@@ -103,6 +105,18 @@ public class Installer {
                 }
             }).toArray(URL[]::new);
 
+            // APDU
+            byte[] installData = ArrayUtils.insert(0, APPLET_AID, (byte) APPLET_AID.length);
+            // control information
+            installData = ArrayUtils.add(installData, (byte) 0);
+            // parameters
+            if (args.installParams != null) {
+                installData = ArrayUtils.add(installData, (byte) args.installParams.length);
+                installData = ArrayUtils.insert(installData.length, installData, args.installParams);
+            } else {
+                installData = ArrayUtils.add(installData, (byte) 0);
+            }
+
             // FIXME: this leak is intentional so that the simulator can access every class in the loaded JAR
             final URLClassLoader classLoader = new URLClassLoader(jarURLArray);
             final Class<? extends Applet> cls = classLoader.loadClass(entryPoint.getQualifiedName())
@@ -111,7 +125,7 @@ public class Installer {
                     .setTestCardType(CardType.JCARDSIMLOCAL)
                     .setAppletToSimulate(cls)
                     .setbReuploadApplet(true)
-                    .setInstallData(ArrayUtils.insert(0, APPLET_AID, (byte) APPLET_AID.length));
+                    .setInstallData(installData);
 
             // Simulator may print unrelated messages to stdout during initialization (happens with JCMathLib)
             PrintStream stdout = System.out;
