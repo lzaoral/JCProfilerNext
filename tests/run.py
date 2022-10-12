@@ -46,12 +46,12 @@ def clone_git_repo(repo: str, target: str) -> bool:
 
 
 def modify_repo(test: Dict[str, Any]):
-    for rm in test['remove']:
+    for rm in test.get('remove', []):
         for file in Path(test['name']).glob(rm):
             print('Removing', file)
             os.unlink(file)
 
-    for replace in test['fixup']:
+    for replace in test.get('fixup', []):
         for glb in replace['files']:
             for file in Path(test['name']).glob(glb):
                 regex = re.compile(replace['regex'], re.MULTILINE)
