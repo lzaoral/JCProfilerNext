@@ -2,11 +2,420 @@
     "jcsdkRepo": "https://github.com/martinpaljak/oracle_javacard_sdks",
     "tests": [
         {
+            "name": "ISO Driving License",
+            "repo": "https://github.com/martinpaljak/AppletPlayground",
+            "path": "src/org/isodl",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "EstEID",
+            "repo": "https://github.com/martinpaljak/esteid-applets",
+            "path": "src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "InfinitEID",
+            "repo": "https://github.com/Muzosh/InfinitEID",
+            "path": "src/InfinitEID-applet/src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "BiometricAuthentification",
+            "repo": "https://github.com/albertocarp/BiometricAuthentification",
+            "path": "sid",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "regex": "^\\s*import com\\.sun\\.javacard.*;\\s*$",
+                    "files": [
+                        "sid/User.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "GidsApplet",
+            "repo": "https://github.com/vletoux/GidsApplet",
+            "path": "src/com/mysmartlogon/gidsApplet",
+            "jckit": "221",
+            "subtests": []
+        },
+        {
+            "name": "GidsApp",
+            "repo": "https://github.com/JavaCardOS/GidsApp",
+            "path": "src/com/mysmartlogon/gidsApplet",
+            "jckit": "221",
+            "subtests": []
+        },
+        {
+            "name": "Iso Applet",
+            "repo": "https://github.com/philipWendland/IsoApplet",
+            "path": "src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "PivApplet",
+            "repo": "https://github.com/arekinath/PivApplet",
+            "path": "src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "cryptonit-applet",
+            "repo": "https://github.com/mbrossard/cryptonit-applet",
+            "path": "src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "Trusted Identity Module",
+            "repo": "https://github.com/Orange-OpenSource/TIM",
+            "path": "TimCardlet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "U2FToken",
+            "repo": "https://github.com/fightyz/U2FToken",
+            "path": "src/com",
+            "jckit": "303",
+            "subtests": []
+        },
+        {
+            "name": "YkOtpApplet",
+            "repo": "https://github.com/arekinath/YkOtpApplet",
+            "path": "src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "YubiKey NEO App OATH",
+            "repo": "https://github.com/Yubico/ykneo-oath",
+            "path": "applet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JavaCard ePurse",
+            "repo": "https://github.com/tomirio619/hw-epurse",
+            "path": "src/ePurse",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "regex": "^\\s*import javax\\.xml\\.bind.*;\\s*$",
+                    "files": [
+                        "src/ePurse/Epurse.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "emv-card-simulator",
+            "repo": "https://github.com/mrautio/emv-card-simulator",
+            "path": "src/main/java",
+            "jckit": "222",
+            "entryPoints": [
+                {
+                    "name": "emvcardsimulator.PaymentApplication",
+                    "subtests": []
+                },
+                {
+                    "name": "emvcardsimulator.PaymentSystemEnvironment",
+                    "subtests": []
+                }
+            ]
+        },
+        {
+            "name": "EMV-TOOLS Adoro",
+            "repo": "https://github.com/gabessolo/EMV-TOOLS",
+            "path": "Adoro/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "EMV-TOOLS CompteurApplet",
+            "repo": "https://github.com/gabessolo/EMV-TOOLS",
+            "path": "CompteurApplet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "EMV-TOOLS OpenEMV",
+            "repo": "https://github.com/gabessolo/EMV-TOOLS",
+            "path": "java-card-openEMV/OpenEMV-master/OpenEMV-master/OpenEMV/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "EMVCAP",
+            "repo": "https://github.com/zoobab/EMVCAP",
+            "path": "mirror/applet",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JavaCard Wallet",
+            "repo": "https://github.com/RimGazzeh/JavaCard_Wallet",
+            "path": "JavaCard/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "OpenEMV",
+            "repo": "https://github.com/JavaCardOS/OpenEMV",
+            "path": "OpenEMV/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "PBOC3Applet",
+            "repo": "https://github.com/jiankeliu5/PBOC3Applet",
+            "path": "src/com",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "Simple Wallet",
+            "repo": "https://github.com/fitpay/javacard-simple-wallet",
+            "path": "src/main/java/fitpay/javacard/simplewallet/applet",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "Java Card OpenPGP Card",
+            "repo": "https://github.com/jderuiter/javacard-openpgpcard",
+            "path": "src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "KeepassNFC",
+            "repo": "https://github.com/JavaCardOS/KeepassNFCApplet",
+            "path": "src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "Smartcard crypto applet",
+            "repo": "https://github.com/nfd/smartcard_crypto_applet",
+            "path": "applet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "smartcard-truecrypt",
+            "repo": "https://github.com/Mercixor/smartcard-truecrypt",
+            "path": "smartcard_applet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "SmartPGP applet",
+            "repo": "https://github.com/ANSSI-FR/SmartPGP",
+            "path": "src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "SmartPGP applet - test applet",
+            "repo": "https://github.com/ANSSI-FR/SmartPGP",
+            "path": "test_applet/src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "FluffyPGP-Applet",
+            "repo": "https://github.com/JavaCardOS/FluffyPGP-Applet",
+            "path": "FluffyPGP-SRC/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "Myst",
+            "repo": "https://github.com/OpenCryptoProject/Myst",
+            "path": "MPCApplet/src",
+            "jckit": "222",
+            "remove": [
+                "MPCApplet/src/mpc/PM.java"
+            ],
+            "fixup": [
+                {
+                    "regex": "^\\s*PM\\.check.*$",
+                    "files": [
+                        "MPCApplet/src/mpc/*.java"
+                    ]
+                },
+                {
+                    "regex": "^\\s*case Consts\\.INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
+                    "files": [
+                        "MPCApplet/src/mpc/MPCApplet.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "YubiKey NEO App OpenPGP",
+            "repo": "https://github.com/Yubico/ykneo-openpgp",
+            "path": "applet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JavaCard NDEF application",
+            "repo": "https://github.com/slomo/ndef-javacard",
+            "path": "src/main/java",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "BitcoinWallet",
+            "repo": "https://github.com/JavaCardOS/BitcoinWallet",
+            "path": "src",
+            "jckit": "304",
+            "entryPoints": [
+                {
+                    "name": "com.ledger.wallet.LWNFCForumApplet",
+                    "subtests": []
+                },
+                {
+                    "name": "com.ledger.wallet.LedgerWalletApplet",
+                    "subtests": []
+                }
+            ]
+        },
+        {
+            "name": "Ledger Unplugged",
+            "repo": "https://github.com/LedgerHQ/ledger-javacard",
+            "path": "src",
+            "jckit": "304",
+            "entryPoints": [
+                {
+                    "name": "com.ledger.wallet.LWNFCForumApplet",
+                    "subtests": []
+                },
+                {
+                    "name": "com.ledger.wallet.LedgerWalletApplet",
+                    "subtests": []
+                }
+            ]
+        },
+        {
+            "name": "SatoChipApplet",
+            "repo": "https://github.com/Toporin/SatochipApplet",
+            "path": "src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "Secure Bitcoin Wallet",
+            "repo": "https://github.com/acidg/SecureBitcoinWalletJavaCardApplet",
+            "path": "src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "Specter-Javacard",
+            "repo": "https://github.com/cryptoadvance/specter-javacard",
+            "path": "src",
+            "jckit": "304",
+            "entryPoints": [
+                {
+                    "name": "toys.SecureApplet",
+                    "subtests": []
+                },
+                {
+                    "name": "toys.TeapotApplet",
+                    "subtests": []
+                }
+            ]
+        },
+        {
+            "name": "Keycard",
+            "repo": "https://github.com/status-im/status-keycard",
+            "path": "src/main",
+            "jckit": "304",
+            "entryPoints": [
+                {
+                    "name": "im.status.keycard.CashApplet",
+                    "subtests": []
+                },
+                {
+                    "name": "im.status.keycard.KeycardApplet",
+                    "subtests": []
+                },
+                {
+                    "name": "im.status.keycard.NDEFApplet",
+                    "subtests": []
+                }
+            ]
+        },
+        {
+            "name": "Gauss Key Card",
+            "repo": "https://github.com/darconeous/gauss-key-card",
+            "path": "src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "Illegal Security Chip",
+            "repo": "https://github.com/dogtopus/IllegalSecurityChip",
+            "path": "src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "T101-Devhub - BrainPoolECCTest",
+            "repo": "https://github.com/ThothTrustCom/T101-Devhub",
+            "path": "Samples/BrainPoolECCTest/src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "T101-Devhub - CertStore",
+            "repo": "https://github.com/ThothTrustCom/T101-Devhub",
+            "path": "Samples/CertStore/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "upsc",
+            "repo": "https://github.com/paromix/upsc",
+            "path": "SIMCard Framework",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JavaCard SMPC RSA",
+            "repo": "https://github.com/lzaoral/javacard-smpc-rsa",
+            "path": "applet/src/main",
+            "jckit": "222",
+            "entryPoints": [
+                {
+                    "name": "smpc_rsa.RSAClient",
+                    "subtests": []
+                },
+                {
+                    "name": "smpc_rsa.RSAClientSign",
+                    "subtests": []
+                },
+                {
+                    "name": "smpc_rsa.RSAServer",
+                    "subtests": []
+                }
+            ]
+        },
+        {
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
             "path": "JCMathLib/src",
-            "entryPoint": "opencrypto.jcmathlib.OCUnitTests",
-            "jckit": "310r20210706",
+            "jckit": "222",
             "remove": [
                 "JCMathLib/src/opencrypto/jcmathlib/PM.java"
             ],
@@ -24,199 +433,215 @@
                     ]
                 }
             ],
-            "resetInst": "0x03",
-            "cla": "0xB0",
-            "subtests": [
+            "entryPoints": [
                 {
-                    "name": "Integer Storage",
-                    "method": "test_INT_STR",
-                    "inst": "0x09",
-                    "input": "0[0-1][0-9A-F]{8}"
-                },
-                {
-                    "name": "Integer Addition",
-                    "method": "test_INT_ADD",
-                    "inst": "0x10",
-                    "p1": "0x05",
-                    "input": "(0[0-1][0-9A-F]{8}){2}"
-                },
-                {
-                    "name": "Integer Subtraction",
-                    "method": "test_INT_SUB",
-                    "inst": "0x11",
-                    "p1": "0x05",
-                    "input": "(0[0-1][0-9A-F]{8}){2}"
-                },
-                {
-                    "name": "Integer Multiplication",
-                    "method": "test_INT_MUL",
-                    "inst": "0x12",
-                    "p1": "0x05",
-                    "input": "(0[0-1][0-9A][0-9A-F]{7}){2}"
-                },
-                {
-                    "name": "Integer Division",
-                    "method": "test_INT_DIV",
-                    "inst": "0x13",
-                    "p1": "0x05",
-                    "input": "(0[0-1][0-9A-F]{8}){2}"
-                },
+                    "name": "opencrypto.jcmathlib.ECExample",
+                    "subtests": [
+                        {
+                            "name": "process",
+                            "method": "opencrypto.jcmathlib.ECExample#process",
+                            "input": "00"
+                        }
+                    ]
 
-                {
-                    "name": "Integer Modulo",
-                    "method": "test_INT_MOD",
-                    "inst": "0x15",
-                    "p1": "0x05",
-                    "input": "(0[0-1][0-9A-F]{8}){2}"
                 },
+                {
+                    "name": "opencrypto.jcmathlib.OCUnitTests",
+                    "resetInst": "0x03",
+                    "cla": "0xB0",
+                    "subtests": [
+                        {
+                            "name": "Integer Storage",
+                            "method": "test_INT_STR",
+                            "inst": "0x09",
+                            "input": "0[0-1][0-9A-F]{8}"
+                        },
+                        {
+                            "name": "Integer Addition",
+                            "method": "test_INT_ADD",
+                            "inst": "0x10",
+                            "p1": "0x05",
+                            "input": "(0[0-1][0-9A-F]{8}){2}"
+                        },
+                        {
+                            "name": "Integer Subtraction",
+                            "method": "test_INT_SUB",
+                            "inst": "0x11",
+                            "p1": "0x05",
+                            "input": "(0[0-1][0-9A-F]{8}){2}"
+                        },
+                        {
+                            "name": "Integer Multiplication",
+                            "method": "test_INT_MUL",
+                            "inst": "0x12",
+                            "p1": "0x05",
+                            "input": "(0[0-1][0-9A][0-9A-F]{7}){2}"
+                        },
+                        {
+                            "name": "Integer Division",
+                            "method": "test_INT_DIV",
+                            "inst": "0x13",
+                            "p1": "0x05",
+                            "input": "(0[0-1][0-9A-F]{8}){2}"
+                        },
 
-
-
-
-                {
-                    "name": "Bignat Storage",
-                    "method": "test_BN_STR",
-                    "inst": "0x20",
-                    "input": "[8-9A-F][0-9A-F]{63}"
-                },
-                {
-                    "name": "Bignat Addition",
-                    "method": "test_BN_ADD",
-                    "inst": "0x21",
-                    "p1": "0x20",
-                    "input": "([4-7][0-9A-F]{63}){2}"
-                },
-                {
-                    "name": "Bignat Subtraction",
-                    "method": "test_BN_SUB",
-                    "inst": "0x22",
-                    "p1": "0x20",
-                    "input": "([4-7][0-9A-F]{63}){2}"
-                },
-                {
-                    "name": "Bignat Multiplication",
-                    "method": "test_BN_MUL",
-                    "inst": "0x23",
-                    "p1": "0x20",
-                    "input": "([8-9A-F][0-9A-F]{63}){2}"
-                },
-                {
-                    "name": "Bignat Exponentiation",
-                    "method": "test_BN_EXP",
-                    "inst": "0x24",
-                    "p1": "0x08",
-                    "p2": "0x19",
-                    "input": "[8-9A-F][0-9A-F]{15}03"
-                },
-                {
-                    "name": "Bignat Modulo",
-                    "method": "test_BN_MOD",
-                    "inst": "0x25",
-                    "p1": "0x21",
-                    "input": "00[8-9A-F][0-9A-F]{63}[4-7][0-9A-F]{63}"
-                },
-
-                {
-                    "name": "Bignat School Multiplication",
-                    "method": "test_BN_MUL",
-                    "inst": "0x27",
-                    "p1": "0x20",
-                    "input": "([8-9A-F][0-9A-F]{63}){2}"
-                },
+                        {
+                            "name": "Integer Modulo",
+                            "method": "test_INT_MOD",
+                            "inst": "0x15",
+                            "p1": "0x05",
+                            "input": "(0[0-1][0-9A-F]{8}){2}"
+                        },
 
 
 
 
-                {
-                    "name": "Bignat Addition Modulo",
-                    "method": "test_BN_ADD_MOD",
-                    "inst": "0x30",
-                    "p1": "0x20",
-                    "p2": "0x20",
-                    "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
-                },
-                {
-                    "name": "Bignat Subtraction Modulo",
-                    "method": "test_BN_SUB_MOD",
-                    "inst": "0x31",
-                    "p1": "0x20",
-                    "p2": "0x20",
-                    "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
-                },
-                {
-                    "name": "Bignat Multiplication Modulo",
-                    "method": "test_BN_MUL_MOD",
-                    "inst": "0x32",
-                    "p1": "0x20",
-                    "p2": "0x20",
-                    "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
-                },
-                {
-                    "name": "Bignat Exponentiation Modulo",
-                    "method": "test_BN_EXP_MOD",
-                    "inst": "0x33",
-                    "p1": "0x20",
-                    "p2": "0x01",
-                    "input": "[8-9A-F][0-9A-F]{63}02[8-9A-F][0-9A-F]{63}"
-                },
-                {
-                    "name": "Bignat Inversion Modulo",
-                    "method": "test_BN_INV_MOD",
-                    "inst": "0x34",
-                    "p1": "0x30",
-                    "input": "[8-9A-F][0-9A-F]{95}F{8}0{7}10{24}F{24}[8-9A-F][0-9A-F]{63}"
-                },
-                {
-                    "name": "Bignat Squared Modulo",
-                    "method": "test_BN_POW2_MOD",
-                    "inst": "0x35",
-                    "p1": "0x20",
-                    "p2": "0x20",
-                    "input": "([8-9A-F][0-9A-F]{63}){2}"
-                },
+                        {
+                            "name": "Bignat Storage",
+                            "method": "test_BN_STR",
+                            "inst": "0x20",
+                            "input": "[8-9A-F][0-9A-F]{63}"
+                        },
+                        {
+                            "name": "Bignat Addition",
+                            "method": "test_BN_ADD",
+                            "inst": "0x21",
+                            "p1": "0x20",
+                            "input": "([4-7][0-9A-F]{63}){2}"
+                        },
+                        {
+                            "name": "Bignat Subtraction",
+                            "method": "test_BN_SUB",
+                            "inst": "0x22",
+                            "p1": "0x20",
+                            "input": "([4-7][0-9A-F]{63}){2}"
+                        },
+                        {
+                            "name": "Bignat Multiplication",
+                            "method": "test_BN_MUL",
+                            "inst": "0x23",
+                            "p1": "0x20",
+                            "input": "([8-9A-F][0-9A-F]{63}){2}"
+                        },
+                        {
+                            "name": "Bignat Exponentiation",
+                            "method": "test_BN_EXP",
+                            "inst": "0x24",
+                            "p1": "0x08",
+                            "p2": "0x19",
+                            "input": "[8-9A-F][0-9A-F]{15}03"
+                        },
+                        {
+                            "name": "Bignat Modulo",
+                            "method": "test_BN_MOD",
+                            "inst": "0x25",
+                            "p1": "0x21",
+                            "input": "00[8-9A-F][0-9A-F]{63}[4-7][0-9A-F]{63}"
+                        },
+
+                        {
+                            "name": "Bignat School Multiplication",
+                            "method": "test_BN_MUL",
+                            "inst": "0x27",
+                            "p1": "0x20",
+                            "input": "([8-9A-F][0-9A-F]{63}){2}"
+                        },
 
 
 
 
-                {
-                    "name": "EC Point Generation",
-                    "method": "test_EC_GEN",
-                    "inst": "0x40",
-                    "input": "00"
-                },
-                {
-                    "name": "EC Point Double",
-                    "method": "test_EC_DBL",
-                    "inst": "0x41",
-                    "input": "046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
-                },
-                {
-                    "name": "EC Point Add",
-                    "method": "test_EC_ADD",
-                    "inst": "0x42",
-                    "inputFile": "inputs/ECPointPairs.txt"
-                },
-                {
-                    "name": "EC Point Scalar Multiplication",
-                    "method": "test_EC_MUL",
-                    "inst": "0x43",
-                    "p1": "0x20",
-                    "input": "[8-9A-F][0-9A-F]{63}046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
-                },
-                {
-                    "name": "EC Point Negation",
-                    "method": "test_EC_NEG",
-                    "inst": "0x44",
-                    "p1": "0x41",
-                    "inputFile": "inputs/ECPoints.txt"
-                },
-                {
-                    "name": "EC Point Comparison",
-                    "method": "test_EC_COMPARE",
-                    "inst": "0x46",
-                    "p1": "0x41",
-                    "p2": "0x41",
-                    "inputFile": "inputs/ECPoints.txt"
+                        {
+                            "name": "Bignat Addition Modulo",
+                            "method": "test_BN_ADD_MOD",
+                            "inst": "0x30",
+                            "p1": "0x20",
+                            "p2": "0x20",
+                            "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
+                        },
+                        {
+                            "name": "Bignat Subtraction Modulo",
+                            "method": "test_BN_SUB_MOD",
+                            "inst": "0x31",
+                            "p1": "0x20",
+                            "p2": "0x20",
+                            "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
+                        },
+                        {
+                            "name": "Bignat Multiplication Modulo",
+                            "method": "test_BN_MUL_MOD",
+                            "inst": "0x32",
+                            "p1": "0x20",
+                            "p2": "0x20",
+                            "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
+                        },
+                        {
+                            "name": "Bignat Exponentiation Modulo",
+                            "method": "test_BN_EXP_MOD",
+                            "inst": "0x33",
+                            "p1": "0x20",
+                            "p2": "0x01",
+                            "input": "[8-9A-F][0-9A-F]{63}02[8-9A-F][0-9A-F]{63}"
+                        },
+                        {
+                            "name": "Bignat Inversion Modulo",
+                            "method": "test_BN_INV_MOD",
+                            "inst": "0x34",
+                            "p1": "0x30",
+                            "input": "[8-9A-F][0-9A-F]{95}F{8}0{7}10{24}F{24}[8-9A-F][0-9A-F]{63}"
+                        },
+                        {
+                            "name": "Bignat Squared Modulo",
+                            "method": "test_BN_POW2_MOD",
+                            "inst": "0x35",
+                            "p1": "0x20",
+                            "p2": "0x20",
+                            "input": "([8-9A-F][0-9A-F]{63}){2}"
+                        },
+
+
+
+
+                        {
+                            "name": "EC Point Generation",
+                            "method": "test_EC_GEN",
+                            "inst": "0x40",
+                            "input": "00"
+                        },
+                        {
+                            "name": "EC Point Double",
+                            "method": "test_EC_DBL",
+                            "inst": "0x41",
+                            "input": "046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
+                        },
+                        {
+                            "name": "EC Point Add",
+                            "method": "test_EC_ADD",
+                            "inst": "0x42",
+                            "inputFile": "inputs/ECPointPairs.txt"
+                        },
+                        {
+                            "name": "EC Point Scalar Multiplication",
+                            "method": "test_EC_MUL",
+                            "inst": "0x43",
+                            "p1": "0x20",
+                            "input": "[8-9A-F][0-9A-F]{63}046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
+                        },
+                        {
+                            "name": "EC Point Negation",
+                            "method": "test_EC_NEG",
+                            "inst": "0x44",
+                            "p1": "0x41",
+                            "inputFile": "inputs/ECPoints.txt"
+                        },
+                        {
+                            "name": "EC Point Comparison",
+                            "method": "test_EC_COMPARE",
+                            "inst": "0x46",
+                            "p1": "0x41",
+                            "p2": "0x41",
+                            "inputFile": "inputs/ECPoints.txt"
+                        }
+                    ]
                 }
             ]
         }
