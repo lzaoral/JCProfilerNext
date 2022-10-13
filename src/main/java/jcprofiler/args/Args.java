@@ -58,7 +58,7 @@ public class Args {
 
     @Parameter(names = {"--method"},
                description = "Method to profile or leave unset to instrument constructor " +
-                             "(custom and memory profiling only)")
+                             "(constructors are custom and memory profiling only)")
     public String method;
 
     @Parameter(names = {"--entry-point"},
