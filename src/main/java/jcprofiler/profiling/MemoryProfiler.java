@@ -33,6 +33,10 @@ public class MemoryProfiler extends AbstractProfiler {
 
     public MemoryProfiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         super(args, cardManager, JCProfilerUtil.getProfiledExecutable(spoon, args.entryPoint, args.method));
+
+        if (JCProfilerUtil.getEntryPoint(spoon, args.entryPoint).getField("INS_PERF_GETMEM") == null)
+            throw new RuntimeException(
+                    "Profiling in " + args.mode + " mode but PM class does not contain INS_PERF_GETMEM field!");
     }
 
     private void getMeasurements(final Map<String, Integer> map, final byte memType) throws CardException {

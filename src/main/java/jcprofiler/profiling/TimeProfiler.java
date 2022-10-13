@@ -32,6 +32,10 @@ public class TimeProfiler extends AbstractProfiler {
 
     public TimeProfiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         super(args, cardManager, JCProfilerUtil.getProfiledMethod(spoon, args.method));
+
+        if (JCProfilerUtil.getEntryPoint(spoon, args.entryPoint).getField("INS_PERF_SETSTOP") == null)
+            throw new RuntimeException(
+                    "Profiling in " + args.mode + " mode but PM class does not contain INS_PERF_SETSTOP field!");
     }
 
     @Override
