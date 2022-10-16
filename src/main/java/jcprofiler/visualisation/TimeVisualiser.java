@@ -91,11 +91,11 @@ public class TimeVisualiser extends AbstractVisualiser {
     }
 
     @Override
-    protected Long convertValues(final String input) {
-        if (input.isEmpty())
+    protected Long convertValues(final String value) {
+        if (value.isEmpty())
             return null;
 
-        long nanos = Long.parseLong(input);
+        long nanos = Long.parseLong(value);
         switch (args.timeUnit) {
             case nano:
                 return nanos; // noop

@@ -110,11 +110,11 @@ public abstract class AbstractVisualiser {
                 .split(System.lineSeparator())).filter(x -> !x.isEmpty()).collect(Collectors.toList());
     }
 
-    protected Long convertValues(final String input) {
-        if (input.isEmpty())
+    protected Long convertValues(final String value) {
+        if (value.isEmpty())
             return null;
 
-        return Long.parseLong(input);
+        return Long.parseLong(value);
     }
 
     public abstract AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor();
