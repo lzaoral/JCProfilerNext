@@ -41,6 +41,7 @@ public abstract class AbstractVisualiser {
     protected String[] inputDescription;
 
     protected List<String> inputs;
+    protected final List<Double> heatmapValues = new ArrayList<>();
     protected final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 
     protected List<String> sourceCode;
@@ -151,11 +152,11 @@ public abstract class AbstractVisualiser {
         context.put("code", sourceCode);
         context.put("elapsedTime", elapsedTime);
         context.put("executableName", profiledExecutableSignature);
+        context.put("heatmapValues", heatmapValues);
         context.put("inputDescription", inputDescription);
         context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
         context.put("measurements", measurements);
         context.put("mode", args.mode);
-        context.put("timeUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
 
         // add mode specific stuff
         prepareVelocityContext(context);

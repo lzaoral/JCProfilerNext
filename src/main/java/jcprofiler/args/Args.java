@@ -128,7 +128,7 @@ public class Args {
     public Path dataFile;
 
     @Parameter(names = {"--time-unit"},
-               description = "Time unit to be used in result visualisation",
+               description = "Time unit to be used in result visualisation (time profiling only)",
                converter = TimeUnitConverter.class)
     public TimeUnit timeUnit = TimeUnit.micro;
 }

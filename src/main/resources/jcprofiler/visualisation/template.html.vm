@@ -71,13 +71,13 @@ $line
                 </div>
             </div>
             <div class="codeContainer">
-                #if( $heatmapValues )<div id="heatmap"></div>#end
-                <div id="codeWithTraps"#if( $heatmapValues ) style="margin-left: -100px;"#end>
+                #if( !$heatmapValues.isEmpty() )<div id="heatmap"></div>#end
+                <div id="codeWithTraps"#if( !$heatmapValues.isEmpty() ) style="margin-left: -100px;"#end>
                     <pre><code class="language-java">#foreach( $line in $code )
                             #printLine( $line, $foreach.index )
                         #end</code></pre>
                 </div>
-                <div id="codeWithoutTraps"#if( $heatmapValues ) style="margin-left: -100px;"#end>
+                <div id="codeWithoutTraps"#if( !$heatmapValues.isEmpty() ) style="margin-left: -100px;"#end>
                     ## skip TRAP lines
                     ## velocity does not have #continue
                     <pre><code class="language-java">#foreach( $line in $code )

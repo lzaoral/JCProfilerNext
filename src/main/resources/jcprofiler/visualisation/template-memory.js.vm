@@ -1,4 +1,7 @@
+## @vtlvariable name="measureUnit" type="java.lang.String"
+
 ## include common code
+#set( $heatmapTitle = "Diff in $measureUnit" )
 #parse( "template-common.js.vm" )
 
 /*
@@ -47,19 +50,6 @@ const layoutCommon = {
 /*
  * FUNCTIONS
  */
-function toggleTraps(event) {
-    const divWith = document.getElementById('codeWithTraps');
-    const divWithout = document.getElementById('codeWithoutTraps');
-
-    if (event.currentTarget.checked) {
-        divWith.style.display = 'initial';
-        divWithout.style.display = 'none';
-        return;
-    }
-
-    divWith.style.display = 'none';
-    divWithout.style.display = 'initial';
-}
 
 // set default heading
 document.getElementById('graphName').innerText = 'Select a line to highlight corresponding values.';

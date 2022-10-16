@@ -1,6 +1,7 @@
 package jcprofiler.visualisation;
 
 import jcprofiler.args.Args;
+import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.processors.AbstractInsertMeasurementsProcessor;
 
 import jcprofiler.visualisation.processors.InsertTimeMeasurementsProcessor;
@@ -19,7 +20,6 @@ import java.util.stream.Collectors;
 public class TimeVisualiser extends AbstractVisualiser {
     private final Map<String, List<Long>> filteredMeasurements = new LinkedHashMap<>();
     private final Map<String, DescriptiveStatistics> filteredStatistics = new LinkedHashMap<>();
-    private final List<Double> heatmapValues = new ArrayList<>();
 
     private static final Logger log = LoggerFactory.getLogger(TimeVisualiser.class);
 
@@ -118,7 +118,7 @@ public class TimeVisualiser extends AbstractVisualiser {
     @Override
     public void prepareVelocityContext(final VelocityContext context) {
         context.put("filteredMeasurements", filteredMeasurements);
-        context.put("heatmapValues", heatmapValues);
         context.put("roundCount", measurements.values().iterator().next().size());
+        context.put("measureUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
     }
 }
