@@ -132,6 +132,10 @@ public abstract class AbstractProfiler {
         if (inputGenerator == null)
             initializeInputGenerator();
 
+        final String input = inputGenerator.getInput();
+        if (input.matches("^([a-fA-F0-9]{2})*$"))
+            throw new RuntimeException("Input " + input + " is not a valid hexstring!");
+
         final byte[] arr = Util.hexStringToByteArray(inputGenerator.getInput());
         final CommandAPDU apdu = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
         inputs.add(Util.bytesToHex(apdu.getBytes()));
