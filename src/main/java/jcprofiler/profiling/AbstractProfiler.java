@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import spoon.SpoonAPI;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtLiteral;
+import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtField;
@@ -86,6 +87,17 @@ public abstract class AbstractProfiler {
         if (traps.isEmpty())
             throw new RuntimeException(String.format(
                     "Extraction of traps from %s failed!", profiledExecutableSignature));
+
+        final CtClass<?> PMC = profiledExecutable.getFactory().getModel()
+                .filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
+        final List<CtField<Short>> pmTraps = PMC.getElements((CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix));
+        if (pmTraps.isEmpty())
+            throw new RuntimeException("Extraction of traps from PMC failed!");
+
+        if (traps.size() != pmTraps.size() || !new HashSet<>(traps).containsAll(pmTraps))
+            throw new RuntimeException(String.format(
+                    "The profiled method and the PM class contain different traps!%n" +
+                    "Please, reinstrument the given sources!"));
 
         for (final CtField<Short> f : traps) {
             final CtLiteral<Integer> evaluated = f.getDefaultExpression().partiallyEvaluate();
