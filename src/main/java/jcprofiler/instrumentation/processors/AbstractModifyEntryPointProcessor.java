@@ -117,8 +117,10 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
 
     private void createInsHandler(final CtMethod<Void> processMethod, final CtField<Byte> insPerfField) {
         // ${param}
-        final CtParameter<?> apduParam = processMethod.getParameters().get(0);
-        final CtVariableAccess<?> apduParamRead = getFactory().createVariableRead(apduParam.getReference(), false);
+        @SuppressWarnings("unchecked") // the runtime check was done in getProcessMethod
+        final CtParameter<APDU> apduParam = (CtParameter<APDU>) processMethod.getParameters().get(0);
+        final CtVariableRead<APDU> apduParamRead = (CtVariableRead<APDU>) getFactory()
+                .createVariableRead(apduParam.getReference(), false);
 
         // ${param}.getBuffer()[ISO7816.OFFSET_INS]
         CtArrayRead<Byte> apduBufferRead;
@@ -163,7 +165,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         // if (${param}.getBuffer()[ISO7816.OFFSET_INS] == ${insPerfField}) {
         //     ${createInsHandlerBody}
         // }
-        final CtBlock<Void> insHandlerBody = createInsHandlerBody(apduParam);
+        final CtBlock<Void> insHandlerBody = createInsHandlerBody(apduParamRead);
         if (!(insHandlerBody.getLastStatement() instanceof CtReturn))
             throw new RuntimeException("The handler body must end with a return statement!");
 
@@ -197,5 +199,5 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                 fieldName, JCProfilerUtil.getFullSignature(processMethod));
     }
 
-    protected abstract CtBlock<Void> createInsHandlerBody(final CtParameter<?> apdu);
+    protected abstract CtBlock<Void> createInsHandlerBody(final CtVariableRead<APDU> apdu);
 }

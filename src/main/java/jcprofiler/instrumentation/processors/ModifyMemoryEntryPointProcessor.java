@@ -6,9 +6,8 @@ import jcprofiler.args.Args;
 
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtInvocation;
-import spoon.reflect.code.CtVariableAccess;
+import spoon.reflect.code.CtVariableRead;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtParameter;
 
 public class ModifyMemoryEntryPointProcessor extends AbstractModifyEntryPointProcessor {
     public ModifyMemoryEntryPointProcessor(final Args args) {
@@ -21,15 +20,11 @@ public class ModifyMemoryEntryPointProcessor extends AbstractModifyEntryPointPro
     }
 
     @Override
-    protected CtBlock<Void> createInsHandlerBody(final CtParameter<?> apdu) {
-        // ${param}
-        final CtVariableAccess<?> apduParamRead = getFactory().createVariableRead(apdu.getReference(), false);
-
+    protected CtBlock<Void> createInsHandlerBody(final CtVariableRead<APDU> apdu) {
         // PM.send(${param})
         final CtInvocation<?> PMSendCall = getFactory().createInvocation(
                 getFactory().createTypeAccess(PM.getReference(), false),
-                PM.getMethod("send", getFactory().createCtTypeReference(APDU.class)).getReference(),
-                apduParamRead);
+                PM.getMethod("send", apdu.getType()).getReference(), apdu);
 
         // {
         //     PM.send(${param});

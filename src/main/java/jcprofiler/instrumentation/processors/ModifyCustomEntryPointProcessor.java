@@ -1,11 +1,12 @@
 package jcprofiler.instrumentation.processors;
 
+import javacard.framework.APDU;
 import jcprofiler.args.Args;
 
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtStatement;
+import spoon.reflect.code.CtVariableRead;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtParameter;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +27,7 @@ public class ModifyCustomEntryPointProcessor extends AbstractModifyEntryPointPro
     }
 
     @Override
-    protected CtBlock<Void> createInsHandlerBody(final CtParameter<?> apdu) {
+    protected CtBlock<Void> createInsHandlerBody(final CtVariableRead<APDU> apdu) {
         try {
             final CtStatement customBlock = getFactory().createCodeSnippetStatement(
                     new String(Files.readAllBytes(args.customHandler)));
