@@ -73,23 +73,27 @@ $line
             <div class="codeContainer">
                 #if( !$heatmapValues.isEmpty() )<div id="heatmap"></div>#end
                 <div id="codeWithTraps"#if( !$heatmapValues.isEmpty() ) style="margin-left: -100px;"#end>
-                    <pre><code class="language-java">#foreach( $line in $code )
-                            #printLine( $line, $foreach.index )
-                        #end</code></pre>
+                    <div class="codeWrapper">
+                        <pre><code class="language-java">#foreach( $line in $code )
+                                #printLine( $line, $foreach.index )
+                            #end</code></pre>
+                    </div>
                 </div>
                 <div id="codeWithoutTraps"#if( !$heatmapValues.isEmpty() ) style="margin-left: -100px;"#end>
-                    ## skip TRAP lines
-                    ## velocity does not have #continue
-                    <pre><code class="language-java">#foreach( $line in $code )
-                            #if( !$line.trim().startsWith("PM.check(PMC.") )
-                                #set( $nextIndex = $foreach.index + 1 )
-                                #if( $nextIndex < $code.size() )
-                                    #printLine( $line, $nextIndex )
-                                #else
-                                    #printLine( $line, $foreach.index )
+                    <div class="codeWrapper">
+                        ## skip TRAP lines
+                        ## velocity does not have #continue
+                        <pre><code class="language-java">#foreach( $line in $code )
+                                #if( !$line.trim().startsWith("PM.check(PMC.") )
+                                    #set( $nextIndex = $foreach.index + 1 )
+                                    #if( $nextIndex < $code.size() )
+                                        #printLine( $line, $nextIndex )
+                                    #else
+                                        #printLine( $line, $foreach.index )
+                                    #end
                                 #end
-                            #end
-                        #end</code></pre>
+                            #end</code></pre>
+                    </div>
                 </div>
             </div>
             <div>

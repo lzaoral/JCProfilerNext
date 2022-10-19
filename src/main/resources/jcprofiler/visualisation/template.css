@@ -92,6 +92,11 @@
     justify-content: flex-start;
 }
 
+.codeWrapper {
+    display: inline-block;
+    min-width: 100%;
+}
+
 .center {
     text-align: center;
 }
