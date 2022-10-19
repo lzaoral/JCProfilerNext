@@ -48,7 +48,6 @@ public abstract class AbstractProfiler {
     protected final List<String> inputs = new ArrayList<>();
 
     private String elapsedTime;
-    private InputGenerator inputGenerator;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractProfiler.class);
 
@@ -106,41 +105,55 @@ public abstract class AbstractProfiler {
         }
     }
 
-    private void initializeInputGenerator() {
-        try {
-            // TODO: more formats? hamming weight?
-            // TODO: print seed for reproducibility
-            final Random rdn = new Random();
+    protected void generateInputs(int size) {
+        if (profiledExecutable instanceof CtConstructor)
+            throw new RuntimeException("Constructors do not support inputs!");
 
-            // TODO: These lambdas could be replaced with regular classes if we are going to add more of them.
-            if (args.dataRegex != null) {
-                log.info("Generating inputs from regular expression {}.", args.dataRegex);
-                final RgxGen rgxGen = new RgxGen(args.dataRegex);
-                inputGenerator = () -> rgxGen.generate(rdn);
-            } else {
-                log.info("Choosing inputs from text file {}.", args.dataFile);
+        // TODO: more formats? hamming weight?
+        // TODO: print seed for reproducibility
+        final Random rdn = new Random();
 
-                final List<String> inputs = Files.readAllLines(args.dataFile);
-                inputGenerator = () -> inputs.get(rdn.nextInt(inputs.size()));
+        // regex
+        if (args.dataRegex != null) {
+            log.info("Generating inputs from regular expression {}.", args.dataRegex);
+            final RgxGen rgxGen = new RgxGen(args.dataRegex);
+
+            for (int i = 0; i < size; i++) {
+                final String input = rgxGen.generate(rdn);
+                if (!JCProfilerUtil.isHexString(input))
+                    throw new RuntimeException(String.format(
+                            "Input %s generated from the %s regular expression not a valid hexstring!",
+                            input, args.dataRegex));
+                inputs.add(input);
             }
+            return;
+        }
+
+        // file
+        log.info("Choosing inputs from text file {}.", args.dataFile);
+
+        try {
+            final List<String> lines = Files.readAllLines(args.dataFile);
+            for (int i = 1; i <= lines.size(); i++) {
+                final String line = lines.get(i - 1);
+                if (!JCProfilerUtil.isHexString(line))
+                    throw new RuntimeException(String.format(
+                            "Input %s on line %d in file %s is not a valid hexstring!", line, i, args.dataFile));
+            }
+
+            for (int i = 0; i < size; i++)
+                inputs.add(lines.get(rdn.nextInt(lines.size())));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected CommandAPDU getRandomAPDU() {
-        if (inputGenerator == null)
-            initializeInputGenerator();
+    protected CommandAPDU getInputAPDU(int round) {
+        if (round < 1 || inputs.size() < round)
+            throw new RuntimeException("Unexpected index: " + round);
 
-        final String input = inputGenerator.getInput();
-        if (input.matches("^([a-fA-F0-9]{2})*$"))
-            throw new RuntimeException("Input " + input + " is not a valid hexstring!");
-
-        final byte[] arr = Util.hexStringToByteArray(inputGenerator.getInput());
-        final CommandAPDU apdu = new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
-        inputs.add(Util.bytesToHex(apdu.getBytes()));
-
-        return apdu;
+        final byte[] arr = Util.hexStringToByteArray(inputs.get(round - 1));
+        return new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
     }
 
     protected void resetApplet() throws CardException {

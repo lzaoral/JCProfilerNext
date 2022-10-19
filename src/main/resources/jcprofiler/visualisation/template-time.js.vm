@@ -1,3 +1,4 @@
+## @vtlvariable name="apduHeader" type="java.lang.String"
 ## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="measureUnit" type="java.lang.String"
 
@@ -215,7 +216,7 @@ function redrawGraph(evt) {
         msg += 'Inputs:\n';
 
         const sortedInputs = Array.from(new Set(selectedInputs)).sort();
-        sortedInputs.forEach(e => msg += e + '\n');
+        sortedInputs.forEach(e => msg += '$apduHeader' + e + '\n');
 
         alert(msg);
     });

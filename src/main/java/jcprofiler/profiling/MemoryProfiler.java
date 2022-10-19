@@ -82,8 +82,9 @@ public class MemoryProfiler extends AbstractProfiler {
         // methods must be executed explicitly
         if (profiledExecutable instanceof CtMethod) {
             resetApplet();
+            generateInputs(/* size */ 1);
 
-            final CommandAPDU triggerAPDU = getRandomAPDU();
+            final CommandAPDU triggerAPDU = getInputAPDU(/* round */ 1);
             final ResponseAPDU response = cardManager.transmit(triggerAPDU);
 
             if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)

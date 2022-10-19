@@ -45,11 +45,12 @@ public class TimeProfiler extends AbstractProfiler {
             resetApplet();
             setTrap(PERF_START);
 
-            for (int repeat = 1; repeat <= args.repeatCount; repeat++) {
-                final CommandAPDU triggerAPDU = getRandomAPDU();
+            generateInputs(args.repeatCount);
+            for (int round = 1; round <= args.repeatCount; round++) {
+                final CommandAPDU triggerAPDU = getInputAPDU(round);
 
                 final String input = Util.bytesToHex(triggerAPDU.getBytes());
-                log.info("Round: {}/{} APDU: {}", repeat, args.repeatCount, input);
+                log.info("Round: {}/{} APDU: {}", round, args.repeatCount, input);
                 profileSingleStep(triggerAPDU);
             }
 
