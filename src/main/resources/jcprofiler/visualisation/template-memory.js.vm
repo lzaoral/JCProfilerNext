@@ -89,7 +89,11 @@ function redrawGraphs(annotations = []) {
     plotlyDiv.removeAllListeners('plotly_click');
     plotlyDiv.on('plotly_click', function (data) {
         const graph = data.points[0];
-        highlightTrap(trapPrefix + graph.x);
+        const trapName = trapPrefix + graph.x;
+
+        highlightTrap(trapName);
+        document.querySelectorAll('.' + trapName).forEach(
+            e => e.scrollIntoView({block: 'center', behavior: 'smooth'}));
     });
 }
 
