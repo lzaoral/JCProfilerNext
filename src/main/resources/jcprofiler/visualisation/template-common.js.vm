@@ -49,6 +49,8 @@ const histogramCommon = {
  * FUNCTIONS
  */
 
+const maxLineStringSize = 2 * heatmapValues.y[0].toString().length;
+
 // heatmap
 Plotly.newPlot('heatmap', [{
     ...heatmapValuesFiltered,
@@ -59,13 +61,13 @@ Plotly.newPlot('heatmap', [{
 }], {
     paper_bgcolor: 'rgba(0, 0, 0, 0)',
     margin: {
-        l: 20,
+        l: 18 + maxLineStringSize,
         r: 110,
         b: 6,
         t: 18,
         pad: 4
     },
-    width: 160,
+    width: 155 + maxLineStringSize,
     xaxis: {
         fixedrange: true,
         ticks: '',
