@@ -85,6 +85,7 @@ function redrawGraph(evt) {
     // update trap title
     document.getElementById('graphName').textContent = trapName;
 
+    const filteredVals = filteredMeasurements[trapName];
     const vals = measurements[trapName];
     const traces = [];
 
@@ -113,16 +114,16 @@ function redrawGraph(evt) {
         // Histograms
         traces.push({
             ...histogramCommon,
-            x: filteredMeasurements[trapName],
-            name: 'without outliers',
+            x: filteredVals,
+            name: 'measurements',
             marker: {
                 color: 'rgb(49, 130, 189)',
                 opacity: 0.75
             }
         }, {
             ...histogramCommon,
-            x: vals,
-            name: 'with outliers',
+            x: vals.map((e, i) => filteredVals[i] !== null ? null : e),
+            name: 'outliers',
             visible: 'legendonly',
             marker: {
                 color: 'rgb(255, 136, 0)',
