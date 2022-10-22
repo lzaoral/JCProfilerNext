@@ -85,8 +85,10 @@ public class MemoryProfiler extends AbstractProfiler {
             generateInputs(/* size */ 1);
 
             final CommandAPDU triggerAPDU = getInputAPDU(/* round */ 1);
-            final ResponseAPDU response = cardManager.transmit(triggerAPDU);
+            final String input = Util.bytesToHex(triggerAPDU.getBytes());
+            log.info("APDU: {}", input);
 
+            final ResponseAPDU response = cardManager.transmit(triggerAPDU);
             if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
                 throw new RuntimeException("Executing the applet failed with SW " + response.getSW());
 
