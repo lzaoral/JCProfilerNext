@@ -113,19 +113,19 @@ function redrawGraph(evt) {
         // Histograms
         traces.push({
             ...histogramCommon,
-            x: vals,
-            name: 'with outliers',
-            visible: 'legendonly',
-            marker: {
-                color: 'rgb(255,136,0)',
-                opacity: 0.75
-            }
-        }, {
-            ...histogramCommon,
             x: filteredMeasurements[trapName],
             name: 'without outliers',
             marker: {
                 color: 'rgb(49, 130, 189)',
+                opacity: 0.75
+            }
+        }, {
+            ...histogramCommon,
+            x: vals,
+            name: 'with outliers',
+            visible: 'legendonly',
+            marker: {
+                color: 'rgb(255, 136, 0)',
                 opacity: 0.75
             }
         });
