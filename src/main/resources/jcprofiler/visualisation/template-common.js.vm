@@ -42,7 +42,7 @@ const histogramCommon = {
     xaxis: 'x2',
     yaxis: 'y1',
     showlegend: true,
-    hovertemplate: "Bin: %{x}<br>Count: %{y}<extra></extra>"
+    hovertemplate: 'Bin: %{x}<br>Count: %{y}<extra></extra>'
 };
 
 /*
@@ -54,7 +54,7 @@ const maxLineStringSize = 2 * heatmapValues.y[0].toString().length;
 // heatmap
 Plotly.newPlot('heatmap', [{
     ...heatmapValuesFiltered,
-    hovertemplate: "Line: %{y}<br>%{z} $measureUnit<extra></extra>",
+    hovertemplate: 'Line: %{y}<br>%{z} $measureUnit<extra></extra>',
     showlegend: false,
     showscale: false,
     type: 'heatmap'
@@ -96,7 +96,7 @@ const padding = 12;
 const originalHeight = document.getElementById('codeWithoutTraps') - padding;
 
 // heatmap resize event
-window.addEventListener("resize", _ => {
+window.addEventListener('resize', _ => {
     const trapSwitch = document.getElementById('trapSwitch');
     const divWith = document.getElementById('codeWithTraps');
 
