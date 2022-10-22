@@ -3,6 +3,9 @@ package jcprofiler.util;
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 
+import jcprofiler.util.enums.Stage;
+import jcprofiler.util.enums.TimeUnit;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVFormat.Builder;
 import org.apache.commons.io.FileUtils;

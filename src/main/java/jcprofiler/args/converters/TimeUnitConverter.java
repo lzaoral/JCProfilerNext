@@ -1,7 +1,7 @@
 package jcprofiler.args.converters;
 
 import com.beust.jcommander.converters.EnumConverter;
-import jcprofiler.util.TimeUnit;
+import jcprofiler.util.enums.TimeUnit;
 
 public class TimeUnitConverter extends EnumConverter<TimeUnit> {
     /**

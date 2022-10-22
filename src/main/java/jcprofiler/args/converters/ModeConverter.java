@@ -1,7 +1,7 @@
 package jcprofiler.args.converters;
 
 import com.beust.jcommander.converters.EnumConverter;
-import jcprofiler.util.Mode;
+import jcprofiler.util.enums.Mode;
 
 public class ModeConverter extends EnumConverter<Mode> {
     /**

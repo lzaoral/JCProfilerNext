@@ -14,7 +14,7 @@ import javacard.framework.Applet;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
-import jcprofiler.util.Stage;
+import jcprofiler.util.enums.Stage;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;

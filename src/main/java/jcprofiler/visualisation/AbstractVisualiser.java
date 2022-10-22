@@ -2,8 +2,8 @@ package jcprofiler.visualisation;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
-import jcprofiler.util.Mode;
-import jcprofiler.util.Stage;
+import jcprofiler.util.enums.Mode;
+import jcprofiler.util.enums.Stage;
 import jcprofiler.visualisation.processors.AbstractInsertMeasurementsProcessor;
 
 import org.apache.commons.csv.CSVParser;

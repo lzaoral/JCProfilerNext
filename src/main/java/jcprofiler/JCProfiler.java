@@ -7,8 +7,8 @@ import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
 import jcprofiler.instrumentation.Instrumenter;
 import jcprofiler.profiling.AbstractProfiler;
-import jcprofiler.util.Mode;
-import jcprofiler.util.Stage;
+import jcprofiler.util.enums.Mode;
+import jcprofiler.util.enums.Stage;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.AbstractVisualiser;
 

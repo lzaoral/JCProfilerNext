@@ -4,9 +4,9 @@ import com.beust.jcommander.Parameter;
 
 import jcprofiler.args.converters.*;
 import jcprofiler.args.validators.*;
-import jcprofiler.util.Mode;
-import jcprofiler.util.Stage;
-import jcprofiler.util.TimeUnit;
+import jcprofiler.util.enums.Mode;
+import jcprofiler.util.enums.Stage;
+import jcprofiler.util.enums.TimeUnit;
 
 import pro.javacard.JavaCardSDK;
 

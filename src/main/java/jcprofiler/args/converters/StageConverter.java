@@ -1,7 +1,7 @@
 package jcprofiler.args.converters;
 
 import com.beust.jcommander.converters.EnumConverter;
-import jcprofiler.util.Stage;
+import jcprofiler.util.enums.Stage;
 
 public class StageConverter extends EnumConverter<Stage> {
     /**

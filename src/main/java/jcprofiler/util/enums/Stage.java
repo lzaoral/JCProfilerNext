@@ -1,4 +1,4 @@
-package jcprofiler.util;
+package jcprofiler.util.enums;
 
 public enum Stage {
     instrumentation,
