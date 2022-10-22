@@ -7,6 +7,7 @@ import jcprofiler.compilation.Compiler;
 import jcprofiler.installation.Installer;
 import jcprofiler.instrumentation.Instrumenter;
 import jcprofiler.profiling.AbstractProfiler;
+import jcprofiler.util.Mode;
 import jcprofiler.util.Stage;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.AbstractVisualiser;
@@ -27,6 +28,13 @@ public class JCProfiler {
     private JCProfiler() {}
 
     public static void run(final Args args) {
+        if (args.mode == Mode.stats) {
+            log.info("Collecting API usage statistics.");
+            new Instrumenter(args).generateStatistics();
+            log.info("Collecting complete.");
+            return;
+        }
+
         // Instrumentation
         if (args.startFrom.ordinal() <= Stage.instrumentation.ordinal()) {
             log.info("Instrumentation started.");

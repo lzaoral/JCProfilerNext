@@ -4,6 +4,9 @@ import jcprofiler.args.Args;
 import jcprofiler.instrumentation.processors.*;
 import jcprofiler.util.JCProfilerUtil;
 
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.lang3.tuple.Triple;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,5 +252,33 @@ public class Instrumenter {
 
         if (trapFields.size() != fieldValuesMap.size() - /* PERF_START */ 1)
             throw new RuntimeException("Some PMC trap fields are unused!");
+    }
+
+    public void generateStatistics() {
+        final Launcher spoon = new Launcher();
+        setupSpoon(spoon, args);
+
+        // we don't care about missing imports
+        spoon.getEnvironment().setNoClasspath(false);
+
+        spoon.addInputResource(args.workDir.toString());
+        spoon.buildModel();
+
+        final StatisticsProcessor sp = new StatisticsProcessor();
+        spoon.addProcessor(sp);
+        spoon.process();
+
+        final Path csv = args.workDir.resolve("APIstatistics.csv");
+        try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCSVFormat())) {
+            printer.printComment("package,class,member,frequency");
+            for (Map.Entry<Triple<String, String, String>, Integer> pair : sp.getUsedReferences().entrySet()) {
+                final Triple<String, String, String> key = pair.getKey();
+                printer.printRecord(key.getLeft(), key.getMiddle(), key.getRight(), pair.getValue());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info("Statistics saved to {}.", csv);
     }
 }
