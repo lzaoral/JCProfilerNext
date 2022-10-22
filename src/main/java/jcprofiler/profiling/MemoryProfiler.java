@@ -25,9 +25,9 @@ import java.util.Map;
 
 public class MemoryProfiler extends AbstractProfiler {
     // use LinkedHashX to preserve insertion order
-    final Map<String, Integer> memoryUsageTransientDeselect = new LinkedHashMap<>();
-    final Map<String, Integer> memoryUsageTransientReset = new LinkedHashMap<>();
-    final Map<String, Integer> memoryUsagePersistent = new LinkedHashMap<>();
+    private final Map<String, Integer> memoryUsageTransientDeselect = new LinkedHashMap<>();
+    private final Map<String, Integer> memoryUsageTransientReset = new LinkedHashMap<>();
+    private final Map<String, Integer> memoryUsagePersistent = new LinkedHashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(MemoryProfiler.class);
 
