@@ -2,6 +2,7 @@ package jcprofiler.visualisation;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
+import jcprofiler.util.enums.InputDivision;
 import jcprofiler.util.enums.Mode;
 import jcprofiler.util.enums.Stage;
 import jcprofiler.visualisation.processors.AbstractInsertMeasurementsProcessor;
@@ -39,6 +40,7 @@ public abstract class AbstractVisualiser {
     protected String elapsedTime;
     protected String apduHeader;
     protected String[] inputDescription;
+    protected InputDivision inputDivision;
 
     protected List<String> inputs;
     protected final List<Double> heatmapValues = new ArrayList<>();
@@ -88,6 +90,7 @@ public abstract class AbstractVisualiser {
             elapsedTime = header.get(3);
             apduHeader = header.get(4);
             inputDescription = header.get(5).split(":", 2);
+            inputDivision = InputDivision.valueOf(header.get(6));
 
             // parse inputs
             inputs = it.next().toList();

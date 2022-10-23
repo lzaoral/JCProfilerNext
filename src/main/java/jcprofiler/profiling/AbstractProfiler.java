@@ -5,11 +5,13 @@ import com.github.curiousoddman.rgxgen.RgxGen;
 import cz.muni.fi.crocs.rcard.client.CardManager;
 import cz.muni.fi.crocs.rcard.client.Util;
 
-import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.args.Args;
+import jcprofiler.util.enums.InputDivision;
+import jcprofiler.util.JCProfilerUtil;
 
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.math3.util.Pair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Lukáš Zaoral and Petr Svenda
@@ -109,43 +112,70 @@ public abstract class AbstractProfiler {
         if (profiledExecutable instanceof CtConstructor)
             throw new RuntimeException("Constructors do not support inputs!");
 
-        // TODO: more formats? hamming weight?
         // TODO: print seed for reproducibility
         final Random rdn = new Random();
+        final List<String> undividedInputs = new ArrayList<>();
 
         // regex
         if (args.dataRegex != null) {
             log.info("Generating inputs from regular expression {}.", args.dataRegex);
             final RgxGen rgxGen = new RgxGen(args.dataRegex);
 
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < size * 100; i++) {
                 final String input = rgxGen.generate(rdn);
                 if (!JCProfilerUtil.isHexString(input))
                     throw new RuntimeException(String.format(
                             "Input %s generated from the %s regular expression not a valid hexstring!",
                             input, args.dataRegex));
-                inputs.add(input);
+                undividedInputs.add(input);
             }
-            return;
+        } else {
+            // file
+            log.info("Choosing inputs from text file {}.", args.dataFile);
+
+            try {
+                final List<String> lines = Files.readAllLines(args.dataFile);
+                for (int i = 1; i <= lines.size(); i++) {
+                    final String line = lines.get(i - 1);
+                    if (!JCProfilerUtil.isHexString(line))
+                        throw new RuntimeException(String.format(
+                                "Input %s on line %d in file %s is not a valid hexstring!", line, i, args.dataFile));
+                }
+
+                for (int i = 0; i < size * 100; i++)
+                    undividedInputs.add(lines.get(rdn.nextInt(lines.size())));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        // file
-        log.info("Choosing inputs from text file {}.", args.dataFile);
+        int oddSize = size & 0x1;
+        switch (args.inputDivision) {
+            case effectiveBitLength:
+                // strings with more leading zero bits will be sorted first
+                undividedInputs.sort(String::compareTo);
+                inputs.addAll(undividedInputs.subList(0, size / 2));
+                inputs.addAll(undividedInputs.subList(undividedInputs.size() - size / 2 - oddSize, undividedInputs.size()));
+                break;
 
-        try {
-            final List<String> lines = Files.readAllLines(args.dataFile);
-            for (int i = 1; i <= lines.size(); i++) {
-                final String line = lines.get(i - 1);
-                if (!JCProfilerUtil.isHexString(line))
-                    throw new RuntimeException(String.format(
-                            "Input %s on line %d in file %s is not a valid hexstring!", line, i, args.dataFile));
-            }
+            case hammingWeight:
+                final List<String> hwsorted = undividedInputs.stream()
+                        .map(s -> new Pair<>(JCProfilerUtil.getHexStringBitCount(s), s))
+                        .sorted(Comparator.comparing(Pair::getKey))
+                        .map(Pair::getValue).collect(Collectors.toList());
+                inputs.addAll(hwsorted.subList(0, size / 2));
+                inputs.addAll(hwsorted.subList(hwsorted.size() - size / 2 - oddSize, hwsorted.size()));
+                break;
 
-            for (int i = 0; i < size; i++)
-                inputs.add(lines.get(rdn.nextInt(lines.size())));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            case none:
+                inputs.addAll(undividedInputs.subList(0, size));
+                break;
+            default:
+                throw new RuntimeException("Unreachable statement reached!");
         }
+
+        if (args.inputDivision != InputDivision.none)
+            log.info("Inputs divided according to the {}.", args.inputDivision.prettyPrint());
     }
 
     protected CommandAPDU getInputAPDU(int round) {
@@ -224,8 +254,9 @@ public abstract class AbstractProfiler {
 
         final Path csv = args.workDir.resolve("measurements.csv");
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCSVFormat())) {
-            printer.printComment("mode,class#methodSignature,ATR,elapsedTime,APDUHeader,inputType:value");
-            printer.printRecord(args.mode, profiledExecutableSignature, atr, elapsedTime, apduHeader, dataSource);
+            printer.printComment("mode,class#methodSignature,ATR,elapsedTime,APDUHeader,inputType:value,inputFilter");
+            printer.printRecord(args.mode, profiledExecutableSignature, atr, elapsedTime, apduHeader, dataSource,
+                    args.inputDivision);
 
             printer.printComment("input1,input2,input3,...");
             printer.printRecord(inputs);
