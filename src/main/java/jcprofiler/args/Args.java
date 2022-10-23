@@ -4,9 +4,7 @@ import com.beust.jcommander.Parameter;
 
 import jcprofiler.args.converters.*;
 import jcprofiler.args.validators.*;
-import jcprofiler.util.enums.Mode;
-import jcprofiler.util.enums.Stage;
-import jcprofiler.util.enums.TimeUnit;
+import jcprofiler.util.enums.*;
 
 import pro.javacard.JavaCardSDK;
 
@@ -126,6 +124,11 @@ public class Args {
                description = "Path to a file specifying data inputs in hex",
                converter = FilePathConverter.class)
     public Path dataFile;
+
+    @Parameter(names = {"--input-division"},
+               description = "Divide generated inputs into two categories based on given characteristic",
+               converter = InputDivisionConverter.class)
+    public InputDivision inputDivision = InputDivision.none;
 
     @Parameter(names = {"--time-unit"},
                description = "Time unit to be used in result visualisation (time profiling only)",
