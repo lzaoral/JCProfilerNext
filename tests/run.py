@@ -163,7 +163,7 @@ def execute_test(test: Dict[str, Any], args) -> None:
     jckit = Path(f'jcsdk/jc{jckit_version}_kit').absolute()
 
     cmd = ['java', '-jar', str(jar), '--jckit', str(jckit),
-                                     '--repeat-count', '100']
+                                     '--repeat-count', str(args.repeat_count)]
 
     if not args.card:
         cmd.append('--simulator')
@@ -210,5 +210,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--card', action='store_true',
                         help='Use a real card instead of a simulator')
+    parser.add_argument('--repeat-count', type=int, default=100,
+                        help='Number profiling rounds (default 100)')
 
     main(parser.parse_args())
