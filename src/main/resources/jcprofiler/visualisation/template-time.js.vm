@@ -1,9 +1,14 @@
 ## @vtlvariable name="apduHeader" type="java.lang.String"
 ## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
+## @vtlvariable name="inputDivision" type="java.lang.String"
 ## @vtlvariable name="measureUnit" type="java.lang.String"
 
 ## include common code
-#set( $heatmapTitle = "Avg $measureUnit" )
+#if( $inputDivision == 'none' )
+    #set( $heatmapTitle = "Avg $measureUnit" )
+#else
+    #set( $heatmapTitle = "Diff $measureUnit" )
+#end
 #parse( "template-common.js.vm" )
 
 /*
@@ -112,15 +117,37 @@ function redrawGraph(evt) {
     const hasTime = vals.some(e => e !== null);
     if (hasTime) {
         // Histograms
+        if ('$inputDivision' === 'none') {
+            traces.push({
+                ...histogramCommon,
+                x: filteredVals,
+                name: 'measurements',
+                marker: {
+                    color: 'rgb(49, 130, 189)',
+                    opacity: 0.75
+                }
+            });
+        } else {
+            traces.push({
+                ...histogramCommon,
+                x: filteredVals.slice(0, filteredVals.length / 2),
+                name: 'low $inputDivision',
+                marker: {
+                    color: 'rgb(58,189,49)',
+                    opacity: 0.75
+                }
+            }, {
+                ...histogramCommon,
+                x: filteredVals.slice(filteredVals.length / 2),
+                name: 'high $inputDivision',
+                marker: {
+                    color: 'rgb(49, 130, 189)',
+                    opacity: 0.75
+                }
+            });
+        }
+
         traces.push({
-            ...histogramCommon,
-            x: filteredVals,
-            name: 'measurements',
-            marker: {
-                color: 'rgb(49, 130, 189)',
-                opacity: 0.75
-            }
-        }, {
             ...histogramCommon,
             x: vals.map((e, i) => filteredVals[i] !== null ? null : e),
             name: 'outliers',
@@ -198,7 +225,11 @@ function redrawGraph(evt) {
                 msg = 'Round: ' + graph.x + '\n';
                 break;
             case 'histogram':
-                selectedInputs = graph.pointIndices.map(e => inputs[e]);
+                #if( $inputDivision != "none" )
+                const dividedHigh = graph.data.name.startsWith('high');
+                #end
+                selectedInputs = graph.pointIndices.map(
+                    e => inputs[#if( $inputDivision != "none" )dividedHigh ? vals.length / 2 + e :#end e]);
 
                 msg = 'Bin: ' + Math.ceil(graph.x - binSizeHalf) + ' to ' + Math.floor(graph.x + binSizeHalf) + '\n';
                 break;

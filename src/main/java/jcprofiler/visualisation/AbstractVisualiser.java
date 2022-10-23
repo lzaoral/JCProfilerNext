@@ -157,6 +157,7 @@ public abstract class AbstractVisualiser {
         context.put("executableName", profiledExecutableSignature);
         context.put("heatmapValues", heatmapValues);
         context.put("inputDescription", inputDescription);
+        context.put("inputDivision", inputDivision.prettyPrint());
         context.put("inputs", inputs.stream().map(s -> "'" + s + "'").collect(Collectors.toList()));
         context.put("measurements", measurements);
         context.put("mode", args.mode);

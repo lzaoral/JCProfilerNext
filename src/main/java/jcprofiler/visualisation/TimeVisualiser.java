@@ -80,10 +80,35 @@ public class TimeVisualiser extends AbstractVisualiser {
 
             final int beginPos = s.indexOf('(') + 1 + "PMC.".length();
             final int endPos = s.indexOf(')');
-            final DescriptiveStatistics ds = filteredStatistics.get(s.substring(beginPos, endPos));
+            final String trapName = s.substring(beginPos, endPos);
+            final DescriptiveStatistics ds = filteredStatistics.get(trapName);
 
-            heatmapValues.add(ds == null ? Double.NaN // trap is completely unreachable
-                                         : Math.round(ds.getMean() * 100.) / 100.);
+            // trap is completely unreachable
+            if (ds == null) {
+                heatmapValues.add(Double.NaN);
+                return;
+            }
+
+            switch (inputDivision) {
+                case effectiveBitLength:
+                case hammingWeight:
+                    final List<Long> values = filteredMeasurements.get(trapName);
+
+                    final double minAvg = values.stream().limit(values.size() / 2)
+                            .filter(Objects::nonNull).mapToLong(Long::longValue).average().orElse(.0);
+                    final double maxAvg = values.stream().skip(values.size() / 2)
+                            .filter(Objects::nonNull).mapToLong(Long::longValue).average().orElse(.0);
+
+                    heatmapValues.add(Math.abs(minAvg - maxAvg));
+                    break;
+
+                case none:
+                    heatmapValues.add(Math.round(ds.getMean() * 100.) / 100.);
+                    break;
+
+                default:
+                    throw new RuntimeException("Unreachable statement reached!");
+            }
         });
     }
 
