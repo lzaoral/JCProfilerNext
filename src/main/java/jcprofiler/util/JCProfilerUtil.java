@@ -19,6 +19,7 @@ import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -357,5 +358,9 @@ public class JCProfilerUtil {
 
     public static boolean isHexString(final String str) {
         return hexString.matcher(str).matches();
+    }
+
+    public static int getHexStringBitCount(final String str) {
+        return new BigInteger(str, 16).bitCount();
     }
 }
