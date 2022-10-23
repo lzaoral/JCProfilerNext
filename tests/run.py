@@ -148,7 +148,7 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         # TODO: check format and contents of generated profiling reports
 
 
-def execute_test(test: Dict[str, Any], args) -> None:
+def execute_test(test: Dict[str, Any]) -> None:
     print('Running test', test['name'])
 
     test['name'] = test['name'].replace(' ', '_')
@@ -157,15 +157,15 @@ def execute_test(test: Dict[str, Any], args) -> None:
 
     jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
 
-    min_jckit = args.min_jckit
+    min_jckit = ARGS.min_jckit
     jckit_version = \
         min_jckit if min_jckit and min_jckit > test['jckit'] else test['jckit']
     jckit = Path(f'jcsdk/jc{jckit_version}_kit').absolute()
 
     cmd = ['java', '-jar', str(jar), '--jckit', str(jckit),
-                                     '--repeat-count', str(args.repeat_count)]
+                                     '--repeat-count', str(ARGS.repeat_count)]
 
-    if not args.card:
+    if not ARGS.card:
         cmd.append('--simulator')
 
     if 'entryPoints' not in test:
@@ -177,7 +177,7 @@ def execute_test(test: Dict[str, Any], args) -> None:
         test_applet(test, cmd.copy(), entry_point)
 
 
-def main(args) -> None:
+def main() -> None:
     root = Path(__file__).parent.resolve()
     print('Test root:', root)
     os.chdir(root)
@@ -190,13 +190,13 @@ def main(args) -> None:
     clone_git_repo(data['jcsdkRepo'], 'jcsdk')
 
     tests = data['tests']
-    if args.filter:
-        tests = [x for x in tests if x['name'] in args.filter]
+    if ARGS.filter:
+        tests = [x for x in tests if x['name'] in ARGS.filter]
         if not tests:
-            raise ValueError(f'No tests match the {args.filter} filter.')
+            raise ValueError(f'No tests match the {ARGS.filter} filter.')
 
     for t in tests:
-        execute_test(t, args)
+        execute_test(t)
 
 
 if __name__ == '__main__':
@@ -213,4 +213,6 @@ if __name__ == '__main__':
     parser.add_argument('--repeat-count', type=int, default=100,
                         help='Number profiling rounds (default 100)')
 
-    main(parser.parse_args())
+    ARGS = parser.parse_args()
+
+    main()
