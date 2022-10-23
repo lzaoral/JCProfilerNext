@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spoon.reflect.code.*;
+import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
@@ -209,8 +210,10 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
                 PM.getMethod("check", getFactory().createCtTypeReference(Short.TYPE)).getReference(),
                 trapFieldRead);
 
-        log.debug("Adding {} trap {} {}.",
-                trapField.getSimpleName(), where.toString().toLowerCase(), element.getPosition());
+        // handle position of implicit super() calls
+        final SourcePosition position = element.isImplicit() ? element.getParent().getPosition()
+                                                             : element.getPosition();
+        log.debug("Adding {} trap {} {}.", trapField.getSimpleName(), where.toString().toLowerCase(), position);
 
         return pmCall;
     }
