@@ -199,9 +199,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='JCProfilerNext integration test suite')
 
-    parser.add_argument('--min-jckit', action='store', dest='min_jckit',
+    parser.add_argument('--min-jckit',
                         help='Minimal JCKit version used during testing')
-    parser.add_argument('filter', nargs='*', action='store',
+    parser.add_argument('filter', nargs='*',
                         help='List of applet names (see ./test_data.json)')
 
     main(parser.parse_args())
