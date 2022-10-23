@@ -65,7 +65,8 @@ def modify_repo(test: Dict[str, Any]):
 
 
 def execute_cmd(cmd: List[str]) -> None:
-    for stage in STAGES:
+    stages = ['all'] if ARGS.card else STAGES
+    for stage in stages:
         stage_cmd = cmd.copy()
 
         if stage != 'all':
