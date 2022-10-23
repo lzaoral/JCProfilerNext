@@ -148,7 +148,7 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         # TODO: check format and contents of generated profiling reports
 
 
-def execute_test(test: Dict[str, Any], min_jckit: str) -> None:
+def execute_test(test: Dict[str, Any], args) -> None:
     print('Running test', test['name'])
 
     test['name'] = test['name'].replace(' ', '_')
@@ -157,12 +157,16 @@ def execute_test(test: Dict[str, Any], min_jckit: str) -> None:
 
     jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
 
+    min_jckit = args.min_jckit
     jckit_version = \
         min_jckit if min_jckit and min_jckit > test['jckit'] else test['jckit']
     jckit = Path(f'jcsdk/jc{jckit_version}_kit').absolute()
 
-    cmd = ['java', '-jar', str(jar), '--jckit', str(jckit), '--simulator',
+    cmd = ['java', '-jar', str(jar), '--jckit', str(jckit),
                                      '--repeat-count', '100']
+
+    if not args.card:
+        cmd.append('--simulator')
 
     if 'entryPoints' not in test:
         test_applet(test, cmd)
@@ -192,7 +196,7 @@ def main(args) -> None:
             raise ValueError(f'No tests match the {args.filter} filter.')
 
     for t in tests:
-        execute_test(t, args.min_jckit)
+        execute_test(t, args)
 
 
 if __name__ == '__main__':
@@ -203,5 +207,8 @@ if __name__ == '__main__':
                         help='Minimal JCKit version used during testing')
     parser.add_argument('filter', nargs='*',
                         help='List of applet names (see ./test_data.json)')
+
+    parser.add_argument('--card', action='store_true',
+                        help='Use a real card instead of a simulator')
 
     main(parser.parse_args())
