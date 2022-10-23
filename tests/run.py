@@ -187,7 +187,9 @@ def main(args) -> None:
 
     tests = data['tests']
     if args.filter:
-        tests = filter(lambda x: x['name'] in args.filter, tests)
+        tests = [x for x in tests if x['name'] in args.filter]
+        if not tests:
+            raise ValueError(f'No tests match the {args.filter} filter.')
 
     for t in tests:
         execute_test(t, args.min_jckit)
