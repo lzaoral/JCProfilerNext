@@ -180,6 +180,11 @@ function redrawGraph(evt) {
     // set click event handler
     const plotlyDiv = document.getElementById('plotly');
 
+    // get bin half of the bin size
+    // Unfortunately, the xbins.size key is stored only in the first histogram trace and not in the rest, so we have
+    // to obtain this value in advance.
+    const binSizeHalf = plotlyDiv._fullData[0].xbins.size / 2;
+
     // replace the event handler
     plotlyDiv.removeAllListeners('plotly_click');
     plotlyDiv.on('plotly_click', function (data) {
@@ -195,10 +200,7 @@ function redrawGraph(evt) {
             case 'histogram':
                 selectedInputs = graph.pointIndices.map(e => inputs[e]);
 
-                // Rather hack-ish and not very efficient but the input object does not contain the %{x}
-                // value from hovertemplates.
-                const binValues = graph.pointIndices.map(e => vals[e]);
-                msg = 'Bin: ' + Math.min(...binValues) + ' to ' + Math.max(...binValues) + '\n';
+                msg = 'Bin: ' + Math.ceil(graph.x - binSizeHalf) + ' to ' + Math.floor(graph.x + binSizeHalf) + '\n';
                 break;
             case 'bar':
                 selectedInputs = vals.reduce((res, e, i) => {
