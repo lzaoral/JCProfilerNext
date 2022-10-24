@@ -92,6 +92,21 @@ public class Main {
                         "Either --data-file or --data-regex options must be specified for the profiling stage!");
         }
 
+        // check that the current JDK can target given JavaCard version
+        final int compilationStage = Stage.compilation.ordinal();
+        if (args.mode != Mode.stats &&
+                args.startFrom.ordinal() <= compilationStage && compilationStage <= args.stopAfter.ordinal()) {
+            final String actualVersion = System.getProperty("java.version");
+            final String requiredVersion = args.jcSDK.getJavaVersion();
+
+            if ((actualVersion.matches("(9|10|11).*") && requiredVersion.matches("1\\.[0-5]")) ||
+                    (actualVersion.matches("1[^01.].*") && requiredVersion.matches("1\\.[0-6]")))
+                throw new UnsupportedOperationException(String.format(
+                        "JDK %s cannot be used to compile for JavaCard %s because javac %s cannot target Java %s.%n" +
+                        "Please, use an older JDK LTS release.",
+                        actualVersion, args.jcSDK.getRelease(), actualVersion, requiredVersion));
+        }
+
         // fail if --inst equals to JCProfilerUtil.INS_PERF_HANDLER
         if (args.inst == JCProfilerUtil.INS_PERF_HANDLER)
             throw new UnsupportedOperationException(String.format(
