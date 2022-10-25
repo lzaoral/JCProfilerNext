@@ -66,6 +66,8 @@ public abstract class AbstractProfiler {
 
     public static AbstractProfiler create(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
         switch (args.mode) {
+            case custom:
+                return new CustomProfiler(args, cardManager, spoon);
             case memory:
                 return new MemoryProfiler(args, cardManager, spoon);
             case time:
@@ -211,7 +213,6 @@ public abstract class AbstractProfiler {
             }
 
             profileImpl();
-            log.info("Collecting measurements complete.");
 
             // measure the time spent profiling
             final long endTimeMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
@@ -225,10 +226,7 @@ public abstract class AbstractProfiler {
             if (!unreachedTraps.isEmpty()) {
                 log.warn("Some traps were not always reached:");
                 unreachedTraps.forEach(System.out::println);
-                return;
             }
-
-            log.info("All traps reached correctly.");
         } catch (CardException e) {
             throw new RuntimeException(e);
         }

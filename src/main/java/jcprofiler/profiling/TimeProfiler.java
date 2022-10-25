@@ -67,6 +67,8 @@ public class TimeProfiler extends AbstractProfiler {
         } catch (CardException e) {
             throw new RuntimeException(e);
         }
+
+        log.info("Collecting measurements complete.");
     }
 
     private void setTrap(short trapID) throws CardException {

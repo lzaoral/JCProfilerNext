@@ -72,10 +72,9 @@ public class Main {
             if (args.customPM == null)
                 throw new UnsupportedOperationException("Option --custom-pm must be set in custom mode!");
 
-            // TODO: We may agree on a subset of customizable profiling strategies.
-            if (args.stopAfter.ordinal() > Stage.installation.ordinal())
+            if (args.stopAfter == Stage.visualisation)
                 throw new UnsupportedOperationException(
-                        "Profiling and visualisation of applet instrumented in custom mode are unsupported!");
+                        "Visualisation of applet instrumented in custom mode is unsupported!");
         }
 
         // validate --data-regex and --data-file
