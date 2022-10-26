@@ -270,7 +270,7 @@ public class Instrumenter {
 
         final Path csv = args.workDir.resolve("APIstatistics.csv");
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCSVFormat())) {
-            printer.printComment("package,class,member,frequency");
+            printer.printComment("package,type,member,frequency");
             for (Map.Entry<Triple<String, String, String>, Integer> pair : sp.getUsedReferences().entrySet()) {
                 final Triple<String, String, String> key = pair.getKey();
                 printer.printRecord(key.getLeft(), key.getMiddle(), key.getRight(), pair.getValue());

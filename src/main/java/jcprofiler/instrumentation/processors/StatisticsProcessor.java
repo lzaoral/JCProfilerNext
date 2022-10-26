@@ -6,8 +6,8 @@ import org.apache.commons.lang3.tuple.Triple;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtTypeAccess;
-import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.*;
 
 import java.util.Collections;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     // ignore types defined in JavaCard's java.lang package
-    private static final List<String> javaCardLangPkg = Collections.unmodifiableList(Stream.of(
+    private static final List<String> javaCardLangTypes = Collections.unmodifiableList(Stream.of(
             "Exception", "Object", "Throwable", "ArithmeticException", "ArrayIndexOutOfBoundsException",
             "ArrayStoreException", "ClassCastException", "Exception", "IndexOutOfBoundsException",
             "NegativeArraySizeException", "NullPointerException", "RuntimeException", "SecurityException").
@@ -36,8 +36,8 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     @Override
     public void init() {
         super.init();
-        pkgs = getFactory().getModel().filterChildren(CtClass.class::isInstance)
-                .map((CtClass<?> c) -> c.getPackage().getReference()).list();
+        pkgs = getFactory().getModel().filterChildren(CtType.class::isInstance)
+                .map((CtType<?> c) -> c.getPackage().getReference()).list();
     }
 
     @Override
@@ -89,16 +89,16 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
         add(declTypeRef, fieldRef.getSimpleName());
     }
 
-    private void add(final CtTypeReference<?> cls, final String member) {
-        final String qualifiedName = cls.getQualifiedName();
-        if (javaCardLangPkg.stream().anyMatch(qualifiedName::startsWith))
+    private void add(final CtTypeReference<?> type, final String member) {
+        final String qualifiedName = type.getQualifiedName();
+        if (javaCardLangTypes.stream().anyMatch(qualifiedName::startsWith))
             return;
 
-        final CtPackageReference pkg = cls.getPackage();
+        final CtPackageReference pkg = type.getPackage();
         if (pkgs.contains(pkg))
             return;
 
-        usedReferences.compute(new ImmutableTriple<>(pkg.getQualifiedName(), cls.getSimpleName(), member),
+        usedReferences.compute(new ImmutableTriple<>(pkg.getQualifiedName(), type.getSimpleName(), member),
                 (k, v) -> v == null ? 1 : v + 1);
     }
 }
