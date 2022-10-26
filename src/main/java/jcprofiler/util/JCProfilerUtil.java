@@ -338,7 +338,10 @@ public class JCProfilerUtil {
 
     // CSV
     public static CSVFormat getCSVFormat() {
-        return Builder.create(CSVFormat.DEFAULT).setCommentMarker('#').build();
+        return Builder.create(CSVFormat.DEFAULT)
+                .setCommentMarker('#')
+                .setRecordSeparator(System.lineSeparator())
+                .build();
     }
 
     public static String getTimeUnitSymbol(final TimeUnit unit) {
