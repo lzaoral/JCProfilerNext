@@ -10,22 +10,19 @@ import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     // ignore types defined in JavaCard's java.lang package
-    private static final List<String> javaCardLangTypes = Collections.unmodifiableList(Stream.of(
+    private static final Set<String> javaCardLangTypes = Collections.unmodifiableSet(Stream.of(
             "Exception", "Object", "Throwable", "ArithmeticException", "ArrayIndexOutOfBoundsException",
             "ArrayStoreException", "ClassCastException", "Exception", "IndexOutOfBoundsException",
             "NegativeArraySizeException", "NullPointerException", "RuntimeException", "SecurityException").
-            map(x -> "java.lang." + x).collect(Collectors.toList()));
+            map(x -> "java.lang." + x).collect(Collectors.toSet()));
 
-    private List<CtPackageReference> pkgs;
+    private Set<CtPackageReference> pkgs = new HashSet<>();
 
     public SortedMap<Triple<String, String, String>, Integer> getUsedReferences() {
         return Collections.unmodifiableSortedMap(usedReferences);
@@ -36,8 +33,10 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     @Override
     public void init() {
         super.init();
-        pkgs = getFactory().getModel().filterChildren(CtType.class::isInstance)
-                .map((CtType<?> c) -> c.getPackage().getReference()).list();
+
+        // populate pkgs set
+        getFactory().getModel().filterChildren(CtType.class::isInstance)
+                .map((CtType<?> c) -> c.getPackage().getReference()).forEach(pkgs::add);
     }
 
     @Override
