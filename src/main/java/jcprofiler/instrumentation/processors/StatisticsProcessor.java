@@ -88,7 +88,7 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
 
     private void add(final CtTypeReference<?> type, final String member) {
         final String qualifiedName = type.getQualifiedName();
-        if (javaCardLangTypes.stream().anyMatch(qualifiedName::startsWith))
+        if (javaCardLangTypes.contains(qualifiedName))
             return;
 
         final CtPackageReference pkg = type.getPackage();
