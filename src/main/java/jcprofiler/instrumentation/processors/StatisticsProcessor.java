@@ -41,6 +41,11 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     }
 
     @Override
+    public boolean isToBeProcessed(final CtReference ref) {
+        return ref instanceof CtTypeReference || ref instanceof CtFieldReference || ref instanceof CtExecutableReference;
+    }
+
+    @Override
     public void process(final CtReference ref) {
         if (ref instanceof CtTypeReference) {
             final CtTypeReference<?> typeRef = (CtTypeReference<?>) ref;
@@ -64,23 +69,24 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
                 return;
 
             add(typeRef, /* member */ "");
+            return;
         }
 
         if (ref instanceof CtExecutableReference) {
             final CtExecutableReference<?> execRef = ((CtExecutableReference<?>) ref);
             add(execRef.getDeclaringType(), execRef.getSignature());
+            return;
         }
 
-        if (ref instanceof CtFieldReference) {
-            final CtFieldReference<?> fieldRef = (CtFieldReference<?>) ref;
-            final CtTypeReference<?> declTypeRef = fieldRef.getDeclaringType();
+        // ref instanceof CtFieldReference
+        final CtFieldReference<?> fieldRef = (CtFieldReference<?>) ref;
+        final CtTypeReference<?> declTypeRef = fieldRef.getDeclaringType();
 
-            // skip e.g. int[].length
-            if (declTypeRef.isPrimitive() || declTypeRef.isArray())
-                return;
+        // skip e.g. int[].length
+        if (declTypeRef.isPrimitive() || declTypeRef.isArray())
+            return;
 
-            add(declTypeRef, fieldRef.getSimpleName());
-        }
+        add(declTypeRef, fieldRef.getSimpleName());
     }
 
     private void add(final CtTypeReference<?> cls, final String member) {
