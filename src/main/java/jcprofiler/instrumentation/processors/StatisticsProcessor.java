@@ -71,7 +71,14 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
 
         if (ref instanceof CtExecutableReference) {
             final CtExecutableReference<?> execRef = ((CtExecutableReference<?>) ref);
-            add(execRef.getDeclaringType(), execRef.getSignature());
+            final CtTypeReference<?> declTypeRef = execRef.getDeclaringType();
+
+            String signature = execRef.getSignature();
+            if (execRef.isConstructor())
+                // Spoon appends a fully qualified package name to the constructor signature
+                signature = signature.substring(declTypeRef.getPackage().getQualifiedName().length() + /*.*/ 1);
+
+            add(declTypeRef, signature);
             return;
         }
 
