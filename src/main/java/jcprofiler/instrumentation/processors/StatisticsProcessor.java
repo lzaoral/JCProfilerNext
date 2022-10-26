@@ -63,9 +63,7 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
                 return;
 
             // ignore types referenced in methods, fields and local variable accesses
-            if (parent instanceof CtFieldReference || parent instanceof CtExecutableReference ||
-                    parent instanceof CtLocalVariableReference || parent instanceof CtParameterReference ||
-                    parent instanceof CtCatchVariableReference)
+            if (parent instanceof CtVariableReference || parent instanceof CtExecutableReference)
                 return;
 
             add(typeRef, /* member */ "");
