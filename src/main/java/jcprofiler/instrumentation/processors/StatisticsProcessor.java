@@ -25,7 +25,7 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
             "NegativeArraySizeException", "NullPointerException", "RuntimeException", "SecurityException").
             map(x -> "java.lang." + x).collect(Collectors.toList()));
 
-    private String pkgName;
+    private List<CtPackageReference> pkgs;
 
     public SortedMap<Triple<String, String, String>, Integer> getUsedReferences() {
         return Collections.unmodifiableSortedMap(usedReferences);
@@ -36,8 +36,8 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     @Override
     public void init() {
         super.init();
-        pkgName = getFactory().getModel().filterChildren(CtClass.class::isInstance)
-                .map((CtClass<?> c) -> c.getPackage().getQualifiedName()).first();
+        pkgs = getFactory().getModel().filterChildren(CtClass.class::isInstance)
+                .map((CtClass<?> c) -> c.getPackage().getReference()).list();
     }
 
     @Override
@@ -94,10 +94,11 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
         if (javaCardLangPkg.stream().anyMatch(qualifiedName::startsWith))
             return;
 
-        if (qualifiedName.startsWith(pkgName))
+        final CtPackageReference pkg = cls.getPackage();
+        if (pkgs.contains(pkg))
             return;
 
-        usedReferences.compute(new ImmutableTriple<>(cls.getPackage().getQualifiedName(), cls.getSimpleName(), member),
+        usedReferences.compute(new ImmutableTriple<>(pkg.getQualifiedName(), cls.getSimpleName(), member),
                 (k, v) -> v == null ? 1 : v + 1);
     }
 }
