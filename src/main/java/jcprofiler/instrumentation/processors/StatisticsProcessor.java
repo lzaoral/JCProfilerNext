@@ -57,7 +57,7 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
             final CtElement parent = typeRef.getParent();
 
             // ignore types of expressions (e.g. assignment or field access) except for explicit type accesses
-            // (e.g. in instanceof, when accessing a static field or method or in type casts)
+            // (e.g. in instanceof, when accessing a static field or static method or in type casts)
             if (parent instanceof CtExpression && !(parent instanceof CtTypeAccess) &&
                     !((CtExpression<?>)parent).getTypeCasts().contains(typeRef))
                 return;
