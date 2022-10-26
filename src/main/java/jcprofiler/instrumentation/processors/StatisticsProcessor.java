@@ -94,12 +94,11 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     }
 
     private void add(final CtTypeReference<?> type, final String member) {
-        final String qualifiedName = type.getQualifiedName();
-        if (javaCardLangTypes.contains(qualifiedName))
-            return;
-
         final CtPackageReference pkg = type.getPackage();
         if (pkgs.contains(pkg))
+            return;
+
+        if (javaCardLangTypes.contains(type.getQualifiedName()))
             return;
 
         usedReferences.compute(new ImmutableTriple<>(pkg.getQualifiedName(), type.getSimpleName(), member),
