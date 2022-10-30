@@ -71,15 +71,14 @@ public class JCProfilerUtil {
             typeRef = typeRef.getSuperclass();
         }
 
+        final CtTypeReference<APDU> APDURef = type.getFactory().createCtTypeReference(APDU.class);
         return getInstallMethod(type) != null &&
-               inheritanceChain.stream().allMatch(CtTypeInformation::isClass) &&
+               inheritanceChain.stream().allMatch(CtTypeReference::isClass) &&
                inheritanceChain.stream().anyMatch(c -> c.getQualifiedName().equals("javacard.framework.Applet")) &&
                inheritanceChain.stream().anyMatch(c -> {
-                   final CtTypeReference<?> APDURef = c.getFactory().createCtTypeReference(APDU.class);
-                   final CtMethod<APDU> processMethod = c.getTypeDeclaration().getMethod("process", APDURef);
-
+                   final CtMethod<?> processMethod = c.getTypeDeclaration().getMethod("process", APDURef);
                    return processMethod != null && !processMethod.isAbstract() &&
-                          processMethod.getType().equals(c.getFactory().createCtTypeReference(Void.TYPE));
+                          processMethod.getType().equals(c.getFactory().Type().voidPrimitiveType());
                });
 
     }
@@ -115,7 +114,7 @@ public class JCProfilerUtil {
                 throw new RuntimeException(String.format(
                         "More entry points detected but none was specified to be used! " +
                         "Use the -e/--entry-point argument.%nDetected entry points: %s",
-                        entryPoints.stream().map(CtTypeInformation::getQualifiedName).collect(Collectors.toList())));
+                        entryPoints.stream().map(CtType::getQualifiedName).collect(Collectors.toList())));
 
             return entryPoints.get(0);
         }
