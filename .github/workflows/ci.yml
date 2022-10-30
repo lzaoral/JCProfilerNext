@@ -47,4 +47,6 @@ jobs:
         run: ./gradlew build
 
       - name: Execute profiling tests
-        run: python3 tests/run.py --min-jckit '${{ matrix.min_jckit }}'
+        run: |
+          python3 tests/run.py --stats
+          python3 tests/run.py --min-jckit '${{ matrix.min_jckit }}'
