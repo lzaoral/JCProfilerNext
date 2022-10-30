@@ -1,6 +1,7 @@
 {
     "jcsdkRepo": "https://github.com/martinpaljak/oracle_javacard_sdks",
     "gpapiRepo": "https://github.com/OpenJavaCard/globalplatform-exports",
+    "visaJar": "https://deadcode.me/mvn/visa/openplatform/javacard/1.0/javacard-1.0.jar",
     "tests": [
         {
             "name": "ISO Driving License",

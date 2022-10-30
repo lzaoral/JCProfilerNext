@@ -5,6 +5,7 @@ from shutil import copytree, rmtree
 from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict, List
+from urllib.request import Request, urlopen
 
 import argparse
 import json
@@ -56,6 +57,16 @@ def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
 
     print(target, 'cloned successfully')
     return
+
+
+def download_file(url: str, target: str) -> None:
+    if os.path.exists(target):
+        return
+
+    print('Downloading', url)
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urlopen(req) as res, open(target, 'wb') as f:
+        f.write(res.read())
 
 
 def modify_repo(test: Dict[str, Any]):
@@ -203,6 +214,10 @@ def execute_test(test: Dict[str, Any]) -> None:
                      '/gpapi-globalplatform.jar').absolute()
         cmd += ['--jar', str(gppro)]
 
+    if 'visa' in test:
+        visa = Path('visa.jar').absolute()
+        cmd += ['--jar', str(visa)]
+
     if ARGS.stats:
         get_stats(test, cmd)
         return
@@ -235,6 +250,7 @@ def main() -> None:
 
     clone_git_repo(data['jcsdkRepo'], 'jcsdk', reclone=False)
     clone_git_repo(data['gpapiRepo'], 'gpapi', reclone=False)
+    download_file(data['visaJar'], 'visa.jar')
 
     tests = data['tests']
     if ARGS.filter:
