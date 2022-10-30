@@ -292,7 +292,7 @@ public class Instrumenter {
                 printer.printComment("");
             }
 
-            printer.printComment("package,type,member,frequency");
+            printer.printComment("package/outer type,type,member,frequency");
             for (Map.Entry<Triple<String, String, String>, Integer> pair : sp.getUsedReferences().entrySet()) {
                 final Triple<String, String, String> key = pair.getKey();
                 printer.printRecord(key.getLeft(), key.getMiddle(), key.getRight(), pair.getValue());

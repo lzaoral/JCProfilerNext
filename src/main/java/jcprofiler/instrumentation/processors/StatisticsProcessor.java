@@ -75,9 +75,13 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
             final CtTypeReference<?> declTypeRef = execRef.getDeclaringType();
 
             String signature = execRef.getSignature();
-            if (execRef.isConstructor())
-                // Spoon appends a fully qualified package name to the constructor signature
-                signature = signature.substring(declTypeRef.getPackage().getQualifiedName().length() + /*.*/ 1);
+            if (execRef.isConstructor()) {
+                // Spoon appends a fully qualified outer class or package name to the constructor signature.
+                final String prefix = declTypeRef.getPackage() != null
+                                        ? declTypeRef.getPackage().getQualifiedName()
+                                        : declTypeRef.getDeclaringType().getQualifiedName();
+                signature = signature.substring(prefix.length() + /*. or $*/ 1);
+            }
 
             add(declTypeRef, signature);
             return;
@@ -95,6 +99,11 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     }
 
     private void add(final CtTypeReference<?> type, final String member) {
+        // deal with inner classes
+        CtTypeReference<?> outerType = type;
+        while (outerType.getPackage() == null)
+            outerType = outerType.getDeclaringType();
+
         final CtPackageReference pkg = type.getPackage();
         if (pkgs.contains(pkg))
             return;
@@ -102,7 +111,11 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
         if (javaCardLangTypes.contains(type.getQualifiedName()))
             return;
 
-        usedReferences.compute(new ImmutableTriple<>(pkg.getQualifiedName(), type.getSimpleName(), member),
+        final String parentQualifiedName = type != outerType
+                                               ? type.getDeclaringType().getQualifiedName()
+                                               : pkg.getQualifiedName();
+
+        usedReferences.compute(new ImmutableTriple<>(parentQualifiedName, type.getSimpleName(), member),
                 (k, v) -> v == null ? 1 : v + 1);
     }
 }
