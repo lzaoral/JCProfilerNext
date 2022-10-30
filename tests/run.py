@@ -79,17 +79,18 @@ def modify_repo(test: Dict[str, Any]):
                     f.write(pattern.sub(replacement, lines))
 
 
+def execute_cmd(cmd: List[str], stages: List[str] = STAGES) -> None:
+    if ARGS.card or ARGS.stats:
+        stages = ['all']
 
-def execute_cmd(cmd: List[str]) -> None:
-    stages = ['all'] if ARGS.card else STAGES
     for stage in stages:
         stage_cmd = cmd.copy()
 
         if stage != 'all':
             stage_cmd += ['--start-from', str(stage)]
             stage_cmd += ['--stop-after', str(stage)]
+            print('Excecuting stage', stage)
 
-        print('Excecuting stage', stage)
         print('Command: ', end='')
         print(" ".join(stage_cmd), colour=BOLD_YELLOW, flush=True)
         ret = call(stage_cmd)
@@ -106,6 +107,15 @@ def prepare_workdir(test: Dict[str, Any], subtest_name: str) -> Path:
     copytree(Path(test['name']) / test['path'], test_dir,
              dirs_exist_ok=True)
     return test_dir
+
+
+def get_stats(test: Dict[str, Any], cmd: List[str]) -> None:
+    ctor_cmd = cmd.copy()
+    test_dir = prepare_workdir(test, 'stats')
+
+    ctor_cmd += ['--work-dir', str(test_dir)]
+    ctor_cmd += ['--mode', 'stats']
+    execute_cmd(ctor_cmd)
 
 
 def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str) -> None:
@@ -126,6 +136,10 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         test_desc = entry_point
         cmd += ['--entry-point', entry_point['name']]
         dir_prefix = entry_point['name'] + '_'
+
+    if 'subtests' not in test_desc:
+        # nothing to do
+        return
 
     if 'resetInst' in test_desc:
         cmd += ['--reset-inst', test_desc['resetInst']]
@@ -167,11 +181,13 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
 
 
 def execute_test(test: Dict[str, Any]) -> None:
+    if not ARGS.stats and 'entryPoints' not in test and 'subtests' not in test:
+        return
+
     print('Running test', test['name'])
 
     test['name'] = test['name'].replace(' ', '_')
     clone_git_repo(test['repo'], test['name'])
-    modify_repo(test)
 
     jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
 
@@ -180,8 +196,15 @@ def execute_test(test: Dict[str, Any]) -> None:
         min_jckit if min_jckit and min_jckit > test['jckit'] else test['jckit']
     jckit = Path(f'jcsdk/jc{jckit_version}_kit').absolute()
 
-    cmd = ['java', '-jar', str(jar), '--jckit', str(jckit),
-                                     '--repeat-count', str(ARGS.repeat_count)]
+    cmd = ['java', '-jar', str(jar), '--jckit', str(jckit)]
+
+    if ARGS.stats:
+        get_stats(test, cmd)
+        return
+
+    cmd += ['--repeat-count', str(ARGS.repeat_count)]
+
+    modify_repo(test)
 
     if not ARGS.card:
         cmd.append('--simulator')
@@ -230,6 +253,9 @@ if __name__ == '__main__':
                         help='Use a real card instead of a simulator')
     parser.add_argument('--repeat-count', type=int, default=100,
                         help='Number profiling rounds (default 100)')
+
+    parser.add_argument('--stats', action='store_true',
+                        help='Collect API usage statistics')
 
     ARGS = parser.parse_args()
 
