@@ -56,10 +56,7 @@ public class TimeVisualiser extends AbstractVisualiser {
 
                 // replace outliers with null
                 double zValue = Math.abs(l - mean) / standardDeviation;
-                if (inputs.size() < 100000 && zValue <= 3.)
-                    return l;
-
-                return zValue <= 2. ? l : null;
+                return zValue <= 3. ? l : null;
             }).collect(Collectors.toList());
 
             filteredMeasurements.put(k, filteredValues);
