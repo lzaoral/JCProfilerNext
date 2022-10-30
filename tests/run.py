@@ -198,6 +198,11 @@ def execute_test(test: Dict[str, Any]) -> None:
 
     cmd = ['java', '-jar', str(jar), '--jckit', str(jckit)]
 
+    if 'gppro' in test:
+        gppro = Path(f'gpapi/org.globalplatform-{test["gppro"]}' +
+                     '/gpapi-globalplatform.jar').absolute()
+        cmd += ['--jar', str(gppro)]
+
     if ARGS.stats:
         get_stats(test, cmd)
         return
@@ -229,6 +234,7 @@ def main() -> None:
         data = json.load(f)
 
     clone_git_repo(data['jcsdkRepo'], 'jcsdk', reclone=False)
+    clone_git_repo(data['gpapiRepo'], 'gpapi', reclone=False)
 
     tests = data['tests']
     if ARGS.filter:
