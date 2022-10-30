@@ -441,7 +441,8 @@ class JCProfilerUtilTest {
                 "   public void process(javacard.framework.APDU apdu) {}" +
                 "}";
         final SpoonAPI spoon = prepareSpoon(input);
-        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+        final CtClass<?> cls = spoon.getModel().filterChildren(
+                (CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
 
         assertTrue(JCProfilerUtil.isTypeEntryPoint(cls));
     }
@@ -455,7 +456,8 @@ class JCProfilerUtilTest {
                 "}" +
                 "public class Entry extends Test {}";
         final SpoonAPI spoon = prepareSpoon(input);
-        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+        final CtClass<?> cls = spoon.getModel().filterChildren(
+                (CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
 
         assertTrue(JCProfilerUtil.isTypeEntryPoint(cls));
     }
@@ -466,7 +468,8 @@ class JCProfilerUtilTest {
                 "public class Test extends javacard.framework.Applet {}" +
                 "public class Entry extends Test {}";
         final SpoonAPI spoon = prepareSpoon(input);
-        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+        final CtClass<?> cls = spoon.getModel().filterChildren(
+                (CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
 
         assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
     }
@@ -477,7 +480,8 @@ class JCProfilerUtilTest {
                 "public abstract class Test extends javacard.framework.Applet {}" +
                 "public abstract class Entry extends Test {}";
         final SpoonAPI spoon = prepareSpoon(input);
-        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+        final CtClass<?> cls = spoon.getModel().filterChildren(
+                (CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
 
         assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
     }
