@@ -45,9 +45,12 @@ public class Main {
         // Log basic info
         log.info("Found JavaCard SDK {} ({})", args.jcSDK.getRelease(), args.jcSDK.getRoot().getAbsolutePath());
         log.info("Working directory: {}", args.workDir);
-        log.info("Start from: {}", args.startFrom);
-        log.info("Stop after: {}", args.stopAfter);
         log.info("Executed in {} mode.", args.mode);
+
+        if (args.mode != Mode.stats) {
+            log.info("Start from: {}", args.startFrom);
+            log.info("Stop after: {}", args.stopAfter);
+        }
 
         try {
             validateArgs(args);
