@@ -12,6 +12,7 @@ import json
 import os
 import platform
 import re
+import stat
 import sys
 
 
@@ -49,7 +50,11 @@ def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
     if os.path.exists(target):
         if not reclone:
             return
-        rmtree(target)
+
+        def remove_readonly(func, path, _):
+            os.chmod(path, stat.S_IWRITE)
+            func(path)
+        rmtree(target, onerror=remove_readonly)
 
     ret = call(['git', 'clone', '--depth=1', repo, target])
     if ret != 0:
