@@ -12,6 +12,10 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.jar.JarFile;
+
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
@@ -94,10 +98,11 @@ public class Main {
                         "Either --data-file or --data-regex options must be specified for the profiling stage!");
         }
 
-        // check that the current JDK can target given JavaCard version
+        // validate compilation stage
         final int compilationStage = Stage.compilation.ordinal();
         if (args.mode != Mode.stats &&
                 args.startFrom.ordinal() <= compilationStage && compilationStage <= args.stopAfter.ordinal()) {
+            // check that the current JDK can target given JavaCard version
             final String actualVersion = System.getProperty("java.version");
             final String requiredVersion = args.jcSDK.getJavaVersion();
 
@@ -107,6 +112,18 @@ public class Main {
                         "JDK %s cannot be used to compile for JavaCard %s because javac %s cannot target Java %s.%n" +
                         "Please, use an older JDK LTS release.",
                         actualVersion, args.jcSDK.getRelease(), actualVersion, requiredVersion));
+
+            // check that dependency JAR archives contain corresponding exp files
+            for (final Path jarPath : args.jars) {
+                try (final JarFile jar = new JarFile(jarPath.toFile())) {
+                    if (jar.stream().noneMatch(j -> j.getName().toLowerCase().endsWith(".exp")))
+                        throw new RuntimeException(String.format(
+                                "Dependency %s does not contain corresponding EXP files!%n" +
+                                "Please, add them to this archive!", jarPath));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         // fail if --inst equals to JCProfilerUtil.INS_PERF_HANDLER
