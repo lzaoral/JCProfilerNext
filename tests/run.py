@@ -85,9 +85,9 @@ def modify_repo(test: Dict[str, Any]):
             for file in Path(test['name']).glob(glb):
                 print('Replacing lines matching', pattern_str, 'with',
                       replacement, 'in', file)
-                with open(file, 'r') as f:
+                with open(file, 'r', encoding='utf8', errors='ignore') as f:
                     lines = f.read()
-                with open(file, 'w') as f:
+                with open(file, 'w', encoding='utf8') as f:
                     f.write(pattern.sub(replacement, lines))
 
 
