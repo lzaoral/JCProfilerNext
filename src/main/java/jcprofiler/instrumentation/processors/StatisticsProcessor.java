@@ -7,6 +7,7 @@ import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtTypeAccess;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.*;
 
@@ -35,8 +36,8 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
         super.init();
 
         // populate pkgs set
-        getFactory().getModel().filterChildren(CtType.class::isInstance)
-                .map((CtType<?> c) -> c.getPackage().getReference()).forEach(pkgs::add);
+        getFactory().getModel().<CtType<?>>getElements(CtType.class::isInstance).stream()
+                .map(CtType::getPackage).filter(Objects::nonNull).map(CtPackage::getReference).forEach(pkgs::add);
     }
 
     @Override
