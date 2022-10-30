@@ -26,6 +26,30 @@
             "subtests": []
         },
         {
+            "name": "SIC",
+            "repo": "https://github.com/nversbra/SIC",
+            "path": "workspace/JavaCard/src",
+            "jckit": "222",
+            "windows": false,
+            "fixup": [
+                {
+                    "pattern": "\\[([\\w.()]+\\s*[+\\-*\\\\]\\s*[\\w.()]+.*)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "workspace/JavaCard/src/be/msec/smartcard/IdentityCard.java"
+                    ]
+                },
+                {
+                    "pattern": "(lhour - delta)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "workspace/JavaCard/src/be/msec/smartcard/IdentityCard.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
             "name": "BiometricAuthentification",
             "repo": "https://github.com/albertocarp/BiometricAuthentification",
             "path": "sid",
@@ -105,6 +129,22 @@
             "subtests": []
         },
         {
+            "name": "Yubisec",
+            "repo": "https://github.com/cayennegraphics/Yubisec",
+            "path": "Yubisec/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "\\[(offs\\s*\\+\\s*i)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "Yubisec/src/com/cayennegraphics/yubisec/Yubisec.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
             "name": "JavaCard ePurse",
             "repo": "https://github.com/tomirio619/hw-epurse",
             "path": "src/ePurse",
@@ -176,6 +216,29 @@
             "repo": "https://github.com/JavaCardOS/OpenEMV",
             "path": "OpenEMV/src",
             "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "emv_applet",
+            "repo": "https://github.com/tiosolid/emv_applet",
+            "path": "emv/src",
+            "jckit": "221",
+            "fixup": [
+                {
+                    "pattern": "(offset\\s*\\+\\s*1)\\]",
+                    "replacement": "(\\1)]",
+                    "files": [
+                        "emv/src/smart/Crypto.java"
+                    ]
+                },
+                {
+                    "pattern": "(apdu_size\\s*\\+\\s*1)\\]",
+                    "replacement": "(short)(\\1)]",
+                    "files": [
+                        "emv/src/smart/Log.java"
+                    ]
+                }
+            ],
             "subtests": []
         },
         {
@@ -272,6 +335,22 @@
             "repo": "https://github.com/Yubico/ykneo-openpgp",
             "path": "applet/src",
             "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "eHealthCard",
+            "repo": "https://github.com/gabriellewp/eHealthCard",
+            "path": "src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "\\[([\\w.()]+\\s*[+\\-*\\\\]\\s*[\\w.()]+[^[]*?)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "src/readwritets1/ReadWriteTS1.java"
+                    ]
+                }
+            ],
             "subtests": []
         },
         {
@@ -378,6 +457,202 @@
             "subtests": []
         },
         {
+            "name": "java-card-desfire-emulation",
+            "repo": "https://github.com/SakaZulu/java-card-desfire-emulation",
+            "path": "java-card-desfire-emulation/Desfire/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "import org.bouncycastle.jce.interfaces.ConfigurableProvider;",
+                    "replacement": "",
+                    "files": [
+                        "java-card-desfire-emulation/Desfire/src/des/DesfireCard.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "Tag4",
+            "repo": "https://github.com/Tordensky/Tag4",
+            "path": "src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "(offset\\s*\\+\\s*lenght)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "src/tag/Tag4.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "EVIV-MP2JavaCard",
+            "repo": "https://github.com/EVIVoting/EVIV",
+            "path": "MP2JavaCard/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "\\[(a.length\\s*-\\s*1)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "MP2JavaCard/src/mp2/MP3MathUti.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "EVIV-MP3JavaCard",
+            "repo": "https://github.com/EVIVoting/EVIV",
+            "path": "MP3JavaCard/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "\\[(a.length\\s*-\\s*1)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "MP3JavaCard/src/mp3/MP3MathUti.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "PBOCLicenseCardApp",
+            "repo": "https://github.com/FourTree/LicenseCardApp",
+            "path": "LicenseCardApp/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "\\[(mlength\\s*-\\s*1)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "LicenseCardApp/src/com/icfcc/license/LicenseApp.java",
+                        "LicenseCardApp/src/com/icfcc/license/SignatureApp.java"
+                    ]
+                },
+                {
+                    "pattern": "\\[(a..Off\\s*\\+\\s*i)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "LicenseCardApp/src/com/icfcc/license/SignatureApp.java"
+                    ]
+                }
+            ],
+            "entryPoints": [
+                {
+                    "name": "com.icfcc.license.LicenseApp",
+                    "subtests": []
+                },
+                {
+                    "name": "com.icfcc.license.SignatureApp",
+                    "subtests": []
+                },
+                {
+                    "name": "com.icfcc.license.VerifyApp",
+                    "subtests": []
+                }
+            ]
+        },
+        {
+            "name": "MQTT-SCACAuth",
+            "repo": "https://github.com/EBuetas78/MQTT-SCACAuth",
+            "path": "SCACAuth_Applets_v2/src",
+            "jckit": "304",
+            "fixup": [
+                {
+                    "pattern": "i<(longitud.*);",
+                    "replacement": "i<(short)(\\1);",
+                    "files": [
+                        "SCACAuth_Applets_v2/src/uned/ebs/scacauth/SCACAuth.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "tem_fw",
+            "repo": "https://github.com/csail/tem_fw",
+            "path": "src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "(\\w+(?:Bytes|Size|Offset)\\s*[+-]\\s*\\w+(?:Bytes|Size|Offset)(?:\\s*[+-]\\s*\\d+)?)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "src/edu/mit/csail/tc/TEMApplet.java",
+                        "src/edu/mit/csail/tc/TEMCrypto.java"
+                    ]
+                },
+                {
+                    "pattern": "(\\(free.*?\\))( [!=]= 0)",
+                    "replacement": "(short)(\\1)\\2",
+                    "files": [
+                        "src/edu/mit/csail/tc/TEMStore.java"
+                    ]
+                },
+                {
+                    "pattern": "\\[(\\w+\\s*>>\\s*\\w+)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "src/edu/mit/csail/tc/TEMStore.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "SmartMeterAggregator",
+            "repo": "https://github.com/adityasawhney/SmartMeterIQ",
+            "path": "card/SmartMeterAggregator/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "import javacardx\\.framework",
+                    "replacement": "import javacard.framework",
+                    "files": [
+                        "card/SmartMeterAggregator/src/edu/colorado/aos/aggregator/SmartMeterAggregator.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "SmartMeterBilling",
+            "repo": "https://github.com/adityasawhney/SmartMeterIQ",
+            "path": "card/SmartMeterBilling/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "import javacardx\\.framework",
+                    "replacement": "import javacard.framework",
+                    "files": [
+                        "card/SmartMeterBilling/src/edu/colorado/aos/SmartMeterBilling.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "SmartMeterDataStore",
+            "repo": "https://github.com/adityasawhney/SmartMeterIQ",
+            "path": "card/SmartMeterDataStore/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "import javacardx\\.framework",
+                    "replacement": "import javacard.framework",
+                    "files": [
+                        "card/SmartMeterDataStore/src/edu/coloado/aos/datastore/SmartMeterDataStore.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
             "name": "T101-Devhub - BrainPoolECCTest",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/BrainPoolECCTest/src",
@@ -390,6 +665,21 @@
             "path": "Samples/CertStore/src",
             "jckit": "222",
             "subtests": []
+        },
+        {
+            "name": "tpm2-se-applet",
+            "repo": "https://github.com/mobilesec/tpm2-se-applet",
+            "path": "TPM2Applet/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "(i\\s*\\/\\s*8)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "TPM2Applet/src/at/usmile/se/tpm/TPM.java"
+                    ]
+                }
+            ]
         },
         {
             "name": "upsc",
