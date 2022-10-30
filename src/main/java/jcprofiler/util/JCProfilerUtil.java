@@ -58,6 +58,7 @@ public class JCProfilerUtil {
     *   1. It inherits from the javacard.framework.Applet abstract class,
     *   2. At least one of the classes in the inheritance chain implements
     *      the void process(javacard.framework.APDU) method.
+    *   3. It implements the static void install(byte[] bArray, short bOffset, byte bLength) method.
     *
     * @param type - type to be checked
     * @return true if the type in an applet entry point otherwise false
@@ -70,7 +71,8 @@ public class JCProfilerUtil {
             typeRef = typeRef.getSuperclass();
         }
 
-        return inheritanceChain.stream().allMatch(CtTypeInformation::isClass) &&
+        return getInstallMethod(type) != null &&
+               inheritanceChain.stream().allMatch(CtTypeInformation::isClass) &&
                inheritanceChain.stream().anyMatch(c -> c.getQualifiedName().equals("javacard.framework.Applet")) &&
                inheritanceChain.stream().anyMatch(c -> {
                    final CtTypeReference<?> APDURef = c.getFactory().createCtTypeReference(APDU.class);
@@ -79,6 +81,28 @@ public class JCProfilerUtil {
                    return processMethod != null && !processMethod.isAbstract() &&
                           processMethod.getType().equals(c.getFactory().createCtTypeReference(Void.TYPE));
                });
+
+    }
+
+    /**
+     * Checks that the type contains the public static void install(byte[] bArray, short bOffset, byte bLength)
+     * method and returns its instance.
+     *
+     * @param type to be checked
+     * @return the given method instance if found, otherwise null
+     */
+    public static CtMethod<?> getInstallMethod(final CtType<?> type) {
+        // get public static void install(byte[] bArray, short bOffset, byte bLength) throws ISOException
+        final CtTypeReference<Byte> byteRef = type.getFactory().Type().bytePrimitiveType();
+        final CtMethod<?> installMethod = type.getMethod("install",
+                type.getFactory().createArrayReference(byteRef), type.getFactory().Type().shortPrimitiveType(),
+                byteRef);
+
+        if (installMethod == null || !installMethod.isStatic() || !installMethod.isPublic() ||
+                !installMethod.getType().equals(type.getFactory().Type().voidPrimitiveType()))
+            return null;
+
+        return installMethod;
     }
 
     public static CtClass<?> getEntryPoint(final SpoonAPI spoon, final String className) {
@@ -139,12 +163,7 @@ public class JCProfilerUtil {
     public static CtConstructor<?> getProfiledConstructor(final SpoonAPI spoon, final String entryPoint,
                                                           final String constructorName) {
         final CtClass<?> entryPointClass = getEntryPoint(spoon, entryPoint);
-
-        // get public static void install(byte[] bArray, short bOffset, byte bLength) throws ISOException
-        final CtTypeReference<Byte> byteRef = spoon.getFactory().createCtTypeReference(Byte.TYPE);
-        final CtMethod<?> installMethod = entryPointClass.getMethod("install",
-                spoon.getFactory().createArrayReference(byteRef), spoon.getFactory().createCtTypeReference(Short.TYPE),
-                byteRef);
+        final CtMethod<?> installMethod = getInstallMethod(entryPointClass);
 
         // get all entryPoint class constructor invocations in the install method
         final List<CtConstructor<?>> constructorCalls = installMethod.getElements(

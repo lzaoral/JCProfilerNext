@@ -405,6 +405,7 @@ class JCProfilerUtilTest {
                 "public class Entry extends javacard.framework.Applet {" +
                 "   @Override" +
                 "   public void process(javacard.framework.APDU apdu) {}" +
+                "   public static void install(byte[] bArray, short bOffset, byte bLength) {} +" +
                 "}";
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
@@ -415,7 +416,22 @@ class JCProfilerUtilTest {
     @Test
     void isClsEntryPointNoProcess() {
         final String input = "package test;" +
-                "public class Entry extends javacard.framework.Applet {}";
+                "public class Entry extends javacard.framework.Applet {" +
+                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
+
+        assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointNoInstall() {
+        final String input = "package test;" +
+                "public class Entry extends javacard.framework.Applet {" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "}";
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(CtClass.class::isInstance).first();
 
@@ -439,6 +455,7 @@ class JCProfilerUtilTest {
                 "public class Entry extends Test {" +
                 "   @Override" +
                 "   public void process(javacard.framework.APDU apdu) {}" +
+                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
                 "}";
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(
@@ -454,7 +471,9 @@ class JCProfilerUtilTest {
                 "   @Override" +
                 "   public void process(javacard.framework.APDU apdu) {}" +
                 "}" +
-                "public class Entry extends Test {}";
+                "public class Entry extends Test {" +
+                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "}";
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(
                 (CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
@@ -466,6 +485,23 @@ class JCProfilerUtilTest {
     void isClsEntryPointInheritedNoProcess() {
         final String input = "package test;" +
                 "public class Test extends javacard.framework.Applet {}" +
+                "public class Entry extends Test {" +
+                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "}";
+        final SpoonAPI spoon = prepareSpoon(input);
+        final CtClass<?> cls = spoon.getModel().filterChildren(
+                (CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
+
+        assertFalse(JCProfilerUtil.isTypeEntryPoint(cls));
+    }
+
+    @Test
+    void isClsEntryPointInheritedNoInstall() {
+        final String input = "package test;" +
+                "public class Test extends javacard.framework.Applet {" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "}" +
                 "public class Entry extends Test {}";
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(
@@ -478,7 +514,10 @@ class JCProfilerUtilTest {
     void isClsEntryPointInheritedAbstractProcess() {
         final String input = "package test;" +
                 "public abstract class Test extends javacard.framework.Applet {}" +
-                "public abstract class Entry extends Test {}";
+                "public abstract class Entry extends Test {" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "}";
         final SpoonAPI spoon = prepareSpoon(input);
         final CtClass<?> cls = spoon.getModel().filterChildren(
                 (CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
