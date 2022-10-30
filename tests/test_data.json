@@ -5,6 +5,12 @@
     "visaJar": "https://deadcode.me/mvn/visa/openplatform/javacard/1.0/javacard-1.0.jar",
     "tests": [
         {
+            "name": "belgian-e-id",
+            "repo": "https://github.com/amoerie/belgian-e-id",
+            "path": "workspace/JavaCard/src",
+            "jckit": "222"
+        },
+        {
             "name": "ISO Driving License",
             "repo": "https://github.com/martinpaljak/AppletPlayground",
             "path": "src/org/isodl",
@@ -19,11 +25,24 @@
             "subtests": []
         },
         {
+            "name": "FedICT Quick-Key Toolset Project",
+            "repo": "https://github.com/Twuk/eid-quick-key-toolset",
+            "path": "eid-quick-key-toolset/eid-applet/src/main/java/be",
+            "jckit": "222",
+            "gppro": "1.7"
+        },
+        {
             "name": "InfinitEID",
             "repo": "https://github.com/Muzosh/InfinitEID",
             "path": "src/InfinitEID-applet/src",
             "jckit": "304",
             "subtests": []
+        },
+        {
+            "name": "jmrtd-noeac",
+            "repo": "https://github.com/walterschell/jmrtd-noeac",
+            "path": "src",
+            "jckit": "304"
         },
         {
             "name": "SIC",
@@ -66,6 +85,25 @@
             "subtests": []
         },
         {
+            "name": "CoolkeyApplet",
+            "repo": "https://github.com/NabilNoaman/CoolkeyApplet",
+            "path": "src",
+            "jckit": "222",
+            "visa": null
+        },
+        {
+            "name": "CCU2F",
+            "repo": "https://github.com/tsenger/CCU2F",
+            "path": "CCU2F/src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "de.fac2",
+            "repo": "https://github.com/tsenger/de.fac2",
+            "path": "src",
+            "jckit": "305u4"
+        },
+        {
             "name": "GidsApplet",
             "repo": "https://github.com/vletoux/GidsApplet",
             "path": "src/com/mysmartlogon/gidsApplet",
@@ -80,11 +118,76 @@
             "subtests": []
         },
         {
+            "name": "hotp_via_ndef",
+            "repo": "https://github.com/petrs/hotp_via_ndef",
+            "path": "src",
+            "jckit": "304"
+        },
+        {
             "name": "Iso Applet",
             "repo": "https://github.com/philipWendland/IsoApplet",
             "path": "src",
             "jckit": "222",
             "subtests": []
+        },
+        {
+            "name": "JavacardIdentity",
+            "repo": "https://github.com/mdwivedi/JavacardIdentity",
+            "path": "Applet/IdentityCredential/Base/src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "ledger-u2f-javacard",
+            "repo": "https://github.com/LedgerHQ/ledger-u2f-javacard",
+            "path": "src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "u2f-javacard",
+            "repo": "https://github.com/darconeous/u2f-javacard/",
+            "path": "src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "OneCard_Card",
+            "repo": "https://github.com/SharkyHarky/OneCard",
+            "path": "Card/src",
+            "jckit": "222",
+            "gppro": "1.7"
+        },
+        {
+            "name": "OneCard_Jacket",
+            "repo": "https://github.com/SharkyHarky/OneCard",
+            "path": "Jacket/src",
+            "jckit": "222",
+            "gppro": "1.7"
+        },
+        {
+            "name": "OpenFIPS201",
+            "repo": "https://github.com/makinako/OpenFIPS201",
+            "path": "src",
+            "jckit": "305u4",
+            "gppro": "1.7"
+        },
+        {
+            "name": "KeyFob-applet-ORWL",
+            "repo": "https://github.com/O-R-W-L/KeyFob-applet",
+            "path": "Code/ORWL",
+            "jckit": "305u4"
+        },
+        {
+            "name": "KeyFob-applet-ORWL_keypair",
+            "repo": "https://github.com/O-R-W-L/KeyFob-applet",
+            "path": "Code/ORWL_Keypair",
+            "jckit": "305u4",
+            "gppro": "1.7"
+        },
+        {
+            "name": "otp",
+            "repo": "https://github.com/gelvaos/otp",
+            "path": "otp/src",
+            "jckit": "222",
+            "etsi": "143.019"
         },
         {
             "name": "PivApplet",
@@ -99,6 +202,13 @@
             "path": "src",
             "jckit": "304",
             "subtests": []
+        },
+        {
+            "name": "uClinux-scard",
+            "repo": "https://github.com/scs/uclinux",
+            "path": "user/ssh/scard",
+            "jckit": "222",
+            "windows": false
         },
         {
             "name": "Trusted Identity Module",
@@ -143,6 +253,12 @@
                 }
             ],
             "subtests": []
+        },
+        {
+            "name": "AppSecure",
+            "repo": "https://github.com/deepakprabhakara/appsecure",
+            "path": "JavaCard/AppSecureApplet/AppSecureApplet",
+            "jckit": "222"
         },
         {
             "name": "JavaCard ePurse",
@@ -212,6 +328,19 @@
             "subtests": []
         },
         {
+            "name": "Loyalty Card",
+            "repo": "https://github.com/Anthirian/Loyalty-Card",
+            "path": "card/src",
+            "jckit": "222"
+        },
+        {
+            "name": "mbank_STK",
+            "repo": "https://github.com/ubs121/mbank_STK",
+            "path": "src",
+            "jckit": "222",
+            "etsi": "143.019"
+        },
+        {
             "name": "OpenEMV",
             "repo": "https://github.com/JavaCardOS/OpenEMV",
             "path": "OpenEMV/src",
@@ -242,6 +371,43 @@
             "subtests": []
         },
         {
+            "name": "CardApplet-PayPass",
+            "repo": "https://github.com/jiankeliu5/CardApplet-PayPass",
+            "path": "src",
+            "jckit": "222"
+        },
+        {
+            "name": "CardExamples-MMPP",
+            "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
+            "path": "CardApplet-MMPP_GPL/src",
+            "jckit": "222",
+            "gppro": "1.7"
+        },
+        {
+            "name": "CardExamples-PayPass",
+            "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
+            "path": "CardApplet-PayPass/src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "CardExamples-VCBP",
+            "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
+            "path": "CardApplet-VCBP_GPL/src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "CardExamples-VisaMSD-SwipeYours",
+            "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
+            "path": "CardApplet-VisaMSD-SwipeYours/src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "PbocEpSimpleVersion",
+            "repo": "https://github.com/jiankeliu5/PBOC3Applet",
+            "path": "src/PbocEpSimpleVersion",
+            "jckit": "222"
+        },
+        {
             "name": "PBOC3Applet",
             "repo": "https://github.com/jiankeliu5/PBOC3Applet",
             "path": "src/com",
@@ -256,6 +422,18 @@
             "subtests": []
         },
         {
+            "name": "cryptsetup-javacard",
+            "repo": "https://github.com/WOnder93/cryptsetup-javacard",
+            "path": "JCKeyStorage/src/applets",
+            "jckit": "222"
+        },
+        {
+            "name": "HydraMultiKeySystem",
+            "repo": "https://github.com/thotheolh/HydraMultiKeySystem",
+            "path": "JavaCard-Applet/src",
+            "jckit": "304"
+        },
+        {
             "name": "Java Card OpenPGP Card",
             "repo": "https://github.com/jderuiter/javacard-openpgpcard",
             "path": "src",
@@ -263,11 +441,62 @@
             "subtests": []
         },
         {
+            "name": "JavaCardKeymaster-Applet",
+            "repo": "https://github.com/divegeek/JavaCardKeymaster",
+            "path": "Applet/src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "JavaCardKeymaster-AndroidSEProvider",
+            "repo": "https://github.com/divegeek/JavaCardKeymaster",
+            "path": "Applet/AndroidSEProvider/src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "JavaCardKeymaster-JCardSimProvider",
+            "repo": "https://github.com/divegeek/JavaCardKeymaster",
+            "path": "Applet/JCardSimProvider/src",
+            "jckit": "305u4"
+        },
+        {
+            "name": "JCPasswordManager",
+            "repo": "https://github.com/bayotop/JCPasswordManager",
+            "path": "StegoPassApplet/src/stegopassapplet",
+            "jckit": "222"
+        },
+        {
             "name": "KeepassNFC",
             "repo": "https://github.com/JavaCardOS/KeepassNFCApplet",
             "path": "src",
             "jckit": "222",
             "subtests": []
+        },
+        {
+            "name": "Passmg",
+            "repo": "https://github.com/cranixx/Passmg",
+            "path": "passmg",
+            "jckit": "222",
+            "visa": null
+        },
+        {
+            "name": "SIM Password Manager",
+            "repo": "https://github.com/nelenkov/sim-password-manager",
+            "path": "password-manager-applet/src",
+            "jckit": "222"
+        },
+        {
+            "name": "sim-password-store",
+            "repo": "https://github.com/gtomek/sim-password-store",
+            "path": "Saimek/src",
+            "jckit": "222",
+            "etsi": "143.019"
+        },
+        {
+            "name": "SIM password wallet",
+            "repo": "https://github.com/bertrandmartel/sim-password-wallet",
+            "path": "applet/src/main",
+            "jckit": "222",
+            "gppro": "1.7"
         },
         {
             "name": "Smartcard crypto applet",
@@ -331,6 +560,13 @@
             "subtests": []
         },
         {
+            "name": "SigAnima",
+            "repo": "https://github.com/tsenger/SigAnima",
+            "path": "src",
+            "jckit": "222",
+            "gppro": "1.7"
+        },
+        {
             "name": "YubiKey NEO App OpenPGP",
             "repo": "https://github.com/Yubico/ykneo-openpgp",
             "path": "applet/src",
@@ -354,11 +590,41 @@
             "subtests": []
         },
         {
+            "name": "OpenJavaCard NDEF - advanced",
+            "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
+            "path": "applet-advanced/src",
+            "jckit": "222"
+        },
+        {
+            "name": "OpenJavaCard NDEF - full",
+            "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
+            "path": "applet-full/src",
+            "jckit": "222"
+        },
+        {
+            "name": "OpenJavaCard NDEF - stub",
+            "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
+            "path": "applet-stub/src",
+            "jckit": "222"
+        },
+        {
+            "name": "OpenJavaCard NDEF - tiny",
+            "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
+            "path": "applet-tiny/src",
+            "jckit": "222"
+        },
+        {
             "name": "JavaCard NDEF application",
             "repo": "https://github.com/slomo/ndef-javacard",
             "path": "src/main/java",
             "jckit": "222",
             "subtests": []
+        },
+        {
+            "name": "Pico NDEF",
+            "repo": "https://github.com/MpicoSys/PicoLabel",
+            "path": "java/scc_applet/Pico_NDEF",
+            "jckit": "222"
         },
         {
             "name": "BitcoinWallet",
@@ -391,6 +657,13 @@
                     "subtests": []
                 }
             ]
+        },
+        {
+            "name": "ssu-card",
+            "repo": "https://github.com/zu-ctrl/ssu-card",
+            "path": "src",
+            "jckit": "304",
+            "subtests": []
         },
         {
             "name": "SatoChipApplet",
@@ -443,6 +716,24 @@
             ]
         },
         {
+            "name": "Java-Card-Project-Des_client_1",
+            "repo": "https://github.com/robsbeat1/Java-Card-Project",
+            "path": "Des_client_1/src",
+            "jckit": "222"
+        },
+        {
+            "name": "Java-Card-Project-Des_client_2",
+            "repo": "https://github.com/robsbeat1/Java-Card-Project",
+            "path": "Des_client_2/src",
+            "jckit": "222"
+        },
+        {
+            "name": "Java-Card-Project-Des_server2",
+            "repo": "https://github.com/robsbeat1/Java-Card-Project",
+            "path": "Des_server2/src",
+            "jckit": "222"
+        },
+        {
             "name": "Gauss Key Card",
             "repo": "https://github.com/darconeous/gauss-key-card",
             "path": "src",
@@ -471,6 +762,12 @@
                 }
             ],
             "subtests": []
+        },
+        {
+            "name": "EDEPApplet-hengbao",
+            "repo": "https://github.com/FourTree/EDEPApplet-hengbao",
+            "path": "MobileEDEPV3/src",
+            "jckit": "222"
         },
         {
             "name": "Tag4",
@@ -521,6 +818,20 @@
             "subtests": []
         },
         {
+            "name": "LicenseCardApp",
+            "repo": "https://github.com/FourTree/LicenseCardApp",
+            "path": "PBOCLicenseCardApp/src",
+            "jckit": "222",
+            "gppro": "1.7"
+        },
+        {
+            "name": "PBOC3_JC2_1_1_License",
+            "repo": "https://github.com/FourTree/LicenseCardApp",
+            "path": "PBOC3_JC2_1_1_License/src",
+            "jckit": "222",
+            "gppro": "1.7"
+        },
+        {
             "name": "PBOCLicenseCardApp",
             "repo": "https://github.com/FourTree/LicenseCardApp",
             "path": "LicenseCardApp/src",
@@ -556,6 +867,13 @@
                     "subtests": []
                 }
             ]
+        },
+        {
+            "name": "LiteID-SimApp",
+            "repo": "https://github.com/LiteID/LiteID-SimApp",
+            "path": "SIM Client/src",
+            "jckit": "222",
+            "etsi": "143.019"
         },
         {
             "name": "MQTT-SCACAuth",
@@ -603,6 +921,12 @@
                 }
             ],
             "subtests": []
+        },
+        {
+            "name": "Secure-Storage-and-Erasure",
+            "repo": "https://github.com/SecurityResearcher/SSE",
+            "path": "Java card applet",
+            "jckit": "222"
         },
         {
             "name": "SmartMeterAggregator",
@@ -667,6 +991,36 @@
             "subtests": []
         },
         {
+            "name": "T101-Devhub - MerryXmas",
+            "repo": "https://github.com/ThothTrustCom/T101-Devhub",
+            "path": "Samples/MerryXmas",
+            "jckit": "222"
+        },
+        {
+            "name": "T101-Devhub - OTP_JCOTP",
+            "repo": "https://github.com/ThothTrustCom/T101-Devhub",
+            "path": "Samples/OTP/JCOTP/src",
+            "jckit": "222"
+        },
+        {
+            "name": "T101-Devhub - Satochip",
+            "repo": "https://github.com/ThothTrustCom/T101-Devhub",
+            "path": "Samples/Satochip/src",
+            "jckit": "304"
+        },
+        {
+            "name": "T101-Devhub - T101Test1",
+            "repo": "https://github.com/ThothTrustCom/T101-Devhub",
+            "path": "Samples/ThetaPass/src",
+            "jckit": "304"
+        },
+        {
+            "name": "T101-Devhub - ThothPGP",
+            "repo": "https://github.com/ThothTrustCom/T101-Devhub",
+            "path": "Samples/ThothPGP/src",
+            "jckit": "305u4"
+        },
+        {
             "name": "tpm2-se-applet",
             "repo": "https://github.com/mobilesec/tpm2-se-applet",
             "path": "TPM2Applet/src",
@@ -689,6 +1043,12 @@
             "subtests": []
         },
         {
+            "name": "Wookey Javacard applets",
+            "repo": "https://github.com/wookey-project/javacard-applet",
+            "path": "src/wookey",
+            "jckit": "222"
+        },
+        {
             "name": "JavaCard SMPC RSA",
             "repo": "https://github.com/lzaoral/javacard-smpc-rsa",
             "path": "applet/src/main",
@@ -707,6 +1067,40 @@
                     "subtests": []
                 }
             ]
+        },
+        {
+            "name": "SIMple ID",
+            "repo": "https://github.com/alan-turing-institute/simple-id",
+            "path": "src",
+            "jckit": "222"
+        },
+        {
+            "name": "HelloSTK2",
+            "repo": "https://github.com/alan-turing-institute/simple-id",
+            "path": "src",
+            "jckit": "222",
+            "etsi": "143.019"
+        },
+        {
+            "name": "sim-applet-sms-im-alive",
+            "repo": "https://github.com/PodgroupConnectivity/sim-applet-sms-im-alive",
+            "path": "src",
+            "jckit": "222",
+            "etsi": "143.019"
+        },
+        {
+            "name": "sim-applet-apn-autoconf",
+            "repo": "https://github.com/PodgroupConnectivity/sim-applet-apn-autoconf",
+            "path": "src",
+            "jckit": "222",
+            "etsi": "143.019"
+        },
+        {
+            "name": "sim-applet-data-heartbeat",
+            "repo": "https://github.com/PodgroupConnectivity/sim-applet-data-heartbeat",
+            "path": "src",
+            "jckit": "222",
+            "etsi": "143.019"
         },
         {
             "name": "JCMathLib",
