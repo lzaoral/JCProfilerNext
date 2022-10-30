@@ -19,6 +19,19 @@ STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
           'visualisation', 'all']
 
 
+BOLD_RED = '\033[1;31m'
+BOLD_GREEN = '\033[1;32m'
+BOLD_YELLOW = '\033[1;33m'
+RESET = '\033[00m'
+
+
+def print(*args, colour=BOLD_GREEN, **kwargs):
+    from builtins import print
+    print(colour, end='')
+    print(*args, **kwargs)
+    print(RESET, end='', flush=True)
+
+
 def rebuild_jar() -> None:
     suffix = '.bat' if os.name == 'nt' else ''
     script_path = Path('../gradlew' + suffix).absolute()
@@ -26,7 +39,7 @@ def rebuild_jar() -> None:
     print('Rebuilding project')
     ret = call([script_path, '--project-dir=..', 'build'])
     if ret != 0:
-        print('JAR rebuild failed with return code', ret)
+        print('JAR rebuild failed with return code', ret, colour=BOLD_RED)
         sys.exit(1)
 
 
@@ -38,7 +51,7 @@ def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
 
     ret = call(['git', 'clone', '--depth=1', repo, target])
     if ret != 0:
-        print('Cloning failed with return code', ret)
+        print('Cloning failed with return code', ret, colour=BOLD_RED)
         sys.exit(1)
 
     print(target, 'cloned successfully')
@@ -73,10 +86,11 @@ def execute_cmd(cmd: List[str]) -> None:
             stage_cmd += ['--stop-after', str(stage)]
 
         print('Excecuting stage', stage)
-        print('Command:', " ".join(stage_cmd), flush=True)
+        print('Command: ', end='')
+        print(" ".join(stage_cmd), colour=BOLD_YELLOW, flush=True)
         ret = call(stage_cmd)
         if ret != 0:
-            print('Command failed with return code', ret)
+            print('Command failed with return code', ret, colour=BOLD_RED)
             sys.exit(1)
 
 
