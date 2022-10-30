@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from shutil import copytree
+from shutil import copytree, rmtree
 from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict, List
@@ -30,12 +30,11 @@ def rebuild_jar() -> None:
         sys.exit(1)
 
 
-def clone_git_repo(repo: str, target: str) -> bool:
+def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
     if os.path.exists(target):
-        print(repo, 'seems to be already cloned')
-        return False
-
-    print(target, 'is not cloned yet', flush=True)
+        if not reclone:
+            return
+        rmtree(target)
 
     ret = call(['git', 'clone', '--depth=1', repo, target])
     if ret != 0:
@@ -43,7 +42,7 @@ def clone_git_repo(repo: str, target: str) -> bool:
         sys.exit(1)
 
     print(target, 'cloned successfully')
-    return True
+    return
 
 
 def modify_repo(test: Dict[str, Any]):
@@ -153,8 +152,8 @@ def execute_test(test: Dict[str, Any]) -> None:
     print('Running test', test['name'])
 
     test['name'] = test['name'].replace(' ', '_')
-    if clone_git_repo(test['repo'], test['name']):
-        modify_repo(test)
+    clone_git_repo(test['repo'], test['name'])
+    modify_repo(test)
 
     jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
 
@@ -188,7 +187,7 @@ def main() -> None:
     with open('test_data.json') as f:
         data = json.load(f)
 
-    clone_git_repo(data['jcsdkRepo'], 'jcsdk')
+    clone_git_repo(data['jcsdkRepo'], 'jcsdk', reclone=False)
 
     tests = data['tests']
     if ARGS.filter:
