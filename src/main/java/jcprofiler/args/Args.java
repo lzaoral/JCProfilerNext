@@ -47,7 +47,8 @@ public class Args {
     @Parameter(names = {"--jar"},
                description = "Path to a JAR file to be added to the JavaCard class path " +
                              "(can be specified multiple times)",
-               converter = FilePathConverter.class)
+               converter = FilePathConverter.class,
+               validateWith = JarFileValidator.class)
     public List<Path> jars = new ArrayList<>();
 
     @Parameter(names = {"--simulator"},
