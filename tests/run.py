@@ -10,6 +10,7 @@ from urllib.request import Request, urlopen
 import argparse
 import json
 import os
+import platform
 import re
 import sys
 
@@ -258,7 +259,12 @@ def main() -> None:
         if not tests:
             raise ValueError(f'No tests match the {ARGS.filter} filter.')
 
+    osName = platform.system().lower()
     for t in tests:
+        if osName in t and not t[osName]:
+            print('Skip test', t['name'],  colour=BOLD_YELLOW)
+            continue
+
         execute_test(t)
 
 
