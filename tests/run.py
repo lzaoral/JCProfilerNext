@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from shutil import copytree, rmtree
+from shutil import copytree, make_archive, rmtree
 from subprocess import call
 from tempfile import mkdtemp
 from typing import Any, Dict, List
@@ -73,6 +73,23 @@ def download_file(url: str, target: str) -> None:
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     with urlopen(req) as res, open(target, 'wb') as f:
         f.write(res.read())
+
+
+def prepare_etsi(version: str) -> str:
+    if version != '143.019':
+        raise NotImplementedError
+
+    src_dir = Path(f'etsiapi/{version}/05.06.00/java').absolute()
+    result = src_dir / 'etsiapi.jar'
+    result_str = str(result)
+
+    if os.path.exists(result):
+        return result_str
+
+    make_archive(result_str, 'zip', src_dir)
+    # fix extension
+    os.rename(result.with_suffix(result.suffix + '.zip'), result)
+    return result_str
 
 
 def modify_repo(test: Dict[str, Any]):
@@ -215,6 +232,9 @@ def execute_test(test: Dict[str, Any]) -> None:
 
     cmd = ['java', '-jar', str(jar), '--jckit', str(jckit)]
 
+    if 'etsi' in test:
+        cmd += ['--jar', prepare_etsi(test['etsi'])]
+
     if 'gppro' in test:
         gppro = Path(f'gpapi/org.globalplatform-{test["gppro"]}' +
                      '/gpapi-globalplatform.jar').absolute()
@@ -254,6 +274,7 @@ def main() -> None:
     with open('test_data.json') as f:
         data = json.load(f)
 
+    clone_git_repo(data['etsiRepo'], 'etsiapi', reclone=False)
     clone_git_repo(data['jcsdkRepo'], 'jcsdk', reclone=False)
     clone_git_repo(data['gpapiRepo'], 'gpapi', reclone=False)
     download_file(data['visaJar'], 'visa.jar')
