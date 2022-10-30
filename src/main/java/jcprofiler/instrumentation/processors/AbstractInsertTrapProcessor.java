@@ -50,7 +50,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
     private void processBlock(final CtStatementList block) {
         // copy is needed as we modify the collection
         final List<CtStatement> statements = block.getStatements().stream()
-                // skip comments (SPOON classifies comments as statements)
+                // skip comments (Spoon classifies comments as statements)
                 // e.g. JCMathLib/JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java:198
                 .filter(x -> !(x instanceof CtComment) && !isEmptyBlock(x))
                 .collect(Collectors.toList());

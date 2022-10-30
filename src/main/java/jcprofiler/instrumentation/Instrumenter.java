@@ -70,7 +70,7 @@ public class Instrumenter {
                 throw new RuntimeException("Unreachable statement reached!");
         }
 
-        // add workarounds for bugs in SPOON
+        // add workarounds for bugs in Spoon
         spoon.addProcessor(new SpoonWorkarounds.FixNestedClassImportProcessor());
         spoon.addProcessor(new SpoonWorkarounds.FixStaticMethodImportProcessor());
         spoon.addProcessor(new SpoonWorkarounds.FixStaticFieldImportProcessor());
@@ -93,7 +93,7 @@ public class Instrumenter {
         setupSpoon(spoon, args);
         spoon.addInputResource(JCProfilerUtil.getSourceInputDirectory(args.workDir).toString());
 
-        log.debug("Building SPOON model.");
+        log.debug("Building Spoon model.");
         try {
             spoon.buildModel();
         } catch (ModelBuildingException e) {
@@ -128,9 +128,9 @@ public class Instrumenter {
     }
 
     public static void setupSpoon(final SpoonAPI spoon, final Args args) {
-        log.debug("Setting SPOON's environment.");
+        log.debug("Setting Spoon's environment.");
 
-        // TODO: uncommenting this might lead to SPOON crashes!
+        // TODO: uncommenting this might lead to Spoon crashes!
         // spoon.getEnvironment().setPrettyPrinterCreator(() -> new SniperJavaPrettyPrinter(spoon.getEnvironment()));
 
         spoon.getEnvironment().setNoClasspath(false);
@@ -141,7 +141,7 @@ public class Instrumenter {
         final List<String> apiJars = args.jcSDK.getApiJars().stream()
                 .map(File::getAbsolutePath).collect(Collectors.toList());
         apiJars.addAll(args.jars.stream().map(j -> {
-            log.debug("Adding {} to SPOON's path.", j);
+            log.debug("Adding {} to Spoon's path.", j);
             return j.toString();
         }).collect(Collectors.toSet()));
 
@@ -151,7 +151,7 @@ public class Instrumenter {
     private void addMissingClasses(final Launcher spoon) {
         log.info("Generating additional classes.");
 
-        // this atrocity seems to be required as SPOON does not allow a module rebuild :(
+        // this atrocity seems to be required as Spoon does not allow a module rebuild :(
         final Launcher tmpSpoon = new Launcher();
         buildModel(tmpSpoon);
 

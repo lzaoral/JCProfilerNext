@@ -40,7 +40,7 @@ public class InsertMemoryTrapProcessor extends AbstractInsertTrapProcessor<CtExe
         final CtField<Short> arrayLengthFieldCasted = (CtField<Short>) arrayLengthField;
 
         @SuppressWarnings("unchecked")
-        // Unfortunately, this is the best solution we have since SPOON does not reflect type casts in type parameters.
+        // Unfortunately, this is the best solution we have since Spoon does not reflect type casts in type parameters.
         final CtLiteral<Short> arrayLengthLiteralCasted = (CtLiteral<Short>) (Object) arrayLengthLiteral;
         arrayLengthFieldCasted.setAssignment(arrayLengthLiteralCasted);
     }

@@ -119,12 +119,12 @@ public class JCProfilerUtil {
 
         if (executables.isEmpty())
             throw new RuntimeException(
-                    "SPOON model does not contain an executable with " + fullSignature + " signature!");
+                    "Spoon model does not contain an executable with " + fullSignature + " signature!");
 
         if (executables.size() > 1)
             throw new RuntimeException(String.format(
-                    "SPOON contains more executables with %s signature! %s", fullSignature, executables.stream()
-                            .map(JCProfilerUtil::getFullSignature).collect(Collectors.toList())));
+                    "Spoon model contains more executables with %s signature! %s", fullSignature,
+                    executables.stream().map(JCProfilerUtil::getFullSignature).collect(Collectors.toList())));
 
         return executables.get(0);
     }

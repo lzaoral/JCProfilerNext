@@ -105,7 +105,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         initializer.addTypeCast(byteRef);
 
         @SuppressWarnings("unchecked")
-        // Unfortunately, this is the best solution we have since SPOON does not reflect type casts in type parameters.
+        // Unfortunately, this is the best solution we have since Spoon does not reflect type casts in type parameters.
         final CtLiteral<Byte> initializerCasted = (CtLiteral<Byte>) (Object) initializer;
         insPerfSetStop.setAssignment(initializerCasted);
 

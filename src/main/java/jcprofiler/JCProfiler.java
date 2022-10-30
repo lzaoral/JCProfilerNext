@@ -46,7 +46,7 @@ public class JCProfiler {
 
         // check that the generated sources are compilable by rebuilding the model after instrumentation
         final SpoonAPI spoon = new Launcher();
-        log.info("Validating SPOON model.");
+        log.info("Validating Spoon model.");
 
         Instrumenter.setupSpoon(spoon, args);
         final Path instrOutput = JCProfilerUtil.getInstrOutputDirectory(args.workDir);
