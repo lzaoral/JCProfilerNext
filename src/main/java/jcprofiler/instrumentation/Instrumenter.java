@@ -97,7 +97,7 @@ public class Instrumenter {
         try {
             spoon.buildModel();
         } catch (ModelBuildingException e) {
-            if (!e.getMessage().matches("The import .* cannot be resolved at .*"))
+            if (!e.getMessage().matches(".* cannot be resolved (to a type )?at .*"))
                 throw e;
 
             throw new RuntimeException(
