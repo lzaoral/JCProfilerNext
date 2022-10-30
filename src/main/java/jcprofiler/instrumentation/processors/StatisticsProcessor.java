@@ -92,30 +92,39 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
         final CtTypeReference<?> declTypeRef = fieldRef.getDeclaringType();
 
         // skip e.g. int[].length
-        if (declTypeRef.isPrimitive() || declTypeRef.isArray())
+        if (declTypeRef != null && (declTypeRef.isPrimitive() || declTypeRef.isArray()))
             return;
 
         add(declTypeRef, fieldRef.getSimpleName());
     }
 
     private void add(final CtTypeReference<?> type, final String member) {
-        // deal with inner classes
-        CtTypeReference<?> outerType = type;
-        while (outerType.getPackage() == null)
-            outerType = outerType.getDeclaringType();
+        String parentQualifiedName = "<unknown>";
+        String typeSimpleName = "<unknown>";
+        if (type != null) {
+            typeSimpleName = type.getSimpleName();
 
-        final CtPackageReference pkg = type.getPackage();
-        if (pkgs.contains(pkg))
-            return;
+            // deal with inner classes
+            CtTypeReference<?> outerType = type;
+            while (outerType != null && outerType.getPackage() == null)
+                outerType = outerType.getDeclaringType();
 
-        if (javaCardLangTypes.contains(type.getQualifiedName()))
-            return;
+            if (outerType != null && outerType.getPackage() != null) {
+                final CtPackageReference pkg = outerType.getPackage();
+                if (pkgs.contains(pkg))
+                    return;
 
-        final String parentQualifiedName = type != outerType
-                                               ? type.getDeclaringType().getQualifiedName()
-                                               : pkg.getQualifiedName();
+                if (javaCardLangTypes.contains(type.getQualifiedName()))
+                    return;
 
-        usedReferences.compute(new ImmutableTriple<>(parentQualifiedName, type.getSimpleName(), member),
+                parentQualifiedName = type != outerType ? type.getDeclaringType().getQualifiedName()
+                                                        : pkg.getQualifiedName();
+                if (parentQualifiedName.isEmpty())
+                    parentQualifiedName = "<unknown>";
+            }
+        }
+
+        usedReferences.compute(new ImmutableTriple<>(parentQualifiedName, typeSimpleName, member),
                 (k, v) -> v == null ? 1 : v + 1);
     }
 }
