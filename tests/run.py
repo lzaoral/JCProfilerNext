@@ -65,15 +65,19 @@ def modify_repo(test: Dict[str, Any]):
             os.unlink(file)
 
     for replace in test.get('fixup', []):
+        pattern = re.compile(replace['pattern'], re.MULTILINE)
+        pattern_str: str = replace['pattern'].replace('\n', '\\n')
+        replacement: str = replace['replacement']
+
         for glb in replace['files']:
             for file in Path(test['name']).glob(glb):
-                regex = re.compile(replace['regex'], re.MULTILINE)
-                regex_str = replace['regex'].replace('\n', '\\n')
-                print('Removing lines matching', regex_str, 'from', file)
+                print('Replacing lines matching', pattern_str, 'with',
+                      replacement, 'in', file)
                 with open(file, 'r') as f:
                     lines = f.read()
                 with open(file, 'w') as f:
-                    f.write(regex.sub('', lines))
+                    f.write(pattern.sub(replacement, lines))
+
 
 
 def execute_cmd(cmd: List[str]) -> None:

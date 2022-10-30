@@ -29,7 +29,8 @@
             "jckit": "222",
             "fixup": [
                 {
-                    "regex": "^\\s*import com\\.sun\\.javacard.*;\\s*$",
+                    "pattern": "^\\s*import com\\.sun\\.javacard.*;\\s*$",
+                    "replacement": "",
                     "files": [
                         "sid/User.java"
                     ]
@@ -107,7 +108,8 @@
             "jckit": "222",
             "fixup": [
                 {
-                    "regex": "^\\s*import javax\\.xml\\.bind.*;\\s*$",
+                    "pattern": "^\\s*import javax\\.xml\\.bind.*;\\s*$",
+                    "replacement": "",
                     "files": [
                         "src/ePurse/Epurse.java"
                     ]
@@ -246,13 +248,15 @@
             ],
             "fixup": [
                 {
-                    "regex": "^\\s*PM\\.check.*$",
+                    "pattern": "^\\s*PM\\.check.*$",
+                    "replacement": "",
                     "files": [
                         "MPCApplet/src/mpc/*.java"
                     ]
                 },
                 {
-                    "regex": "^\\s*case Consts\\.INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
+                    "pattern": "^\\s*case Consts\\.INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
+                    "replacement": "",
                     "files": [
                         "MPCApplet/src/mpc/MPCApplet.java"
                     ]
@@ -421,13 +425,15 @@
             ],
             "fixup": [
                 {
-                    "regex": "^\\s*PM\\.check.*$",
+                    "pattern": "^\\s*PM\\.check.*$",
+                    "replacement": "",
                     "files": [
                         "JCMathLib/src/opencrypto/jcmathlib/*.java"
                     ]
                 },
                 {
-                    "regex": "^\\s*case INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
+                    "pattern": "^\\s*case INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
+                    "replacement": "",
                     "files": [
                         "JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java"
                     ]
