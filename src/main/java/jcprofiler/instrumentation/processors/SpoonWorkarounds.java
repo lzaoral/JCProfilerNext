@@ -10,7 +10,7 @@ import spoon.reflect.reference.CtTypeReference;
 
 /**
  * Workarounds for bugs in automatic generation of import statements from other compilation units:
- *     - Fixes import generation for nested classes.
+ *     - Fixes import generation for nested types.
  *     - Fixes import generation for static fields imported through a static import.
  *     - Fixes import generation for static methods imported through a static import.
  */
@@ -18,7 +18,7 @@ public class SpoonWorkarounds {
     static public class FixNestedClassImportProcessor extends AbstractProcessor<CtTypeReference<?>> {
         @Override
         public boolean isToBeProcessed(final CtTypeReference<?> typeRef) {
-            // check that the type is a nested
+            // check that the type is nested
             return typeRef.getDeclaringType() != null;
         }
 
