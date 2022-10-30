@@ -257,14 +257,28 @@ public class Instrumenter {
     }
 
     public void generateStatistics() {
-        final Launcher spoon = new Launcher();
+        boolean permissive = false;
+
+        Launcher spoon = new Launcher();
         setupSpoon(spoon, args);
-
-        // we don't care about missing imports
-        spoon.getEnvironment().setNoClasspath(false);
-
         spoon.addInputResource(args.workDir.toString());
-        spoon.buildModel();
+
+        try {
+            spoon.buildModel();
+        } catch (ModelBuildingException e) {
+            log.warn(e.getMessage());
+
+            log.info("Retrying in permissive mode.");
+            log.warn("The results may not be accurate!");
+            permissive = true;
+
+            // try it with missing imports
+            spoon = new Launcher();
+            setupSpoon(spoon, args);
+            spoon.addInputResource(args.workDir.toString());
+            spoon.getEnvironment().setNoClasspath(true);
+            spoon.buildModel();
+        }
 
         final StatisticsProcessor sp = new StatisticsProcessor();
         spoon.addProcessor(sp);
@@ -272,6 +286,12 @@ public class Instrumenter {
 
         final Path csv = args.workDir.resolve("APIstatistics.csv");
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCSVFormat())) {
+            if (permissive) {
+                printer.printComment("CSV generated in permissive mode! Some imports or types could not be resolved.");
+                printer.printComment("Please, do a rerun with appropriate JAR files using the --jar option.");
+                printer.printComment("");
+            }
+
             printer.printComment("package,type,member,frequency");
             for (Map.Entry<Triple<String, String, String>, Integer> pair : sp.getUsedReferences().entrySet()) {
                 final Triple<String, String, String> key = pair.getKey();
