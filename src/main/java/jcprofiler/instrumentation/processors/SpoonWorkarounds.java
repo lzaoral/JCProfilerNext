@@ -4,6 +4,8 @@ import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtInvocation;
 import spoon.reflect.declaration.CtType;
+import spoon.reflect.reference.CtExecutableReference;
+import spoon.reflect.reference.CtFieldReference;
 import spoon.reflect.reference.CtTypeReference;
 
 /**
@@ -30,10 +32,11 @@ public class SpoonWorkarounds {
     static public class FixStaticMethodImportProcessor extends AbstractProcessor<CtInvocation<?>> {
         @Override
         public boolean isToBeProcessed(final CtInvocation<?> invocation) {
+            final CtExecutableReference<?> execRef = invocation.getExecutable();
+            final CtTypeReference<?> parentTypeRef = invocation.getParent(CtType.class).getReference();
+
             // check that the invoked method is static and that this occurs in a different class
-            return invocation.getExecutable().isStatic() &&
-                    !invocation.getExecutable().getDeclaringType().equals(
-                            invocation.getExecutable().getParent(CtType.class).getReference());
+            return execRef.isStatic() && !execRef.getDeclaringType().equals(parentTypeRef);
         }
 
         @Override
@@ -46,10 +49,11 @@ public class SpoonWorkarounds {
     static public class FixStaticFieldImportProcessor extends AbstractProcessor<CtFieldAccess<?>> {
         @Override
         public boolean isToBeProcessed(final CtFieldAccess<?> fieldAccess) {
+            final CtFieldReference<?> fieldRef = fieldAccess.getVariable();
+            final CtTypeReference<?> parentTypeRef = fieldAccess.getParent(CtType.class).getReference();
+
             // check that the accessed field is static and that this occurs in a different class
-            return fieldAccess.getVariable().isStatic() &&
-                   !fieldAccess.getVariable().getDeclaringType().equals(
-                           fieldAccess.getParent(CtType.class).getReference());
+            return fieldRef.isStatic() && !fieldRef.getDeclaringType().equals(parentTypeRef);
         }
 
         @Override
