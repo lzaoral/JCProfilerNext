@@ -155,8 +155,9 @@ public class Instrumenter {
         final Launcher tmpSpoon = new Launcher();
         buildModel(tmpSpoon);
 
-        final List<CtClass<?>> classes = tmpSpoon.getModel().getElements(CtClass.class::isInstance);
-        final Set<CtPackage> pkgs = classes.stream().map(CtClass::getPackage).collect(Collectors.toSet());
+        final List<CtType<?>> types = tmpSpoon.getModel().getElements(CtType.class::isInstance);
+        final Set<CtPackage> pkgs = types.stream().map(CtType::getPackage)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
         log.debug("Found following packages in sources: {}", pkgs);
 
         if (pkgs.stream().anyMatch(CtPackage::isUnnamedPackage))
@@ -180,7 +181,8 @@ public class Instrumenter {
         final String packageName = pkgs.iterator().next().getQualifiedName();
         for (final String className : generatedClasses) {
             log.debug("Looking for existing {} class.", className);
-            final long count = classes.stream().filter(c -> c.isTopLevel() && c.getSimpleName().equals(className)).count();
+            final long count = types.stream()
+                    .filter(t -> t.isClass() && t.isTopLevel() && t.getSimpleName().equals(className)).count();
             if (count > 0)
                 throw new UnsupportedOperationException(String.format(
                         "Code contains %d classes named %s! Updating already instrumented sources is unsupported " +
