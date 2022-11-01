@@ -6,6 +6,9 @@ import javacard.framework.ISOException;
 import javacard.framework.JCSystem;
 import javacard.framework.Util;
 
+/**
+ * PM class for memory usage measurement for JCSDK 3.0.4 and newer.
+ */
 public class PM {
     private static final short ARRAY_LENGTH = 0;
     private static final short MAX_APDU_LENGTH = 256;
@@ -15,13 +18,24 @@ public class PM {
     public static final byte[] memoryUsageTransientReset = new byte[ARRAY_LENGTH];
     public static final byte[] memoryUsagePersistent = new byte[ARRAY_LENGTH];
 
+    // buffer
+    public static final short[] buffer = new short[Integer.BYTES];
+
     // Store usage info for given trap
     public static void check(short stopCondition) {
-        short trapID = (short) ((stopCondition - /* PERF_START */ 2) * Short.BYTES);
+        short trapID = (short) ((stopCondition - /* PERF_START */ 2) * Integer.BYTES);
 
-        Util.setShort(memoryUsageTransientDeselect, trapID, JCSystem.getAvailableMemory(JCSystem.MEMORY_TYPE_TRANSIENT_DESELECT));
-        Util.setShort(memoryUsageTransientReset, trapID, JCSystem.getAvailableMemory(JCSystem.MEMORY_TYPE_TRANSIENT_RESET));
-        Util.setShort(memoryUsagePersistent, trapID, JCSystem.getAvailableMemory(JCSystem.MEMORY_TYPE_PERSISTENT));
+        JCSystem.getAvailableMemory(buffer, (short) 0, JCSystem.MEMORY_TYPE_TRANSIENT_DESELECT);
+        Util.setShort(memoryUsageTransientDeselect, trapID, buffer[0]);
+        Util.setShort(memoryUsageTransientDeselect, (short) (trapID + Short.BYTES), buffer[1]);
+
+        JCSystem.getAvailableMemory(buffer, (short) 0, JCSystem.MEMORY_TYPE_TRANSIENT_RESET);
+        Util.setShort(memoryUsageTransientReset, trapID, buffer[0]);
+        Util.setShort(memoryUsageTransientReset, (short) (trapID + Short.BYTES), buffer[1]);
+
+        JCSystem.getAvailableMemory(buffer, (short) 0, JCSystem.MEMORY_TYPE_PERSISTENT);
+        Util.setShort(memoryUsagePersistent, trapID, buffer[0]);
+        Util.setShort(memoryUsagePersistent, (short) (trapID + Short.BYTES), buffer[1]);
     }
 
     // Prepare and send the given part of data

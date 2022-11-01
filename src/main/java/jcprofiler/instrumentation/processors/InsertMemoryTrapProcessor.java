@@ -3,6 +3,8 @@ package jcprofiler.instrumentation.processors;
 import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 
+import pro.javacard.JavaCardSDK;
+
 import spoon.reflect.code.CtLiteral;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtField;
@@ -25,9 +27,13 @@ public class InsertMemoryTrapProcessor extends AbstractInsertTrapProcessor<CtExe
     }
 
     private void fixPMArrayLength() {
-        final CtTypeReference<Short> shortRef = getFactory().createCtTypeReference(Short.TYPE);
+        // handle support for 16bit and 32bit values
+        final int arrayLength = trapCount *
+                (!args.useSimulator && args.jcSDK.getVersion().ordinal() >= JavaCardSDK.Version.V304.ordinal()
+                    ? Integer.BYTES
+                    : Short.BYTES);
 
-        final int arrayLength = trapCount * Short.BYTES;
+        final CtTypeReference<Short> shortRef = getFactory().createCtTypeReference(Short.TYPE);
         final CtLiteral<Integer> arrayLengthLiteral = getFactory().createLiteral(arrayLength);
         arrayLengthLiteral.addTypeCast(shortRef);
 

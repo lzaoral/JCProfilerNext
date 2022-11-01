@@ -198,6 +198,20 @@ public class Instrumenter {
                         spoon.addInputResource(args.customPM.toString());
                         continue;
                     case memory:
+                        actualFilename = args.mode + "/" + className;
+
+                        // support newer JCSystem.getAvailableMemory overloads
+                        final boolean hasNewerAPI = args.jcSDK.getVersion().ordinal() >= JavaCardSDK.Version.V304.ordinal();
+                        if (hasNewerAPI && args.useSimulator) {
+                            log.warn("jCardSim does not implement JCSystem.getAvailableMemory(short[],short,byte).");
+                            log.info("Falling back to JCSystem.getAvailableMemory(short).");
+                        }
+
+                        final boolean useNewerAPI = hasNewerAPI && !args.useSimulator;
+                        log.info("Using JCSystem.getAvailableMemory with {} B limit.",
+                                useNewerAPI ? Integer.MAX_VALUE : Short.MAX_VALUE);
+                        actualFilename += (useNewerAPI ? "-new" : "-old") + ".java";
+                        break;
                     case time:
                         actualFilename = args.mode + "/" + className + ".java";
                         break;
