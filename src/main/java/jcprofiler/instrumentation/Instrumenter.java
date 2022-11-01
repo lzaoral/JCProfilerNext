@@ -190,18 +190,26 @@ public class Instrumenter {
 
             log.debug("Class {} not found.", className);
             try {
-                if (className.equals("PM") && args.customPM != null) {
-                    log.info("Using custom PM class from {}.", args.customPM);
-                    spoon.addInputResource(args.customPM.toString());
-                    continue;
+                String actualFilename = null;
+                if (className.equals("PM")) {
+                    switch (args.mode) {
+                    case custom:
+                        log.info("Using custom PM class from {}.", args.customPM);
+                        spoon.addInputResource(args.customPM.toString());
+                        continue;
+                    case memory:
+                    case time:
+                        actualFilename = args.mode + "/" + className + ".java";
+                        break;
+                    default:
+                        throw new RuntimeException("Unreachable statement reached!");
+                    }
                 }
 
                 final String filename = className + ".java";
                 // getClass().getResource() does not work when executed from JAR
-                InputStream is = getClass().getResourceAsStream(filename);
-                if (is == null)
-                    is = Objects.requireNonNull(getClass().getResourceAsStream(args.mode + "/" + filename));
-
+                final InputStream is = Objects.requireNonNull(getClass().getResourceAsStream(
+                        actualFilename != null ?  actualFilename : filename));
                 try (final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                     final String src = br.lines()
                             // fix newlines
@@ -210,7 +218,7 @@ public class Instrumenter {
                             .replace("@PACKAGE@", packageName);
                     spoon.addInputResource(new VirtualFile(src, filename));
                 }
-                log.debug("Successfully generated new {} class.", className);
+                log.debug("Successfully generated new {} class.", filename);
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
