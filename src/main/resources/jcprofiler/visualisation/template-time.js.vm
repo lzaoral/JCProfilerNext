@@ -122,35 +122,35 @@ function redrawGraph(evt) {
     const hasTime = vals.some(e => e !== null);
     if (hasTime) {
         // Histograms
-        if ('$inputDivision' === 'none') {
-            traces.push({
-                ...histogramCommon,
-                x: filteredVals,
-                name: 'measurements',
-                marker: {
-                    color: 'rgb(49, 130, 189)',
-                    opacity: 0.75
-                }
-            });
-        } else {
-            traces.push({
-                ...histogramCommon,
-                x: filteredVals.slice(0, filteredVals.length / 2),
-                name: 'low $inputDivision',
-                marker: {
-                    color: 'rgb(58,189,49)',
-                    opacity: 0.75
-                }
-            }, {
-                ...histogramCommon,
-                x: filteredVals.slice(filteredVals.length / 2),
-                name: 'high $inputDivision',
-                marker: {
-                    color: 'rgb(49, 130, 189)',
-                    opacity: 0.75
-                }
-            });
-        }
+        #if( "$inputDivision" == "none" )
+        traces.push({
+            ...histogramCommon,
+            x: filteredVals,
+            name: 'measurements',
+            marker: {
+                color: 'rgb(49, 130, 189)',
+                opacity: 0.75
+            }
+        });
+        #else
+        traces.push({
+            ...histogramCommon,
+            x: filteredVals.slice(0, filteredVals.length / 2),
+            name: 'low $inputDivision',
+            marker: {
+                color: 'rgb(58,189,49)',
+                opacity: 0.75
+            }
+        }, {
+            ...histogramCommon,
+            x: filteredVals.slice(filteredVals.length / 2),
+            name: 'high $inputDivision',
+            marker: {
+                color: 'rgb(49, 130, 189)',
+                opacity: 0.75
+            }
+        });
+        #end
 
         traces.push({
             ...histogramCommon,
