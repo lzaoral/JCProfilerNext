@@ -1,0 +1,9 @@
+# mode,type#signature,ATR,elapsedTime,APDUHeader,inputType:value,inputFilter
+memory,example.Example(),3B8580018073C821100E,0 days 00:00:00.022,install,install,none
+# input1,input2,input3,...
+measured during installation
+# trapName,freeTransientDeselect,freeTransientReset,freePersistent
+TRAP_example_Example_argb_arge_1,4240,4250,157852
+TRAP_example_Example_argb_arge_2,3984,3994,157836
+TRAP_example_Example_argb_arge_3,3728,3738,157820
+TRAP_example_Example_argb_arge_4,3728,3738,157548

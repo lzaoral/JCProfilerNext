@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Measurements - example.Example()</title>
+        <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"></script>
+    <script>hljs.highlightAll()</script>
+    <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
+    <style>
+.contents {
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-svg {
+    z-index: 1;
+}
+
+.trap {
+    position: relative;
+}
+
+.trap:hover {
+    cursor: pointer;
+    font-style: italic;
+}
+
+.trap_select {
+    background-color: rgba(0, 255, 255, 25%);
+    font-style: italic;
+}
+
+.trap_err {
+    background-color: rgba(255, 0, 0, 25%);
+}
+
+.trap_warn {
+    background-color: rgba(255, 255, 0, 50%);
+}
+
+.trapSwitch {
+    bottom: 0;
+    position: absolute;
+    right: 0;
+}
+
+.notes  {
+    align-items: center;
+    background-color: rgba(248, 248, 248, 0.97);
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5em;
+}
+
+.note {
+    align-items: center;
+    display: flex;
+    justify-content: left;
+}
+
+.square {
+    display: inline-block;
+    height: 20px;
+    margin-right: 10px;
+    width: 20px;
+}
+
+.graph {
+    align-content: center;
+    width: 49%;
+}
+
+.graph-sticky {
+    top: 0;
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+.code {
+    float: left;
+    width: 50%;
+}
+
+#codeWithTraps, #codeWithoutTraps {
+    flex: 1;
+    overflow: scroll;
+}
+
+#codeWithTraps, #graphHelp {
+    display: none;
+}
+
+.codeHeader {
+    position: relative;
+    margin-bottom: 20px;
+    word-wrap: anywhere;
+}
+
+.codeContainer {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.codeWrapper {
+    display: inline-block;
+    min-width: 100%;
+}
+
+.center {
+    text-align: center;
+}
+    </style>
+</head>
+<body>
+    <h1>example.Example()</h1>
+    <h3 id="graphName" class="center"></h3>
+    <div class="contents">
+        <div class="code">
+            <div class="codeHeader">
+                <div>
+                    <b>Mode:</b> memory<br>
+                    <b>Card ATR:</b>                         <a href="https://smartcard-atr.apdu.fr/parse?ATR=3B8580018073C821100E" target="_blank">3B8580018073C821100E</a>
+<br>
+                    <b>APDU header:</b> measured during installation<br>
+                        <b>Input:</b> measured during installation<br>
+                    <b>Elapsed time:</b> 0 days 00:00:00.022<br>
+                    <b>Source measurements:</b> <a href="example-memory.csv" target="_blank">measurements.csv</a>
+                </div>
+                <div class="trapSwitch">
+                    <input type="checkbox" id="trapSwitch" autocomplete="off"/>
+                    <label for="trapSwitch">Show explicit traps</label>
+                </div>
+            </div>
+            <div class="codeContainer">
+<div id="heatmap"></div>                <div id="codeWithTraps" style="margin-left: -100px;">
+                    <div class="codeWrapper">
+                        <pre><code class="language-java">private Example() {
+<div class="TRAP_example_Example_argb_arge_1 trap">    <span class="trap_contents">PM.check(PMC.TRAP_example_Example_argb_arge_1);</span>
+</div>    // Transient Deselect
+    byte[] transientDeselect = JCSystem.makeTransientByteArray(((short) (256)), JCSystem.CLEAR_ON_DESELECT);
+<div class="TRAP_example_Example_argb_arge_2 trap">    <span class="trap_contents">PM.check(PMC.TRAP_example_Example_argb_arge_2);</span>
+</div>    // Transient Reset
+    byte[] transientReset = JCSystem.makeTransientByteArray(((short) (256)), JCSystem.CLEAR_ON_RESET);
+<div class="TRAP_example_Example_argb_arge_3 trap">    <span class="trap_contents">PM.check(PMC.TRAP_example_Example_argb_arge_3);</span>
+</div>    // Persistent
+    byte[] persistent = new byte[256];
+<div class="TRAP_example_Example_argb_arge_4 trap">    <span class="trap_contents">PM.check(PMC.TRAP_example_Example_argb_arge_4);</span>
+</div>}
+</code></pre>
+                    </div>
+                </div>
+                <div id="codeWithoutTraps" style="margin-left: -100px;">
+                    <div class="codeWrapper">
+                                                                        <pre><code class="language-java"><div class="TRAP_example_Example_argb_arge_1 trap"><span class="trap_contents">private Example() {</span>
+</div>    // Transient Deselect
+<div class="TRAP_example_Example_argb_arge_2 trap">    <span class="trap_contents">byte[] transientDeselect = JCSystem.makeTransientByteArray(((short) (256)), JCSystem.CLEAR_ON_DESELECT);</span>
+</div>    // Transient Reset
+<div class="TRAP_example_Example_argb_arge_3 trap">    <span class="trap_contents">byte[] transientReset = JCSystem.makeTransientByteArray(((short) (256)), JCSystem.CLEAR_ON_RESET);</span>
+</div>    // Persistent
+<div class="TRAP_example_Example_argb_arge_4 trap">    <span class="trap_contents">byte[] persistent = new byte[256];</span>
+</div>}
+</code></pre>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3 class="center">Colour explanation</h3>
+                <div class="notes">
+                    <div class="note">
+                        <div class="square trap_select"></div>
+                        Currently selected trap
+                    </div>
+                    <div class="note">
+                        <div class="square trap_warn"></div>
+                        Trap was never reached
+                    </div>
+                    <div class="note">
+                        <div class="square trap_err"></div>
+                        Trap was reached only sometimes
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="graph">
+            <div class="graph-sticky">
+                <div id="graphHelp" class="center">
+                    <p>Click on a graph item to get a list of corresponding inputs.</p>
+                </div>
+                <div id="plotly"></div>
+            </div>
+        </div>
+    </div>
+    <script type="application/javascript">
+
+const heatmapX = ['Trans', 'Pers'];
+const heatmapData  = {
+    colorscale: [
+        [0, 'white'], [1, 'red']
+    ]
+};
+
+/*
+ * MACROS
+ */
+
+
+/*
+ * CONSTANTS
+ */
+
+const trapPrefix = 'TRAP_example_Example_argb_arge_';
+
+const inputs = ['measured during installation'];
+const measurements = {
+        TRAP_example_Example_argb_arge_1: [4240, 4250, 157852],
+        TRAP_example_Example_argb_arge_2: [3984, 3994, 157836],
+        TRAP_example_Example_argb_arge_3: [3728, 3738, 157820],
+        TRAP_example_Example_argb_arge_4: [3728, 3738, 157548]
+};
+
+const heatmapValues = {
+    x: heatmapX,
+    y: [...Array(12 + 1).keys()].splice(1).reverse(),
+    z: [[null, null], [0.0, 272.0], [null, null], [null, null], [256.0, 16.0], [null, null], [null, null], [256.0, 16.0], [null, null], [null, null], [0.0, 0.0], [null, null]]
+};
+
+const heatmapValuesFiltered = {
+    x: heatmapValues.x,
+    y: undefined,
+    z: heatmapValues.z.filter((e, i, z) => i === 0 || z[i][0] !== null || z[i - 1][0] === null)
+};
+heatmapValuesFiltered.y = heatmapValues.y.slice(12 - heatmapValuesFiltered.z.length, 12);
+
+const histogramCommon = {
+    type: 'histogram',
+    xaxis: 'x2',
+    yaxis: 'y1',
+    showlegend: true,
+    hovertemplate: 'Bin: %{x}<br>Count: %{y}<extra></extra>'
+};
+
+/*
+ * FUNCTIONS
+ */
+
+const maxLineStringSize = 2 * heatmapValues.y[0].toString().length;
+
+// heatmap
+Plotly.newPlot('heatmap', [{
+    ...heatmapValuesFiltered,
+    hovertemplate: 'Line: %{y}<br>%{z} B<extra></extra>',
+    showlegend: false,
+    showscale: false,
+    type: 'heatmap',
+    xgap: 4,
+    ...heatmapData
+}], {
+    paper_bgcolor: 'rgba(0, 0, 0, 0)',
+    margin: {
+        l: 18 + maxLineStringSize,
+        r: 110,
+        b: 6,
+        t: 18,
+        pad: 4
+    },
+    width: 112 + 40 * heatmapValues.x.length + maxLineStringSize,
+    xaxis: {
+        side: 'top',
+        fixedrange: true,
+        ticks: '',
+        showgrid: false,
+        zeroline: false
+    },
+    yaxis: {
+        fixedrange: true,
+        ticks: '',
+        title: '',
+        type: 'category',
+        showgrid: false,
+        zeroline: false
+    }
+}, {
+    displayModeBar: false
+});
+
+// this is not very nice but Google didn't help much nor I'm a JS developer ¯\_(ツ)_/¯
+const padding = 12;
+const originalHeight = document.getElementById('codeWithoutTraps') - padding;
+
+// heatmap resize event
+window.addEventListener('resize', _ => {
+    const trapSwitch = document.getElementById('trapSwitch');
+    const divWith = document.getElementById('codeWithTraps');
+
+    if (trapSwitch.checked)
+        Plotly.relayout('heatmap', {
+            height: divWith.clientHeight - padding
+        });
+    else
+        Plotly.relayout('heatmap', {
+            height: originalHeight
+        });
+});
+
+// heatmap click event handler
+const heatmapDiv = document.getElementById('heatmap');
+heatmapDiv.on('plotly_click', function (data) {
+    const graph = data.points[0];
+    // check for a valid value
+    if (graph.z === null)
+        return;
+
+    // compute the correct trap index
+    const z = graph.data.z;
+
+    let trapIdx = 0;
+    for (let i = z.length - 1; i >= z.length - graph.y; i--) {
+        if (z[i][0] !== null)
+            trapIdx++;
+    }
+
+    const trapDiv = document.querySelector('.' + trapPrefix + trapIdx);
+    const event = new MouseEvent('click');
+    trapDiv.dispatchEvent(event);
+});
+
+function toggleTraps(event) {
+    const divWith = document.getElementById('codeWithTraps');
+    const divWithout = document.getElementById('codeWithoutTraps');
+
+    if (event.currentTarget.checked) {
+        divWith.style.display = 'initial';
+        divWithout.style.display = 'none';
+
+        Plotly.update('heatmap', {
+            x: [heatmapValues.x],
+            y: [heatmapValues.y],
+            z: [heatmapValues.z]
+        }, {
+            'yaxis.type': 'category',
+            height: divWith.clientHeight - padding
+        });
+        return;
+    }
+
+    divWith.style.display = 'none';
+    divWithout.style.display = 'initial';
+
+    Plotly.update('heatmap', {
+        x: [heatmapValuesFiltered.x],
+        y: [heatmapValuesFiltered.y],
+        z: [heatmapValuesFiltered.z]
+    }, {
+        'yaxis.type': 'category',
+        height: originalHeight
+    });
+}
+
+function selectTraps(trapName) {
+    // update highlight of the selected trap
+    document.querySelectorAll('.trap .trap_select').forEach(t => t.classList.remove('trap_select'));
+    document.querySelectorAll('.' + trapName + ' .trap_contents').forEach(t => t.classList.add('trap_select'));
+}
+
+/*
+ * CONSTANTS
+ */
+
+const memoryTypes = ['transient deselect', 'transient reset', 'persistent']
+
+const scatterCommon = {
+    connectgaps: true,
+    type: 'scatter'
+};
+
+const xaxisCommon = {
+    // dtick: 1,
+    tickformat: ',d',
+    title: 'Trap ID'
+};
+
+const yaxisCommon = {
+    title: 'Free memory in B',
+    tickformat: ',d'
+};
+
+const layoutCommon = {
+    bargap: 0.2,
+    grid: {
+        rows: 2,
+        columns: 1,
+        pattern: 'independent'
+    },
+    height: 700,
+    margin: {
+        l: 80,
+        r: 40,
+        b: 80,
+        t: 40,
+        pad: 5
+    },
+    xaxis1: xaxisCommon,
+    xaxis2: xaxisCommon,
+    yaxis1: yaxisCommon,
+    yaxis2: yaxisCommon
+};
+
+/*
+ * FUNCTIONS
+ */
+
+// set default heading
+document.getElementById('graphName').innerText = 'Select a line to highlight corresponding values.';
+
+// Line graphs
+const persistentEqual = Object.keys(measurements).every(e => measurements[e][0] === measurements[e][1]);
+
+const traces = [];
+for (let i = 0; i < 3; i++) {
+    let vals = Object.values(measurements).map(e => e[i]);
+
+    traces.push({
+        ...scatterCommon,
+        x: [...Array(vals.length + 1).keys()].splice(1),
+        y: vals,
+        xaxis: i < 2 ? 'x1' : 'x2',
+        yaxis: i < 2 ? 'y1' : 'y2',
+        name: memoryTypes[i],
+        hovertemplate: 'Trap ID: %{x}<br>Free ' + memoryTypes[i] + ' memory: %{y} B<extra></extra>',
+        mode: i === 2 || !persistentEqual ? 'lines+markers' : i === 0 ? 'markers' : 'lines'
+    });
+}
+
+// WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
+function redrawGraphs() {
+    Plotly.newPlot('plotly', traces, {
+        ...layoutCommon
+    }, {
+        responsive: true
+    });
+
+    // set click event handler
+    const plotlyDiv = document.getElementById('plotly');
+
+    // replace the event handler
+    plotlyDiv.removeAllListeners('plotly_click');
+    plotlyDiv.on('plotly_click', function (data) {
+        const graph = data.points[0];
+        const trapName = trapPrefix + graph.x;
+
+        highlightTrap(trapName);
+        document.querySelectorAll('.' + trapName).forEach(
+            e => e.scrollIntoView({block: 'center', behavior: 'smooth'}));
+    });
+}
+
+// initial draw
+redrawGraphs();
+
+// redraw graph event handler
+function highlightTrap(trapName) {
+    // remove old traces
+    if (document.querySelector('.trap .trap_select') != null)
+        Plotly.deleteTraces('plotly', [3, 4, 5]);
+
+    selectTraps(trapName);
+
+    // update trap title
+    document.getElementById('graphName').textContent = trapName;
+
+    const trapID = trapName.split('_').at(-1);
+    const trace = {
+        hoverinfo: 'skip',
+        marker: {
+            color: 'black',
+            size: 6
+        },
+        mode: 'markers',
+        showlegend: false,
+        type: 'scatter',
+        x: [trapID]
+    };
+
+    // highlight the points
+    for (let i = 0; i < 3; i++) {
+        let val = measurements[trapName][i];
+        if (val === null) {
+            for (const elem of Object.keys(measurements)) {
+                if (elem === trapName)
+                    break;
+
+                if (measurements[elem][i] !== null)
+                    val = measurements[elem][i];
+            }
+        }
+
+        Plotly.addTraces('plotly', {
+            ...trace,
+            y: [val],
+            xaxis: i < 2 ? 'x1' : 'x2',
+            yaxis: i < 2 ? 'y1' : 'y2'
+        });
+    }
+}
+
+window.addEventListener('load', _ => {
+    document.getElementById('trapSwitch').addEventListener('change', toggleTraps);
+    document.querySelectorAll('.trap').forEach(elem => elem.addEventListener('click',
+            // attribute with trap name is always the first
+            evt => highlightTrap(evt.currentTarget.classList[0])))
+});
+    </script>
+</body>
+</html>

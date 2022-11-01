@@ -5,7 +5,7 @@ JCProfilerNext
 
 link:https://github.com/lzaoral/JCProfilerNext/actions/workflows/ci.yml[image:https://github.com/lzaoral/JCProfilerNext/actions/workflows/ci.yml/badge.svg[Java CI with Gradle]]
 
-WARNING: JCProfilerNext is still a work in progress so changes in behaviour,
+WARNING: JCProfilerNext is still a work in progress. Therefore, changes in behaviour,
 bugs and crashes are expected.  If you encounter a bug, please file an issue.
 Thank you!
 
@@ -29,8 +29,17 @@ Installation
 .. directly using built JAR: `java -jar build/libs/JCProfilerNext-1.0-SNAPSHOT.jar --help`.
 .. directly from distribution archives in `build/distributions`.
 
-Example
--------
+Execution modes
+---------------
+The tool can be executed in four different modes (select with `--mode`):
+
+* `custom` -- Instrument the applet with user-provided code snippets.  The user has to do the measurements on their own.
+* `memory` -- Measure memory usage.
+* `time` (default) -- Measure elapsed time.
+* `stats` -- Collect API usage statistics.
+
+Time Example
+~~~~~~~~~~~~
 Consider the `example` method in the following class.  The outer loop is clearly
 not constant since its iteration count depends on the input value.  On the other
 hand, the inner loop is constant.
@@ -86,19 +95,97 @@ also use this directory to store all intermediate results:
 
 * `applet` - contains the built applet with corresponding CAP, JAR and JCA files
 * `measurements.csv` - contains the profiled method signature, card ATR, elapsed time, input APDUs and corresponding raw measurements
-* `measurements.html` - contains visualisation of the measurements
+* `measurements.html` - contains a visualisation of the measurements
 * `sources_instr` - contains instrumented sources
 * `sources_original` - contains original unchanged sources
 * `sources_perf` - contains sources with inserted measurements as inline comments
 
-If you open the corresponding link:https://lzaoral.github.io/JCProfilerNext/example.html[`measurements.html`]
+If you open the corresponding link:https://lzaoral.github.io/JCProfilerNext/example-time.html[`measurements.html`]
 produced by JCProfilerNext, you will see that some parts of the code are indeed
-not constant.  Namely if you inspect the corresponding histograms of traps
+not constant, namely if you inspect the corresponding histograms of traps
 after the `for` loops.
+
+Memory Example
+~~~~~~~~~~~~~~
+Consider the following source code:
+
+[source,java]
+----
+package example;
+
+import javacard.framework.*;
+
+public class Example extends Applet {
+
+    private Example() {
+        // Transient Deselect
+        byte[] transientDeselect = JCSystem.makeTransientByteArray((short) 256, JCSystem.CLEAR_ON_DESELECT);
+
+        // Transient Reset
+        byte[] transientReset = JCSystem.makeTransientByteArray((short) 256, JCSystem.CLEAR_ON_RESET);
+
+        // Persistent
+        byte[] persistent = new byte[256];
+    }
+
+    public static void install(byte[] bArray, short bOffset, byte bLength) {
+        new Example().register();
+    }
+
+    @Override
+    public void process(APDU apdu) {}
+}
+----
+
+Run as:
+[source,console]
+----
+$ ./gradlew run --args="--work-dir example --jckit jc304_kit --mode memory"
+----
+JCProfilerNext will produce the same directory structure as in the time mode
+above.  The `--method` option is omitted because we want to measure memory
+usage in the constructor. Note that the allocation of transient deselect memory
+may also affect the amount of free transient memory and vice versa. See
+link:https://lzaoral.github.io/JCProfilerNext/example-memory.html[`measurements.html`]
+for visualisation of the measurements.
+
+Stats Example
+~~~~~~~~~~~~~
+Consider the following source code:
+
+[source,java]
+----
+import javacard.security.KeyPair;
+
+class Example {
+    public Example() {
+        KeyPair kp = new KeyPair(KeyPair.ALG_RSA, (short) 2048);
+        kp.genKeyPair();
+    }
+}
+----
+
+Run as:
+[source,console]
+----
+$ ./gradlew run --args="--work-dir example --jckit jc222_kit --mode stats"
+----
+JCProfilerNext will process all sources in the `example` directory and produce
+the `APIstatistics.csv` file. Note that if not all imports can be resolved,
+the results may not be precise, and the tool will issue an appropriate warning.
+
+[source,csv]
+----
+# package/outer type,type,member,frequency
+javacard.security,KeyPair,,2
+javacard.security,KeyPair,ALG_RSA,1
+javacard.security,KeyPair,genKeyPair(),1
+javacard.security,KeyPair,"KeyPair(byte,short)",1
+----
 
 Limitations
 -----------
 
-* Cards that require special communication procedures are not supported.
-* It is not possible to use a different JDK to compile the JavaCard applets and to run this project.
+* Cards that require special communication procedures (e.g. `SecureChannel`) are not supported.
+* It is not possible to use a different JDK to compile the JavaCard applets and run this project.
 * Connection to wireless card terminals may occasionally fail.
