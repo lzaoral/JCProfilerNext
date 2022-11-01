@@ -8,6 +8,7 @@ import org.apache.velocity.VelocityContext;
 
 import spoon.SpoonAPI;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -32,7 +33,7 @@ public class MemoryVisualiser extends AbstractVisualiser {
         // prepare values for the heatMap
         for (final String line : sourceCode) {
             if (!line.contains("PM.check(PMC.TRAP")) {
-                heatmapValues.add(null);
+                heatmapValues.add(Arrays.asList(null, null));
                 continue;
             }
 
@@ -42,7 +43,7 @@ public class MemoryVisualiser extends AbstractVisualiser {
 
             // unreachable trap or first reachable trap
             if (measurements.get(currentTrap).contains(null) || prevActualTrap == null) {
-                heatmapValues.add(0.0);
+                heatmapValues.add(Arrays.asList(0.0, 0.0));
 
                 // first reachable processed trap
                 if (prevActualTrap == null)
@@ -55,7 +56,9 @@ public class MemoryVisualiser extends AbstractVisualiser {
             final List<Long> current = measurements.get(currentTrap);
 
             // get the biggest difference in available memory
-            heatmapValues.add(IntStream.range(0, 3).mapToDouble(i -> prev.get(i) - current.get(i)).max().orElse(0.0));
+            final double trans = (double) Math.max(prev.get(0) - current.get(0), prev.get(1) - current.get(1));
+            final double pers = (double) (prev.get(2) - current.get(2));
+            heatmapValues.add(Arrays.asList(trans, pers));
 
             prevActualTrap = currentTrap;
         }

@@ -43,7 +43,7 @@ public abstract class AbstractVisualiser {
     protected InputDivision inputDivision;
 
     protected List<String> inputs;
-    protected final List<Double> heatmapValues = new ArrayList<>();
+    protected final List<List<Double>> heatmapValues = new ArrayList<>();
     protected final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 
     protected List<String> sourceCode;
@@ -148,6 +148,9 @@ public abstract class AbstractVisualiser {
 
         final VelocityEngine velocityEngine = new VelocityEngine(props);
         velocityEngine.init();
+
+        // the heatmap is in reverse
+        Collections.reverse(heatmapValues);
 
         final VelocityContext context = new VelocityContext();
         context.put("apduHeader", apduHeader);

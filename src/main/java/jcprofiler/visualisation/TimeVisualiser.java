@@ -71,7 +71,7 @@ public class TimeVisualiser extends AbstractVisualiser {
         // prepare values for the heatMap
         sourceCode.forEach(s -> {
             if (!s.contains("PM.check(PMC.TRAP")) {
-                heatmapValues.add(null);
+                heatmapValues.add(Collections.singletonList(null));
                 return;
             }
 
@@ -82,7 +82,7 @@ public class TimeVisualiser extends AbstractVisualiser {
 
             // trap is completely unreachable
             if (ds == null) {
-                heatmapValues.add(Double.NaN);
+                heatmapValues.add(Collections.singletonList(Double.NaN));
                 return;
             }
 
@@ -96,11 +96,11 @@ public class TimeVisualiser extends AbstractVisualiser {
                     final double maxAvg = values.stream().skip(values.size() / 2)
                             .filter(Objects::nonNull).mapToLong(Long::longValue).average().orElse(.0);
 
-                    heatmapValues.add(Math.abs(minAvg - maxAvg));
+                    heatmapValues.add(Collections.singletonList(Math.abs(minAvg - maxAvg)));
                     break;
 
                 case none:
-                    heatmapValues.add(Math.round(ds.getMean() * 100.) / 100.);
+                    heatmapValues.add(Collections.singletonList(Math.round(ds.getMean() * 100.) / 100.));
                     break;
 
                 default:

@@ -1,5 +1,4 @@
-## @vtlvariable name="heatmapTitle" type="java.lang.String"
-## @vtlvariable name="heatmapValues" type="java.util.List<java.lang.Double>"
+## @vtlvariable name="heatmapValues" type="java.util.List<java.util.List<java.lang.Double>>"
 ## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
 ## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="measureUnit" type="java.lang.String"
@@ -25,13 +24,13 @@ const inputs = $inputs;
 const measurements = #object( $measurements );
 
 const heatmapValues = {
-    x: [''],
+    x: heatmapX,
     y: [...Array(${heatmapValues.size()} + 1).keys()].splice(1).reverse(),
-    z: ${heatmapValues}.map(e => [e]).reverse()
+    z: ${heatmapValues}
 };
 
 const heatmapValuesFiltered = {
-    x: [''],
+    x: heatmapValues.x,
     y: undefined,
     z: heatmapValues.z.filter((e, i, z) => i === 0 || z[i][0] !== null || z[i - 1][0] === null)
 };
@@ -57,7 +56,9 @@ Plotly.newPlot('heatmap', [{
     hovertemplate: 'Line: %{y}<br>%{z} $measureUnit<extra></extra>',
     showlegend: false,
     showscale: false,
-    type: 'heatmap'
+    type: 'heatmap',
+    xgap: 4,
+    ...heatmapData
 }], {
     paper_bgcolor: 'rgba(0, 0, 0, 0)',
     margin: {
@@ -67,16 +68,12 @@ Plotly.newPlot('heatmap', [{
         t: 18,
         pad: 4
     },
-    width: 155 + maxLineStringSize,
+    width: 112 + 40 * heatmapValues.x.length + maxLineStringSize,
     xaxis: {
+        side: 'top',
         fixedrange: true,
         ticks: '',
-        title: {
-            text: '$heatmapTitle',
-            standoff: 5.5
-        },
         showgrid: false,
-        showticklabels: false,
         zeroline: false
     },
     yaxis: {

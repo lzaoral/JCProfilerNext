@@ -1,7 +1,12 @@
 ## @vtlvariable name="measureUnit" type="java.lang.String"
 
 ## include common code
-#set( $heatmapTitle = "Diff in $measureUnit" )
+const heatmapX = ['Trans', 'Pers'];
+const heatmapData  = {
+    colorscale: [
+        [0, 'white'], [1, 'red']
+    ]
+};
 #parse( "template-common.js.vm" )
 
 /*

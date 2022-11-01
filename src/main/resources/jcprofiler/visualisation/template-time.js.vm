@@ -4,11 +4,16 @@
 ## @vtlvariable name="measureUnit" type="java.lang.String"
 
 ## include common code
-#if( $inputDivision == 'none' )
-    #set( $heatmapTitle = "Avg $measureUnit" )
-#else
-    #set( $heatmapTitle = "Diff $measureUnit" )
-#end
+const heatmapX = [
+    #if( $inputDivision == 'none' )
+    'Avg $measureUnit',
+    #else
+    'Diff $measureUnit',
+    #end
+];
+const heatmapData  = {
+    colorscale: 'RdBu'
+};
 #parse( "template-common.js.vm" )
 
 /*
