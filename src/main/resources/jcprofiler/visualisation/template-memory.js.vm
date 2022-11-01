@@ -74,10 +74,9 @@ for (var i = 0; i < 3; i++) {
 }
 
 // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
-function redrawGraphs(annotations = []) {
+function redrawGraphs() {
     Plotly.newPlot('plotly', traces, {
-        ...layoutCommon,
-        annotations: annotations
+        ...layoutCommon
     }, {
         responsive: true
     });
@@ -102,25 +101,30 @@ redrawGraphs();
 
 // redraw graph event handler
 function highlightTrap(trapName) {
+    // remove old traces
+    if (document.querySelector('.trap .trap_select') != null)
+        Plotly.deleteTraces('plotly', [3, 4, 5]);
+
     selectTraps(trapName);
 
     // update trap title
     document.getElementById('graphName').textContent = trapName;
 
     const trapID = trapName.split('_').at(-1);
-    const annotation = {
-        x: trapID,
-        showarrow: true,
-        arrowhead: 5,
-        ax: 0,
-        ay: -35
+    const trace = {
+        hoverinfo: 'skip',
+        marker: {
+            color: 'black',
+            size: 6
+        },
+        mode: 'markers',
+        showlegend: false,
+        type: 'scatter',
+        x: [trapID]
     };
 
-    const annotations = [];
-    for (var i = 0; i < 3; i++) {
-        if (i === 1)
-            continue;
-
+    // highlight the points
+    for (let i = 0; i < 3; i++) {
         let val = measurements[trapName][i];
         if (val === null) {
             for (const elem of Object.keys(measurements)) {
@@ -132,15 +136,13 @@ function highlightTrap(trapName) {
             }
         }
 
-        annotations.push({
-            ...annotation,
-            y: val,
-            xref: i < 2 ? 'x1' : 'x2',
-            yref: i < 2 ? 'y1' : 'y2'
+        Plotly.addTraces('plotly', {
+            ...trace,
+            y: [val],
+            xaxis: i < 2 ? 'x1' : 'x2',
+            yaxis: i < 2 ? 'y1' : 'y2'
         });
     }
-
-    redrawGraphs(annotations);
 }
 
 window.addEventListener('load', _ => {
