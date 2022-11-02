@@ -34,7 +34,8 @@ hs_err_pid*
 build
 
 # temporary test files
-tests
+tests/**/*
+!tests/gather-stats.sh
 !tests/run.py
 !tests/test_data.json
 !tests/inputs
