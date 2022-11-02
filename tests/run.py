@@ -134,8 +134,11 @@ def execute_cmd(cmd: List[str], stages: List[str] = STAGES) -> None:
 
 
 def prepare_workdir(test: Dict[str, Any], subtest_name: str) -> Path:
+    if not os.path.exists(ARGS.output_dir):
+        os.mkdir(ARGS.output_dir)
+
     test_dir = Path(mkdtemp(prefix=f'{test["name"]}_{subtest_name}_',
-                    dir='.')).absolute()
+                    dir=ARGS.output_dir)).absolute()
     print('Created temporary directory', test_dir)
 
     copytree(Path(test['name']) / test['path'], test_dir,
@@ -297,6 +300,9 @@ def main() -> None:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='JCProfilerNext integration test suite')
+
+    parser.add_argument('--output-dir', default='.',
+                        help='Directory where to store the test runs')
 
     parser.add_argument('--min-jckit',
                         help='Minimal JCKit version used during testing')
