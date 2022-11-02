@@ -274,7 +274,7 @@ def main() -> None:
 
     rebuild_jar()
 
-    with open('test_data.json') as f:
+    with open('test-data.json') as f:
         data = json.load(f)
 
     clone_git_repo(data['etsiRepo'], 'etsiapi', reclone=False)
