@@ -1,4 +1,4 @@
-package @PACKAGE@;
+package jcprofiler;
 
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;

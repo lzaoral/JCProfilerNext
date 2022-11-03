@@ -229,7 +229,7 @@ public class Instrumenter {
                             // fix newlines
                             .collect(Collectors.joining(System.lineSeparator()))
                             // set package name
-                            .replace("@PACKAGE@", packageName);
+                            .replace("jcprofiler", packageName);
                     spoon.addInputResource(new VirtualFile(src, filename));
                 }
                 log.debug("Successfully generated new {} class.", filename);
