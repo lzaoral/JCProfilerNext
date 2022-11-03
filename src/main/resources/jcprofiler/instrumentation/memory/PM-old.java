@@ -17,9 +17,9 @@ public class PM {
     private static final short MAX_APDU_LENGTH = 256;
 
     // Arrays storing the memory consumption for given trap
-    public static final byte[] memoryUsageTransientDeselect = new byte[ARRAY_LENGTH];
-    public static final byte[] memoryUsageTransientReset = new byte[ARRAY_LENGTH];
-    public static final byte[] memoryUsagePersistent = new byte[ARRAY_LENGTH];
+    private static final byte[] memoryUsageTransientDeselect = new byte[ARRAY_LENGTH];
+    private static final byte[] memoryUsageTransientReset = new byte[ARRAY_LENGTH];
+    private static final byte[] memoryUsagePersistent = new byte[ARRAY_LENGTH];
 
     private static boolean initialised = false;
 
