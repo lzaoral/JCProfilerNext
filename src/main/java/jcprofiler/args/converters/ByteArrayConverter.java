@@ -5,11 +5,22 @@ import com.beust.jcommander.converters.BaseConverter;
 
 import cz.muni.fi.crocs.rcard.client.Util;
 
+/**
+ * Parameter converter for byte arrays
+ */
 public class ByteArrayConverter extends BaseConverter<byte[]> {
     public ByteArrayConverter(final String optionName) {
         super(optionName);
     }
 
+    /**
+     * Coverts a hexadecimal string into an array of bytes.
+     *
+     * @param  value input string
+     * @return       converted byte array
+     *
+     * @throws ParameterException if the value is not a valid single byte hexadecimal string
+     */
     @Override
     public byte[] convert(String value) {
         if (value.startsWith("0x"))

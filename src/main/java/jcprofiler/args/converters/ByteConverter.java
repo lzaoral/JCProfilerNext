@@ -2,13 +2,25 @@ package jcprofiler.args.converters;
 
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.BaseConverter;
+
 import cz.muni.fi.crocs.rcard.client.Util;
 
+/**
+ * Parameter converter for single bytes
+ */
 public class ByteConverter extends BaseConverter<Byte> {
     public ByteConverter(final String optionName) {
         super(optionName);
     }
 
+    /**
+     * Coverts a hexadecimal string into a single byte.
+     *
+     * @param  value input string
+     * @return       converted byte
+     *
+     * @throws ParameterException if the value is not a valid single byte hexadecimal string
+     */
     @Override
     public Byte convert(String value) {
         if (value.startsWith("0x"))

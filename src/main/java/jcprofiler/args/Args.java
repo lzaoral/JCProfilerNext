@@ -12,6 +12,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Description of commandline arguments
+ */
 public class Args {
     @Parameter(names = {"-h", "--help"},
                description = "Show help",
