@@ -32,10 +32,10 @@ public class Compiler {
         JCProfilerUtil.recreateDirectory(appletDir);
 
         log.debug("Generating ANT JavaCard project");
-        final Project p = new Project();
-        p.init();
-        p.setName("JavaCard");
-        p.setBaseDir(appletDir.toFile());
+        final Project project = new Project();
+        project.init();
+        project.setName("JavaCard");
+        project.setBaseDir(appletDir.toFile());
 
         /*
          TODO: make it possible to select the JDK that is used to compile the project if possible
@@ -46,28 +46,28 @@ public class Compiler {
         consoleLogger.setErrorPrintStream(System.err);
         consoleLogger.setOutputPrintStream(System.out);
         consoleLogger.setMessageOutputLevel(args.debug ? Project.MSG_VERBOSE : Project.MSG_INFO);
-        p.addBuildListener(consoleLogger);
+        project.addBuildListener(consoleLogger);
 
         final Target jcTarget = new Target();
         jcTarget.setName("javacard");
-        p.addTarget(jcTarget);
-        p.setDefault("javacard");
+        project.addTarget(jcTarget);
+        project.setDefault("javacard");
 
         final Echo echo = new Echo();
         echo.setTaskName("echo");
-        echo.setProject(p);
-        echo.setMessage("Java version: " + p.getProperty("java.version"));
+        echo.setProject(project);
+        echo.setMessage("Java version: " + project.getProperty("java.version"));
         jcTarget.addTask(echo);
 
         final JavaCard jc = new JavaCard();
         jc.setTaskName("JavaCard");
-        jc.setProject(p);
+        jc.setProject(project);
         jc.setJCKit(args.jcSDK.getRoot().getAbsolutePath());
         jcTarget.addTask(jc);
 
         final JCCap cap = jc.createCap();
         cap.setTaskName("JavaCard");
-        cap.setProject(p);
+        cap.setProject(project);
         cap.setClasses("classes");
         cap.setSources(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toString());
         cap.setExport(".");
@@ -90,6 +90,6 @@ public class Compiler {
         }
 
         log.debug("Compiling into {}.cap", entryPoint.getSimpleName());
-        p.executeTarget(p.getDefaultTarget());
+        project.executeTarget(project.getDefaultTarget());
     }
 }
