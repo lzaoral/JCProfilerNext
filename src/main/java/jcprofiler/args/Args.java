@@ -23,7 +23,7 @@ public class Args {
     public boolean debug = false;
 
     @Parameter(names = {"-w", "--work-dir"},
-               description = "Input files or directories (can be specified multiple times)",
+               description = "Path to the working directory",
                required = true,
                converter = DirectoryPathConverter.class)
     public Path workDir;
