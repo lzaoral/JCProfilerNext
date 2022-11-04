@@ -9,9 +9,9 @@
 
 #macro( object $map )
 {
-    #foreach( $pair in $map.entrySet() )
-        $pair.getKey(): $pair.getValue()#if($foreach.hasNext),#end
-    #end
+#foreach( $pair in $map.entrySet() )
+    $pair.getKey(): $pair.getValue()#if( $foreach.hasNext ),#end
+#end
 }#end
 
 /*
