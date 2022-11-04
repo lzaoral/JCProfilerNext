@@ -85,7 +85,7 @@ public class Compiler {
         app.setClass(entryPoint.getQualifiedName());
 
         for (final Path jar : args.jars) {
-            log.debug("Adding {} as in import for the CAP file.", jar);
+            log.debug("Adding {} as an import for the CAP file.", jar);
             cap.createImport().setJar(jar.toString());
         }
 
