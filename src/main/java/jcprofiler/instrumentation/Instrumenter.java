@@ -24,6 +24,7 @@ import spoon.support.compiler.VirtualFile;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // TODO: support already instrumented stuff
@@ -243,11 +244,9 @@ public class Instrumenter {
         // check that all trap constants have unique values
         final CtClass<?> pmc = spoon.getModel().filterChildren(
                 (CtClass<?> c) -> c.isTopLevel() && c.getSimpleName().equals("PMC")).first();
-        final Map<CtField<?>, Short> fieldValuesMap = pmc.getFields().stream().map(f -> {
-            final CtLiteral<? extends Number> lit = f.getAssignment().partiallyEvaluate();
-            return new AbstractMap.SimpleEntry<>(f, lit.getValue().shortValue());
-        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+        final Map<CtField<?>, Short> fieldValuesMap = pmc.getFields().stream().collect(Collectors.toMap(
+                Function.identity(),
+                f -> f.getAssignment().<CtLiteral<Integer>>partiallyEvaluate().getValue().shortValue()));
         if (fieldValuesMap.size() != fieldValuesMap.values().stream().distinct().count()) {
             final Map<Short, List<CtField<?>>> valueFieldsMap = new HashMap<>();
             fieldValuesMap.forEach((k, v) -> valueFieldsMap.computeIfAbsent(v, e -> new ArrayList<>()).add(k));
