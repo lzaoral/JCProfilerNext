@@ -12,7 +12,7 @@
 ## @vtlvariable name="null" type="java.lang.Object"
 ## @vtlvariable name="roundCount" type="java.lang.Integer"
 
-#macro( printLine $line $trapIdx )
+#macro( printLine $line $trapIdx $implicit )
     #set( $trapLine = $code[$trapIdx].trim() )
     #if( $trapLine.startsWith("PM.check(PMC.") )
         #set( $trap = $trapLine.replace("PM.check(PMC.", "").replace(");", "") )
@@ -21,6 +21,8 @@
         #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
         #set( $spaceCount = $line.length() - $line.trim().length() )
 <div class="$trap trap#if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn#end">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
+</div>#elseif( $implicit )
+<div class="#if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn#end">$line
 </div>#else
 $line
 #end#end
@@ -77,7 +79,7 @@ $line
                 <div id="codeWithTraps"#if( !$heatmapValues.isEmpty() ) style="margin-left: -100px;"#end>
                     <div class="codeWrapper">
                         <pre><code class="language-java">#foreach( $line in $code )
-                                #printLine( $line, $foreach.index )
+                                #printLine( $line, $foreach.index, false )
                             #end</code></pre>
                     </div>
                 </div>
@@ -89,9 +91,9 @@ $line
                                 #if( !$line.trim().startsWith("PM.check(PMC.") )
                                     #set( $nextIndex = $foreach.index + 1 )
                                     #if( $nextIndex < $code.size() )
-                                        #printLine( $line, $nextIndex )
+                                        #printLine( $line, $nextIndex, true )
                                     #else
-                                        #printLine( $line, $foreach.index )
+                                        #printLine( $line, $foreach.index, true )
                                     #end
                                 #end
                             #end</code></pre>
