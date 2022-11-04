@@ -412,6 +412,15 @@
             "repo": "https://github.com/jiankeliu5/PBOC3Applet",
             "path": "src/com",
             "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "(public void process\\(APDU apdu\\) {)",
+                    "replacement": "\\1\\nif (selectingApplet()) return;",
+                    "files": [
+                        "src/com/cssweb/payment/PBOC3Applet.java"
+                    ]
+                }
+            ],
             "subtests": []
         },
         {
@@ -618,6 +627,15 @@
             "repo": "https://github.com/slomo/ndef-javacard",
             "path": "src/main/java",
             "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "(public void process\\(APDU apdu\\) {)",
+                    "replacement": "\\1\\nif (selectingApplet()) return;",
+                    "files": [
+                        "src/main/java/de/spline/uves/ndef/Ndef.java"
+                    ]
+                }
+            ],
             "subtests": []
         },
         {
@@ -663,6 +681,15 @@
             "repo": "https://github.com/zu-ctrl/ssu-card",
             "path": "src",
             "jckit": "304",
+            "fixup": [
+                {
+                    "pattern": "(public void process\\(APDU apdu\\) {)",
+                    "replacement": "\\1\\nif (selectingApplet()) return;",
+                    "files": [
+                        "src/is/lamassu/Test.java"
+                    ]
+                }
+            ],
             "subtests": []
         },
         {
