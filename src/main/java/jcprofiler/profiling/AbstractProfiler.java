@@ -197,7 +197,7 @@ public abstract class AbstractProfiler {
         CommandAPDU reset = new CommandAPDU(args.cla, args.cleanupInst, 0, 0);
         ResponseAPDU response = cardManager.transmit(reset);
         if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
-            throw new RuntimeException("Resetting the applet failed with SW " + response.getSW());
+            throw new RuntimeException("Resetting the applet failed with SW " + Integer.toHexString(response.getSW()));
     }
 
     public void profile() {

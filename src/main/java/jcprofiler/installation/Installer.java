@@ -68,7 +68,7 @@ public class Installer {
             log.info("Selecting installed applet on card.");
             ResponseAPDU out = cardManager.selectApplet();
             if (out.getSW() != JCProfilerUtil.SW_NO_ERROR)
-                throw new CardException("Applet could not se selected. SW: " + out.getSW());
+                throw new CardException("Applet could not se selected. SW: " + Integer.toHexString(out.getSW()));
         } catch (CardException e) {
             throw new RuntimeException(e);
         }

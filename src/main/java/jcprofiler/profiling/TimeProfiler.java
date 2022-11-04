@@ -79,7 +79,8 @@ public class TimeProfiler extends AbstractProfiler {
         ResponseAPDU response = cardManager.transmit(setTrap);
         if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
             throw new RuntimeException(String.format(
-                    "Setting \"%s\" trap failed with SW %d", getTrapName(trapID), response.getSW()));
+                    "Setting \"%s\" trap failed with SW %s",
+                    getTrapName(trapID), Integer.toHexString(response.getSW())));
     }
 
     private void profileSingleStep(CommandAPDU triggerAPDu) throws CardException {

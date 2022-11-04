@@ -87,7 +87,8 @@ public class MemoryProfiler extends AbstractProfiler {
             final CommandAPDU getMeasurements = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_HANDLER, memType, part++);
             final ResponseAPDU response = cardManager.transmit(getMeasurements);
             if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
-                throw new RuntimeException("Getting memory measurements failed with SW " + response.getSW());
+                throw new RuntimeException(
+                        "Getting memory measurements failed with SW " + Integer.toHexString(response.getSW()));
 
             final byte[] responseData = response.getData();
             if (responseData.length != nextLength)
@@ -137,7 +138,8 @@ public class MemoryProfiler extends AbstractProfiler {
 
             final ResponseAPDU response = cardManager.transmit(triggerAPDU);
             if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
-                throw new RuntimeException("Executing the applet failed with SW " + response.getSW());
+                throw new RuntimeException(
+                        "Executing the applet failed with SW " + Integer.toHexString(response.getSW()));
 
             log.info("Measuring {} complete.", profiledExecutableSignature);
         }
