@@ -138,6 +138,10 @@ public class Installer {
             if (!ret)
                 throw new RuntimeException("Setting-up the simulator failed");
 
+            final ResponseAPDU response = cardManager.getSelectResponse();
+            if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
+                throw new CardException("Applet could not se selected. SW: " + Integer.toHexString(response.getSW()));
+
             return cardManager;
         } catch (ClassNotFoundException | CardException e) {
             throw new RuntimeException(e);
