@@ -281,6 +281,11 @@ def execute_test(test: Dict[str, Any]) -> None:
         return
 
     for entry_point in test['entryPoints']:
+        if 'subtests' not in entry_point:
+            print('Skipping entry point', entry_point['name'],
+                  colour=BOLD_YELLOW)
+            continue
+
         print('Using', entry_point['name'], 'entry point.')
         test_applet(test, cmd.copy(), entry_point)
 
