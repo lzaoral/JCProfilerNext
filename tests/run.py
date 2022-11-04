@@ -217,8 +217,19 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         # TODO: check format and contents of generated profiling reports
 
 
-def execute_test(test: Dict[str, Any]) -> None:
+def skip_test(test: Dict[str, Any]) -> bool:
+    # skip empty tests when not in stat mode
     if not ARGS.stats and 'entryPoints' not in test and 'subtests' not in test:
+        return True
+
+    # skip tests disabled on given platform
+    osName = platform.system().lower()
+    return osName in test and not test[osName]
+
+
+def execute_test(test: Dict[str, Any]) -> None:
+    if skip_test(test):
+        print('Skip test', test['name'],  colour=BOLD_YELLOW)
         return
 
     print('Running test', test['name'])
@@ -288,12 +299,7 @@ def main() -> None:
         if not tests:
             raise ValueError(f'No tests match the {ARGS.filter} filter.')
 
-    osName = platform.system().lower()
     for t in tests:
-        if osName in t and not t[osName]:
-            print('Skip test', t['name'],  colour=BOLD_YELLOW)
-            continue
-
         execute_test(t)
 
 
