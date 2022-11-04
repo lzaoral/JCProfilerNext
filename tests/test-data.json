@@ -1126,6 +1126,13 @@
             "etsi": "143.019"
         },
         {
+            "name": "JCEd25519",
+            "repo": "https://github.com/dufkan/JCEd25519",
+            "path": "applet/src/main/java",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
             "path": "JCMathLib/src",
