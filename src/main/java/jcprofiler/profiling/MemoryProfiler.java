@@ -103,13 +103,19 @@ public class MemoryProfiler extends AbstractProfiler {
         trapNameMap.forEach((trapID, trapName) -> {
             int idx = (Short.toUnsignedInt(trapID) - /* PERF_START */ 2) * valueBytes;
 
-            Integer val = Short.toUnsignedInt(Util.getShort(buffer, idx));
-            if (valueBytes == Integer.BYTES) {
-                val <<= Short.SIZE;
-                val |= Short.toUnsignedInt(Util.getShort(buffer, idx + Short.BYTES));
+            Integer val;
+            if (valueBytes == Short.BYTES) {
+                val = (int) Util.getShort(buffer, idx);
+            } else {
+                val = Short.toUnsignedInt(Util.getShort(buffer, idx)) << Short.SIZE;
+                val |= Short.toUnsignedInt(Util.readShort(buffer, idx + Short.BYTES));
             }
 
-            if (val == 0) {
+            // -1 corresponds to an unreachable trap
+            if (val < 0) {
+                if (val != -1)
+                    throw new RuntimeException("The value of free memory measurement must be greater or equal -1");
+
                 unreachedTraps.add(trapName);
                 val = null;
             }

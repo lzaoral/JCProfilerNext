@@ -21,8 +21,25 @@ public class PM {
     public static final byte[] memoryUsageTransientReset = new byte[ARRAY_LENGTH];
     public static final byte[] memoryUsagePersistent = new byte[ARRAY_LENGTH];
 
+    private static boolean initialised = false;
+
+    /**
+     * Initialise all arrays with -1 integer values which
+     * correspond to unreachable traps.
+     */
+    private static void initialise() {
+        Util.arrayFillNonAtomic(memoryUsageTransientDeselect, (short) 0, ARRAY_LENGTH, (byte) 0xFF);
+        Util.arrayFillNonAtomic(memoryUsageTransientReset, (short) 0, ARRAY_LENGTH, (byte) 0xFF);
+        Util.arrayFillNonAtomic(memoryUsagePersistent, (short) 0, ARRAY_LENGTH, (byte) 0xFF);
+
+        initialised = true;
+    }
+
     // Store usage info for given trap
     public static void check(short stopCondition) {
+        if (!initialised)
+            initialise();
+
         short trapID = (short) ((stopCondition - /* PERF_START */ 2) * Short.BYTES);
 
         Util.setShort(memoryUsageTransientDeselect, trapID, JCSystem.getAvailableMemory(JCSystem.MEMORY_TYPE_TRANSIENT_DESELECT));

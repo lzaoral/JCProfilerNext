@@ -25,8 +25,25 @@ public class PM {
     // buffer
     public static final short[] buffer = new short[Integer.BYTES];
 
+    private static boolean initialised = false;
+
+    /**
+     * Initialise all arrays with -1 integer values which
+     * correspond to unreachable traps.
+     */
+    private static void initialise() {
+        Util.arrayFillNonAtomic(memoryUsageTransientDeselect, (short) 0, ARRAY_LENGTH, (byte) 0xFF);
+        Util.arrayFillNonAtomic(memoryUsageTransientReset, (short) 0, ARRAY_LENGTH, (byte) 0xFF);
+        Util.arrayFillNonAtomic(memoryUsagePersistent, (short) 0, ARRAY_LENGTH, (byte) 0xFF);
+
+        initialised = true;
+    }
+
     // Store usage info for given trap
     public static void check(short stopCondition) {
+        if (!initialised)
+            initialise();
+
         short trapID = (short) ((stopCondition - /* PERF_START */ 2) * Integer.BYTES);
 
         JCSystem.getAvailableMemory(buffer, (short) 0, JCSystem.MEMORY_TYPE_TRANSIENT_DESELECT);
