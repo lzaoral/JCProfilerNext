@@ -262,6 +262,9 @@ def execute_test(test: Dict[str, Any]) -> None:
         visa = Path('visa.jar').absolute()
         cmd += ['--jar', str(visa)]
 
+    if ARGS.debug:
+        cmd.append('--debug')
+
     if ARGS.stats:
         get_stats(test, cmd)
         return
@@ -310,6 +313,9 @@ def main() -> None:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='JCProfilerNext integration test suite')
+
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help='Execute in debug mode')
 
     parser.add_argument('--output-dir', default='.',
                         help='Directory where to store the test runs')
