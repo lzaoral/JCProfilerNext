@@ -11,9 +11,8 @@ public class PM {
 
     // if m_perfStop equals to stopCondition, exception is thrown (trap hit)
     public static void check(short stopCondition) {
-        if (PM.nextPerfStop == stopCondition) {
+        if (nextPerfStop == stopCondition)
             ISOException.throwIt(stopCondition);
-        }
     }
 
     // Set next fatal performace trap
