@@ -128,14 +128,16 @@ public class Installer {
                     .setInstallData(installData);
 
             // Simulator may print unrelated messages to stdout during initialization (happens with JCMathLib)
-            PrintStream stdout = System.out;
+            final PrintStream stdout = System.out;
             System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
 
             log.debug("Connecting to jCardSim simulator.");
-            if (!cardManager.connect(runCfg))
-                throw new RuntimeException("Setting-up the simulator failed");
+            boolean ret = cardManager.connect(runCfg);
 
             System.setOut(stdout);
+            if (!ret)
+                throw new RuntimeException("Setting-up the simulator failed");
+
             return cardManager;
         } catch (ClassNotFoundException | CardException e) {
             throw new RuntimeException(e);
