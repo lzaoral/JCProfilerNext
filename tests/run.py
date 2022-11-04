@@ -224,7 +224,11 @@ def skip_test(test: Dict[str, Any]) -> bool:
 
     # skip tests disabled on given platform
     osName = platform.system().lower()
-    return osName in test and not test[osName]
+    if osName in test and not test[osName]:
+        return True
+
+    # test requires newer JCKit than possible
+    return ARGS.max_jckit and test['jckit'] > ARGS.max_jckit
 
 
 def execute_test(test: Dict[str, Any]) -> None:
@@ -311,7 +315,10 @@ if __name__ == '__main__':
                         help='Directory where to store the test runs')
 
     parser.add_argument('--min-jckit',
-                        help='Minimal JCKit version used during testing')
+                        help='Minimum JCKit version used during testing')
+    parser.add_argument('--max-jckit',
+                        help='Maximum JCKit version used during testing')
+
     parser.add_argument('filter', nargs='*',
                         help='List of applet names (see ./test_data.json)')
 
