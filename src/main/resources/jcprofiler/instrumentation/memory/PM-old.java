@@ -10,13 +10,13 @@ import javacard.framework.JCSystem;
 import javacard.framework.Util;
 
 /**
- * PM class for memory usage measurement for JCSDK 3.0.3 and older.
+ * PM class for memory usage measurement for JCSDK 3.0.3 and older
  */
 public class PM {
     private static final short ARRAY_LENGTH = 0;
     private static final short MAX_APDU_LENGTH = 256;
 
-    // Arrays storing the memory consumption for given trap
+    // Arrays storing the amount of free memory for each trap as shorts
     private static final byte[] memoryUsageTransientDeselect = new byte[ARRAY_LENGTH];
     private static final byte[] memoryUsageTransientReset = new byte[ARRAY_LENGTH];
     private static final byte[] memoryUsagePersistent = new byte[ARRAY_LENGTH];
@@ -35,7 +35,12 @@ public class PM {
         initialised = true;
     }
 
-    // Store usage info for given trap
+    /**
+     * Stores the amount of free memory for the given trap.
+     * The maximum value is capped by {@link Short#MAX_VALUE}.
+     *
+     * @param stopCondition ID of the reached trap
+     */
     public static void check(short stopCondition) {
         if (!initialised)
             initialise();
@@ -47,7 +52,14 @@ public class PM {
         Util.setShort(memoryUsagePersistent, trapID, JCSystem.getAvailableMemory(JCSystem.MEMORY_TYPE_PERSISTENT));
     }
 
-    // Prepare and send the given part of data
+    /**
+     * Copy and send the P2th part of the selected byte
+     * array back to the profiler.
+     *
+     * @param  arr          byte array
+     * @param  apdu         input APDU
+     * @throws ISOException if the P2 byte has a wrong value
+     */
     private static void sendArray(byte[] arr, APDU apdu) {
         short part = (short) (apdu.getBuffer()[ISO7816.OFFSET_P2] & 0x00FF);
         short beginOffset = (short) (part * MAX_APDU_LENGTH);
@@ -62,7 +74,14 @@ public class PM {
         apdu.setOutgoingAndSend((short) 0, length);
     }
 
-    // Send usage info back to the profiler
+    /**
+     * Sends a part of the memory usage info back to the profiler.
+     * The P1 byte selects the memory type. See {@link #sendArray}
+     * for details about the P2 byte.
+     *
+     * @param  apdu         input APDU
+     * @throws ISOException if the P1 byte has a wrong value
+     */
     public static void send(APDU apdu) {
         switch (apdu.getBuffer()[ISO7816.OFFSET_P1]) {
             case JCSystem.MEMORY_TYPE_TRANSIENT_DESELECT:
