@@ -1,10 +1,16 @@
 ## @vtlvariable name="measureUnit" type="java.lang.String"
+## @vtlvariable name="nonemptyHeatmap" type="java.lang.Boolean"
 
 ## include common code
 const heatmapX = ['Trans', 'Pers'];
 const heatmapData  = {
     colorscale: [
-        [0, 'white'], [1, 'red']
+        [0, 'white'],
+        #if( $nonemptyHeatmap )
+        [1, 'red']
+        #else
+        [1, 'white']
+        #end
     ]
 };
 #parse( "template-common.js.vm" )
