@@ -123,7 +123,7 @@ def execute_cmd(cmd: List[str], stages: List[str] = STAGES) -> None:
         if stage != 'all':
             stage_cmd += ['--start-from', str(stage)]
             stage_cmd += ['--stop-after', str(stage)]
-            print('Excecuting stage', stage)
+            print('Executing stage', stage)
 
         print('Command: ', end='')
         print(" ".join(stage_cmd), colour=BOLD_YELLOW, flush=True)
@@ -208,7 +208,7 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
 
         print('Executing subtest:', subtest['name'])
         for mode in MODES:
-            print('Excecuting mode', mode)
+            print('Executing mode', mode)
             mode_cmd = sub_cmd.copy()
             mode_cmd += ['--mode', mode]
 
@@ -233,7 +233,7 @@ def skip_test(test: Dict[str, Any]) -> bool:
 
 def execute_test(test: Dict[str, Any]) -> None:
     if skip_test(test):
-        print('Skip test', test['name'],  colour=BOLD_YELLOW)
+        print('Skip test', test['name'], colour=BOLD_YELLOW)
         return
 
     print('Running test', test['name'])
