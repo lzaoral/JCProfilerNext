@@ -92,14 +92,21 @@ public class TimeProfiler extends AbstractProfiler {
             setTrap(trapID);
 
             // execute target operation
-            log.debug("Measuring {}.", getTrapName(trapID));
-            ResponseAPDU response = cardManager.transmit(triggerAPDu);
+            final String trapName = getTrapName(trapID);
+            log.debug("Measuring {}.", trapName);
+            final ResponseAPDU response = cardManager.transmit(triggerAPDu);
 
-            // Check expected error to be equal performance trap
-            if (response.getSW() != Short.toUnsignedInt(trapID)) {
+            // SW should be equal to the trap ID
+            final int SW = response.getSW();
+            if (SW != Short.toUnsignedInt(trapID)) {
+                // unknown SW returned
+                if (SW != JCProfilerUtil.SW_NO_ERROR)
+                    throw new RuntimeException(String.format(
+                            "Unexpected SW received when profiling trap %s: %s", trapName, Integer.toHexString(SW)));
+
                 // we have not reached expected performance trap
-                unreachedTraps.add(getTrapName(trapID));
-                measurements.computeIfAbsent(getTrapName(trapID), k -> new ArrayList<>()).add(null);
+                unreachedTraps.add(trapName);
+                measurements.computeIfAbsent(trapName, k -> new ArrayList<>()).add(null);
                 log.debug("Duration: unreachable");
                 continue;
             }
