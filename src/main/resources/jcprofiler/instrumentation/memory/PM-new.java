@@ -1,5 +1,9 @@
 package jcprofiler;
 
+// Explicit imports to ensure that they are not shadowed by other classes from the applet package.
+import java.lang.Integer;
+import java.lang.Short;
+
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
