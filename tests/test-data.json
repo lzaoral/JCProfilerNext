@@ -65,8 +65,7 @@
                         "workspace/JavaCard/src/be/msec/smartcard/IdentityCard.java"
                     ]
                 }
-            ],
-            "subtests": []
+            ]
         },
         {
             "name": "BiometricAuthentification",
@@ -200,8 +199,7 @@
             "name": "cryptonit-applet",
             "repo": "https://github.com/mbrossard/cryptonit-applet",
             "path": "src",
-            "jckit": "304",
-            "subtests": []
+            "jckit": "304"
         },
         {
             "name": "uClinux-scard",
@@ -651,8 +649,7 @@
             "jckit": "304",
             "entryPoints": [
                 {
-                    "name": "com.ledger.wallet.LWNFCForumApplet",
-                    "subtests": []
+                    "name": "com.ledger.wallet.LWNFCForumApplet"
                 },
                 {
                     "name": "com.ledger.wallet.LedgerWalletApplet",
@@ -667,8 +664,7 @@
             "jckit": "304",
             "entryPoints": [
                 {
-                    "name": "com.ledger.wallet.LWNFCForumApplet",
-                    "subtests": []
+                    "name": "com.ledger.wallet.LWNFCForumApplet"
                 },
                 {
                     "name": "com.ledger.wallet.LedgerWalletApplet",
