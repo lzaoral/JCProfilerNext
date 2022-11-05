@@ -21,6 +21,7 @@ MODES = ['memory', 'time']
 STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
           'visualisation', 'all']
 
+FAILURES: List[str] = []
 
 BOLD_RED = '\033[1;31m'
 BOLD_GREEN = '\033[1;32m'
@@ -114,7 +115,7 @@ def modify_repo(test: Dict[str, Any]) -> None:
                     f.write(pattern.sub(replacement, lines))
 
 
-def execute_cmd(cmd: List[str], stages: List[str] = STAGES) -> None:
+def execute_cmd(cmd: List[str], stages: List[str] = STAGES) -> bool:
     if ARGS.card or ARGS.stats:
         stages = ['all']
 
@@ -127,11 +128,16 @@ def execute_cmd(cmd: List[str], stages: List[str] = STAGES) -> None:
             print('Executing stage', stage)
 
         print('Command: ', end='')
-        print(" ".join(stage_cmd), colour=BOLD_YELLOW, flush=True)
+        print(*stage_cmd, colour=BOLD_YELLOW)
+
         ret = call(stage_cmd)
         if ret != 0:
             print('Command failed with return code', ret, colour=BOLD_RED)
-            sys.exit(1)
+            if not ARGS.card:
+                sys.exit(1)
+            return False
+
+    return True
 
 
 def prepare_workdir(test: Dict[str, Any], subtest_name: str) -> Path:
@@ -153,7 +159,9 @@ def get_stats(test: Dict[str, Any], cmd: List[str]) -> None:
 
     stats_cmd += ['--work-dir', str(test_dir)]
     stats_cmd += ['--mode', 'stats']
-    execute_cmd(stats_cmd)
+
+    if not execute_cmd(stats_cmd):
+        FAILURES.append(f'{test["name"]} in stats mode')
 
 
 def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str) -> None:
@@ -162,7 +170,9 @@ def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str) -> None:
 
     ctor_cmd += ['--work-dir', str(test_dir)]
     ctor_cmd += ['--mode', 'memory']
-    execute_cmd(ctor_cmd)
+
+    if not execute_cmd(ctor_cmd):
+        FAILURES.append(f'{test["name"]} constructor in memory mode')
 
 
 def test_applet(test: Dict[str, Any], cmd: List[str],
@@ -213,7 +223,9 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
             mode_cmd = sub_cmd.copy()
             mode_cmd += ['--mode', mode]
 
-            execute_cmd(mode_cmd)
+            if not execute_cmd(mode_cmd):
+                FAILURES.append(
+                        f'{test["name"]} {subtest["method"]} in {mode} mode')
 
         # TODO: check format and contents of generated profiling reports
 
@@ -314,6 +326,11 @@ def main() -> None:
 
     for t in tests:
         execute_test(t)
+
+    if FAILURES:
+        print('Failed tests:')
+        for failure in FAILURES:
+            print(failure, colour=BOLD_RED)
 
 
 if __name__ == '__main__':
