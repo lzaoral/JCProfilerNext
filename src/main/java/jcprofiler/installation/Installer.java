@@ -16,7 +16,9 @@ import jcprofiler.args.Args;
 import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.util.enums.Stage;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.ArrayUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +31,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.*;
-
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
 public class Installer {
     private static final Logger log = LoggerFactory.getLogger(Installer.class);
@@ -129,7 +129,7 @@ public class Installer {
 
             // Simulator may print unrelated messages to stdout during initialization (happens with JCMathLib)
             final PrintStream stdout = System.out;
-            System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
+            System.setOut(new PrintStream(NullOutputStream.NULL_OUTPUT_STREAM));
 
             log.debug("Connecting to jCardSim simulator.");
             boolean ret = cardManager.connect(runCfg);
