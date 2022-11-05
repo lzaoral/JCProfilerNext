@@ -44,9 +44,8 @@ public class Installer {
             throw new UnsupportedOperationException("Installation on a simulator is not possible");
 
         final CardManager cardManager = connectToCard();
-
-        final GPTool gp = new GPTool();
         final BIBO bibo = CardBIBO.wrap(cardManager.getChannel().getCard());
+
         final Path capPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                 .resolve(entryPoint.getSimpleName() + ".cap");
         JCProfilerUtil.checkFile(capPath, Stage.compilation);
@@ -60,7 +59,7 @@ public class Installer {
         // TODO: be very careful to not destroy the card!!!
         log.info("Executing GlobalPlatformPro to install {}.", capPath);
         log.debug("GlobalPlatformPro argv: {}", Arrays.toString(gpArgv));
-        int ret = gp.run(bibo, gpArgv);
+        int ret = new GPTool().run(bibo, gpArgv);
         if (ret != 0)
             throw new RuntimeException("GlobalPlatformPro exited with non-zero code: " + ret);
 
@@ -158,12 +157,11 @@ public class Installer {
         log.info("Looking for terminal with a card.");
 
         try {
-            List<CardTerminal> terminalList = terminals.list(CardTerminals.State.CARD_PRESENT);
-            while (terminalList.isEmpty()) {
+            List<CardTerminal> terminalList;
+            while ((terminalList = terminals.list(CardTerminals.State.CARD_PRESENT)).isEmpty()) {
                 log.warn("No connected terminals with a card found!");
                 log.info("Waiting for a terminal with a card.");
                 terminals.waitForChange();
-                terminalList = terminals.list(CardTerminals.State.CARD_PRESENT);
             }
 
             int terminalIdx = 0;
@@ -190,7 +188,7 @@ public class Installer {
             for (final CardTerminal ct : terminalList)
                 System.out.printf("%d. %s%n", i++, ct.getName());
 
-            Scanner in = new Scanner(System.in);
+            final Scanner in = new Scanner(System.in);
             try {
                 int idx = in.nextInt();
                 if (0 <= idx && idx < terminalList.size())
