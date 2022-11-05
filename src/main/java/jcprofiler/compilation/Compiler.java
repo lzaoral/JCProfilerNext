@@ -19,18 +19,29 @@ import spoon.reflect.declaration.CtClass;
 
 import java.nio.file.Path;
 
+/**
+ * This class represents the compilation stage.
+ */
 public class Compiler {
     private static final Logger log = LoggerFactory.getLogger(Compiler.class);
 
     // static class
     private Compiler() {}
 
-    // Inspired by https://stackoverflow.com/questions/6440295/is-it-possible-to-call-ant-or-nsis-scripts-from-java-code/6440342#6440342
+    /**
+     * Compiles the instrumented sources into a CAP package, JAR archive, JCA file and *.class files.
+     *
+     * @param args       object with commandline arguments
+     * @param entryPoint applet entry point class
+     */
     public static void compile(final Args args, final CtClass<?> entryPoint) {
+        // NOTE: Check that the code was instrumented is already done in the JCProfiler class.
+
         // always recreate the output directory
         final Path appletDir = JCProfilerUtil.getAppletOutputDirectory(args.workDir);
         JCProfilerUtil.recreateDirectory(appletDir);
 
+        // create an empty project
         log.debug("Generating ANT JavaCard project");
         final Project project = new Project();
         project.init();
@@ -42,29 +53,37 @@ public class Compiler {
          Right now we use the compiler that's part of the JDK that was used to execute this project.
          */
 
+        // set the output streams and debug level
+        //   * adapted from https://stackoverflow.com/a/6440865 with the possibility to set a different message
+        //     output level.
+        //   * CC BY-SA 3.0 is compatible with CC BY-SA 4.0 which is compatible with GPLv3
         final DefaultLogger consoleLogger = new DefaultLogger();
         consoleLogger.setErrorPrintStream(System.err);
         consoleLogger.setOutputPrintStream(System.out);
         consoleLogger.setMessageOutputLevel(args.debug ? Project.MSG_VERBOSE : Project.MSG_INFO);
         project.addBuildListener(consoleLogger);
 
+        // create javacard target
         final Target jcTarget = new Target();
         jcTarget.setName("javacard");
         project.addTarget(jcTarget);
         project.setDefault("javacard");
 
+        // print JDK version
         final Echo echo = new Echo();
         echo.setTaskName("echo");
         echo.setProject(project);
         echo.setMessage("Java version: " + project.getProperty("java.version"));
         jcTarget.addTask(echo);
 
+        // create JavaCard task
         final JavaCard jc = new JavaCard();
         jc.setTaskName("JavaCard");
         jc.setProject(project);
         jc.setJCKit(args.jcSDK.getRoot().getAbsolutePath());
         jcTarget.addTask(jc);
 
+        // create a CAP file subtask
         final JCCap cap = jc.createCap();
         cap.setTaskName("JavaCard");
         cap.setProject(project);
@@ -81,9 +100,11 @@ public class Compiler {
         cap.setPackage(entryPoint.getPackage().getQualifiedName());
         cap.setOutput(entryPoint.getSimpleName() + ".cap");
 
+        // add applet to the CAP file
         final JCApplet app = cap.createApplet();
         app.setClass(entryPoint.getQualifiedName());
 
+        // add JAR files with dependencies to the project
         for (final Path jar : args.jars) {
             log.debug("Adding {} as an import for the CAP file.", jar);
             cap.createImport().setJar(jar.toString());
