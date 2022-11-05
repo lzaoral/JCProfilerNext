@@ -1,7 +1,8 @@
 #!/bin/sh -eu
 
 echo "Gathering API usage statistics"
-rm -r stats_out stats.csv || true
+rm stats.txt || true
+rm -r stats_out || true
 ./run.py --stats --output-dir stats_out
 
 set -- stats_out/*
