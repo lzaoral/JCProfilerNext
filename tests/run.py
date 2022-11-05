@@ -4,7 +4,7 @@ from pathlib import Path
 from shutil import copytree, make_archive, rmtree
 from subprocess import call
 from tempfile import mkdtemp
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 from urllib.request import Request, urlopen
 
 import argparse
@@ -28,11 +28,11 @@ BOLD_YELLOW = '\033[1;33m'
 RESET = '\033[00m'
 
 
-def print(*args, colour=BOLD_GREEN, **kwargs):
-    from builtins import print
-    print(colour, end='')
-    print(*args, **kwargs)
-    print(RESET, end='', flush=True)
+def print(*args: Any, colour: str = BOLD_GREEN, **kwargs: Any) -> None:
+    import builtins
+    builtins.print(colour, end='')
+    builtins.print(*args, **kwargs)
+    builtins.print(RESET, end='', flush=True)
 
 
 def rebuild_jar() -> None:
@@ -51,7 +51,8 @@ def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
         if not reclone:
             return
 
-        def remove_readonly(func, path, _):
+        def remove_readonly(func: Callable[[Path], None],
+                            path: Path, _: Exception) -> None:
             os.chmod(path, stat.S_IWRITE)
             func(path)
         rmtree(target, onerror=remove_readonly)
@@ -92,7 +93,7 @@ def prepare_etsi(version: str) -> str:
     return result_str
 
 
-def modify_repo(test: Dict[str, Any]):
+def modify_repo(test: Dict[str, Any]) -> None:
     for rm in test.get('remove', []):
         for file in Path(test['name']).glob(rm):
             print('Removing', file)
@@ -228,7 +229,7 @@ def skip_test(test: Dict[str, Any]) -> bool:
         return True
 
     # test requires newer JCKit than possible
-    return ARGS.max_jckit and test['jckit'] > ARGS.max_jckit
+    return ARGS.max_jckit is not None and test['jckit'] > ARGS.max_jckit
 
 
 def execute_test(test: Dict[str, Any]) -> None:
@@ -243,9 +244,9 @@ def execute_test(test: Dict[str, Any]) -> None:
 
     jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
 
-    min_jckit = ARGS.min_jckit
-    jckit_version = \
-        min_jckit if min_jckit and min_jckit > test['jckit'] else test['jckit']
+    jckit_version = test['jckit']
+    if ARGS.min_jckit is not None and ARGS.min_jckit > test['jckit']:
+        jckit_version = ARGS.min_jckit
     jckit = Path(f'jcsdk/jc{jckit_version}_kit').absolute()
 
     cmd = ['java', '-jar', str(jar), '--jckit', str(jckit)]
