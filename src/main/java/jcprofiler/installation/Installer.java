@@ -32,6 +32,9 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * This class represents the installation stage.
+ */
 public class Installer {
     private static final Logger log = LoggerFactory.getLogger(Installer.class);
     private static final byte[] APPLET_AID = Util.hexStringToByteArray(JCProfilerUtil.APPLET_AID);
@@ -39,17 +42,27 @@ public class Installer {
     // static class
     private Installer() {}
 
+    /**
+     * Installs the applet on a selected card.
+     *
+     * @param args       object with commandline arguments
+     * @param entryPoint applet entry point class
+     * @return           {@link CardManager} connection instance
+     */
     public static CardManager installOnCard(final Args args, final CtClass<?> entryPoint) {
         if (args.useSimulator)
             throw new UnsupportedOperationException("Installation on a simulator is not possible");
 
+        // connect to the card
         final CardManager cardManager = connectToCard();
         final BIBO bibo = CardBIBO.wrap(cardManager.getChannel().getCard());
 
+        // get path to CAP package
         final Path capPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                 .resolve(entryPoint.getSimpleName() + ".cap");
         JCProfilerUtil.checkFile(capPath, Stage.compilation);
 
+        // construct argv for GPTool
         String[] gpArgv = new String[]{"--verbose", "--force", "--install", capPath.toString()};
         if (args.debug)
             gpArgv = ArrayUtils.add(gpArgv, "--debug");
@@ -63,6 +76,7 @@ public class Installer {
         if (ret != 0)
             throw new RuntimeException("GlobalPlatformPro exited with non-zero code: " + ret);
 
+        // select the applet
         try {
             log.info("Selecting installed applet on card.");
             ResponseAPDU out = cardManager.selectApplet();
@@ -75,18 +89,33 @@ public class Installer {
         return cardManager;
     }
 
+    /**
+     * Either connects to a physical card or to simulator depending on the
+     * commandline arguments.
+     *
+     * @param args       object with commandline arguments
+     * @param entryPoint applet entry point class
+     * @return           {@link CardManager} connection instance
+     */
     public static CardManager connect(final Args args, final CtClass<?> entryPoint) {
         return args.useSimulator ? configureSimulator(args, entryPoint)
                                  : connectToCard();
     }
 
+    /**
+     *
+     * @param args       object with commandline arguments
+     * @param entryPoint applet entry point class
+     * @return           {@link CardManager} connection instance
+     */
     private static CardManager configureSimulator(final Args args, final CtClass<?> entryPoint) {
         log.info("Configuring jCardSim simulator.");
 
+        // get path to JAR archive
         final Path jarPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                         .resolve(entryPoint.getPackage().getSimpleName() + ".jar");
         JCProfilerUtil.checkFile(jarPath, Stage.compilation);
-        final CardManager cardManager = new CardManager(true, APPLET_AID);
+        final CardManager cardManager = new CardManager(/* logging */ true, APPLET_AID);
 
         try {
             log.debug("Loading {} from {}.", entryPoint.getQualifiedName(), jarPath);
@@ -104,6 +133,7 @@ public class Installer {
                 }
             }).toArray(URL[]::new);
 
+            // simulate the installData array of real cards
             // APDU
             byte[] installData = ArrayUtils.insert(0, APPLET_AID, (byte) APPLET_AID.length);
             // control information
@@ -116,6 +146,7 @@ public class Installer {
                 installData = ArrayUtils.add(installData, (byte) 0);
             }
 
+            // load the simulated class
             // FIXME: this leak is intentional so that the simulator can access every class in the loaded JAR
             final URLClassLoader classLoader = new URLClassLoader(jarURLArray);
             final Class<? extends Applet> cls = classLoader.loadClass(entryPoint.getQualifiedName())
@@ -147,9 +178,14 @@ public class Installer {
         }
     }
 
+    /**
+     * Connects to a physical card.
+     *
+     * @return {@link CardManager} connection instance
+     */
     private static CardManager connectToCard() {
         log.info("Connecting to a physical card reader.");
-        final CardManager cardManager = new CardManager(true, APPLET_AID);
+        final CardManager cardManager = new CardManager(/* logging */ true, APPLET_AID);
 
         // for better portability across different platforms
         TerminalManager.fixPlatformPaths();
@@ -180,6 +216,12 @@ public class Installer {
         }
     }
 
+    /**
+     * Helper method to display a selection screen with terminals with present cards.
+     *
+     * @param  terminalList list of card terminals
+     * @return              index of selected terminal
+     */
     private static int selectTerminal(final List<CardTerminal> terminalList) {
         while (true) {
             System.out.println("More card terminals found. Please, select one:");
