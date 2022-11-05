@@ -1133,6 +1133,336 @@
             "subtests": []
         },
         {
+            "name": "AEonJC - acorn",
+            "repo": "https://github.com/palkrajesh/AEonJC",
+            "path": "github_AEonJC/acorn",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "^\\s*case INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
+                    "replacement": "",
+                    "files": [
+                        "github_AEonJC/acorn/AcornApplet.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "AEonJC - aegis",
+            "repo": "https://github.com/palkrajesh/AEonJC",
+            "path": "github_AEonJC/aegis",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "AEonJC - ascon",
+            "repo": "https://github.com/palkrajesh/AEonJC",
+            "path": "github_AEonJC/ascon",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "AEonJC - cloc",
+            "repo": "https://github.com/palkrajesh/AEonJC",
+            "path": "github_AEonJC/cloc",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "AEonJC - morus",
+            "repo": "https://github.com/palkrajesh/AEonJC",
+            "path": "github_AEonJC/morus",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JCSWAlgs",
+            "repo": "https://github.com/petrs/JCSWAlgs",
+            "path": "src/applets",
+            "jckit": "222",
+            "maxJckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "Audit",
+            "repo": "https://github.com/AuditURV/Audit",
+            "path": "source/thresholdLib/src",
+            "jckit": "222",
+            "maxJckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "jc_curve25519",
+            "repo": "https://github.com/david-oswald/jc_curve25519",
+            "path": "src/curve25519",
+            "jckit": "303"
+        },
+        {
+            "name": "secure-channel-ec-srp-applet",
+            "repo": "https://github.com/mobilesec/secure-channel-ec-srp-applet",
+            "path": "src",
+            "jckit": "222"
+        },
+        {
+            "name": "eVerification-2",
+            "repo": "https://github.com/CRISES-URV/eVerification-2",
+            "path": "source/thresholdLib/src",
+            "jckit": "222",
+            "maxJckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "SCP11B",
+            "repo": "https://github.com/ThothTrustCom/SCP11B",
+            "path": "applet/SCP11BApplet/src",
+            "jckit": "304"
+        },
+        {
+            "name": "jcard",
+            "repo": "https://github.com/mll11/jcard",
+            "path": "TestMAC/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "(msgLength \\+ 15)",
+                    "replacement": "(short) (\\1)",
+                    "files": [
+                        "TestMAC/src/com/test/MacApplet.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "jc_sync",
+            "repo": "https://github.com/jfhren/jc_sync",
+            "path": "src/synclib",
+            "jckit": "222"
+        },
+        {
+            "name": "jcChaCha2032",
+            "repo": "https://github.com/thotheolh/jcChaCha2032",
+            "path": "src",
+            "jckit": "222"
+        },
+        {
+            "name": "external-libese - boot",
+            "repo": "https://github.com/TinkerBoard2-Android/external-libese",
+            "path": "apps/boot/card",
+            "jckit": "304"
+        },
+        {
+            "name": "external-libese - weaver",
+            "repo": "https://github.com/TinkerBoard2-Android/external-libese",
+            "path": "apps/weaver/card",
+            "jckit": "304"
+        },
+        {
+            "name": "opacity-for-smartcard",
+            "repo": "https://github.com/shevelevsergey/opacity-for-smartcard",
+            "path": "smartcard",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "opacity-for-smartcard",
+            "repo": "https://github.com/halemmerich/opentlssc",
+            "path": "OpenTLSSClib/src",
+            "jckit": "222"
+        },
+        {
+            "name": "Primitives_SmartCard",
+            "repo": "https://github.com/albertocarp/Primitives_SmartCard",
+            "path": "src",
+            "jckit": "222",
+            "maxJckit": "304",
+            "fixup": [
+                {
+                    "pattern": "^\\s*import com\\.sun\\.javacard.*;\\s*$",
+                    "replacement": "",
+                    "files": [
+                        "src/sid/JCMath.java",
+                        "src/sid/TestApplet.java",
+                        "src/sid/UProve.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "plaid804",
+            "repo": "https://github.com/martinpaljak/AppletPlayground",
+            "path": "src/plaid804",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "SCP10Applet",
+            "repo": "https://github.com/ddealmei/SCP10-attack",
+            "path": "SCP10Applet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "SCP10Applet_mitigated",
+            "repo": "https://github.com/ddealmei/SCP10-attack",
+            "path": "SCP10Applet_mitigated/src",
+            "jckit": "222"
+        },
+        {
+            "name": "Sec2",
+            "repo": "https://github.com/RUB-NDS/Sec2",
+            "path": "sec2-tokenware/src",
+            "jckit": "222"
+        },
+        {
+            "name": "pool-AuthenticationApplet",
+            "repo": "https://github.com/seek-for-android/pool",
+            "path": "samples/ServiceLayerTester/JavaCardApplets/AuthenticationApplet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "pool-FileManagementApplet",
+            "repo": "https://github.com/seek-for-android/pool",
+            "path": "samples/ServiceLayerTester/JavaCardApplets/FileManagementApplet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "pool-SecureStorageApplet",
+            "repo": "https://github.com/seek-for-android/pool",
+            "path": "samples/ServiceLayerTester/JavaCardApplets/SecureStorageApplet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "pool-mockcard",
+            "repo": "https://github.com/seek-for-android/pool",
+            "path": "tests/CTS-OpenMobileAPI/src/mockcard",
+            "jckit": "222"
+        },
+        {
+            "name": "pool-AllowAll",
+            "repo": "https://github.com/seek-for-android/pool",
+            "path": "samples/AllowAll/com",
+            "jckit": "222"
+        },
+        {
+            "name": "pool-ApduTester",
+            "repo": "https://github.com/seek-for-android/pool",
+            "path": "samples/ApduTester/JavaCardApplet/com",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "pool-HelloSmartcard",
+            "repo": "https://github.com/seek-for-android/pool",
+            "path": "samples/HelloSmartcard/JavaCardApplet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "sbcred_javacard",
+            "repo": "https://github.com/credentials/sbcred_javacard",
+            "path": "src",
+            "jckit": "222"
+        },
+        {
+            "name": "OptimizedJCAlgs-ACORN",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "AEAD/ACORN/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "OptimizedJCAlgs-AEGIS",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "AEAD/AEGIS/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "OptimizedJCAlgs-ASCON",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "AEAD/ASCON/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "OptimizedJCAlgs-CLOC",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "AEAD/CLOC/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "OptimizedJCAlgs-MORUS",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "AEAD/MORUS/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "OptimizedJCAlgs-OpenPGP",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "OpenPGP/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "OptimizedJCAlgs-Pbkdf2",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "Pbkdf2/src",
+            "jckit": "222",
+            "subtests": []
+        },
+
+        {
+            "name": "OptimizedJCAlgs-Twine",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "Twine/src",
+            "jckit": "222",
+            "maxJckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "OptimizedJCAlgs-Zorro",
+            "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
+            "path": "Zorro/src",
+            "jckit": "222",
+            "maxJckit": "304",
+            "subtests": []
+        },
+        {
+            "name": "smart_card_TLS",
+            "repo": "https://github.com/gilb/smart_card_TLS",
+            "path": "src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "secure-channel-srp6a-applet",
+            "repo": "https://github.com/mobilesec/secure-channel-srp6a-applet",
+            "path": "src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "carrier_privilege",
+            "repo": "https://github.com/sabtmoha/carrier_privilege",
+            "path": "",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "ykneo-curves",
+            "repo": "https://github.com/Yubico/ykneo-curves",
+            "path": "applet",
+            "jckit": "222"
+        },
+        {
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
             "path": "JCMathLib/src",
