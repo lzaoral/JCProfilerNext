@@ -148,12 +148,12 @@ def prepare_workdir(test: Dict[str, Any], subtest_name: str) -> Path:
 
 
 def get_stats(test: Dict[str, Any], cmd: List[str]) -> None:
-    ctor_cmd = cmd.copy()
+    stats_cmd = cmd.copy()
     test_dir = prepare_workdir(test, 'stats')
 
-    ctor_cmd += ['--work-dir', str(test_dir)]
-    ctor_cmd += ['--mode', 'stats']
-    execute_cmd(ctor_cmd)
+    stats_cmd += ['--work-dir', str(test_dir)]
+    stats_cmd += ['--mode', 'stats']
+    execute_cmd(stats_cmd)
 
 
 def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str) -> None:
