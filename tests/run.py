@@ -22,6 +22,7 @@ STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
           'visualisation', 'all']
 
 FAILURES: List[str] = []
+SKIPS: List[str] = []
 
 BOLD_RED = '\033[1;31m'
 BOLD_GREEN = '\033[1;32m'
@@ -256,6 +257,7 @@ def execute_test(test: Dict[str, Any]) -> None:
     reason = skip_test(test)
     if reason is not None:
         print(f'Skip test {test["name"]}: {reason}', colour=BOLD_YELLOW)
+        SKIPS.append(f'{test["name"]}: {reason}')
         return
 
     print('Running test', test['name'])
@@ -335,6 +337,11 @@ def main() -> None:
 
     for t in tests:
         execute_test(t)
+
+    if SKIPS:
+        print('Skipped tests:')
+        for skip in SKIPS:
+            print(skip, colour=BOLD_YELLOW)
 
     if FAILURES:
         print('Failed tests:')
