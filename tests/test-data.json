@@ -8,7 +8,11 @@
             "name": "belgian-e-id",
             "repo": "https://github.com/amoerie/belgian-e-id",
             "path": "workspace/JavaCard/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "instrumentation",
+                "reason": "Conversion: non-javacard constructs, e.g. System.out."
+            }
         },
         {
             "name": "ISO_Driving_License",
@@ -33,6 +37,10 @@
             "entryPoints": [
                 {
                     "name": "be.fedict.eidapplet.EidCard",
+                    "failure": {
+                        "stopAfter": "compilation",
+                        "reason": "Installation: NullPointerException due to method call on OwnerPin null reference"
+                    }
                 },
                 {
                     "name": "be.fedict.eidapplet.EmptyEidCard",
@@ -55,9 +63,17 @@
             "entryPoints": [
                 {
                     "name": "sos.passportapplet.EvilPassportApplet",
+                    "failure": {
+                        "stopAfter": "instrumentation",
+                        "reason": "Conversion: interface fields may only be initialized to primitive compile-time constant values."
+                    }
                 },
                 {
                     "name": "sos.passportapplet.PassportApplet",
+                    "failure": {
+                        "stopAfter": "instrumentation",
+                        "reason": "Conversion: interface fields may only be initialized to primitive compile-time constant values."
+                    }
                 }
             ]
         },
@@ -69,6 +85,7 @@
             "windows": false,
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "\\[([\\w.()]+\\s*[+\\-*\\\\]\\s*[\\w.()]+.*)\\]",
                     "replacement": "[(short)(\\1)]",
                     "files": [
@@ -76,13 +93,18 @@
                     ]
                 },
                 {
+                    "reason": "Conversion: unsupported int type of intermediate value",
                     "pattern": "(lhour - delta)",
                     "replacement": "(short)(\\1)",
                     "files": [
                         "workspace/JavaCard/src/be/msec/smartcard/IdentityCard.java"
                     ]
                 }
-            ]
+            ],
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Selection: APDUException.ILLEGAL_USE"
+            }
         },
         {
             "name": "BiometricAuthentification",
@@ -91,6 +113,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Instrumentation: the import com.sun.javacard cannot be resolved",
                     "pattern": "^\\s*import com\\.sun\\.javacard.*;\\s*$",
                     "replacement": "",
                     "files": [
@@ -112,13 +135,19 @@
             "name": "CCU2F",
             "repo": "https://github.com/tsenger/CCU2F",
             "path": "CCU2F/src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: the import com.nxp cannot be resolved"
+            }
         },
         {
             "name": "de.fac2",
             "repo": "https://github.com/tsenger/de.fac2",
             "path": "src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: the import com.gieseckedevrient cannot be resolved"
+            }
         },
         {
             "name": "GidsApplet",
@@ -138,7 +167,11 @@
             "name": "hotp_via_ndef",
             "repo": "https://github.com/petrs/hotp_via_ndef",
             "path": "src",
-            "jckit": "304"
+            "jckit": "304",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "IsoApplet",
@@ -151,60 +184,95 @@
             "name": "JavacardIdentity",
             "repo": "https://github.com/mdwivedi/JavacardIdentity",
             "path": "Applet/IdentityCredential/Base/src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: no install method in entry point class"
+            }
         },
         {
             "name": "ledger-u2f-javacard",
             "repo": "https://github.com/LedgerHQ/ledger-u2f-javacard",
             "path": "src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "u2f-javacard",
-            "repo": "https://github.com/darconeous/u2f-javacard/",
+            "repo": "https://github.com/darconeous/u2f-javacard",
             "path": "src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "OneCard_Card",
             "repo": "https://github.com/SharkyHarky/OneCard",
             "path": "Card/src",
             "jckit": "222",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "subtests": []
         },
         {
             "name": "OneCard_Jacket",
             "repo": "https://github.com/SharkyHarky/OneCard",
             "path": "Jacket/src",
             "jckit": "222",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "subtests": []
         },
         {
             "name": "OpenFIPS201",
             "repo": "https://github.com/makinako/OpenFIPS201",
             "path": "src",
             "jckit": "305u4",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "fixup": [
+                {
+                    "reason": "Instrumentation: comment X cannot be added into the AST",
+                    "pattern": "//.*$",
+                    "replacement": "",
+                    "files": [
+                        "src/com/makina/security/openfips201/PIV.java"
+                    ]
+                }
+            ],
+            "subtests": []
         },
         {
             "name": "KeyFob-applet-ORWL",
             "repo": "https://github.com/O-R-W-L/KeyFob-applet",
             "path": "Code/ORWL",
-            "jckit": "305u4"
+            "jckit": "310r20210706",
+            "failure": {
+                "reason": "Instrumentation: project contains multiple packages"
+            }
         },
         {
             "name": "KeyFob-applet-ORWL_keypair",
             "repo": "https://github.com/O-R-W-L/KeyFob-applet",
             "path": "Code/ORWL_Keypair",
             "jckit": "305u4",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls GPSystem.getCVM"
+            }
         },
         {
             "name": "otp",
             "repo": "https://github.com/gelvaos/otp",
             "path": "otp/src",
             "jckit": "222",
-            "etsi": "143.019"
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
         },
         {
             "name": "PivApplet",
@@ -217,14 +285,21 @@
             "name": "cryptonit-applet",
             "repo": "https://github.com/mbrossard/cryptonit-applet",
             "path": "src",
-            "jckit": "304"
+            "jckit": "304",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Selection: applet requires specific APDU"
+            }
         },
         {
             "name": "uclinux",
             "repo": "https://github.com/scs/uclinux",
             "path": "user/ssh/scard",
             "jckit": "222",
-            "windows": false
+            "windows": false,
+            "failure": {
+                "reason": "Instrumentation: CyberflexFile cannot be resolved to a type"
+            }
         },
         {
             "name": "TIM",
@@ -261,6 +336,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "\\[(offs\\s*\\+\\s*i)\\]",
                     "replacement": "[(short)(\\1)]",
                     "files": [
@@ -274,7 +350,11 @@
             "name": "appsecure",
             "repo": "https://github.com/deepakprabhakara/appsecure",
             "path": "JavaCard/AppSecureApplet/AppSecureApplet",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.UNINITIALIZED_KEY"
+            }
         },
         {
             "name": "hw-epurse",
@@ -283,6 +363,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Instrumentation: the import javax.xml.bind cannot be resolved",
                     "pattern": "^\\s*import javax\\.xml\\.bind.*;\\s*$",
                     "replacement": "",
                     "files": [
@@ -347,14 +428,22 @@
             "name": "Loyalty-Card",
             "repo": "https://github.com/Anthirian/Loyalty-Card",
             "path": "card/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "instrumentation",
+                "reason": "Conversion: unsupported int type of field"
+            }
         },
         {
             "name": "mbank_STK",
             "repo": "https://github.com/ubs121/mbank_STK",
             "path": "src",
             "jckit": "222",
-            "etsi": "143.019"
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "instrumentation",
+                "reason": "Installation: CryptoException.NO_SUCH_ALGORITHM"
+            }
         },
         {
             "name": "OpenEMV",
@@ -370,6 +459,7 @@
             "jckit": "221",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "(offset\\s*\\+\\s*1)\\]",
                     "replacement": "(\\1)]",
                     "files": [
@@ -377,6 +467,7 @@
                     ]
                 },
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "(apdu_size\\s*\\+\\s*1)\\]",
                     "replacement": "(short)(\\1)]",
                     "files": [
@@ -390,38 +481,57 @@
             "name": "CardApplet-PayPass",
             "repo": "https://github.com/jiankeliu5/CardApplet-PayPass",
             "path": "src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: the method setStatePersonalized(String, Calendar, String, String) is undefined for the type PayPass"
+            }
         },
         {
             "name": "CardExamples-MMPP",
             "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
             "path": "CardApplet-MMPP_GPL/src",
             "jckit": "222",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "failure": {
+                "reason": "Instrumentation: the import com.st.mmpp.crypto cannot be resolved"
+            }
         },
         {
             "name": "CardExamples-PayPass",
             "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
             "path": "CardApplet-PayPass/src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: the method setStatePersonalized(String, Calendar, String, String) is undefined for the type PayPass"
+            }
         },
         {
             "name": "CardExamples-VCBP",
             "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
             "path": "CardApplet-VCBP_GPL/src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "gppro": "1.7",
+            "failure": {
+                "reason": "Instrumentation: the import com.st.vcbp.crypto cannot be resolved"
+            }
         },
         {
             "name": "CardExamples-VisaMSD-SwipeYours",
             "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
             "path": "CardApplet-VisaMSD-SwipeYours/src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: the method setStatePerso() is undefined for the type CardApplet"
+            }
         },
         {
             "name": "PbocEpSimpleVersion",
             "repo": "https://github.com/jiankeliu5/PBOC3Applet",
             "path": "src/PbocEpSimpleVersion",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: tPIN cannot be resolved to a type"
+            }
         },
         {
             "name": "PBOC3Applet",
@@ -430,6 +540,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Selection: process does not handle ISO7816.INS_SELECT",
                     "pattern": "(public void process\\(APDU apdu\\) {)",
                     "replacement": "\\1\\nif (selectingApplet()) return;",
                     "files": [
@@ -450,13 +561,21 @@
             "name": "cryptsetup-javacard",
             "repo": "https://github.com/WOnder93/cryptsetup-javacard",
             "path": "JCKeyStorage/src/applets",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "HydraMultiKeySystem",
             "repo": "https://github.com/thotheolh/HydraMultiKeySystem",
             "path": "JavaCard-Applet/src",
-            "jckit": "304"
+            "jckit": "304",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.NO_SUCH_ALGORITHM"
+            }
         },
         {
             "name": "javacard-openpgpcard",
@@ -469,25 +588,38 @@
             "name": "JavaCardKeymaster-Applet",
             "repo": "https://github.com/divegeek/JavaCardKeymaster",
             "path": "Applet/src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: KMUtils cannot be resolved"
+            }
         },
         {
             "name": "JavaCardKeymaster-AndroidSEProvider",
             "repo": "https://github.com/divegeek/JavaCardKeymaster",
             "path": "Applet/AndroidSEProvider/src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: KMInteger cannot be resolved"
+            }
         },
         {
             "name": "JavaCardKeymaster-JCardSimProvider",
             "repo": "https://github.com/divegeek/JavaCardKeymaster",
             "path": "Applet/JCardSimProvider/src",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: KMOperation cannot be resolved to a type"
+            }
         },
         {
             "name": "JCPasswordManager",
             "repo": "https://github.com/bayotop/JCPasswordManager",
             "path": "StegoPassApplet/src/stegopassapplet",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "KeepassNFCApplet",
@@ -516,7 +648,20 @@
             "repo": "https://github.com/gtomek/sim-password-store",
             "path": "Saimek/src",
             "jckit": "222",
-            "etsi": "143.019"
+            "etsi": "143.019",
+            "fixup": [
+                {
+                    "pattern": "import sun.security.krb5.internal.crypto.b;",
+                    "replacement": "",
+                    "files": [
+                        "Saimek/src/com/tomek/rd/saimek/Saimek.java"
+                    ]
+                }
+            ],
+            "failure": {
+                "stopAfter": "instrumentation",
+                "reason": "Conversion: interface fields may only be initialized to primitive compile-time constant values"
+            }
         },
         {
             "name": "sim-password-wallet",
@@ -571,6 +716,7 @@
             ],
             "fixup": [
                 {
+                    "reason": "Instrumentation: already contains PM class",
                     "pattern": "^\\s*PM\\.check.*$",
                     "replacement": "",
                     "files": [
@@ -578,6 +724,7 @@
                     ]
                 },
                 {
+                    "reason": "Instrumentation: already contains PM class",
                     "pattern": "^\\s*case Consts\\.INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
                     "replacement": "",
                     "files": [
@@ -592,7 +739,10 @@
             "repo": "https://github.com/tsenger/SigAnima",
             "path": "src",
             "jckit": "222",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "failure": {
+                "reason": "Instrumentation: the import com.nxp cannot be resolved"
+            }
         },
         {
             "name": "ykneo-openpgp",
@@ -608,6 +758,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "\\[([\\w.()]+\\s*[+\\-*\\\\]\\s*[\\w.()]+[^[]*?)\\]",
                     "replacement": "[(short)(\\1)]",
                     "files": [
@@ -635,13 +786,21 @@
             "name": "openjavacard-ndef-stub",
             "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
             "path": "applet-stub/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "openjavacard-ndef-tiny",
             "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
             "path": "applet-tiny/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "ndef-javacard",
@@ -650,6 +809,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Selection: process does not handle ISO7816.INS_SELECT",
                     "pattern": "(public void process\\(APDU apdu\\) {)",
                     "replacement": "\\1\\nif (selectingApplet()) return;",
                     "files": [
@@ -673,7 +833,11 @@
             "jckit": "304",
             "entryPoints": [
                 {
-                    "name": "com.ledger.wallet.LWNFCForumApplet"
+                    "name": "com.ledger.wallet.LWNFCForumApplet",
+                    "failure": {
+                        "stopAfter": "compilation",
+                        "reason": "Selection: requires contactless interface"
+                    }
                 },
                 {
                     "name": "com.ledger.wallet.LedgerWalletApplet",
@@ -688,7 +852,11 @@
             "jckit": "304",
             "entryPoints": [
                 {
-                    "name": "com.ledger.wallet.LWNFCForumApplet"
+                    "name": "com.ledger.wallet.LWNFCForumApplet",
+                    "failure": {
+                        "stopAfter": "compilation",
+                        "reason": "Selection: requires contactless interface"
+                    }
                 },
                 {
                     "name": "com.ledger.wallet.LedgerWalletApplet",
@@ -703,6 +871,7 @@
             "jckit": "304",
             "fixup": [
                 {
+                    "reason": "Selection: process does not handle ISO7816.INS_SELECT",
                     "pattern": "(public void process\\(APDU apdu\\) {)",
                     "replacement": "\\1\\nif (selectingApplet()) return;",
                     "files": [
@@ -766,13 +935,19 @@
             "name": "Java-Card-Project-Des_client_1",
             "repo": "https://github.com/robsbeat1/Java-Card-Project",
             "path": "Des_client_1/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: the import des_server2 cannot be resolved"
+            }
         },
         {
             "name": "Java-Card-Project-Des_client_2",
             "repo": "https://github.com/robsbeat1/Java-Card-Project",
             "path": "Des_client_2/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: the import des_server2 cannot be resolved"
+            }
         },
         {
             "name": "Java-Card-Project-Des_server2",
@@ -781,6 +956,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Installation: SystemException.ILLEGAL_AID",
                     "pattern": "register\\(\\);",
                     "replacement": "",
                     "files": [
@@ -811,6 +987,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Instrumentation: the import org.bouncycastle cannot be resolved",
                     "pattern": "import org.bouncycastle.jce.interfaces.ConfigurableProvider;",
                     "replacement": "",
                     "files": [
@@ -824,7 +1001,10 @@
             "name": "EDEPApplet-hengbao",
             "repo": "https://github.com/FourTree/EDEPApplet-hengbao",
             "path": "MobileEDEPV3/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: project contains multiple packages"
+            }
         },
         {
             "name": "Tag4",
@@ -833,6 +1013,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type of intermediate value",
                     "pattern": "(offset\\s*\\+\\s*lenght)",
                     "replacement": "(short)(\\1)",
                     "files": [
@@ -849,6 +1030,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "\\[(a.length\\s*-\\s*1)\\]",
                     "replacement": "[(short)(\\1)]",
                     "files": [
@@ -865,6 +1047,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "\\[(a.length\\s*-\\s*1)\\]",
                     "replacement": "[(short)(\\1)]",
                     "files": [
@@ -881,6 +1064,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "\\[(mlength\\s*-\\s*1)\\]",
                     "replacement": "[(short)(\\1)]",
                     "files": [
@@ -889,6 +1073,7 @@
                     ]
                 },
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "\\[(a..Off\\s*\\+\\s*i)\\]",
                     "replacement": "[(short)(\\1)]",
                     "files": [
@@ -933,14 +1118,32 @@
             "repo": "https://github.com/FourTree/LicenseCardApp",
             "path": "PBOCLicenseCardApp/src",
             "jckit": "222",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "fixup": [
+                {
+                    "reason": "Conversion: unsupported int type array index",
+                    "pattern": "\\[(mlength\\s*-\\s*1)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "PBOCLicenseCardApp/src/com/icfcc/javacard/pboclicense/LicenseCardApp.java"
+                    ]
+                }
+            ],
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "LiteID-SimApp",
             "repo": "https://github.com/LiteID/LiteID-SimApp",
             "path": "SIM Client/src",
             "jckit": "222",
-            "etsi": "143.019"
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
         },
         {
             "name": "MQTT-SCACAuth",
@@ -949,6 +1152,7 @@
             "jckit": "304",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type of intermediate value",
                     "pattern": "i<(longitud.*);",
                     "replacement": "i<(short)(\\1);",
                     "files": [
@@ -965,6 +1169,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type of intermediate value",
                     "pattern": "(\\w+(?:Bytes|Size|Offset)\\s*[+-]\\s*\\w+(?:Bytes|Size|Offset)(?:\\s*[+-]\\s*\\d+)?)",
                     "replacement": "(short)(\\1)",
                     "files": [
@@ -973,6 +1178,7 @@
                     ]
                 },
                 {
+                    "reason": "Conversion: unsupported int type of intermediate value",
                     "pattern": "(\\(free.*?\\))( [!=]= 0)",
                     "replacement": "(short)(\\1)\\2",
                     "files": [
@@ -980,6 +1186,7 @@
                     ]
                 },
                 {
+                    "reason": "Conversion: unsupported int type array index",
                     "pattern": "\\[(\\w+\\s*>>\\s*\\w+)\\]",
                     "replacement": "[(short)(\\1)]",
                     "files": [
@@ -993,7 +1200,11 @@
             "name": "SSE",
             "repo": "https://github.com/SecurityResearcher/SSE",
             "path": "Java card applet",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.ILLEGAL_VALUE"
+            }
         },
         {
             "name": "SmartMeterIQ-SmartMeterAggregator",
@@ -1002,6 +1213,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Instrumentation: the import javacardx.framework.JCSystem cannot be resolved",
                     "pattern": "import javacardx\\.framework",
                     "replacement": "import javacard.framework",
                     "files": [
@@ -1018,6 +1230,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Instrumentation: the import javacardx.framework.JCSystem cannot be resolved",
                     "pattern": "import javacardx\\.framework",
                     "replacement": "import javacard.framework",
                     "files": [
@@ -1034,6 +1247,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Instrumentation: the import javacardx.framework.JCSystem cannot be resolved",
                     "pattern": "import javacardx\\.framework",
                     "replacement": "import javacard.framework",
                     "files": [
@@ -1061,37 +1275,55 @@
             "name": "T101-Devhub-MerryXmas",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/MerryXmas",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+            }
         },
         {
             "name": "T101-Devhub-OTP_JCOTP",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/OTP/JCOTP/src/jcotp",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+            }
         },
         {
             "name": "T101-Devhub-Satochip",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/Satochip/src/org",
-            "jckit": "304"
+            "jckit": "304",
+            "failure": {
+                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+            }
         },
         {
             "name": "T101-Devhub-T101Test1",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/T101Test1/src/testt101",
-            "jckit": "304"
+            "jckit": "304",
+            "failure": {
+                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+            }
         },
         {
             "name": "T101-Devhub-ThetaPass",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/ThetaPass/src/thetapass",
-            "jckit": "304"
+            "jckit": "304",
+            "failure": {
+                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+            }
         },
         {
             "name": "T101-Devhub-ThothPGP",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/ThothPGP/src/org",
-            "jckit": "305u4"
+            "jckit": "305u4",
+            "failure": {
+                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+            }
         },
         {
             "name": "tpm2-se-applet",
@@ -1100,13 +1332,18 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type of intermediate value",
                     "pattern": "(i\\s*\\/\\s*8)",
                     "replacement": "(short)(\\1)",
                     "files": [
                         "TPM2Applet/src/at/usmile/se/tpm/TPM.java"
                     ]
                 }
-            ]
+            ],
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.NO_SUCH_ALGORITHM"
+            }
         },
         {
             "name": "upsc",
@@ -1119,7 +1356,10 @@
             "name": "Wookey",
             "repo": "https://github.com/wookey-project/javacard-applet",
             "path": "src/wookey",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: WooKey cannot be resolved to a type"
+            }
         },
         {
             "name": "javacard-smpc-rsa",
@@ -1145,35 +1385,52 @@
             "name": "simple-id",
             "repo": "https://github.com/alan-turing-institute/simple-id",
             "path": "src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
+            }
         },
         {
             "name": "HelloSTK2",
             "repo": "https://github.com/alan-turing-institute/simple-id",
             "path": "src",
             "jckit": "222",
-            "etsi": "143.019"
+            "failure": {
+                "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
+            }
         },
         {
             "name": "sim-applet-sms-im-alive",
             "repo": "https://github.com/PodgroupConnectivity/sim-applet-sms-im-alive",
             "path": "src",
             "jckit": "222",
-            "etsi": "143.019"
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
         },
         {
             "name": "sim-applet-apn-autoconf",
             "repo": "https://github.com/PodgroupConnectivity/sim-applet-apn-autoconf",
             "path": "src",
             "jckit": "222",
-            "etsi": "143.019"
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
         },
         {
             "name": "sim-applet-data-heartbeat",
             "repo": "https://github.com/PodgroupConnectivity/sim-applet-data-heartbeat",
             "path": "src",
             "jckit": "222",
-            "etsi": "143.019"
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
         },
         {
             "name": "JCEd25519",
@@ -1189,6 +1446,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Instrumentation: already contains PM class",
                     "pattern": "^\\s*case INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
                     "replacement": "",
                     "files": [
@@ -1246,13 +1504,20 @@
             "name": "jc_curve25519",
             "repo": "https://github.com/david-oswald/jc_curve25519",
             "path": "src/curve25519",
-            "jckit": "303"
+            "jckit": "303",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.ILLEGAL_VALUE"
+            }
         },
         {
             "name": "secure-channel-ec-srp-applet",
             "repo": "https://github.com/mobilesec/secure-channel-ec-srp-applet",
             "path": "src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: the import com.nxp cannot be resolved"
+            }
         },
         {
             "name": "eVerification-2",
@@ -1266,7 +1531,29 @@
             "name": "SCP11B",
             "repo": "https://github.com/ThothTrustCom/SCP11B",
             "path": "applet/SCP11BApplet/src",
-            "jckit": "304"
+            "jckit": "304",
+            "fixup": [
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "(\\(sb3 - sb2 \\+ 8\\))",
+                    "replacement": "(short) \\1",
+                    "files": [
+                        "applet/SCP11BApplet/src/SCP11BApplet/MathUtil.java"
+                    ]
+                },
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "(\\(a \\+ b - 1\\))",
+                    "replacement": "(short) \\1",
+                    "files": [
+                        "applet/SCP11BApplet/src/SCP11BApplet/MathUtil.java"
+                    ]
+                }
+            ],
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.NO_SUCH_ALGORITHM"
+            }
         },
         {
             "name": "jcard",
@@ -1275,6 +1562,7 @@
             "jckit": "222",
             "fixup": [
                 {
+                    "reason": "Conversion: unsupported int type of intermediate value",
                     "pattern": "(msgLength \\+ 15)",
                     "replacement": "(short) (\\1)",
                     "files": [
@@ -1288,25 +1576,38 @@
             "name": "jc_sync",
             "repo": "https://github.com/jfhren/jc_sync",
             "path": "src/synclib",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: no entry point class"
+            }
         },
         {
             "name": "jcChaCha2032",
             "repo": "https://github.com/thotheolh/jcChaCha2032",
             "path": "src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "instrumentation",
+                "reason": "Conversion: unsupported int type of field"
+            }
         },
         {
             "name": "external-libese-boot",
             "repo": "https://github.com/TinkerBoard2-Android/external-libese",
             "path": "apps/boot/card",
-            "jckit": "304"
+            "jckit": "304",
+            "failure": {
+                "reason": "Instrumentation: the import com.nxp cannot be resolved"
+            }
         },
         {
             "name": "external-libese-weaver",
             "repo": "https://github.com/TinkerBoard2-Android/external-libese",
             "path": "apps/weaver/card",
-            "jckit": "304"
+            "jckit": "304",
+            "failure": {
+                "reason": "Instrumentation: the import com.nxp cannot be resolved"
+            }
         },
         {
             "name": "opacity-for-smartcard",
@@ -1319,7 +1620,10 @@
             "name": "opentlssc",
             "repo": "https://github.com/halemmerich/opentlssc",
             "path": "OpenTLSSClib/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: no entry point class"
+            }
         },
         {
             "name": "Primitives_SmartCard",
@@ -1329,6 +1633,7 @@
             "maxJckit": "304",
             "fixup": [
                 {
+                    "reason": "Instrumentation: the import com.sun.javacard cannot be resolved",
                     "pattern": "^\\s*import com\\.sun\\.javacard.*;\\s*$",
                     "replacement": "",
                     "files": [
@@ -1358,13 +1663,21 @@
             "name": "SCP10Applet_mitigated",
             "repo": "https://github.com/ddealmei/SCP10-attack",
             "path": "SCP10Applet_mitigated/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.NO_SUCH_ALGORITHM"
+            }
         },
         {
             "name": "Sec2",
             "repo": "https://github.com/RUB-NDS/Sec2",
             "path": "sec2-tokenware/src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.NO_SUCH_ALGORITHM"
+            }
         },
         {
             "name": "pool-AuthenticationApplet",
@@ -1391,13 +1704,19 @@
             "name": "pool-mockcard",
             "repo": "https://github.com/seek-for-android/pool",
             "path": "tests/CTS-OpenMobileAPI/src/mockcard",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: the import org.simalliance cannot be resolved"
+            }
         },
         {
             "name": "pool-AllowAll",
             "repo": "https://github.com/seek-for-android/pool",
             "path": "samples/AllowAll/com",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: the import org.simalliance cannot be resolved"
+            }
         },
         {
             "name": "pool-ApduTester",
@@ -1417,7 +1736,10 @@
             "name": "sbcred_javacard",
             "repo": "https://github.com/credentials/sbcred_javacard",
             "path": "src",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: the import com.nxp cannot be resolved"
+            }
         },
         {
             "name": "OptimizedJCAlgs-ACORN",
@@ -1510,7 +1832,11 @@
             "name": "ykneo-curves",
             "repo": "https://github.com/Yubico/ykneo-curves",
             "path": "applet",
-            "jckit": "222"
+            "jckit": "222",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: CryptoException.ILLEGAL_VALUE"
+            }
         },
         {
             "name": "JCMathLib",
@@ -1522,6 +1848,7 @@
             ],
             "fixup": [
                 {
+                    "reason": "Instrumentation: already contains PM class",
                     "pattern": "^\\s*PM\\.check.*$",
                     "replacement": "",
                     "files": [
@@ -1529,6 +1856,7 @@
                     ]
                 },
                 {
+                    "reason": "Instrumentation: already contains PM class",
                     "pattern": "^\\s*case INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
                     "replacement": "",
                     "files": [
