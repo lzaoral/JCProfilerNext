@@ -16,8 +16,6 @@ import stat
 import sys
 
 
-MODES = ['memory', 'time']
-
 STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
           'visualisation', 'all']
 
@@ -117,7 +115,7 @@ def modify_repo(test: Dict[str, Any]) -> None:
 
 
 def execute_cmd(cmd: List[str], stages: List[str] = STAGES) -> bool:
-    if ARGS.card or ARGS.stats:
+    if ARGS.card or ARGS.mode == 'stats':
         stages = ['all']
 
     for stage in stages:
@@ -218,22 +216,20 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         if 'p2' in subtest:
             sub_cmd += ['--p2', subtest['p2']]
 
-        print('Executing subtest:', subtest['name'])
-        for mode in MODES:
-            print('Executing mode', mode)
-            mode_cmd = sub_cmd.copy()
-            mode_cmd += ['--mode', mode]
+        print('Executing subtest', subtest['name'], 'in mode', ARGS.mode)
+        sub_cmd += ['--mode', ARGS.mode]
 
-            if not execute_cmd(mode_cmd):
-                FAILURES.append(
-                        f'{test["name"]} {subtest["method"]} in {mode} mode')
+        if not execute_cmd(sub_cmd):
+            FAILURES.append(
+                    f'{test["name"]} {subtest["method"]} in {ARGS.mode} mode')
 
         # TODO: check format and contents of generated profiling reports
 
 
 def skip_test(test: Dict[str, Any]) -> Optional[str]:
     # skip empty tests when not in stat mode
-    if not ARGS.stats and 'entryPoints' not in test and 'subtests' not in test:
+    if not ARGS.mode == 'stats' and 'entryPoints' not in test and \
+            'subtests' not in test:
         return 'empty test'
 
     # skip tests disabled on given platform
@@ -289,7 +285,7 @@ def execute_test(test: Dict[str, Any]) -> None:
     if ARGS.debug:
         cmd.append('--debug')
 
-    if ARGS.stats:
+    if ARGS.mode == 'stats':
         get_stats(test, cmd)
         return
 
@@ -372,8 +368,8 @@ if __name__ == '__main__':
     parser.add_argument('--repeat-count', type=int, default=100,
                         help='Number profiling rounds (default 100)')
 
-    parser.add_argument('--stats', action='store_true',
-                        help='Collect API usage statistics')
+    parser.add_argument('--mode', choices=['memory', 'time', 'stats'],
+                        required=True, help='Execute tests for given mode')
 
     ARGS = parser.parse_args()
 
