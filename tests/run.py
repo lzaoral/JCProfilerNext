@@ -266,7 +266,7 @@ def execute_test(test: Dict[str, Any]) -> None:
     jckit_version = test['jckit']
     if ARGS.min_jckit is not None and ARGS.min_jckit > test['jckit']:
         jckit_version = ARGS.min_jckit
-    jckit = Path(f'jcsdk/jc{jckit_version}_kit').absolute()
+    jckit = Path(f'jckit/jc{jckit_version}_kit').absolute()
 
     cmd = ['java', '-jar', str(jar), '--jckit', str(jckit)]
 
@@ -321,7 +321,7 @@ def main() -> None:
         data = json.load(f)
 
     clone_git_repo(data['etsiRepo'], 'etsiapi', reclone=False)
-    clone_git_repo(data['jcsdkRepo'], 'jcsdk', reclone=False)
+    clone_git_repo(data['jckitRepo'], 'jckit', reclone=False)
     clone_git_repo(data['gpapiRepo'], 'gpapi', reclone=False)
     download_file(data['visaJar'], 'visa.jar')
 
