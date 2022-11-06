@@ -240,6 +240,11 @@ def skip_test(test: Dict[str, Any]) -> Optional[str]:
     if osName in test and not test[osName]:
         return 'disabled on ' + osName
 
+    # test requires older JCKit than possible
+    if 'maxJckit' in test and ARGS.min_jckit is not None and \
+            test['maxJckit'] < ARGS.min_jckit:
+        return 'requires older JCKit than specified in --min-jckit'
+
     # test requires newer JCKit than possible
     if ARGS.max_jckit is not None and test['jckit'] > ARGS.max_jckit:
         return 'requires newer JCKit than specified in --max-jckit'
