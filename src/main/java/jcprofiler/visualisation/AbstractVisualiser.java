@@ -128,6 +128,7 @@ public abstract class AbstractVisualiser {
         JCProfilerUtil.recreateDirectory(outputDir);
 
         log.info("Inserting measurements into sources.");
+        final SpoonAPI spoon = JCProfilerUtil.getInstrumentedSpoon(args);
         spoon.setSourceOutputDirectory(outputDir.toFile());
         spoon.addProcessor(getInsertMeasurementsProcessor());
         spoon.process();
@@ -136,7 +137,6 @@ public abstract class AbstractVisualiser {
 
     public abstract void prepareVelocityContext(final VelocityContext context);
 
-    // TODO: must be executed before insertMeasurementsToSources()
     public void generateHTML() {
         log.info("Initializing Apache Velocity.");
         final Properties props = new Properties();
