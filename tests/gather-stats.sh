@@ -3,7 +3,7 @@
 echo "Gathering API usage statistics"
 rm stats.txt || true
 rm -r stats_out || true
-./run.py --stats --output-dir stats_out
+./run.py --mode stats --output-dir stats_out
 
 set -- stats_out/*
 for f in "$@"; do
