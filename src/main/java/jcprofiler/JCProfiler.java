@@ -15,11 +15,8 @@ import jcprofiler.visualisation.AbstractVisualiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtClass;
-
-import java.nio.file.Path;
 
 public class JCProfiler {
     private static final Logger log = LoggerFactory.getLogger(JCProfiler.class);
@@ -45,15 +42,7 @@ public class JCProfiler {
         }
 
         // check that the generated sources are compilable by rebuilding the model after instrumentation
-        final SpoonAPI spoon = new Launcher();
-        log.info("Validating Spoon model.");
-
-        Instrumenter.setupSpoon(spoon, args);
-        final Path instrOutput = JCProfilerUtil.getInstrOutputDirectory(args.workDir);
-        JCProfilerUtil.checkDirectory(instrOutput, Stage.instrumentation);
-        spoon.addInputResource(instrOutput.toString());
-        spoon.buildModel();
-
+        final SpoonAPI spoon = JCProfilerUtil.getInstrumentedSpoon(args);
         if (args.stopAfter == Stage.instrumentation)
             return;
 

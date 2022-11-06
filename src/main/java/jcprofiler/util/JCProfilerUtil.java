@@ -3,6 +3,7 @@ package jcprofiler.util;
 import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 
+import jcprofiler.args.Args;
 import jcprofiler.util.enums.Stage;
 import jcprofiler.util.enums.TimeUnit;
 
@@ -13,11 +14,13 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.reflect.code.CtConstructorCall;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -383,5 +386,56 @@ public class JCProfilerUtil {
 
     public static int getHexStringBitCount(final String str) {
         return new BigInteger(str, 16).bitCount();
+    }
+
+    // Spoon helper methods
+
+    /**
+     * Sets common settings for given Spoon instance.
+     *
+     * @param spoon Spoon instance
+     * @param args  object with commandline arguments
+     */
+    public static void setupSpoon(final SpoonAPI spoon, final Args args) {
+        log.debug("Setting Spoon's environment.");
+
+        // TODO: uncommenting this might lead to Spoon crashes!
+        // spoon.getEnvironment().setPrettyPrinterCreator(() -> new SniperJavaPrettyPrinter(spoon.getEnvironment()));
+
+        spoon.getEnvironment().setNoClasspath(false);
+        spoon.getEnvironment().setAutoImports(true);
+        spoon.getEnvironment().setCopyResources(false);
+
+        // construct the list of JavaCard API JAR files
+        final List<String> apiJars = args.jcSDK.getApiJars().stream()
+                .map(File::getAbsolutePath).collect(Collectors.toList());
+        apiJars.addAll(args.jars.stream().map(j -> {
+            log.debug("Adding {} to Spoon's path.", j);
+            return j.toString();
+        }).collect(Collectors.toSet()));
+
+        spoon.getEnvironment().setSourceClasspath(apiJars.toArray(new String[0]));
+    }
+
+    /**
+     * Build a Spoon model from instrumented sources. Also checks that the instrumentation
+     * did not produce malformed source code.
+     *
+     * @param  args object with commandline arguments
+     * @return      Spoon instance
+     */
+    public static SpoonAPI getInstrumentedSpoon(final Args args) {
+        log.info("Validating Spoon model.");
+
+        final Launcher spoon = new Launcher();
+        setupSpoon(spoon, args);
+
+        final Path instrOutput = getInstrOutputDirectory(args.workDir);
+        checkDirectory(instrOutput, Stage.instrumentation);
+
+        spoon.addInputResource(instrOutput.toString());
+        spoon.buildModel();
+
+        return spoon;
     }
 }

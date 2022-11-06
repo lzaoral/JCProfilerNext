@@ -91,7 +91,7 @@ public class Instrumenter {
     }
 
     private void buildModel(final Launcher spoon) {
-        setupSpoon(spoon, args);
+        JCProfilerUtil.setupSpoon(spoon, args);
         spoon.addInputResource(JCProfilerUtil.getSourceInputDirectory(args.workDir).toString());
 
         log.debug("Building Spoon model.");
@@ -126,27 +126,6 @@ public class Instrumenter {
                 throw new RuntimeException("Unreachable statement reached!");
         }
         args.method = JCProfilerUtil.getFullSignature(executable);
-    }
-
-    public static void setupSpoon(final SpoonAPI spoon, final Args args) {
-        log.debug("Setting Spoon's environment.");
-
-        // TODO: uncommenting this might lead to Spoon crashes!
-        // spoon.getEnvironment().setPrettyPrinterCreator(() -> new SniperJavaPrettyPrinter(spoon.getEnvironment()));
-
-        spoon.getEnvironment().setNoClasspath(false);
-        spoon.getEnvironment().setAutoImports(true);
-        spoon.getEnvironment().setCopyResources(false);
-
-        // construct the list of JavaCard API JAR files
-        final List<String> apiJars = args.jcSDK.getApiJars().stream()
-                .map(File::getAbsolutePath).collect(Collectors.toList());
-        apiJars.addAll(args.jars.stream().map(j -> {
-            log.debug("Adding {} to Spoon's path.", j);
-            return j.toString();
-        }).collect(Collectors.toSet()));
-
-        spoon.getEnvironment().setSourceClasspath(apiJars.toArray(new String[0]));
     }
 
     private void addMissingClasses(final Launcher spoon) {
@@ -281,7 +260,7 @@ public class Instrumenter {
         boolean permissive = false;
 
         Launcher spoon = new Launcher();
-        setupSpoon(spoon, args);
+        JCProfilerUtil.setupSpoon(spoon, args);
         spoon.addInputResource(args.workDir.toString());
 
         try {
@@ -295,7 +274,7 @@ public class Instrumenter {
 
             // try it with missing imports
             spoon = new Launcher();
-            setupSpoon(spoon, args);
+            JCProfilerUtil.setupSpoon(spoon, args);
             spoon.addInputResource(args.workDir.toString());
             spoon.getEnvironment().setNoClasspath(true);
             spoon.buildModel();
