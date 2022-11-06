@@ -46,8 +46,11 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew build
 
-      - name: Execute profiling tests
-        run: |
-          python3 tests/run.py --mode stats
-          python3 tests/run.py --mode memory --ci --min-jckit '${{ matrix.min_jckit }}'
-          python3 tests/run.py --mode time   --ci --min-jckit '${{ matrix.min_jckit }}'
+      - name: Execute profiling tests (stats)
+        run: python3 tests/run.py --mode stats
+
+      - name: Execute profiling tests (memory)
+        run: python3 tests/run.py --mode memory --ci --min-jckit '${{ matrix.min_jckit }}'
+
+      - name: Execute profiling tests (time)
+        run: python3 tests/run.py --mode time --ci --min-jckit '${{ matrix.min_jckit }}'
