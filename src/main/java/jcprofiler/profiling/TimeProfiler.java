@@ -23,8 +23,6 @@ import java.util.*;
  * @author Lukáš Zaoral and Petr Svenda
  */
 public class TimeProfiler extends AbstractProfiler {
-    private static final short PERF_START = 0x0001;
-
     // use LinkedHashX to preserve insertion order
     private final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 

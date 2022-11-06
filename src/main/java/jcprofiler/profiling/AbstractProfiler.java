@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractProfiler {
     protected static final short PERF_START = 0x0001;
+
     protected final Args args;
     protected final CardManager cardManager;
     protected final CtExecutable<?> profiledExecutable;
