@@ -754,7 +754,17 @@
             "name": "Java-Card-Project-Des_server2",
             "repo": "https://github.com/robsbeat1/Java-Card-Project",
             "path": "Des_server2/src",
-            "jckit": "222"
+            "jckit": "222",
+            "fixup": [
+                {
+                    "pattern": "register\\(\\);",
+                    "replacement": "",
+                    "files": [
+                        "Des_server2/src/des_server2/Des_Server2.java"
+                    ]
+                }
+            ],
+            "subtests": []
         },
         {
             "name": "Gauss Key Card",
