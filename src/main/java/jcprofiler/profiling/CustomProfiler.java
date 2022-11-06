@@ -15,7 +15,8 @@ import java.io.IOException;
 // custom profiler will only generate inputs!
 public class CustomProfiler extends AbstractProfiler {
     public CustomProfiler(final Args args, final CardManager cardManager, final CtModel model) {
-        super(args, cardManager, JCProfilerUtil.getProfiledMethod(model, args.method), "INS_PERF_CUSTOM");
+        super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method),
+              "INS_PERF_CUSTOM");
     }
 
     @Override
