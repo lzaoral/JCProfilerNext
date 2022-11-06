@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import spoon.Launcher;
 import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 import spoon.reflect.code.CtConstructorCall;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
@@ -107,8 +108,8 @@ public class JCProfilerUtil {
         return installMethod;
     }
 
-    public static CtClass<?> getEntryPoint(final SpoonAPI spoon, final String className) {
-        final List<CtClass<?>> entryPoints = spoon.getModel().getElements(JCProfilerUtil::isTypeEntryPoint);
+    public static CtClass<?> getEntryPoint(final CtModel model, final String className) {
+        final List<CtClass<?>> entryPoints = model.getElements(JCProfilerUtil::isTypeEntryPoint);
         if (entryPoints.isEmpty())
             throw new RuntimeException("None of the provided classes is an entry point!");
 
@@ -126,7 +127,7 @@ public class JCProfilerUtil {
                 .filter(cls -> cls.getQualifiedName().equals(className)).findAny();
 
         if (!maybeEntryPoint.isPresent()) {
-            if (spoon.getModel().getElements((CtClass<?> cls) -> cls.getQualifiedName().equals(className)).isEmpty())
+            if (model.getElements((CtClass<?> cls) -> cls.getQualifiedName().equals(className)).isEmpty())
                 throw new RuntimeException("Class " + className + " specified an an entry point does not exist!");
 
             throw new RuntimeException("Class " + className + " is not an entry point!");
@@ -139,8 +140,8 @@ public class JCProfilerUtil {
     }
 
     // profiled constructor/method detection
-    public static CtExecutable<?> getProfiledExecutable(final SpoonAPI spoon, final String fullSignature) {
-        final List<CtExecutable<?>> executables = spoon.getModel().getElements(
+    public static CtExecutable<?> getProfiledExecutable(final CtModel model, final String fullSignature) {
+        final List<CtExecutable<?>> executables = model.getElements(
                 (CtExecutable<?> e) -> JCProfilerUtil.getFullSignature(e).equals(fullSignature));
 
         if (executables.isEmpty())
@@ -155,16 +156,16 @@ public class JCProfilerUtil {
         return executables.get(0);
     }
 
-    public static CtExecutable<?> getProfiledExecutable(final SpoonAPI spoon, final String entryPoint,
+    public static CtExecutable<?> getProfiledExecutable(final CtModel model, final String entryPoint,
                                                         final String executableName) {
-        final CtConstructor<?> constructor = getProfiledConstructor(spoon, entryPoint, executableName);
+        final CtConstructor<?> constructor = getProfiledConstructor(model, entryPoint, executableName);
         return constructor != null ? constructor
-                                   : getProfiledMethod(spoon, executableName);
+                                   : getProfiledMethod(model, executableName);
     }
 
-    public static CtConstructor<?> getProfiledConstructor(final SpoonAPI spoon, final String entryPoint,
+    public static CtConstructor<?> getProfiledConstructor(final CtModel model, final String entryPoint,
                                                           final String constructorName) {
-        final CtClass<?> entryPointClass = getEntryPoint(spoon, entryPoint);
+        final CtClass<?> entryPointClass = getEntryPoint(model, entryPoint);
         final CtMethod<?> installMethod = getInstallMethod(entryPointClass);
 
         // get all entryPoint class constructor invocations in the install method
@@ -193,14 +194,14 @@ public class JCProfilerUtil {
         return constructor;
     }
 
-    public static CtMethod<?> getProfiledMethod(final SpoonAPI spoon, final String methodName) {
+    public static CtMethod<?> getProfiledMethod(final CtModel model, final String methodName) {
         if (methodName == null)
             throw new RuntimeException("--method argument was not provided!");
 
         final String[] split = methodName.split("#");
         final int lastIdx = split.length - 1;
 
-        final List<CtMethod<?>> methods = spoon.getModel().getElements((CtMethod<?> m) -> {
+        final List<CtMethod<?>> methods = model.getElements((CtMethod<?> m) -> {
             boolean sameSignature = split[lastIdx].contains("(") ? m.getSignature().equals(split[lastIdx])
                                                                  : m.getSimpleName().equals(split[lastIdx]);
             return sameSignature && (split.length == 1 || m.getDeclaringType().getQualifiedName().equals(split[0]));

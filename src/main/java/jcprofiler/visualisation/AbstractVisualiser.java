@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtExecutable;
 
 import java.io.*;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractVisualiser {
     protected final Args args;
-    protected final SpoonAPI spoon;
+    protected final CtModel model;
 
     // CSV header
     protected Mode mode;
@@ -50,17 +51,17 @@ public abstract class AbstractVisualiser {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractVisualiser.class);
 
-    protected AbstractVisualiser(final Args args, final SpoonAPI spoon) {
+    protected AbstractVisualiser(final Args args, final CtModel model) {
         this.args = args;
-        this.spoon = spoon;
+        this.model = model;
     }
 
-    public static AbstractVisualiser create(final Args args, final SpoonAPI spoon) {
+    public static AbstractVisualiser create(final Args args, final CtModel model) {
         switch (args.mode) {
             case memory:
-                return new MemoryVisualiser(args, spoon);
+                return new MemoryVisualiser(args, model);
             case time:
-                return new TimeVisualiser(args, spoon);
+                return new TimeVisualiser(args, model);
             default:
                 throw new RuntimeException("Unreachable statement reached!");
         }
@@ -108,7 +109,7 @@ public abstract class AbstractVisualiser {
 
     private void loadSourceCode() {
         // get source code, escape it for HTML and strip empty lines
-        final CtExecutable<?> executable = JCProfilerUtil.getProfiledExecutable(spoon, profiledExecutableSignature);
+        final CtExecutable<?> executable = JCProfilerUtil.getProfiledExecutable(model, profiledExecutableSignature);
         sourceCode = Arrays.stream(StringEscapeUtils.escapeHtml4(executable.prettyprint())
                 .split(System.lineSeparator())).filter(x -> !x.isEmpty()).collect(Collectors.toList());
     }

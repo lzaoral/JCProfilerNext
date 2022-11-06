@@ -6,15 +6,14 @@ import jcprofiler.visualisation.processors.InsertMemoryMeasurementsProcessor;
 
 import org.apache.velocity.VelocityContext;
 
-import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class MemoryVisualiser extends AbstractVisualiser {
-    public MemoryVisualiser(final Args args, final SpoonAPI spoon) {
-        super(args, spoon);
+    public MemoryVisualiser(final Args args, final CtModel model) {
+        super(args, model);
     }
 
     @Override

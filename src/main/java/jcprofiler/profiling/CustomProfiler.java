@@ -7,15 +7,15 @@ import jcprofiler.util.JCProfilerUtil;
 
 import org.apache.commons.csv.CSVPrinter;
 
-import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtConstructor;
 
 import java.io.IOException;
 
 // custom profiler will only generate inputs!
 public class CustomProfiler extends AbstractProfiler {
-    public CustomProfiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
-        super(args, cardManager, JCProfilerUtil.getProfiledMethod(spoon, args.method));
+    public CustomProfiler(final Args args, final CardManager cardManager, final CtModel model) {
+        super(args, cardManager, JCProfilerUtil.getProfiledMethod(model, args.method));
     }
 
     @Override

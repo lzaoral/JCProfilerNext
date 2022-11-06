@@ -16,6 +16,7 @@ import spoon.Launcher;
 import spoon.OutputType;
 import spoon.SpoonAPI;
 import spoon.compiler.ModelBuildingException;
+import spoon.reflect.CtModel;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtFieldReference;
@@ -47,7 +48,7 @@ public class Instrumenter {
         final Launcher spoon = new Launcher();
         addMissingClasses(spoon);
         buildModel(spoon);
-        checkArguments(spoon);
+        checkArguments(spoon.getModel());
 
         // Instrument the model
 
@@ -106,21 +107,21 @@ public class Instrumenter {
         }
     }
 
-    private void checkArguments(final Launcher spoon) {
+    private void checkArguments(final CtModel model) {
         log.info("Validating '--entry-point' and '--method' arguments.");
 
         // validate args.entryPoint
-        JCProfilerUtil.getEntryPoint(spoon, args.entryPoint);
+        JCProfilerUtil.getEntryPoint(model, args.entryPoint);
 
         // validate and select args.method
         CtExecutable<?> executable;
         switch (args.mode) {
             case custom:
             case memory:
-                executable = JCProfilerUtil.getProfiledExecutable(spoon, args.entryPoint, args.method);
+                executable = JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method);
                 break;
             case time:
-                executable = JCProfilerUtil.getProfiledMethod(spoon, args.method);
+                executable = JCProfilerUtil.getProfiledMethod(model, args.method);
                 break;
             default:
                 throw new RuntimeException("Unreachable statement reached!");

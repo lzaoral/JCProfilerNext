@@ -11,7 +11,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
@@ -30,10 +30,10 @@ public class TimeProfiler extends AbstractProfiler {
 
     private static final Logger log = LoggerFactory.getLogger(TimeProfiler.class);
 
-    public TimeProfiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
-        super(args, cardManager, JCProfilerUtil.getProfiledMethod(spoon, args.method));
+    public TimeProfiler(final Args args, final CardManager cardManager, final CtModel model) {
+        super(args, cardManager, JCProfilerUtil.getProfiledMethod(model, args.method));
 
-        if (JCProfilerUtil.getEntryPoint(spoon, args.entryPoint).getField("INS_PERF_SETSTOP") == null)
+        if (JCProfilerUtil.getEntryPoint(model, args.entryPoint).getField("INS_PERF_SETSTOP") == null)
             throw new RuntimeException(
                     "Profiling in " + args.mode + " mode but PM class does not contain INS_PERF_SETSTOP field!");
     }

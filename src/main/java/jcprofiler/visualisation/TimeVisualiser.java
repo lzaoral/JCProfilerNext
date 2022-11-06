@@ -11,7 +11,7 @@ import org.apache.velocity.VelocityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -23,8 +23,8 @@ public class TimeVisualiser extends AbstractVisualiser {
 
     private static final Logger log = LoggerFactory.getLogger(TimeVisualiser.class);
 
-    public TimeVisualiser(final Args args, final SpoonAPI spoon) {
-        super(args, spoon);
+    public TimeVisualiser(final Args args, final CtModel model) {
+        super(args, model);
     }
 
     @Override

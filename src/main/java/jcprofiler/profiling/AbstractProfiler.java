@@ -16,7 +16,7 @@ import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtLiteral;
 import spoon.reflect.declaration.CtClass;
@@ -64,14 +64,14 @@ public abstract class AbstractProfiler {
         buildPerfMapping();
     }
 
-    public static AbstractProfiler create(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
+    public static AbstractProfiler create(final Args args, final CardManager cardManager, final CtModel model) {
         switch (args.mode) {
             case custom:
-                return new CustomProfiler(args, cardManager, spoon);
+                return new CustomProfiler(args, cardManager, model);
             case memory:
-                return new MemoryProfiler(args, cardManager, spoon);
+                return new MemoryProfiler(args, cardManager, model);
             case time:
-                return new TimeProfiler(args, cardManager, spoon);
+                return new TimeProfiler(args, cardManager, model);
             default:
                 throw new RuntimeException("Unreachable statement reached!");
         }

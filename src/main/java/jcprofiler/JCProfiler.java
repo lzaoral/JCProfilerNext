@@ -15,7 +15,7 @@ import jcprofiler.visualisation.AbstractVisualiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtClass;
 
 public class JCProfiler {
@@ -42,13 +42,13 @@ public class JCProfiler {
         }
 
         // check that the generated sources are compilable by rebuilding the model after instrumentation
-        final SpoonAPI spoon = JCProfilerUtil.getInstrumentedSpoon(args);
+        final CtModel model = JCProfilerUtil.getInstrumentedSpoon(args).getModel();
         if (args.stopAfter == Stage.instrumentation)
             return;
 
         // get entry point class (needed from compilation to profiling)
         final CtClass<?> entryPoint = args.startFrom != Stage.visualisation
-                                            ? JCProfilerUtil.getEntryPoint(spoon, args.entryPoint)
+                                            ? JCProfilerUtil.getEntryPoint(model, args.entryPoint)
                                             : null;
 
         // Compilation
@@ -85,7 +85,7 @@ public class JCProfiler {
                 cardManager = Installer.connect(args, entryPoint);
 
             log.info("Profiling started.");
-            final AbstractProfiler profiler = AbstractProfiler.create(args, cardManager, spoon);
+            final AbstractProfiler profiler = AbstractProfiler.create(args, cardManager, model);
             profiler.profile();
             profiler.generateCSV();
             log.info("Profiling complete.");
@@ -96,7 +96,7 @@ public class JCProfiler {
 
         // Visualisation
         log.info("Visualising results.");
-        final AbstractVisualiser vis = AbstractVisualiser.create(args, spoon);
+        final AbstractVisualiser vis = AbstractVisualiser.create(args, model);
         vis.loadAndProcessMeasurements();
         vis.generateHTML();
         vis.insertMeasurementsToSources();

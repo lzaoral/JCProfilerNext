@@ -13,7 +13,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
@@ -35,14 +35,14 @@ public class MemoryProfiler extends AbstractProfiler {
 
     private static final Logger log = LoggerFactory.getLogger(MemoryProfiler.class);
 
-    public MemoryProfiler(final Args args, final CardManager cardManager, final SpoonAPI spoon) {
-        super(args, cardManager, JCProfilerUtil.getProfiledExecutable(spoon, args.entryPoint, args.method));
+    public MemoryProfiler(final Args args, final CardManager cardManager, final CtModel model) {
+        super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method));
 
-        if (JCProfilerUtil.getEntryPoint(spoon, args.entryPoint).getField("INS_PERF_GETMEM") == null)
+        if (JCProfilerUtil.getEntryPoint(model, args.entryPoint).getField("INS_PERF_GETMEM") == null)
             throw new RuntimeException(
                     "Profiling in " + args.mode + " mode but PM class does not contain INS_PERF_GETMEM field!");
 
-        valueBytes = getValueBytes(spoon);
+        valueBytes = getValueBytes(model);
         if (valueBytes == Integer.BYTES && args.useSimulator)
             throw new UnsupportedOperationException(
                     "jCardSim does not support the 3.0.4+ JCSystem.getAvailableMemory(short[],short,byte) overload!");
@@ -53,12 +53,12 @@ public class MemoryProfiler extends AbstractProfiler {
      * static method used in the PM.check(short) method in bytes. JCSDK 3.0.4+ return an
      * int and older return a short.
      *
-     * @param spoon - Spoon instance
-     * @return size of the getAvailableMemory measurement in bytes
+     * @param model Spoon model
+     * @return      size of the getAvailableMemory measurement in bytes
      */
-    private int getValueBytes(final SpoonAPI spoon) {
+    private int getValueBytes(final CtModel model) {
         // get PM.check(short) method
-        final CtMethod<?> PM = spoon.getFactory().getModel().filterChildren(
+        final CtMethod<?> PM = model.filterChildren(
                 (CtMethod<?> m) -> m.getSignature().equals("check(short)") &&
                         m.getDeclaringType().getSimpleName().equals("PM")).first();
 
