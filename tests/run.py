@@ -4,7 +4,7 @@ from pathlib import Path
 from shutil import copytree, make_archive, rmtree
 from subprocess import call
 from tempfile import mkdtemp
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 from urllib.request import Request, urlopen
 
 import argparse
@@ -230,23 +230,27 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         # TODO: check format and contents of generated profiling reports
 
 
-def skip_test(test: Dict[str, Any]) -> bool:
+def skip_test(test: Dict[str, Any]) -> Optional[str]:
     # skip empty tests when not in stat mode
     if not ARGS.stats and 'entryPoints' not in test and 'subtests' not in test:
-        return True
+        return 'empty test'
 
     # skip tests disabled on given platform
     osName = platform.system().lower()
     if osName in test and not test[osName]:
-        return True
+        return 'disabled on ' + osName
 
     # test requires newer JCKit than possible
-    return ARGS.max_jckit is not None and test['jckit'] > ARGS.max_jckit
+    if ARGS.max_jckit is not None and test['jckit'] > ARGS.max_jckit:
+        return 'requires newer JCKit than specified in --max-jckit'
+
+    return None
 
 
 def execute_test(test: Dict[str, Any]) -> None:
-    if skip_test(test):
-        print('Skip test', test['name'], colour=BOLD_YELLOW)
+    reason = skip_test(test)
+    if reason is not None:
+        print(f'Skip test {test["name"]}: {reason}', colour=BOLD_YELLOW)
         return
 
     print('Running test', test['name'])
