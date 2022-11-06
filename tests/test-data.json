@@ -29,7 +29,16 @@
             "repo": "https://github.com/Twuk/eid-quick-key-toolset",
             "path": "eid-quick-key-toolset/eid-applet/src/main/java/be",
             "jckit": "222",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "entryPoints": [
+                {
+                    "name": "be.fedict.eidapplet.EidCard",
+                },
+                {
+                    "name": "be.fedict.eidapplet.EmptyEidCard",
+                    "subtests": []
+                }
+            ]
         },
         {
             "name": "InfinitEID",
@@ -42,7 +51,15 @@
             "name": "jmrtd-noeac",
             "repo": "https://github.com/walterschell/jmrtd-noeac",
             "path": "src",
-            "jckit": "304"
+            "jckit": "304",
+            "entryPoints": [
+                {
+                    "name": "sos.passportapplet.EvilPassportApplet",
+                },
+                {
+                    "name": "sos.passportapplet.PassportApplet",
+                }
+            ]
         },
         {
             "name": "SIC",
@@ -88,7 +105,8 @@
             "repo": "https://github.com/NabilNoaman/CoolkeyApplet",
             "path": "src",
             "jckit": "222",
-            "visa": null
+            "visa": null,
+            "subtests": []
         },
         {
             "name": "CCU2F",
@@ -483,13 +501,15 @@
             "repo": "https://github.com/cranixx/Passmg",
             "path": "passmg",
             "jckit": "222",
-            "visa": null
+            "visa": null,
+            "subtests": []
         },
         {
             "name": "sim-password-manager",
             "repo": "https://github.com/nelenkov/sim-password-manager",
             "path": "password-manager-applet/src",
-            "jckit": "222"
+            "jckit": "222",
+            "subtests": []
         },
         {
             "name": "sim-password-store",
@@ -503,7 +523,8 @@
             "repo": "https://github.com/bertrandmartel/sim-password-wallet",
             "path": "applet/src/main",
             "jckit": "222",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "subtests": []
         },
         {
             "name": "smartcard_crypto_applet",
@@ -600,13 +621,15 @@
             "name": "openjavacard-ndef-advanced",
             "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
             "path": "applet-advanced/src",
-            "jckit": "222"
+            "jckit": "222",
+            "subtests": []
         },
         {
             "name": "openjavacard-ndef-full",
             "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
             "path": "applet-full/src",
-            "jckit": "222"
+            "jckit": "222",
+            "subtests": []
         },
         {
             "name": "openjavacard-ndef-stub",
@@ -640,7 +663,8 @@
             "name": "PicoLabel",
             "repo": "https://github.com/MpicoSys/PicoLabel",
             "path": "java/scc_applet/Pico_NDEF",
-            "jckit": "222"
+            "jckit": "222",
+            "subtests": []
         },
         {
             "name": "BitcoinWallet",
@@ -892,7 +916,17 @@
             "repo": "https://github.com/FourTree/LicenseCardApp",
             "path": "PBOC3_JC2_1_1_License/src",
             "jckit": "222",
-            "gppro": "1.7"
+            "gppro": "1.7",
+            "entryPoints": [
+                {
+                    "name": "com.broadthinking.pboc3.PBOC",
+                    "subtests": []
+                },
+                {
+                    "name": "com.broadthinking.pboc3.PaySysEnv",
+                    "subtests": []
+                }
+            ]
         },
         {
             "name": "LicenseCardApp-PBOCLicenseCardApp",
@@ -1032,25 +1066,31 @@
         {
             "name": "T101-Devhub-OTP_JCOTP",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
-            "path": "Samples/OTP/JCOTP/src",
+            "path": "Samples/OTP/JCOTP/src/jcotp",
             "jckit": "222"
         },
         {
             "name": "T101-Devhub-Satochip",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
-            "path": "Samples/Satochip/src",
+            "path": "Samples/Satochip/src/org",
             "jckit": "304"
         },
         {
             "name": "T101-Devhub-T101Test1",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
-            "path": "Samples/ThetaPass/src",
+            "path": "Samples/T101Test1/src/testt101",
+            "jckit": "304"
+        },
+        {
+            "name": "T101-Devhub-ThetaPass",
+            "repo": "https://github.com/ThothTrustCom/T101-Devhub",
+            "path": "Samples/ThetaPass/src/thetapass",
             "jckit": "304"
         },
         {
             "name": "T101-Devhub-ThothPGP",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
-            "path": "Samples/ThothPGP/src",
+            "path": "Samples/ThothPGP/src/org",
             "jckit": "305u4"
         },
         {
