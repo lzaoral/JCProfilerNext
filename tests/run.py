@@ -114,7 +114,7 @@ def modify_repo(test: Dict[str, Any]) -> None:
                     f.write(pattern.sub(replacement, lines))
 
 
-def execute_cmd(cmd: List[str], stages: List[str] = STAGES) -> bool:
+def execute_cmd(cmd: List[str], stages: List[str] = []) -> bool:
     if ARGS.card or ARGS.mode == 'stats':
         stages = ['all']
 
@@ -163,14 +163,15 @@ def get_stats(test: Dict[str, Any], cmd: List[str]) -> None:
         FAILURES.append(f'{test["name"]} in stats mode')
 
 
-def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str) -> None:
+def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str,
+              stages: List[str]) -> None:
     ctor_cmd = cmd.copy()
     test_dir = prepare_workdir(test, dir_prefix + 'ctor')
 
     ctor_cmd += ['--work-dir', str(test_dir)]
     ctor_cmd += ['--mode', 'memory']
 
-    if not execute_cmd(ctor_cmd):
+    if not execute_cmd(ctor_cmd, stages):
         FAILURES.append(f'{test["name"]} constructor in memory mode')
 
 
@@ -184,19 +185,21 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         cmd += ['--entry-point', entry_point['name']]
         dir_prefix = entry_point['name'] + '_'
 
-    if 'subtests' not in test_desc:
-        # nothing to do
-        return
-
     if 'resetInst' in test_desc:
         cmd += ['--reset-inst', test_desc['resetInst']]
     if 'cla' in test_desc:
         cmd += ['--cla', test_desc['cla']]
 
-    # test memory measurement in constructor
-    test_ctor(test, cmd, dir_prefix)
+    stages = STAGES
+    if 'failure' in test_desc:
+        stages = stages[:STAGES.index(test_desc['failure']['stopAfter']) + 1]
+        print('Test supports only:', stages)
 
-    for subtest in test_desc['subtests']:
+    if ARGS.mode == 'memory':
+        # test memory measurement in constructor
+        test_ctor(test, cmd, dir_prefix, stages)
+
+    for subtest in test_desc.get('subtests', []):
         sub_cmd = cmd.copy()
         test_dir = prepare_workdir(test, dir_prefix + subtest["method"])
 
@@ -219,19 +222,12 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         print('Executing subtest', subtest['name'], 'in mode', ARGS.mode)
         sub_cmd += ['--mode', ARGS.mode]
 
-        if not execute_cmd(sub_cmd):
+        if not execute_cmd(sub_cmd, stages):
             FAILURES.append(
                     f'{test["name"]} {subtest["method"]} in {ARGS.mode} mode')
 
-        # TODO: check format and contents of generated profiling reports
-
 
 def skip_test(test: Dict[str, Any]) -> Optional[str]:
-    # skip empty tests when not in stat mode
-    if not ARGS.mode == 'stats' and 'entryPoints' not in test and \
-            'subtests' not in test:
-        return 'empty test'
-
     # skip tests disabled on given platform
     osName = platform.system().lower()
     if osName in test and not test[osName]:
@@ -245,6 +241,31 @@ def skip_test(test: Dict[str, Any]) -> Optional[str]:
     # test requires newer JCKit than possible
     if ARGS.max_jckit is not None and test['jckit'] > ARGS.max_jckit:
         return 'requires newer JCKit than specified in --max-jckit'
+
+    # allow stats
+    if ARGS.mode == 'stats':
+        return None
+
+    # test cannot be executed completely, unless --ci was passed
+    if 'failure' in test or ('entryPoints' in test and
+                             all('failure' in e for e in test['entryPoints'])):
+        if not ARGS.ci:
+            return 'failing test'
+
+        # toplevel failure node
+        if 'failure' in test and 'stopAfter' not in test['failure']:
+            return 'empty test'
+
+        # failure nodes in entryPoints
+        if 'entryPoints' in test:
+            f = map(lambda x: x['failure'], test['entryPoints'])
+            if 'entryPoints' in test and all('stopAfter' not in e for e in f):
+                return 'empty test'
+
+    # time mode requires nonempty subtests
+    if ARGS.mode == 'time' and not test.get('subtests', []) and not \
+            any(e.get('subtests', []) for e in test.get('entryPoints', [])):
+        return "no subtests"
 
     return None
 
@@ -301,12 +322,13 @@ def execute_test(test: Dict[str, Any]) -> None:
         return
 
     for entry_point in test['entryPoints']:
-        if 'subtests' not in entry_point:
-            print('Skipping entry point', entry_point['name'],
+        if 'failure' in entry_point and \
+                (not ARGS.ci or 'stopAfter' not in entry_point['failure']):
+            print('Skipping failing entry point', entry_point['name'],
                   colour=BOLD_YELLOW)
             continue
 
-        print('Using', entry_point['name'], 'entry point.')
+        print('Using', entry_point['name'], 'entry point')
         test_applet(test, cmd.copy(), entry_point)
 
 
@@ -329,7 +351,7 @@ def main() -> None:
     if ARGS.filter:
         tests = [x for x in tests if any(y in x['name'] for y in ARGS.filter)]
         if not tests:
-            raise ValueError(f'No tests match the {ARGS.filter} filter.')
+            raise ValueError(f'No tests match the {ARGS.filter} filter')
 
     for t in tests:
         execute_test(t)
@@ -371,6 +393,12 @@ if __name__ == '__main__':
     parser.add_argument('--mode', choices=['memory', 'time', 'stats'],
                         required=True, help='Execute tests for given mode')
 
+    parser.add_argument('--ci', action='store_true',
+                        help='Execute also partial tests (useful in CI)')
+
     ARGS = parser.parse_args()
+
+    if ARGS.card and ARGS.mode == 'stats':
+        raise RuntimeError('Stats cannot be collected on a physical card!')
 
     main()

@@ -49,5 +49,5 @@ jobs:
       - name: Execute profiling tests
         run: |
           python3 tests/run.py --mode stats
-          python3 tests/run.py --mode memory --min-jckit '${{ matrix.min_jckit }}'
-          python3 tests/run.py --mode time   --min-jckit '${{ matrix.min_jckit }}'
+          python3 tests/run.py --mode memory --ci --min-jckit '${{ matrix.min_jckit }}'
+          python3 tests/run.py --mode time   --ci --min-jckit '${{ matrix.min_jckit }}'
