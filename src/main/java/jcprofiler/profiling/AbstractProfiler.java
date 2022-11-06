@@ -60,7 +60,7 @@ public abstract class AbstractProfiler {
         this.args = args;
         this.cardManager = cardManager;
 
-        if (JCProfilerUtil.getEntryPoint(executable.getFactory().getModel(), args.entryPoint).getField(handlerInsField) == null)
+        if (!JCProfilerUtil.entryPointHasField(executable.getFactory().getModel(), args.entryPoint, handlerInsField))
             throw new RuntimeException(String.format(
                     "Profiling in %s mode but entry point class does not contain %s field!",
                     args.mode, handlerInsField));

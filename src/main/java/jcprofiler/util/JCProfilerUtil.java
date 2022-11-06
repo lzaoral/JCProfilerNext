@@ -139,6 +139,27 @@ public class JCProfilerUtil {
         return entryPoint;
     }
 
+    /**
+     * Detects whether the entry point or one of its predecessors contain a field with given name.
+     * Used to check that the profiler stage was not executed in wrong mode.
+     *
+     * @param model      Spoon model
+     * @param entryPoint name of the entry point class. If empty, try to detect entry point instead.
+     * @param field      name of the field
+     * @return           true if the entry point or one of its predecessors contain field with given name,
+     *                   false otherwise
+     */
+    public static boolean entryPointHasField(final CtModel model, final String entryPoint, final String field) {
+        CtTypeReference<?> classRef = getEntryPoint(model, entryPoint).getReference();
+        while (classRef != null) {
+            if (classRef.getDeclaredField(field) != null)
+                return true;
+            classRef = classRef.getSuperclass();
+        }
+
+        return false;
+    }
+
     // profiled constructor/method detection
     public static CtExecutable<?> getProfiledExecutable(final CtModel model, final String fullSignature) {
         final List<CtExecutable<?>> executables = model.getElements(
