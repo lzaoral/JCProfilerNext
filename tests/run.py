@@ -339,12 +339,12 @@ def main() -> None:
         execute_test(t)
 
     if SKIPS:
-        print('Skipped tests:')
+        print(len(SKIPS), 'skipped tests:')
         for skip in SKIPS:
             print(skip, colour=BOLD_YELLOW)
 
     if FAILURES:
-        print('Failed tests:')
+        print(len(FAILURES), 'failed tests:')
         for failure in FAILURES:
             print(failure, colour=BOLD_RED)
 
