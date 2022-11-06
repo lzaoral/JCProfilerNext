@@ -87,7 +87,11 @@ def prepare_etsi(version: str) -> str:
     if os.path.exists(result):
         return result_str
 
+    # add export files
+    copytree(src_dir.parent / 'exports', src_dir, dirs_exist_ok=True)
+
     make_archive(result_str, 'zip', src_dir)
+
     # fix extension
     os.rename(result.with_suffix(result.suffix + '.zip'), result)
     return result_str
