@@ -36,11 +36,8 @@ public class MemoryProfiler extends AbstractProfiler {
     private static final Logger log = LoggerFactory.getLogger(MemoryProfiler.class);
 
     public MemoryProfiler(final Args args, final CardManager cardManager, final CtModel model) {
-        super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method));
-
-        if (JCProfilerUtil.getEntryPoint(model, args.entryPoint).getField("INS_PERF_GETMEM") == null)
-            throw new RuntimeException(
-                    "Profiling in " + args.mode + " mode but PM class does not contain INS_PERF_GETMEM field!");
+        super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method),
+              "INS_PERF_GETMEM");
 
         valueBytes = getValueBytes(model);
         if (valueBytes == Integer.BYTES && args.useSimulator)
