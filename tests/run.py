@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from shutil import copytree, make_archive, rmtree
 from subprocess import run
@@ -7,7 +8,6 @@ from tempfile import mkdtemp
 from typing import Any, Callable, Dict, List, Optional
 from urllib.request import Request, urlopen
 
-import argparse
 import json
 import os
 import platform
@@ -19,6 +19,7 @@ import sys
 STAGES = ['instrumentation', 'compilation', 'installation', 'profiling',
           'visualisation', 'all']
 
+ARGS: Namespace
 FAILURES: List[str] = []
 SKIPS: List[str] = []
 
@@ -364,9 +365,10 @@ def main() -> None:
             print(failure, colour=BOLD_RED)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-            description='JCProfilerNext integration test suite')
+def parse_args(args: List[str] = []) -> None:
+    global ARGS
+
+    parser = ArgumentParser(description='JCProfilerNext test suite')
 
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Execute in debug mode')
@@ -393,9 +395,12 @@ if __name__ == '__main__':
     parser.add_argument('--ci', action='store_true',
                         help='Execute also partial tests (useful in CI)')
 
-    ARGS = parser.parse_args()
+    ARGS = parser.parse_args(args if args else sys.argv[1:])
 
     if ARGS.card and ARGS.mode == 'stats':
         raise RuntimeError('Stats cannot be collected on a physical card!')
 
+
+if __name__ == '__main__':
+    parse_args()
     main()
