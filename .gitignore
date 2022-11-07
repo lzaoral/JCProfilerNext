@@ -35,7 +35,7 @@ build
 
 # temporary test files
 tests/**/*
-!tests/gather-stats.sh
+!tests/gather-stats.py
 !tests/run.py
 !tests/test_data.json
 !tests/inputs
