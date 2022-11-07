@@ -233,8 +233,8 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
 
 def skip_test(test: Dict[str, Any]) -> Optional[str]:
     # skip tests disabled on given platform
-    osName = platform.system().lower()
-    if osName in test and not test[osName]:
+    osName = platform.system()
+    if osName.lower() in test and not test[osName.lower()]:
         return 'disabled on ' + osName
 
     # test requires older JCKit than possible
