@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from shutil import copytree, make_archive, rmtree
-from subprocess import call
+from subprocess import run
 from tempfile import mkdtemp
 from typing import Any, Callable, Dict, List, Optional
 from urllib.request import Request, urlopen
@@ -40,10 +40,7 @@ def rebuild_jar() -> None:
     script_path = Path('../gradlew' + suffix).absolute()
 
     print('Rebuilding project')
-    ret = call([script_path, '--project-dir=..', 'build'])
-    if ret != 0:
-        print('JAR rebuild failed with return code', ret, colour=BOLD_RED)
-        sys.exit(1)
+    run([script_path, '--project-dir=..', 'build'], check=True)
 
 
 def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
@@ -57,11 +54,7 @@ def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
             func(path)
         rmtree(target, onerror=remove_readonly)
 
-    ret = call(['git', 'clone', '--depth=1', repo, target])
-    if ret != 0:
-        print('Cloning failed with return code', ret, colour=BOLD_RED)
-        sys.exit(1)
-
+    run(['git', 'clone', '--depth=1', repo, target], check=True)
     print(target, 'cloned successfully')
     return
 
@@ -133,7 +126,7 @@ def execute_cmd(cmd: List[str], stages: List[str] = []) -> bool:
         print('Command: ', end='')
         print(*stage_cmd, colour=BOLD_YELLOW)
 
-        ret = call(stage_cmd)
+        ret = run(stage_cmd).returncode
         if ret != 0:
             print('Command failed with return code', ret, colour=BOLD_RED)
             if not ARGS.card:
