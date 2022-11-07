@@ -211,7 +211,7 @@
         },
         {
             "name": "OneCard_Card",
-            "repo": "https://github.com/SharkyHarky/OneCard",
+            "repo": "https://github.com/javacard-FOSS-applets/OneCard",
             "path": "Card/src",
             "jckit": "222",
             "gppro": "1.7",
@@ -219,7 +219,7 @@
         },
         {
             "name": "OneCard_Jacket",
-            "repo": "https://github.com/SharkyHarky/OneCard",
+            "repo": "https://github.com/javacard-FOSS-applets/OneCard",
             "path": "Jacket/src",
             "jckit": "222",
             "gppro": "1.7",
