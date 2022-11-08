@@ -12,18 +12,9 @@ import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class StatisticsProcessor extends AbstractProcessor<CtReference> {
-    // ignore types defined in JavaCard's java.lang package
-    private static final Set<String> javaCardLangTypes = Collections.unmodifiableSet(Stream.of(
-            "Exception", "Object", "Throwable", "ArithmeticException", "ArrayIndexOutOfBoundsException",
-            "ArrayStoreException", "ClassCastException", "Exception", "IndexOutOfBoundsException",
-            "NegativeArraySizeException", "NullPointerException", "RuntimeException", "SecurityException").
-            map(x -> "java.lang." + x).collect(Collectors.toSet()));
-
-    private Set<CtPackageReference> pkgs = new HashSet<>();
+    private final Set<CtPackageReference> pkgs = new HashSet<>();
 
     public SortedMap<Triple<String, String, String>, Integer> getUsedReferences() {
         return Collections.unmodifiableSortedMap(usedReferences);
@@ -112,9 +103,6 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
             if (outerType != null && outerType.getPackage() != null) {
                 final CtPackageReference pkg = outerType.getPackage();
                 if (pkgs.contains(pkg))
-                    return;
-
-                if (javaCardLangTypes.contains(type.getQualifiedName()))
                     return;
 
                 parentQualifiedName = type != outerType ? type.getDeclaringType().getQualifiedName()
