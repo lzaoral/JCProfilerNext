@@ -1,0 +1,225 @@
+# java.io
+IOException
+
+# java.lang
+Object
+Throwable
+ArithmeticException
+ArrayIndexOutOfBoundsException
+ArrayStoreException
+ClassCastException
+Exception
+IndexOutOfBoundsException
+NegativeArraySizeException
+NullPointerException
+RuntimeException
+SecurityException
+
+# java.rmi
+Remote
+RemoteException
+
+# javacard.framework
+AppletEvent
+ISO7816
+MultiSelectable
+OwnerPINx
+OwnerPINxWithPredecrement
+PIN
+Shareable
+AID
+APDU
+Applet
+JCSystem
+OwnerPIN
+OwnerPINBuilder
+Resources
+SensitiveArrays
+Util
+APDUException
+CardException
+CardRuntimeException
+ISOException
+PINException
+SystemException
+TransactionException
+UserException
+
+# javacard.framework.service
+RemoteService
+SecurityService
+Service
+BasicService
+CardRemoteObject
+Dispatcher
+RMIService
+ServiceException
+
+# javacard.security
+AESKey
+AlgorithmParameterSpec
+DESKey
+DHKey
+DHPrivateKey
+DHPublicKey
+DSAKey
+DSAPrivateKey
+DSAPublicKey
+ECKey
+ECPrivateKey
+ECPublicKey
+GenericSecretKey
+HMACKey
+Key
+KoreanSEEDKey
+PrimalityTestParamSpec
+PrivateKey
+PublicKey
+RSAPrivateCrtKey
+RSAPrivateKey
+RSAPublicKey
+SecretKey
+SignatureMessageRecovery
+SM4Key
+XECKey
+XECPrivateKey
+XECPublicKey
+Checksum
+InitializedMessageDigest
+KeyAgreement
+KeyBuilder
+KeyPair
+MessageDigest
+NamedParameterSpec
+RandomData
+Signature
+CryptoException
+
+# javacard.security.InitializedMessageDigest
+OneShot
+
+# javacard.security.MessageDigest
+OneShot
+
+# javacard.security.RandomData
+OneShot
+
+# javacard.security.Signature
+OneShot
+
+# javacardx.annotations
+StringDef
+StringPool
+
+# javacardx.apdu
+ExtendedLength
+
+# javacardx.apdu.util
+APDUUtil
+
+# javacardx.biometry
+BioTemplate
+OwnerBioTemplate
+SharedBioTemplate
+BioBuilder
+BioException
+
+# javacardx.biometry1toN
+BioMatcher
+BioTemplateData
+OwnerBioMatcher
+OwnerBioTemplateData
+SharedBioMatcher
+SharedBioTemplateData
+Bio1toNBuilder
+Bio1toNException
+
+# javacardx.crypto
+KeyEncryption
+AEADCipher
+Cipher
+
+# javacardx.crypto.Cipher
+OneShot
+
+# javacardx.external
+MemoryAccess
+Memory
+ExternalException
+
+# javacardx.framework.event
+EventListener
+EventSource
+EventRegistry
+
+# javacardx.framework.math
+BCDUtil
+BigNumber
+ParityBit
+
+# javacardx.framework.nio
+Buffer
+ByteBuffer
+ByteOrder
+BufferOverflowException
+BufferUnderflowException
+ReadOnlyBufferException
+
+# javacardx.framework.string
+StringUtil
+StringException
+
+# javacardx.framework.time
+SysTime
+TimeDuration
+DateTimeException
+
+# javacardx.framework.tlv
+BERTag
+BERTLV
+ConstructedBERTag
+ConstructedBERTLV
+PrimitiveBERTag
+PrimitiveBERTLV
+TLVException
+
+# javacardx.framework.util
+ArrayLogic
+UtilException
+
+# javacardx.framework.util.intx
+JCint
+
+# javacardx.security
+SensitiveResult
+
+# javacardx.security.cert
+Certificate
+X509Certificate
+CertificateParser
+CertificateException
+
+# javacardx.security.cert.CertificateParser
+KeyHandler
+ParserHandler
+
+# javacardx.security.cert.X509Certificate
+ExtensionHandler
+FieldHandler
+
+# javacardx.security.derivation
+KDFAnsiX963Spec
+KDFCounterModeSpec
+KDFDoublePipelineIterationModeSpec
+KDFFeedbackModeSpec
+KDFHmacSpec
+KDFIcaoMrtdSpec
+KDFIeee1363Spec
+TLSPseudoRandomFunctionSpec
+DerivationFunction
+
+# javacardx.security.derivation.DerivationFunction
+OneShot
+
+# javacardx.security.util
+MonotonicCounter

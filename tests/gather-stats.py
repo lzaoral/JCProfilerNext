@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+from collections import Counter
 from pathlib import Path
 from run import main, parse_args
+from typing import Optional
 
 import json
 import os
@@ -48,3 +50,76 @@ with open('test-data.json', 'r') as j, open(STATS_FILE, 'w') as f:
     print('Analysed', len(tests), 'projects.')
     print(incomplete, 'did not have all dependencies on class path!')
     print(STATS_FILE.name, 'generated successfully.')
+
+
+# count API symbol usages across projects
+with open(STATS_FILE, 'r') as f:
+    # count applet usages
+    counter: Counter[str] = Counter()
+    for elem in f:
+        # skip empty lines and comments
+        if elem.isspace() or elem.startswith('#'):
+            continue
+        counter[elem.rpartition(',')[0]] += 1
+
+
+def generate_summary(filename: str, members: bool) -> None:
+    with open(filename + '-in.txt') as cin, \
+         open(filename + '.txt', 'w') as cout:
+        pkg: Optional[str] = None
+        cls: Optional[str] = None
+
+        print('# Number of projects that use the given symbol\n', file=cout)
+
+        for line in cin:
+            # strip whitespace
+            line = line.strip()
+
+            # skip empty lines
+            if not line:
+                print(file=cout)
+                continue
+
+            # handle section start
+            if line.startswith('#'):
+                print(line, file=cout)
+                pkg = line.removeprefix('# ')
+                if members:
+                    pkg, _, cls = pkg.rpartition('.')
+                continue
+
+            assert pkg is not None, "Should never happen"
+
+            # package
+            key = f'{pkg},'
+
+            # add class for members
+            if members:
+                key += f'{cls},'
+
+            # escape methods with multiple arguments
+            key += f'"{line}"' if ',' in line else line
+
+            # add empty member for classes
+            if not members:
+                key += ','
+
+            # remove the element so that we are left with stuff that's
+            # not from JavaCard API
+            print(line, '-', counter.pop(key, 0), file=cout)
+
+    print(f'{filename}.txt generated successfully.')
+
+
+generate_summary('constants', members=True)
+generate_summary('types', members=False)
+generate_summary('methods', members=True)
+
+
+# store remaining symbols
+with open('thirdparty.txt', 'w') as t:
+    print('# Number of projects that use the given symbol', file=t)
+    print('# package,type[,member] - count\n', file=t)
+    for symbol, count in sorted(counter.items()):
+        print(symbol.removesuffix(','), '-', count, file=t)
+print('thirdparty.txt generated successfully.')

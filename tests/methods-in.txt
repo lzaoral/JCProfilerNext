@@ -1,0 +1,782 @@
+# javacardx.crypto.AEADCipher
+AEADCipher()
+doFinal(byte[],short,short,byte[],short)
+init(javacard.security.Key,byte)
+init(javacard.security.Key,byte,byte[],short,short)
+init(javacard.security.Key,byte,byte[],short,short,short,short,short)
+retrieveTag(byte[],short,short)
+update(byte[],short,short,byte[],short)
+updateAAD(byte[],short,short)
+verifyTag(byte[],short,short,short)
+
+# javacard.security.AESKey
+getKey(byte[],short)
+setKey(byte[],short)
+
+# javacard.framework.AID
+AID(byte[],short,byte)
+equals(byte[],short,byte)
+equals(java.lang.Object)
+getBytes(byte[],short)
+getPartialBytes(short,byte[],short,byte)
+partialEquals(byte[],short,byte)
+RIDEquals(javacard.framework.AID)
+
+# javacard.framework.APDU
+getBuffer()
+getCLAChannel()
+getCurrentAPDU()
+getCurrentAPDUBuffer()
+getCurrentState()
+getInBlockSize()
+getIncomingLength()
+getNAD()
+getOffsetCdata()
+getOutBlockSize()
+getProtocol()
+isCommandChainingCLA()
+isISOInterindustryCLA()
+isSecureMessagingCLA()
+isValidCLA()
+receiveBytes(short)
+sendBytes(short,short)
+sendBytesLong(byte[],short,short)
+setIncomingAndReceive()
+setOutgoing()
+setOutgoingAndSend(short,short)
+setOutgoingLength(short)
+setOutgoingNoChaining()
+waitExtension()
+
+# javacard.framework.APDUException
+APDUException(short)
+throwIt(short)
+
+# javacardx.apdu.util.APDUUtil
+getCLAChannel(byte)
+isCommandChainingCLA(byte)
+isISOInterindustryCLA(byte)
+isSecureMessagingCLA(byte)
+isValidCLA(byte)
+
+# javacard.framework.Applet
+Applet()
+deselect()
+getShareableInterfaceObject(javacard.framework.AID,byte)
+install(byte[],short,byte)
+process(javacard.framework.APDU)
+register()
+register(byte[],short,byte)
+reSelectingApplet()
+select()
+selectingApplet()
+
+# javacard.framework.AppletEvent
+uninstall()
+
+# java.lang.ArithmeticException
+ArithmeticException()
+
+# java.lang.ArrayIndexOutOfBoundsException
+ArrayIndexOutOfBoundsException()
+
+# javacardx.framework.util.ArrayLogic
+arrayCompareGeneric(java.lang.Object,short,java.lang.Object,short,short)
+arrayCopyRepack(java.lang.Object,short,short,java.lang.Object,short)
+arrayCopyRepackNonAtomic(java.lang.Object,short,short,java.lang.Object,short)
+arrayFillGeneric(java.lang.Object,short,short,java.lang.Object,short)
+arrayFillGenericNonAtomic(java.lang.Object,short,short,java.lang.Object,short)
+arrayFindGeneric(java.lang.Object,short,byte[],short)
+
+# java.lang.ArrayStoreException
+ArrayStoreException()
+
+# javacard.framework.service.BasicService
+BasicService()
+fail(javacard.framework.APDU,short)
+getCLA(javacard.framework.APDU)
+getINS(javacard.framework.APDU)
+getOutputLength(javacard.framework.APDU)
+getP1(javacard.framework.APDU)
+getP2(javacard.framework.APDU)
+getStatusWord(javacard.framework.APDU)
+isProcessed(javacard.framework.APDU)
+processCommand(javacard.framework.APDU)
+processDataIn(javacard.framework.APDU)
+processDataOut(javacard.framework.APDU)
+receiveInData(javacard.framework.APDU)
+selectingApplet()
+setOutputLength(javacard.framework.APDU,short)
+setProcessed(javacard.framework.APDU)
+setStatusWord(javacard.framework.APDU,short)
+succeed(javacard.framework.APDU)
+succeedWithStatusWord(javacard.framework.APDU,short)
+
+# javacardx.framework.math.BCDUtil
+BCDUtil()
+convertToBCD(byte[],short,short,byte[],short)
+convertToHex(byte[],short,short,byte[],short)
+getMaxBytesSupported()
+isBCDFormat(byte[],short,short)
+
+# javacardx.framework.tlv.BERTag
+BERTag()
+equals(javacardx.framework.tlv.BERTag)
+equals(java.lang.Object)
+getInstance(byte[],short)
+init(byte[],short)
+isConstructed()
+isConstructed(byte[],short)
+size()
+size(byte[],short)
+tagClass()
+tagClass(byte[],short)
+tagNumber()
+tagNumber(byte[],short)
+toBytes(byte[],short)
+toBytes(short,boolean,short,byte[],short)
+verifyFormat(byte[],short)
+
+# javacardx.framework.tlv.BERTLV
+BERTLV()
+getInstance(byte[],short,short)
+getLength()
+getLength(byte[],short)
+getTag()
+getTag(byte[],short,byte[],short)
+init(byte[],short,short)
+size()
+toBytes(byte[],short)
+verifyFormat(byte[],short,short)
+
+# javacardx.framework.math.BigNumber
+BigNumber(short)
+add(byte[],short,short,byte)
+compareTo(javacardx.framework.math.BigNumber)
+compareTo(byte[],short,short,byte)
+getByteLength(byte)
+getMaxBytesSupported()
+init(byte[],short,short,byte)
+multiply(byte[],short,short,byte)
+reset()
+setMaximum(byte[],short,short,byte)
+subtract(byte[],short,short,byte)
+toBytes(byte[],short,short,byte)
+
+# javacardx.biometry1toN.Bio1toNBuilder
+buildBioMatcher(short,byte,byte)
+buildBioMatcher(short,byte,byte,byte[],byte)
+buildBioTemplateData(byte)
+buildBioTemplateData(byte,byte[])
+
+# javacardx.biometry1toN.Bio1toNException
+Bio1toNException(short)
+throwIt(short)
+
+# javacardx.biometry.BioBuilder
+buildBioTemplate(byte,byte)
+buildBioTemplate(byte,byte,byte[],byte)
+
+# javacardx.biometry.BioException
+BioException(short)
+throwIt(short)
+
+# javacardx.biometry1toN.BioMatcher
+getBioTemplateData(short)
+getBioType()
+getIndexOfLastMatchingBioTemplateData()
+getMaxNbOfBioTemplateData()
+getTriesRemaining()
+getVersion(byte[],short)
+initMatch(byte[],short,short)
+isInitialized()
+isValidated()
+match(byte[],short,short)
+reset()
+
+# javacardx.biometry.BioTemplate
+getBioType()
+getPublicTemplateData(short,byte[],short,short)
+getTriesRemaining()
+getVersion(byte[],short)
+initMatch(byte[],short,short)
+isInitialized()
+isValidated()
+match(byte[],short,short)
+reset()
+
+# javacardx.biometry1toN.BioTemplateData
+getBioType()
+getPublicData(short,byte[],short,short)
+isInitialized()
+
+# javacard.framework.CardException
+CardException(short)
+getReason()
+setReason(short)
+throwIt(short)
+
+# javacard.framework.service.CardRemoteObject
+CardRemoteObject()
+export(java.rmi.Remote)
+unexport(java.rmi.Remote)
+
+# javacard.framework.CardRuntimeException
+CardRuntimeException(short)
+getReason()
+setReason(short)
+throwIt(short)
+
+# javacard.security.Checksum
+Checksum()
+doFinal(byte[],short,short,byte[],short)
+getAlgorithm()
+getInstance(byte,boolean)
+init(byte[],short,short)
+update(byte[],short,short)
+
+# javacardx.crypto.Cipher
+Cipher()
+doFinal(byte[],short,short,byte[],short)
+getAlgorithm()
+getCipherAlgorithm()
+getInstance(byte,boolean)
+getInstance(byte,byte,boolean)
+getPaddingAlgorithm()
+init(javacard.security.Key,byte)
+init(javacard.security.Key,byte,byte[],short,short)
+update(byte[],short,short,byte[],short)
+
+# javacardx.crypto.Cipher.OneShot
+close()
+doFinal(byte[],short,short,byte[],short)
+getAlgorithm()
+getCipherAlgorithm()
+getPaddingAlgorithm()
+init(javacard.security.Key,byte)
+init(javacard.security.Key,byte,byte[],short,short)
+open(byte,byte)
+update(byte[],short,short,byte[],short)
+
+# java.lang.ClassCastException
+ClassCastException()
+
+# javacardx.framework.tlv.ConstructedBERTag
+ConstructedBERTag()
+init(byte[],short)
+init(byte,short)
+
+# javacardx.framework.tlv.ConstructedBERTLV
+ConstructedBERTLV(short)
+append(javacardx.framework.tlv.BERTLV)
+append(byte[],short,byte[],short)
+delete(javacardx.framework.tlv.BERTLV,short)
+find(javacardx.framework.tlv.BERTag)
+find(byte[],short,byte[],short)
+findNext(javacardx.framework.tlv.BERTag,javacardx.framework.tlv.BERTLV,short)
+findNext(byte[],short,short,byte[],short)
+init(byte[],short,short)
+init(javacardx.framework.tlv.ConstructedBERTag,javacardx.framework.tlv.BERTLV)
+init(javacardx.framework.tlv.ConstructedBERTag,byte[],short,short)
+
+# javacard.security.CryptoException
+CryptoException(short)
+throwIt(short)
+
+# javacard.security.DESKey
+getKey(byte[],short)
+setKey(byte[],short)
+
+# javacard.security.DHKey
+getG(byte[],short)
+getP(byte[],short)
+getQ(byte[],short)
+setG(byte[],short,short)
+setP(byte[],short,short)
+setQ(byte[],short,short)
+
+# javacard.security.DHPrivateKey
+getX(byte[],short)
+setX(byte[],short,short)
+
+# javacard.security.DHPublicKey
+getY(byte[],short)
+setY(byte[],short,short)
+
+# javacard.framework.service.Dispatcher
+Dispatcher(short)
+addService(javacard.framework.service.Service,byte)
+dispatch(javacard.framework.APDU,byte)
+process(javacard.framework.APDU)
+removeService(javacard.framework.service.Service,byte)
+
+# javacard.security.DSAKey
+getG(byte[],short)
+getP(byte[],short)
+getQ(byte[],short)
+setG(byte[],short,short)
+setP(byte[],short,short)
+setQ(byte[],short,short)
+
+# javacard.security.DSAPrivateKey
+getX(byte[],short)
+setX(byte[],short,short)
+
+# javacard.security.DSAPublicKey
+getY(byte[],short)
+setY(byte[],short,short)
+
+# javacard.security.ECKey
+copyDomainParametersFrom(javacard.security.ECKey)
+getA(byte[],short)
+getB(byte[],short)
+getField(byte[],short)
+getG(byte[],short)
+getK()
+getR(byte[],short)
+setA(byte[],short,short)
+setB(byte[],short,short)
+setFieldF2M(short)
+setFieldF2M(short,short,short)
+setFieldFP(byte[],short,short)
+setG(byte[],short,short)
+setK(short)
+setR(byte[],short,short)
+
+# javacard.security.ECPrivateKey
+getS(byte[],short)
+setS(byte[],short,short)
+
+# javacard.security.ECPublicKey
+getW(byte[],short)
+setW(byte[],short,short)
+
+# java.lang.Exception
+Exception()
+
+# javacardx.apdu.ExtendedLengthA (empty)
+
+# javacardx.external.ExternalException
+ExternalException(short)
+throwIt(short)
+
+# javacard.security.HMACKey
+getKey(byte[],short)
+setKey(byte[],short,short)
+
+# java.lang.IndexOutOfBoundsException
+IndexOutOfBoundsException()
+
+# javacard.security.InitializedMessageDigest
+InitializedMessageDigest()
+setInitialDigest(byte[],short,short,byte[],short,short)
+
+# javacard.security.InitializedMessageDigest.OneShot
+close()
+doFinal(byte[],short,short,byte[],short)
+getAlgorithm()
+getLength()
+open(byte)
+reset()
+setInitialDigest(byte[],short,short,byte[],short,short)
+update(byte[],short,short)
+
+# java.io.IOException
+IOException()
+
+# javacard.framework.ISO7816 (empty)
+
+# javacard.framework.ISOException
+ISOException(short)
+throwIt(short)
+
+# javacardx.framework.util.intx.JCint
+getInt(byte[],short)
+makeInt(byte,byte,byte,byte)
+makeInt(short,short)
+makeTransientIntArray(short,byte)
+setInt(byte[],short,int)
+
+# javacard.framework.JCSystem
+abortTransaction()
+beginTransaction()
+commitTransaction()
+getAID()
+getAppletShareableInterfaceObject(javacard.framework.AID,byte)
+getAssignedChannel()
+getAvailableMemory(byte)
+getAvailableMemory(short[],short,byte)
+getMaxCommitCapacity()
+getPreviousContextAID()
+getTransactionDepth()
+getUnusedCommitCapacity()
+getVersion()
+isAppletActive(javacard.framework.AID)
+isObjectDeletionSupported()
+isTransient(java.lang.Object)
+lookupAID(byte[],short,byte)
+makeGlobalArray(byte,short)
+makeTransientBooleanArray(short,byte)
+makeTransientByteArray(short,byte)
+makeTransientObjectArray(short,byte)
+makeTransientShortArray(short,byte)
+requestObjectDeletion()
+
+# javacard.security.Key
+clearKey()
+getSize()
+getType()
+isInitialized()
+
+# javacard.security.KeyAgreement
+KeyAgreement()
+generateSecret(byte[],short,short,byte[],short)
+getAlgorithm()
+getInstance(byte,boolean)
+init(javacard.security.PrivateKey)
+
+# javacard.security.KeyBuilder
+buildKey(byte,byte,short,boolean)
+buildKey(byte,short,boolean)
+buildKeyWithSharedDomain(byte,byte,javacard.security.Key,boolean)
+
+# javacardx.crypto.KeyEncryption
+getKeyCipher()
+setKeyCipher(javacardx.crypto.Cipher)
+
+# javacard.security.KeyPair
+KeyPair(byte,short)
+KeyPair(javacard.security.PublicKey,javacard.security.PrivateKey)
+genKeyPair()
+getPrivate()
+getPublic()
+
+# javacard.security.KoreanSEEDKey
+getKey(byte[],short)
+setKey(byte[],short)
+
+# javacardx.external.Memory
+getMemoryAccessInstance(byte,short[],short)
+
+# javacardx.external.MemoryAccess
+readData(byte[],short,byte[],short,short,short,short,short)
+writeData(byte[],short,short,byte[],short,short,short,short)
+
+# javacard.security.MessageDigest
+MessageDigest()
+doFinal(byte[],short,short,byte[],short)
+getAlgorithm()
+getInitializedMessageDigestInstance(byte,boolean)
+getInstance(byte,boolean)
+getLength()
+reset()
+update(byte[],short,short)
+
+# javacard.security.MessageDigest.OneShot
+close()
+doFinal(byte[],short,short,byte[],short)
+getAlgorithm()
+getLength()
+open(byte)
+reset()
+update(byte[],short,short)
+
+# javacard.framework.MultiSelectable
+deselect(boolean)
+select(boolean)
+
+# java.lang.NegativeArraySizeException
+NegativeArraySizeException()
+
+# java.lang.NullPointerException
+NullPointerException()
+
+# java.lang.Object
+Object()
+equals(java.lang.Object)
+
+# javacardx.biometry1toN.OwnerBioMatcher
+getBioTemplateData(short)
+getIndexOfLastMatchingBioTemplateData()
+putBioTemplateData(short,javacardx.biometry1toN.BioTemplateData)
+resetUnblockAndSetTryLimit(byte)
+
+# javacardx.biometry.OwnerBioTemplate
+doFinal()
+init(byte[],short,short)
+resetUnblockAndSetTryLimit(byte)
+update(byte[],short,short)
+
+# javacardx.biometry1toN.OwnerBioTemplateData
+doFinal()
+init(byte[],short,short)
+update(byte[],short,short)
+
+# javacard.framework.OwnerPIN
+OwnerPIN(byte,byte)
+check(byte[],short,byte)
+getTriesRemaining()
+getValidatedFlag()
+isValidated()
+reset()
+resetAndUnblock()
+setValidatedFlag(boolean)
+update(byte[],short,byte)
+
+# javacard.framework.OwnerPINBuilder
+buildOwnerPIN(byte,byte,byte)
+
+# javacard.framework.OwnerPINx
+getTryLimit()
+setTriesRemaining(byte)
+setTryLimit(byte)
+update(byte[],short,byte)
+
+# javacard.framework.OwnerPINxWithPredecrement
+check(byte[],short,byte)
+decrementTriesRemaining()
+
+# javacardx.framework.math.ParityBit
+ParityBit()
+set(byte[],short,short,boolean)
+
+# javacard.framework.PIN
+check(byte[],short,byte)
+getTriesRemaining()
+isValidated()
+reset()
+
+# javacard.framework.PINException
+PINException(short)
+throwIt(short)
+
+# javacardx.framework.tlv.PrimitiveBERTag
+PrimitiveBERTag()
+init(byte[],short)
+init(byte,short)
+
+# javacardx.framework.tlv.PrimitiveBERTLV
+PrimitiveBERTLV(short)
+appendValue(byte[],short,byte[],short,short)
+appendValue(byte[],short,short)
+getValue(byte[],short)
+getValueOffset(byte[],short)
+init(byte[],short,short)
+init(PrimitiveBERTag,byte[],short,short)
+replaceValue(byte[],short,short)
+toBytes(byte[],short,byte[],short,short,byte[],short)
+
+# javacard.security.PrivateKey (empty)
+
+# javacard.security.PublicKey (empty)
+
+# javacard.security.RandomData
+RandomData()
+generateData(byte[],short,short)
+getAlgorithm()
+getInstance(byte)
+nextBytes(byte[],short,short)
+setSeed(byte[],short,short)
+
+# javacard.security.RandomData.OneShot
+close()
+generateData(byte[],short,short)
+getAlgorithm()
+nextBytes(byte[],short,short)
+open(byte)
+setSeed(byte[],short,short)
+
+# java.rmi.Remote (empty)
+
+# java.rmi.RemoteException
+RemoteException()
+
+# javacard.framework.service.RemoteService (empty)
+
+# javacard.framework.service.RMIService
+RMIService(java.rmi.Remote)
+processCommand(javacard.framework.APDU)
+setInvokeInstructionByte(byte)
+
+# javacard.security.RSAPrivateCrtKey
+getDP1(byte[],short)
+getDQ1(byte[],short)
+getP(byte[],short)
+getPQ(byte[],short)
+getQ(byte[],short)
+setDP1(byte[],short,short)
+setDQ1(byte[],short,short)
+setP(byte[],short,short)
+setPQ(byte[],short,short)
+setQ(byte[],short,short)
+
+# javacard.security.RSAPrivateKey
+getExponent(byte[],short)
+getModulus(byte[],short)
+setExponent(byte[],short,short)
+setModulus(byte[],short,short)
+
+# javacard.security.RSAPublicKey
+getExponent(byte[],short)
+getModulus(byte[],short)
+setExponent(byte[],short,short)
+setModulus(byte[],short,short)
+
+# java.lang.RuntimeException
+RuntimeException()
+
+# javacard.security.SecretKey (empty)
+
+# java.lang.SecurityException
+SecurityException()
+
+# javacard.framework.service.SecurityService
+isAuthenticated(short)
+isChannelSecure(byte)
+isCommandSecure(byte)
+
+# javacard.framework.SensitiveArrays
+assertIntegrity(java.lang.Object)
+clearArray(java.lang.Object)
+isIntegritySensitive(java.lang.Object)
+isIntegritySensitiveArraysSupported()
+makeIntegritySensitiveArray(byte,byte,short)
+
+# javacardx.security.SensitiveResult
+assertEquals(java.lang.Object)
+assertEquals(short)
+assertFalse()
+assertGreaterThan(short)
+assertLessThan(short)
+assertNegative()
+assertPositive()
+assertTrue()
+assertZero()
+reset()
+
+# javacard.framework.service.Service
+processCommand(javacard.framework.APDU)
+processDataIn(javacard.framework.APDU)
+processDataOut(javacard.framework.APDU)
+
+# javacard.framework.service.ServiceException
+ServiceException(short)
+throwIt(short)
+
+# javacard.framework.Shareable (empty)
+
+# javacardx.biometry1toN.SharedBioMatcher (empty)
+
+# javacardx.biometry.SharedBioTemplate (empty)
+
+# javacardx.biometry1toN.SharedBioTemplateData (empty)
+
+# javacard.security.Signature
+Signature()
+getAlgorithm()
+getCipherAlgorithm()
+getInstance(byte,boolean)
+getInstance(byte,byte,byte,boolean)
+getLength()
+getMessageDigestAlgorithm()
+getPaddingAlgorithm()
+init(javacard.security.Key,byte)
+init(javacard.security.Key,byte,byte[],short,short)
+setInitialDigest(byte[],short,short,byte[],short,short)
+sign(byte[],short,short,byte[],short)
+signPreComputedHash(byte[],short,short,byte[],short)
+update(byte[],short,short)
+verify(byte[],short,short,byte[],short,short)
+verifyPreComputedHash(byte[],short,short,byte[],short,short)
+
+# javacard.security.Signature.OneShot
+close()
+getAlgorithm()
+getCipherAlgorithm()
+getLength()
+getMessageDigestAlgorithm()
+getPaddingAlgorithm()
+init(javacard.security.Key,byte)
+init(javacard.security.Key,byte,byte[],short,short)
+open(byte,byte,byte)
+setInitialDigest(byte[],short,short,byte[],short,short)
+sign(byte[],short,short,byte[],short)
+signPreComputedHash(byte[],short,short,byte[],short)
+update(byte[],short,short)
+verify(byte[],short,short,byte[],short,short)
+verifyPreComputedHash(byte[],short,short,byte[],short,short)
+
+# javacard.security.SignatureMessageRecovery
+beginVerify(byte[] sigAndRecDataBuff,short buffOffset,short sigLength)
+getAlgorithm()
+getLength()
+init(javacard.security.Key,byte)
+sign(byte[],short,short,byte[],short,short[],short)
+update(byte[],short,short)
+verify(byte[],short,short)
+
+# javacardx.annotations.StringDef (empty)
+
+# javacardx.framework.string.StringException
+StringException(short)
+throwIt(short)
+
+# javacardx.annotations.StringPool (empty)
+
+# javacardx.framework.string.StringUtil
+check(byte[],short,short)
+codePointAt(byte[],short,short,short,byte[],short)
+codePointBefore(byte[],short,short,short,byte[],short)
+codePointCount(byte[],short,short)
+compare(boolean,byte[],short,short,byte[],short,short)
+convertFrom(byte[],short,short,byte[],short,byte)
+convertTo(byte[],short,short,byte[],short,byte)
+endsWith(byte[],short,short,byte[],short,short,short)
+indexOf(byte[],short,short,byte[],short,short)
+offsetByCodePoints(byte[],short,short,short,short)
+parseBoolean(byte[],short,short)
+parseLongInteger(byte[],short,short,short[],short)
+parseShortInteger(byte[],short,short)
+replace(byte[],short,short,byte[],short,short,byte[],short,short,byte[],short)
+startsWith(byte[],short,short,byte[],short,short,short)
+substring(byte[],short,short,short,short,byte[],short)
+toLowerCase(byte[],short,short,byte[],short)
+toUpperCase(byte[],short,short,byte[],short)
+trim(byte[],short,short,byte[],short)
+valueOf(boolean,byte[],short)
+valueOf(short[],byte[],short)
+valueOf(short,byte[],short)
+
+# javacard.framework.SystemException
+SystemException(short)
+throwIt(short)
+
+# java.lang.Throwable
+Throwable()
+
+# javacardx.framework.tlv.TLVException
+TLVException(short)
+throwIt(short)
+
+# javacard.framework.TransactionException
+TransactionException(short)
+throwIt(short)
+
+# javacard.framework.UserException
+UserException()
+UserException(short)
+throwIt(short)
+
+# javacard.framework.Util
+arrayCompare(byte[],short,byte[],short,short)
+arrayCopy(byte[],short,byte[],short,short)
+arrayCopyNonAtomic(byte[],short,byte[],short,short)
+arrayFill(byte[],short,short,byte)
+arrayFillNonAtomic(byte[],short,short,byte)
+getShort(byte[],short)
+makeShort(byte,byte)
+setShort(byte[],short,short)
+
+# javacardx.framework.util.UtilException
+UtilException(short)
+throwIt(short)

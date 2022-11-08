@@ -35,6 +35,13 @@ build
 
 # temporary test files
 tests/**/*
+
+# JavaCard 3.1 API
+!tests/constants-in.txt
+!tests/methods-in.txt
+!tests/types-in.txt
+
+# actual test scripts and inputs
 !tests/gather-stats.py
 !tests/run.py
 !tests/test_data.json
