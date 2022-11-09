@@ -607,6 +607,7 @@
             "repo": "https://github.com/divegeek/JavaCardKeymaster",
             "path": "Applet/JCardSimProvider/src",
             "jckit": "305u4",
+            "gppro": "1.7",
             "failure": {
                 "reason": "Instrumentation: KMOperation cannot be resolved to a type"
             }
@@ -1385,7 +1386,7 @@
             "name": "simple-id",
             "repo": "https://github.com/alan-turing-institute/simple-id",
             "path": "src",
-            "jckit": "222",
+            "jckit": "304",
             "failure": {
                 "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
             }
@@ -1394,7 +1395,7 @@
             "name": "HelloSTK2",
             "repo": "https://github.com/alan-turing-institute/simple-id",
             "path": "src",
-            "jckit": "222",
+            "jckit": "304",
             "failure": {
                 "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
             }
