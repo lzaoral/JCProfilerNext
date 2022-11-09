@@ -10,6 +10,7 @@ import os
 import re
 import tempfile
 
+PWD = Path.cwd()
 STATS_FILE = Path('stats.txt').absolute()
 STATS_DIR = Path('stats_out').absolute()
 
@@ -64,8 +65,8 @@ with open(STATS_FILE, 'r') as f:
 
 
 def generate_summary(filename: str, members: bool) -> None:
-    with open(filename + '-in.txt') as cin, \
-         open(filename + '.txt', 'w') as cout:
+    with open(f'{filename}-in.txt') as cin, \
+         open(PWD / f'{filename}.txt', 'w') as cout:
         pkg: Optional[str] = None
         cls: Optional[str] = None
 
@@ -117,7 +118,7 @@ generate_summary('methods', members=True)
 
 
 # store remaining symbols
-with open('thirdparty.txt', 'w') as t:
+with open(PWD / 'thirdparty.txt', 'w') as t:
     print('# Number of projects that use the given symbol', file=t)
     print('# package,type[,member] - count\n', file=t)
     for symbol, count in sorted(counter.items()):
