@@ -381,9 +381,6 @@ def parse_args(args: List[str] = []) -> None:
     parser.add_argument('--max-jckit',
                         help='Maximum JCKit version used during testing')
 
-    parser.add_argument('filter', nargs='*',
-                        help='List of applet names (see ./test_data.json)')
-
     parser.add_argument('--card', action='store_true',
                         help='Use a real card instead of a simulator')
     parser.add_argument('--repeat-count', type=int, default=100,
@@ -394,6 +391,9 @@ def parse_args(args: List[str] = []) -> None:
 
     parser.add_argument('--ci', action='store_true',
                         help='Execute also partial tests (useful in CI)')
+
+    parser.add_argument('filter', nargs='*',
+                        help='List of applet names (see ./test_data.json)')
 
     ARGS = parser.parse_args(args if args else sys.argv[1:])
 
