@@ -104,8 +104,8 @@ def modify_repo(test: Dict[str, Any]) -> None:
 
         for glb in replace['files']:
             for file in Path(test['name']).glob(glb):
-                print('Replacing lines matching', pattern_str, 'with',
-                      replacement, 'in', file)
+                print('Replacing lines matching', f'"{pattern_str}"', 'with',
+                      f'"{replacement}"', 'in', file)
                 with open(file, 'r', encoding='utf8', errors='ignore') as f:
                     lines = f.read()
                 with open(file, 'w', encoding='utf8') as f:
