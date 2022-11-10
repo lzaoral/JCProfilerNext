@@ -2071,7 +2071,7 @@
                             "inst": "0x46",
                             "p1": "0x41",
                             "p2": "0x41",
-                            "inputFile": "inputs/ECPoints.txt"
+                            "inputFile": "inputs/ECPointPairs.txt"
                         }
                     ]
                 }
