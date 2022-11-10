@@ -65,8 +65,8 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         }
 
         for (final CtStatement statement : statements) {
-            // skip insertion after ISOException calls as all such statements are unreachable
-            if (isISOException(statement))
+            // skip insertion after Exception.throwIt calls as all such statements are unreachable
+            if (isExceptionThrowIt(statement))
                 return;
 
             // CtTry is an instance of CtBodyHolder, but we want to process catch and final blocks as well
@@ -108,21 +108,39 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         return blockContents.isEmpty() || blockContents.stream().allMatch(s -> isEmptyBlock(s) || s instanceof CtComment);
     }
 
-    private boolean isISOException(final CtStatement statement) {
+    /**
+     * Checks whether the input statement is an Exception.throwIt(short) call.
+     *
+     * @param  statement a statement
+     * @return           true if the statement is an Exception.throwIt(short) call, otherwise false
+     */
+    private boolean isExceptionThrowIt(final CtStatement statement) {
         // can be the last statement a commentary?
         if (!(statement instanceof CtInvocation))
             return false;
 
         final CtInvocation<?> call = (CtInvocation<?>) statement;
+        final CtExecutableReference<?> method = call.getExecutable();
+
+        // check for static void throwIt(short) method call
+        if (!method.isStatic() || !method.getSignature().equals("throwIt(short)") ||
+                !method.getType().equals(getFactory().Type().voidPrimitiveType()))
+            return false;
+
         if (!(call.getTarget() instanceof CtTypeAccess))
             return false;
 
-        final CtTypeAccess<?> classAccess = (CtTypeAccess<?>) call.getTarget();
+        // check for inheritance from javacard.framework.Card(Runtime)?Exception
+        CtTypeReference<?> typeRef = ((CtTypeAccess<?>) call.getTarget()).getAccessedType();
+        while (typeRef != null) {
+            final String qualifiedName = typeRef.getQualifiedName();
+            if (qualifiedName.equals("javacard.framework.CardException") ||
+                    qualifiedName.equals("javacard.framework.CardRuntimeException"))
+                return true;
+            typeRef = typeRef.getSuperclass();
+        }
 
-        // check for void javacard.framework.ISOException.throwIt(short) call
-        return classAccess.getAccessedType().getQualifiedName().equals("javacard.framework.ISOException")
-                && call.getExecutable().getSignature().equals("throwIt(short)")
-                && call.getType().equals(getFactory().createCtTypeReference(Void.TYPE));
+        return false;
     }
 
     /***
@@ -164,7 +182,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
      * PM.check(...) <- this would be unreachable!
      */
     private boolean isCompleteTerminator(final CtStatement statement) {
-        if (statement instanceof CtReturn || statement instanceof CtThrow || isISOException(statement))
+        if (statement instanceof CtReturn || statement instanceof CtThrow || isExceptionThrowIt(statement))
             return true;
 
         // CtTry is an instance of CtBodyHolder, but we want to process catch and final blocks as well

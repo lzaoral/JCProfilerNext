@@ -1,5 +1,5 @@
-import javacard.framework.ISO7816;
-import javacard.framework.ISOException;
+import javacard.framework.*;
+import javacard.security.CryptoException;
 
 public class SimpleClass {
     public void assignment(int a) {
@@ -350,6 +350,23 @@ public class SimpleClass {
                     a++;
                     break;
                 }
+        }
+    }
+
+    public void terminator14(int a) {
+        switch (a) {
+            case 1:
+                CardRuntimeException.throwIt(0);
+                break;
+            case 2:
+                UserException.throwIt(0);
+                break;
+            case 3:
+                SystemException.throwIt(0);
+                break;
+            case 4:
+                CryptoException.throwIt(0);
+                break;
         }
     }
 

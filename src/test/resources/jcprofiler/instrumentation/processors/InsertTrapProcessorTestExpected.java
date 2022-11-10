@@ -1,5 +1,5 @@
-import javacard.framework.ISO7816;
-import javacard.framework.ISOException;
+import javacard.framework.*;
+import javacard.security.CryptoException;
 
 public class SimpleClass {
     public void assignment(int a) {
@@ -509,6 +509,29 @@ public class SimpleClass {
                 }
         }
         PM.check(PMC.TRAP_SimpleClass_hash_terminator13_argb_int_arge_5);
+    }
+
+    public void terminator14(int a) {
+        PM.check(PMC.TRAP_SimpleClass_hash_terminator14_argb_int_arge_1);
+        switch (a) {
+            case 1:
+                PM.check(PMC.TRAP_SimpleClass_hash_terminator14_argb_int_arge_2);
+                CardRuntimeException.throwIt(0);
+                break;
+            case 2:
+                PM.check(PMC.TRAP_SimpleClass_hash_terminator14_argb_int_arge_3);
+                UserException.throwIt(0);
+                break;
+            case 3:
+                PM.check(PMC.TRAP_SimpleClass_hash_terminator14_argb_int_arge_4);
+                SystemException.throwIt(0);
+                break;
+            case 4:
+                PM.check(PMC.TRAP_SimpleClass_hash_terminator14_argb_int_arge_5);
+                CryptoException.throwIt(0);
+                break;
+        }
+        PM.check(PMC.TRAP_SimpleClass_hash_terminator14_argb_int_arge_6);
     }
 
     public static class Nest {
