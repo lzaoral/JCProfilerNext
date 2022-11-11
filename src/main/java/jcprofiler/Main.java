@@ -24,8 +24,8 @@ public class Main {
         // TODO: add proper versioning info as well
         log.info("Welcome to JCProfilerNext!");
 
-        Args args = new Args();
-        JCommander jc = JCommander.newBuilder().addObject(args).build();
+        final Args args = new Args();
+        final JCommander jc = JCommander.newBuilder().addObject(args).build();
 
         jc.setProgramName("JCProfiler");
         try {

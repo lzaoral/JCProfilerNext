@@ -147,7 +147,7 @@ public class Instrumenter {
         // Only JavaCard 3.0.1 and newer support multi package CAP files.
         // https://docs.oracle.com/en/java/javacard/3.1/guide/programming-multi-package-large-cap-files.html
         if (pkgs.size() != 1) {
-            JavaCardSDK.Version jcVersion = args.jcSDK.getVersion();
+            final JavaCardSDK.Version jcVersion = args.jcSDK.getVersion();
             if (!jcVersion.isOneOf(JavaCardSDK.Version.V310)) {
                 throw new UnsupportedOperationException(String.format(
                         "Only one package is allowed with JavaCard %s! Found: %s", jcVersion, pkgs));

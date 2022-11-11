@@ -253,7 +253,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
             statement.insertBefore(pmCall);
     }
 
-    private CtField<Short> addTrapField(String trapFieldName) {
+    private CtField<Short> addTrapField(final String trapFieldName) {
         final CtTypeReference<Short> shortType = getFactory().Type().shortPrimitiveType();
 
         final CtField<?> previousTrap = PMC.getFields().get(PMC.getFields().size() - 1);
