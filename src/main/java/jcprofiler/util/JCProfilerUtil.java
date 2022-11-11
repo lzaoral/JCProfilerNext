@@ -160,6 +160,24 @@ public class JCProfilerUtil {
         return false;
     }
 
+    /**
+     * Returns a top-level type with given name that should already exist at the time of this call.
+     *
+     * @param  model            Spoon model
+     * @param  simpleName       name of the wanted top-level type
+     *
+     * @return                  instance of the top-level type with given name
+     * @throws RuntimeException if the model does not contain such type
+     */
+    public static CtType<?> getToplevelType(final CtModel model, final String simpleName) {
+        final CtType<?> cls = model.filterChildren(
+                (CtType<?> c) -> c.isTopLevel() && c.getSimpleName().equals(simpleName)).first();
+        if (cls == null)
+            throw new RuntimeException("Class " + simpleName + " not found!");
+
+        return cls;
+    }
+
     // profiled constructor/method detection
     public static CtExecutable<?> getProfiledExecutable(final CtModel model, final String fullSignature) {
         final List<CtExecutable<?>> executables = model.getElements(
