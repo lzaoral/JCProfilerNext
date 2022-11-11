@@ -42,7 +42,7 @@ class ModifyEntryPointProcessorTest {
         final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
 
         // change type from byte to short
-        input.getField("INS_PERF_SETSTOP").setType(input.getFactory().createCtTypeReference(Short.TYPE));
+        input.getField("INS_PERF_SETSTOP").setType(input.getFactory().createCtTypeReference(short.class));
 
         Exception e = assertThrows(
                 RuntimeException.class,
@@ -106,7 +106,7 @@ class ModifyEntryPointProcessorTest {
         final CtLiteral<Byte> lit = (CtLiteral<Byte>) (Object) input.getFactory()
                 .createLiteral(0xFF)
                 .setBase(LiteralBase.HEXADECIMAL)
-                .addTypeCast(input.getFactory().createCtTypeReference(Byte.TYPE));
+                .addTypeCast(input.getFactory().Type().bytePrimitiveType());
         field.setAssignment(lit);
 
         Exception e = assertThrows(

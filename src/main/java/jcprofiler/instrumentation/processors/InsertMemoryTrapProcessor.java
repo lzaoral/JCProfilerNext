@@ -33,7 +33,7 @@ public class InsertMemoryTrapProcessor extends AbstractInsertTrapProcessor<CtExe
                     ? Integer.BYTES
                     : Short.BYTES);
 
-        final CtTypeReference<Short> shortRef = getFactory().createCtTypeReference(Short.TYPE);
+        final CtTypeReference<Short> shortRef = getFactory().Type().shortPrimitiveType();
         final CtLiteral<Integer> arrayLengthLiteral = getFactory().createLiteral(arrayLength);
         arrayLengthLiteral.addTypeCast(shortRef);
 

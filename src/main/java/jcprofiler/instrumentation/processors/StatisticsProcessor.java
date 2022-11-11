@@ -42,7 +42,7 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
             final CtTypeReference<?> typeRef = (CtTypeReference<?>) ref;
 
             // ignore null, primitive types and arrays (the array element type will be processed separately)
-            if (typeRef.isPrimitive() || typeRef.isArray() || ref.equals(getFactory().Type().NULL_TYPE))
+            if (typeRef.isPrimitive() || typeRef.isArray() || ref.equals(getFactory().Type().nullType()))
                 return;
 
             final CtElement parent = typeRef.getParent();

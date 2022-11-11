@@ -225,7 +225,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
 
         final CtInvocation<?> pmCall = getFactory().createInvocation(
                 getFactory().createTypeAccess(PM.getReference()),
-                PM.getMethod("check", getFactory().createCtTypeReference(Short.TYPE)).getReference(),
+                PM.getMethod("check", getFactory().Type().shortPrimitiveType()).getReference(),
                 trapFieldRead);
 
         // handle position of implicit super() calls
@@ -254,7 +254,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
     }
 
     private CtField<Short> addTrapField(String trapFieldName) {
-        final CtTypeReference<Short> shortType = getFactory().createCtTypeReference(Short.TYPE);
+        final CtTypeReference<Short> shortType = getFactory().Type().shortPrimitiveType();
 
         final CtField<?> previousTrap = PMC.getFields().get(PMC.getFields().size() - 1);
         if (!previousTrap.getType().equals(shortType))
@@ -272,11 +272,15 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
                 trapFieldName, shortType, "", ModifierKind.PUBLIC, ModifierKind.STATIC, ModifierKind.FINAL);
 
         // (short) (previousTrap + 1)
-        final CtExpression<Short> sum = getFactory().createBinaryOperator(
+        final CtExpression<Integer> sum = getFactory().createBinaryOperator(
                 previousTrapRead, getFactory().createLiteral(1), BinaryOperatorKind.PLUS);
-        sum.setType(getFactory().createCtTypeReference(Integer.TYPE));
+        sum.setType(getFactory().Type().integerPrimitiveType());
         sum.addTypeCast(shortType);
-        trapField.setAssignment(sum);
+
+        @SuppressWarnings("unchecked")
+        // Unfortunately, this is the best solution we have since Spoon does not reflect type casts in type parameters.
+        final CtExpression<Short> sumCasted = (CtExpression<Short>) (Object) sum;
+        trapField.setAssignment(sumCasted);
 
         PMC.addField(trapField);
 

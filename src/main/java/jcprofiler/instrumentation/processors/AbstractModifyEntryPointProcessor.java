@@ -39,7 +39,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         do {
             processMethod = clsRef.getTypeDeclaration().filterChildren(
                     (CtMethod<Void> m) -> m.getSignature().equals("process(javacard.framework.APDU)") &&
-                            m.getType().equals(getFactory().createCtTypeReference(Void.TYPE)) &&
+                            m.getType().equals(getFactory().Type().voidPrimitiveType()) &&
                             !m.isAbstract() && m.getBody() != null).first();
             clsRef = clsRef.getSuperclass();
         } while (clsRef != null && processMethod == null);
@@ -62,7 +62,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         final CtType<?> declaringCls = processMethod.getDeclaringType();
 
         // private static final byte ${name} = (byte) ${JCProfilerUtil.INS_PERF_HANDLER}
-        final CtTypeReference<Byte> byteRef = getFactory().createCtTypeReference(Byte.TYPE);
+        final CtTypeReference<Byte> byteRef = getFactory().Type().bytePrimitiveType();
 
         Optional<CtField<?>> existingInsPerfSetStop = declaringCls.getFields().stream().filter(
                 f -> f.getSimpleName().equals(name)).findFirst();
@@ -73,7 +73,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
             if (!insPerfSetStop.getType().equals(byteRef))
                 throw new RuntimeException(String.format(
                         "Existing %s field has type %s! Expected: %s",
-                        name, insPerfSetStop.getType().getQualifiedName(), Byte.TYPE.getTypeName()));
+                        name, insPerfSetStop.getType().getQualifiedName(), byteRef.getQualifiedName()));
 
             @SuppressWarnings("unchecked") // the runtime check is above
             final CtField<Byte> insPerfSetStopCasted = (CtField<Byte>) insPerfSetStop;
@@ -142,7 +142,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
             apduBufferRead = getFactory().createArrayRead();
             apduBufferRead.setIndexExpression(offsetFieldRead);
             apduBufferRead.setTarget(apduBufferInvocation);
-            apduBufferRead.setType(getFactory().createCtTypeReference(Byte.TYPE));
+            apduBufferRead.setType(getFactory().Type().bytePrimitiveType());
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -159,7 +159,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
             insPerfSetStopFieldRead.setVariable(getFactory().Field().createReference(insPerfField));
 
             insEqCond = getFactory().createBinaryOperator(apduBufferRead, insPerfSetStopFieldRead, BinaryOperatorKind.EQ);
-            insEqCond.setType(getFactory().createCtTypeReference(Boolean.TYPE));
+            insEqCond.setType(getFactory().Type().booleanPrimitiveType());
         }
 
         // if (${param}.getBuffer()[ISO7816.OFFSET_INS] == ${insPerfField}) {

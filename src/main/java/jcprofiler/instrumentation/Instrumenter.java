@@ -242,7 +242,7 @@ public class Instrumenter {
                         return false;
                     final CtType<?> cls = ((CtTypeAccess<?>) i.getTarget()).getAccessedType().getDeclaration();
                     return PM.equals(cls) &&
-                           i.getType().equals(i.getFactory().createCtTypeReference(Void.TYPE)) &&
+                           i.getType().equals(i.getFactory().Type().voidPrimitiveType()) &&
                            i.getExecutable().getSignature().equals("check(short)");
         });
         final Set<CtField<?>> trapFields = traps.stream().flatMap(x -> x.getArguments().stream())
