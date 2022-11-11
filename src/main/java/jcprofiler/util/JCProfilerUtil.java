@@ -207,6 +207,10 @@ public class JCProfilerUtil {
         final CtClass<?> entryPointClass = getEntryPoint(model, entryPoint);
         final CtMethod<?> installMethod = getInstallMethod(entryPointClass);
 
+        // this check should never succeed since getEntryPoint did not throw
+        if (installMethod == null)
+            throw new RuntimeException("Unreachable statement reached!");
+
         // get all entryPoint class constructor invocations in the install method
         final List<CtConstructor<?>> constructorCalls = installMethod.getElements(
                 (CtConstructorCall<?> c) -> c.getExecutable().getDeclaringType().equals(entryPointClass.getReference()))
