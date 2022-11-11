@@ -1,6 +1,5 @@
 package jcprofiler.util;
 
-import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 
 import jcprofiler.args.Args;
@@ -75,16 +74,39 @@ public class JCProfilerUtil {
             typeRef = typeRef.getSuperclass();
         }
 
-        final CtTypeReference<APDU> APDURef = type.getFactory().createCtTypeReference(APDU.class);
         return getInstallMethod(type) != null &&
+               getProcessMethod(type) != null &&
                inheritanceChain.stream().allMatch(CtTypeReference::isClass) &&
-               inheritanceChain.stream().anyMatch(c -> c.getQualifiedName().equals("javacard.framework.Applet")) &&
-               inheritanceChain.stream().anyMatch(c -> {
-                   final CtMethod<?> processMethod = c.getTypeDeclaration().getMethod("process", APDURef);
-                   return processMethod != null && !processMethod.isAbstract() &&
-                          processMethod.getType().equals(c.getFactory().Type().voidPrimitiveType());
-               });
+               inheritanceChain.stream().anyMatch(c -> c.getQualifiedName().equals("javacard.framework.Applet"));
+    }
 
+    /**
+     * Checks that the input type instance defines the void process(javacard.framework.APDU) method.
+     *
+     * @param  type             type to be checked
+     *
+     * @return                  the instance of the void process(javacard.framework.APDU)
+     *                          method, otherwise null
+     * @throws RuntimeException if the type defines more than one method with such property,
+     *                          which should never happen
+     */
+    public static CtMethod<Void> getProcessMethod(final CtType<?> type) {
+        final List<CtMethod<?>> processMethods = type.getAllMethods().stream().filter(
+            m -> m.getSignature().equals("process(javacard.framework.APDU)") && !m.isAbstract() &&
+                 m.getType().equals(type.getFactory().Type().voidPrimitiveType()) &&
+                 m.getBody() != null
+        ).collect(Collectors.toList());
+        if (processMethods.size() > 1)
+            throw new RuntimeException(String.format(
+                    "Unreachable statement reached! Type %s has more than one implemented void process(APDU) method!",
+                    type.getQualifiedName()));
+
+        if (processMethods.isEmpty())
+            return null;
+
+        @SuppressWarnings("unchecked") // the runtime check is above
+        final CtMethod<Void> processMethodCast = (CtMethod<Void>) processMethods.get(0);
+        return processMethodCast;
     }
 
     /**

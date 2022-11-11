@@ -32,28 +32,15 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                 (args.entryPoint.isEmpty() || cls.getQualifiedName().equals(args.entryPoint));
     }
 
-    private CtMethod<Void> getProcessMethod(final CtClass<?> cls) {
-        CtMethod<Void> processMethod;
-        CtTypeReference<?> clsRef = cls.getReference();
-
-        do {
-            processMethod = clsRef.getTypeDeclaration().filterChildren(
-                    (CtMethod<Void> m) -> m.getSignature().equals("process(javacard.framework.APDU)") &&
-                            m.getType().equals(getFactory().Type().voidPrimitiveType()) &&
-                            !m.isAbstract() && m.getBody() != null).first();
-            clsRef = clsRef.getSuperclass();
-        } while (clsRef != null && processMethod == null);
-
-        if (processMethod == null)
-            throw new RuntimeException(String.format(
-                    "Class %s inherits from %s but does not implement the 'process(javacard.framework.APDU)' method!",
-                    cls.getQualifiedName(), cls.getSuperclass().getQualifiedName()));
-        return processMethod;
-    }
-
     protected void process(final CtClass<?> cls, final String fieldName) {
         log.info("Instrumenting entry point class {}.", cls.getQualifiedName());
-        final CtMethod<Void> processMethod = getProcessMethod(cls);
+
+        final CtMethod<Void> processMethod = JCProfilerUtil.getProcessMethod(cls);
+        if (processMethod == null)
+            throw new RuntimeException(String.format(
+                    "Type %s nor its parents implement the 'process(javacard.framework.APDU)' method!",
+                    cls.getQualifiedName()));
+
         final CtField<Byte> insPerfField = addInsField(fieldName, processMethod);
         createInsHandler(processMethod, insPerfField);
     }

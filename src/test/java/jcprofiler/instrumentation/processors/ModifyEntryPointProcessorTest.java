@@ -9,6 +9,7 @@ import spoon.Launcher;
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtField;
+import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.support.compiler.VirtualFile;
 
@@ -133,22 +134,28 @@ class ModifyEntryPointProcessorTest {
     }
 
     @Test
+    public void abstractProcessMethod() {
+        // Using already instrumented file for input is NOT a bug!
+        final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
+
+        // delete the process method body
+        final CtMethod<?> method = input.getMethodsByName("process").get(0);
+        method.addModifier(ModifierKind.ABSTRACT);
+        method.getBody().delete();
+
+        assertFalse(new ModifyTimeEntryPointProcessor(new Args()).isToBeProcessed(input));
+    }
+
+    @Test
     public void declaredProcessMethod() {
         // Using already instrumented file for input is NOT a bug!
         final CtClass<?> input = parseClass("ModifyEntryPointProcessorTestExpected.java");
 
         // delete the process method body
-        input.getMethodsByName("process").get(0).getBody().delete();
+        final CtMethod<?> method = input.getMethodsByName("process").get(0);
+        method.getBody().delete();
 
-        Exception e = assertThrows(
-                RuntimeException.class,
-                () -> assertThat(input).withProcessor(new ModifyTimeEntryPointProcessor(new Args())).isEqualTo(input));
-
-        String expected = "Class Example inherits from javacard.framework.Applet but does not implement the " +
-                "'process(javacard.framework.APDU)' method!";
-        String actual = e.getMessage();
-
-        assertEquals(expected, actual);
+        assertFalse(new ModifyTimeEntryPointProcessor(new Args()).isToBeProcessed(input));
     }
 
     @Test
