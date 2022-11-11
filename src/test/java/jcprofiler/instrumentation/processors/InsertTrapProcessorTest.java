@@ -56,7 +56,7 @@ class InsertTrapProcessorTest {
         // add PM stub
         spoon.addInputResource(new VirtualFile("public class PM { public static void check(short s) {} }"));
 
-        // SPOON must know the types of PMC fields used in SimpleClass
+        // Spoon must know the types of PMC fields used in SimpleClass
         final List<CtMethod<?>> methods = input.getElements(CtMethod.class::isInstance);
         StringBuilder sb = new StringBuilder("public class PMC {");
         for (final CtMethod<?> method : methods) {

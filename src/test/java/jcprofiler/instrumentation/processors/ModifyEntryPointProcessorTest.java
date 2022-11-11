@@ -102,7 +102,7 @@ class ModifyEntryPointProcessorTest {
         // change initializer from (byte) 0xF5 to (byte) 0xFF
         final CtField<Byte> field = (CtField<Byte>) input.getField("INS_PERF_SETSTOP");
 
-        @SuppressWarnings("unchecked") // to overcome SPOON's limitation
+        @SuppressWarnings("unchecked") // to overcome Spoon's limitation
         final CtLiteral<Byte> lit = (CtLiteral<Byte>) (Object) input.getFactory()
                 .createLiteral(0xFF)
                 .setBase(LiteralBase.HEXADECIMAL)
