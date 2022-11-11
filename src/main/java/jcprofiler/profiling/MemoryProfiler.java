@@ -39,7 +39,7 @@ public class MemoryProfiler extends AbstractProfiler {
         super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method),
               "INS_PERF_GETMEM");
 
-        valueBytes = getValueBytes(model);
+        valueBytes = getValueBytes();
         if (valueBytes == Integer.BYTES && args.useSimulator)
             throw new UnsupportedOperationException(
                     "jCardSim does not support the 3.0.4+ JCSystem.getAvailableMemory(short[],short,byte) overload!");
@@ -50,17 +50,14 @@ public class MemoryProfiler extends AbstractProfiler {
      * static method used in the PM.check(short) method in bytes. JCSDK 3.0.4+ return an
      * int and older return a short.
      *
-     * @param model Spoon model
-     * @return      size of the getAvailableMemory measurement in bytes
+     * @return size of the getAvailableMemory measurement in bytes
      */
-    private int getValueBytes(final CtModel model) {
+    private int getValueBytes() {
         // get PM.check(short) method
-        final CtMethod<?> PM = model.filterChildren(
-                (CtMethod<?> m) -> m.getSignature().equals("check(short)") &&
-                        m.getDeclaringType().getSimpleName().equals("PM")).first();
+        final CtMethod<?> check = PM.getMethod("check", PM.getFactory().Type().shortPrimitiveType());
 
         // get all distinct return types of getAvailableMemory calls
-        final List<CtTypeReference<?>> returnTypes = PM.getBody().getElements(
+        final List<CtTypeReference<?>> returnTypes = check.getElements(
                 (CtExecutableReference<?> e) -> e.getSimpleName().equals("getAvailableMemory") &&
                         e.getDeclaringType().getQualifiedName().equals("javacard.framework.JCSystem"))
                 .stream().map(CtExecutableReference::getType).distinct().collect(Collectors.toList());

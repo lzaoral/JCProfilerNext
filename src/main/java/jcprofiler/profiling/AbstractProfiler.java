@@ -19,10 +19,7 @@ import org.slf4j.LoggerFactory;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtLiteral;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtConstructor;
-import spoon.reflect.declaration.CtExecutable;
-import spoon.reflect.declaration.CtField;
+import spoon.reflect.declaration.*;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CommandAPDU;
@@ -46,6 +43,9 @@ public abstract class AbstractProfiler {
     protected final CtExecutable<?> profiledExecutable;
     protected final String profiledExecutableSignature;
 
+    protected final CtType<?> PM;
+    protected final CtType<?> PMC;
+
     // use LinkedHashX to preserve insertion order
     protected final Map<Short, String> trapNameMap = new LinkedHashMap<>();
     protected final Set<String> unreachedTraps = new LinkedHashSet<>();
@@ -57,6 +57,10 @@ public abstract class AbstractProfiler {
 
     protected AbstractProfiler(final Args args, final CardManager cardManager, final CtExecutable<?> executable,
                                final String handlerInsField) {
+        final CtModel model = executable.getFactory().getModel();
+        PM = JCProfilerUtil.getToplevelType(model, "PM");
+        PMC = JCProfilerUtil.getToplevelType(model, "PMC");
+
         this.args = args;
         this.cardManager = cardManager;
 
@@ -99,15 +103,13 @@ public abstract class AbstractProfiler {
             throw new RuntimeException(String.format(
                     "Extraction of traps from %s failed!", profiledExecutableSignature));
 
-        final CtClass<?> PMC = profiledExecutable.getFactory().getModel()
-                .filterChildren((CtClass<?> c) -> c.getSimpleName().equals("PMC")).first();
         final List<CtField<Short>> pmTraps = PMC.getElements((CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix));
         if (pmTraps.isEmpty())
             throw new RuntimeException("Extraction of traps from PMC failed!");
 
         if (traps.size() != pmTraps.size() || !new HashSet<>(traps).containsAll(pmTraps))
             throw new RuntimeException(String.format(
-                    "The profiled method and the PM class contain different traps!%n" +
+                    "The profiled method and the PMC class contain different traps!%n" +
                     "Please, reinstrument the given sources!"));
 
         for (final CtField<Short> f : traps) {

@@ -14,7 +14,6 @@ import pro.javacard.JavaCardSDK;
 
 import spoon.Launcher;
 import spoon.OutputType;
-import spoon.SpoonAPI;
 import spoon.compiler.ModelBuildingException;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.*;
@@ -88,7 +87,7 @@ public class Instrumenter {
         spoon.prettyprint();
 
         // check that all PMC members are unique
-        checkPMC(spoon);
+        checkPMC(spoon.getModel());
     }
 
     private void buildModel(final Launcher spoon) {
@@ -220,10 +219,9 @@ public class Instrumenter {
         }
     }
 
-    private void checkPMC(final SpoonAPI spoon) {
+    private void checkPMC(final CtModel model) {
         // check that all trap constants have unique values
-        final CtClass<?> pmc = spoon.getModel().filterChildren(
-                (CtClass<?> c) -> c.isTopLevel() && c.getSimpleName().equals("PMC")).first();
+        final CtType<?> pmc = JCProfilerUtil.getToplevelType(model, "PMC");
         final Map<CtField<?>, Short> fieldValuesMap = pmc.getFields().stream().collect(Collectors.toMap(
                 Function.identity(),
                 f -> f.getAssignment().<CtLiteral<Integer>>partiallyEvaluate().getValue().shortValue()));
@@ -237,12 +235,13 @@ public class Instrumenter {
         }
 
         // check that every trap constant is used exactly once
-        final List<CtInvocation<?>> traps = spoon.getModel().getElements(
+        final CtType<?> PM = JCProfilerUtil.getToplevelType(model, "PM");
+        final List<CtInvocation<?>> traps = model.getElements(
                 (CtInvocation<?> i) -> {
                     if (!(i.getTarget() instanceof CtTypeAccess))
                         return false;
                     final CtType<?> cls = ((CtTypeAccess<?>) i.getTarget()).getAccessedType().getDeclaration();
-                    return cls != null && cls.isTopLevel() && cls.getSimpleName().equals("PM") &&
+                    return PM.equals(cls) &&
                            i.getType().equals(i.getFactory().createCtTypeReference(Void.TYPE)) &&
                            i.getExecutable().getSignature().equals("check(short)");
         });
