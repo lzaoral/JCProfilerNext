@@ -25,9 +25,11 @@ public class Main {
         log.info("Welcome to JCProfilerNext!");
 
         final Args args = new Args();
-        final JCommander jc = JCommander.newBuilder().addObject(args).build();
+        final JCommander jc = JCommander.newBuilder()
+                .addObject(args)
+                .programName("JCProfiler")
+                .build();
 
-        jc.setProgramName("JCProfiler");
         try {
             jc.parse(argv);
         } catch (Exception e) {
