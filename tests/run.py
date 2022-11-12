@@ -250,7 +250,7 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         if 'p2' in subtest:
             sub_cmd += ['--p2', subtest['p2']]
 
-        print('Executing subtest', subtest['name'], 'in mode', ARGS.mode)
+        print('Executing subtest', subtest['name'], 'in', ARGS.mode, 'mode')
         sub_cmd += ['--mode', ARGS.mode]
 
         if not execute_cmd(sub_cmd, stages):
