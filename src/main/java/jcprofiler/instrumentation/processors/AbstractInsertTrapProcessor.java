@@ -15,29 +15,55 @@ import spoon.reflect.reference.CtTypeReference;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Unfortunately, CtConstructor<?> and CtMethod<?> do not have a common base class just for these two and
-// <T extends CtExecutable<?> & CtTypeMember> cannot be used.  More details are here:
-// https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6946211
+/**
+ * General class for performance trap insertion
+ *
+ * @param <T> processed AST node type and an instance of {@link CtElement}
+ */
 public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends AbstractProfilerProcessor<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractInsertTrapProcessor.class);
 
+    /**
+     * Full signature of the processed executable.
+     */
     protected String fullSignature;
+
+    /**
+     * Trap field name prefix for the processed executable.
+     */
     protected String trapNamePrefix;
+
+    /**
+     * Number of inserted traps.
+     */
     protected int trapCount;
 
+    /**
+     * Constructs the {@link AbstractInsertTrapProcessor} class.
+     *
+     * @param args object with commandline arguments
+     */
     protected AbstractInsertTrapProcessor(final Args args) {
         super(args);
     }
 
+    /**
+     * Inserts traps into the given executable (constructor/method).
+     *
+     * @param executable constructor/method instance
+     */
     protected void process(final CtExecutable<?> executable) {
         // make e.g. default constructor visible
         executable.setImplicit(false);
 
+        // initialise
         fullSignature = JCProfilerUtil.getFullSignature(executable);
         trapCount = 0;
         trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(executable);
 
+        // instrument
         log.info("Instrumenting {}.", fullSignature);
+
         final CtBlock<?> block = executable.getBody();
         if (isEmptyBlock(block)) {
             insertTrapCheck(block);
@@ -47,6 +73,11 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         processBlock(block);
     }
 
+    /**
+     * Inserts performance traps in to a code block.
+     *
+     * @param block block of statements
+     */
     private void processBlock(final CtStatementList block) {
         // copy is needed as we modify the collection
         final List<CtStatement> statements = block.getStatements().stream()
@@ -100,6 +131,19 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         }
     }
 
+    /**
+     * Check whether the input statement in an empty block, a block without any actual statements.
+     * E.g. the following block is empty.
+     * {
+     *     // foo
+     *     {
+     *         // bar
+     *     }
+     * }
+     *
+     * @param  statement a statement
+     * @return           true if {@code statement} is an empty block, otherwise false
+     */
     private boolean isEmptyBlock(final CtStatement statement) {
         if (!(statement instanceof CtBlock))
             return false;
@@ -143,11 +187,12 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         return false;
     }
 
-    /***
-     * Statement is a terminator iff any statement inserted after in the corresponding block will be unreachable, e.g.:
-     *     1. the statement is a break or continue,
-     *     2. the statement is a code block ending with a statement that is a terminator,
-     *     3. the statement is a complete terminator.
+    /**
+     * Statement is a terminator iff any statement inserted after it in the corresponding block
+     * will be unreachable, e.g.:
+     *   1. the statement is a break or continue,
+     *   2. the statement is a code block ending with a statement that is a terminator,
+     *   3. the statement is a complete terminator.
      * <p>
      * for (int i = 1; i < 100; i++) {
      *     if (cond) {
@@ -158,6 +203,9 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
      *     PM.check(...) <- this would be unreachable!
      * }
      * PM.check(...) <- this is still reachable!
+     *
+     * @param  statement a statement
+     * @return           true if the input statement is a terminator, otherwise false
      */
     private boolean isTerminator(final CtStatement statement) {
         // if the statement is a block just go inside
@@ -169,10 +217,10 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         return statement instanceof CtCFlowBreak || isCompleteTerminator(statement);
     }
 
-    /***
+    /**
      * Statement is a full terminator iff any statement inserted after it into a given method will be unreachable, e.g.:
-     *     1. the statement is a jump out of the method,
-     *     2. the last statement is not an expression and all its held block statements are full terminators, e.g.:
+     *   1. the statement is a return or a throw,
+     *   2. the last statement is not an expression and all its held block statements are full terminators, e.g.:
      * <p>
      * if (cond) {
      *     return true;
@@ -180,6 +228,9 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
      *     return false;
      * }
      * PM.check(...) <- this would be unreachable!
+     *
+     * @param  statement a statement
+     * @return           true if the input statement is a full terminator, otherwise false
      */
     private boolean isCompleteTerminator(final CtStatement statement) {
         if (statement instanceof CtReturn || statement instanceof CtThrow || isExceptionThrowIt(statement))
@@ -212,6 +263,13 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         return false;
     }
 
+    /**
+     * Generates a new performance trap before/after the input element.
+     *
+     * @param  element code element
+     * @param  where   {@link Insert} position relative to the element
+     * @return         PM.check(...) call invocation
+     */
     private CtInvocation<?> insertPMCall(final CtElement element, final Insert where) {
         final String trapName = String.format("%s_%d", trapNamePrefix, ++trapCount);
 
@@ -236,6 +294,11 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         return pmCall;
     }
 
+    /**
+     * Inserts a new performance trap into the input block.
+     *
+     * @param block block of statements
+     */
     private void insertTrapCheck(final CtStatementList block) {
         final CtInvocation<?> pmCall = insertPMCall(block, Insert.INTO);
         if (block.getStatements().isEmpty())
@@ -244,18 +307,30 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
             block.getStatement(0).insertBefore(pmCall);
     }
 
+    /**
+     * Inserts a new performance trap before/after the input statement.
+     *
+     * @param statement a statement
+     * @param where     {@link Insert} position relative to the statement
+     */
     private void insertTrapCheck(final CtStatement statement, final Insert where) {
         final CtInvocation<?> pmCall = insertPMCall(statement, where);
-
         if (where == Insert.AFTER)
             statement.insertAfter(pmCall);
         else
             statement.insertBefore(pmCall);
     }
 
+    /**
+     * Creates a new PMC field with given name.
+     *
+     * @param  trapFieldName name of a new PMC field
+     * @return               PMC field instance with given name
+     */
     private CtField<Short> addTrapField(final String trapFieldName) {
         final CtTypeReference<Short> shortType = getFactory().Type().shortPrimitiveType();
 
+        // read previousTrap
         final CtField<?> previousTrap = PMC.getFields().get(PMC.getFields().size() - 1);
         if (!previousTrap.getType().equals(shortType))
             throw new RuntimeException(String.format(
@@ -265,13 +340,15 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         @SuppressWarnings("unchecked") // the runtime check is above
         final CtField<Short> previousTrapCasted = (CtField<Short>) previousTrap;
         final CtFieldRead<Short> previousTrapRead = getFactory().createFieldRead();
-        previousTrapRead.setTarget(getFactory().createTypeAccess(PMC.getReference(), true));
+        previousTrapRead.setTarget(getFactory().createTypeAccess(PMC.getReference(), /* implicit */ true));
         previousTrapRead.setVariable(previousTrapCasted.getReference());
 
+        // create new field
         final CtField<Short> trapField = getFactory().createCtField(
-                trapFieldName, shortType, "", ModifierKind.PUBLIC, ModifierKind.STATIC, ModifierKind.FINAL);
+                trapFieldName, shortType, /* init */ null,
+                ModifierKind.PUBLIC, ModifierKind.STATIC, ModifierKind.FINAL);
 
-        // (short) (previousTrap + 1)
+        // initialise the new field with (short) (previousTrap + 1)
         final CtExpression<Integer> sum = getFactory().createBinaryOperator(
                 previousTrapRead, getFactory().createLiteral(1), BinaryOperatorKind.PLUS);
         sum.setType(getFactory().Type().integerPrimitiveType());
@@ -282,11 +359,14 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
         final CtExpression<Short> sumCasted = (CtExpression<Short>) (Object) sum;
         trapField.setAssignment(sumCasted);
 
+        // add the field to PMC class
         PMC.addField(trapField);
-
         return trapField;
     }
 
+    /**
+     * Direction of statement insertion
+     */
     private enum Insert {
         AFTER,
         BEFORE,
