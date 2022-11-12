@@ -119,7 +119,7 @@ public class Main {
             for (final Path jarPath : args.jars) {
                 try (final JarFile jar = new JarFile(jarPath.toFile())) {
                     if (jar.stream().noneMatch(j -> j.getName().toLowerCase().endsWith(".exp")))
-                        throw new RuntimeException(String.format(
+                        throw new UnsupportedOperationException(String.format(
                                 "Dependency %s does not contain corresponding EXP files!%n" +
                                 "Please, add them to this archive!", jarPath));
                 } catch (IOException e) {
