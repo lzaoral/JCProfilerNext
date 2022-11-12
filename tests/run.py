@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from shutil import copytree, make_archive, rmtree
+from shutil import copy, copytree, make_archive, rmtree
 from subprocess import run
 from tempfile import mkdtemp
 from typing import Any, Callable, Dict, List, Optional
@@ -85,6 +85,39 @@ def prepare_etsi(version: str) -> str:
     copytree(src_dir.parent / 'exports', src_dir, dirs_exist_ok=True)
 
     make_archive(result_str, 'zip', src_dir)
+
+    # fix extension
+    os.rename(result.with_suffix(result.suffix + '.zip'), result)
+    return result_str
+
+
+def prepare_thoth(version: str) -> str:
+    if version != 'KM101':
+        raise NotImplementedError
+
+    src_dir = Path('thoth').absolute()
+    result = src_dir / 'thoth.jar'
+    result_str = str(result)
+
+    if os.path.exists(result):
+        return result_str
+
+    pkg_dir = src_dir / 'result' / version / 'javacard'
+
+    # create dirs
+    os.makedirs(pkg_dir)
+
+    # compile the sources
+    run(['javac', str(src_dir / 'T101OpenAPI.java'), '-classpath',
+         Path('jckit').absolute() / 'jc222_kit' / 'lib' / 'api.jar'],
+        check=True)
+
+    # add sources and the export file
+    copy(src_dir / 'T101OpenAPI.class', pkg_dir.parent)
+    copy(src_dir / 'T101OpenAPI.java', pkg_dir.parent)
+    copy(src_dir / f'{version}.exp', pkg_dir)
+
+    make_archive(result_str, 'zip', src_dir / 'result')
 
     # fix extension
     os.rename(result.with_suffix(result.suffix + '.zip'), result)
@@ -297,6 +330,9 @@ def execute_test(test: Dict[str, Any]) -> None:
                      '/gpapi-globalplatform.jar').absolute()
         cmd += ['--jar', str(gppro)]
 
+    if 'thoth' in test:
+        cmd += ['--jar', prepare_thoth(test['thoth'])]
+
     if 'visa' in test:
         visa = Path('visa.jar').absolute()
         cmd += ['--jar', str(visa)]
@@ -340,9 +376,11 @@ def main() -> None:
     with open('test-data.json') as f:
         data = json.load(f)
 
+    # get API JAR files
     clone_git_repo(data['etsiRepo'], 'etsiapi', reclone=False)
     clone_git_repo(data['jckitRepo'], 'jckit', reclone=False)
     clone_git_repo(data['gpapiRepo'], 'gpapi', reclone=False)
+    clone_git_repo(data['thothRepo'], 'thoth', reclone=False)
     download_file(data['visaJar'], 'visa.jar')
 
     tests = data['tests']

@@ -2,6 +2,7 @@
     "etsiRepo": "https://github.com/OpenJavaCard/etsi-exports",
     "jckitRepo": "https://github.com/martinpaljak/oracle_javacard_sdks",
     "gpapiRepo": "https://github.com/OpenJavaCard/globalplatform-exports",
+    "thothRepo": "https://github.com/ThothTrustCom/T101-Devhub",
     "visaJar": "https://deadcode.me/mvn/visa/openplatform/javacard/1.0/javacard-1.0.jar",
     "tests": [
         {
@@ -1276,9 +1277,10 @@
             "name": "T101-Devhub-MerryXmas",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/MerryXmas",
-            "jckit": "222",
+            "jckit": "304",
+            "thoth": "KM101",
             "failure": {
-                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+                "reason": "Instrumentation: TEXT_SETUP_COMPLETE cannot be resolved to a variable"
             }
         },
         {
@@ -1286,8 +1288,10 @@
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/OTP/JCOTP/src/jcotp",
             "jckit": "222",
+            "thoth": "KM101",
             "failure": {
-                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+                "stopAfter": "instrumentation",
+                "reason": "Conversion: unsupported int type method parameter"
             }
         },
         {
@@ -1295,8 +1299,10 @@
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/Satochip/src/org",
             "jckit": "304",
+            "thoth": "KM101",
             "failure": {
-                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+                "stopAfter": "compilation",
+                "reason": "Selection: SystemException.ILLEGAL_USE"
             }
         },
         {
@@ -1304,17 +1310,18 @@
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/T101Test1/src/testt101",
             "jckit": "304",
-            "failure": {
-                "reason": "Instrumentation: KM101 cannot be resolved to a type"
-            }
+            "thoth": "KM101",
+            "subtests": []
         },
         {
             "name": "T101-Devhub-ThetaPass",
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/ThetaPass/src/thetapass",
             "jckit": "304",
+            "thoth": "KM101",
             "failure": {
-                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+                "stopAfter": "instrumentation",
+                "reason": "Conversion: unsupported int type method parameter"
             }
         },
         {
@@ -1322,8 +1329,9 @@
             "repo": "https://github.com/ThothTrustCom/T101-Devhub",
             "path": "Samples/ThothPGP/src/org",
             "jckit": "305u4",
+            "thoth": "KM101",
             "failure": {
-                "reason": "Instrumentation: KM101 cannot be resolved to a type"
+                "reason": "Instrumentation: the method ecParams(ECCurves) is undefined for the type PGPKey"
             }
         },
         {
