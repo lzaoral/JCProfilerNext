@@ -41,11 +41,11 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                     "Type %s nor its parents implement the 'process(javacard.framework.APDU)' method!",
                     cls.getQualifiedName()));
 
-        final CtField<Byte> insPerfField = addInsField(fieldName, processMethod);
+        final CtField<Byte> insPerfField = addCustomInsField(fieldName, processMethod);
         createInsHandler(processMethod, insPerfField);
     }
 
-    private CtField<Byte> addInsField(final String name, final CtMethod<Void> processMethod) {
+    private CtField<Byte> addCustomInsField(final String name, final CtMethod<Void> processMethod) {
         final CtType<?> declaringCls = processMethod.getDeclaringType();
 
         // private static final byte ${name} = (byte) ${JCProfilerUtil.INS_PERF_HANDLER}
