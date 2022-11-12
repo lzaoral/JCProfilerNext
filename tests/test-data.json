@@ -552,7 +552,7 @@
         },
         {
             "name": "javacard-simple-wallet",
-            "repo": "https://github.com/fitpay/javacard-simple-wallet",
+            "repo": "https://github.com/javacard-FOSS-applets/javacard-simple-wallet",
             "path": "src/main/java/fitpay/javacard/simplewallet/applet",
             "jckit": "222",
             "subtests": []
