@@ -7,7 +7,9 @@ from typing import Optional
 
 import json
 import os
+import platform
 import re
+import shutil
 import tempfile
 
 PWD = Path.cwd()
@@ -21,7 +23,7 @@ print('Gathering API usage statistics')
 if os.path.exists(STATS_DIR):
     old_dir = tempfile.mkdtemp(prefix=str(STATS_DIR))
     print('Renaming previous stats dir to', old_dir)
-    os.rename(STATS_DIR, old_dir)
+    shutil.move(STATS_DIR, old_dir)
 
 # gather stats
 parse_args(['--mode', 'stats', '--output-dir', str(STATS_DIR)])
@@ -38,10 +40,17 @@ with open('test-data.json', 'r') as j, open(STATS_FILE, 'w') as f:
         print('# Path:', test['path'], file=f)
         print(file=f)
 
+        # skip if disabled
+        osName = platform.system()
+        if osName.lower() in test and not test[osName.lower()]:
+            print('disabled on', osName, file=f)
+            print(file=f)
+            continue
+
         # append the CSV
         csv_path = next(STATS_DIR.glob(
-                test['name'].replace(' ', '_') + '_stats_*/APIstatistics.csv'))
-        with open(csv_path, 'r') as csv:
+                test['name'].replace(' ', '_') + '_stats_*'))
+        with open(csv_path / 'APIstatistics.csv', 'r') as csv:
             contents = csv.read()
             if INCOMPLETE_HEADER_RE.search(contents) is not None:
                 incomplete += 1
