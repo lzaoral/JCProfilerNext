@@ -42,7 +42,7 @@ jobs:
         run: ./gradlew build
 
       - name: Execute profiling tests (stats)
-        run: python3 tests/run.py --mode stats
+        run: python3 tests/gather-stats.py
 
       - name: Execute profiling tests (memory)
         run: python3 tests/run.py --mode memory --ci
