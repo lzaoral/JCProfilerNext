@@ -41,17 +41,19 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                     "Type %s nor its parents implement the 'process(javacard.framework.APDU)' method!",
                     cls.getQualifiedName()));
 
-        final CtField<Byte> insPerfField = addCustomInsField(fieldName, processMethod);
+        // insert custom instruction field to the class defining the process method
+        // (may not be the same as cls argument of this method!)
+        final CtField<Byte> insPerfField = addCustomInsField(fieldName, processMethod.getDeclaringType());
+
+        // insert custom instruction handler
         createInsHandler(processMethod, insPerfField);
     }
 
-    private CtField<Byte> addCustomInsField(final String name, final CtMethod<Void> processMethod) {
-        final CtType<?> declaringCls = processMethod.getDeclaringType();
-
+    private CtField<Byte> addCustomInsField(final String name, final CtType<?> processCls) {
         // private static final byte ${name} = (byte) ${JCProfilerUtil.INS_PERF_HANDLER}
         final CtTypeReference<Byte> byteRef = getFactory().Type().bytePrimitiveType();
 
-        Optional<CtField<?>> existingInsPerfSetStop = declaringCls.getFields().stream().filter(
+        Optional<CtField<?>> existingInsPerfSetStop = processCls.getFields().stream().filter(
                 f -> f.getSimpleName().equals(name)).findFirst();
         if (existingInsPerfSetStop.isPresent()) {
             final CtField<?> insPerfSetStop = existingInsPerfSetStop.get();
@@ -97,8 +99,8 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         insPerfSetStop.setAssignment(initializerCasted);
 
         // insert the field
-        declaringCls.addField(0, insPerfSetStop);
-        log.debug("Added {} field to {}.", name, declaringCls.getQualifiedName());
+        processCls.addField(0, insPerfSetStop);
+        log.debug("Added {} field to {}.", name, processCls.getQualifiedName());
         return insPerfSetStop;
     }
 
