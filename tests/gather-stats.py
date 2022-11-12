@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-from collections import Counter
 from pathlib import Path
 from run import main, parse_args
-from typing import Optional
+from typing import Counter, Optional
 
 import json
 import os
@@ -93,7 +92,7 @@ def generate_summary(filename: str, members: bool) -> None:
             # handle section start
             if line.startswith('#'):
                 print(line, file=cout)
-                pkg = line.removeprefix('# ')
+                pkg = line[len('# '):]
                 if members:
                     pkg, _, cls = pkg.rpartition('.')
                 continue
@@ -131,5 +130,6 @@ with open(PWD / 'thirdparty.txt', 'w') as t:
     print('# Number of projects that use the given symbol', file=t)
     print('# package,type[,member] - count\n', file=t)
     for symbol, count in sorted(counter.items()):
-        print(symbol.removesuffix(','), '-', count, file=t)
+        # remove ',' suffix
+        print(symbol[:-1], '-', count, file=t)
 print('thirdparty.txt generated successfully.')
