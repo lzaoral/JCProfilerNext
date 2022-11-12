@@ -43,6 +43,19 @@ public class Installer {
     private Installer() {}
 
     /**
+     * Selects an applet on a physical card.
+     *
+     * @param  cardManager   {@link CardManager} connection instance
+     * @throws CardException if the selection fails
+     */
+    private static void selectApplet(final CardManager cardManager) throws CardException {
+        log.info("Selecting profiled applet on card.");
+        ResponseAPDU out = cardManager.selectApplet();
+        if (out.getSW() != JCProfilerUtil.SW_NO_ERROR)
+            throw new CardException("Applet could not se selected. SW: " + Integer.toHexString(out.getSW()));
+    }
+
+    /**
      * Installs the applet on a selected card.
      *
      * @param  args       object with commandline arguments
@@ -80,10 +93,7 @@ public class Installer {
 
         // select the applet
         try {
-            log.info("Selecting installed applet on card.");
-            ResponseAPDU out = cardManager.selectApplet();
-            if (out.getSW() != JCProfilerUtil.SW_NO_ERROR)
-                throw new CardException("Applet could not se selected. SW: " + Integer.toHexString(out.getSW()));
+            selectApplet(cardManager);
         } catch (CardException e) {
             throw new RuntimeException(e);
         }
@@ -219,6 +229,7 @@ public class Installer {
             log.info("Successfully connected.");
             log.info("Card ATR: {}", Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes()));
 
+            selectApplet(cardManager);
             return cardManager;
         } catch (CardException e) {
             throw new RuntimeException(e);
