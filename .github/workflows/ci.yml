@@ -25,13 +25,6 @@ jobs:
             name: Ubuntu
           - os: windows-latest
             name: Windows
-          - jdk: 8
-            min_jckit: 211
-          - jdk: 11
-            min_jckit: 304
-          - jdk: 17
-            min_jckit: 310r20210706
-
 
     steps:
       - uses: actions/checkout@v3
@@ -52,7 +45,7 @@ jobs:
         run: python3 tests/run.py --mode stats
 
       - name: Execute profiling tests (memory)
-        run: python3 tests/run.py --mode memory --ci --min-jckit '${{ matrix.min_jckit }}'
+        run: python3 tests/run.py --mode memory --ci
 
       - name: Execute profiling tests (time)
-        run: python3 tests/run.py --mode time --ci --min-jckit '${{ matrix.min_jckit }}'
+        run: python3 tests/run.py --mode time --ci

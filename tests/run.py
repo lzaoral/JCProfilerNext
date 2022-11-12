@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from shutil import copy, copytree, make_archive, rmtree
-from subprocess import run
+from subprocess import PIPE, STDOUT, run
 from tempfile import mkdtemp
 from typing import Any, Callable, Dict, List, Optional
 from urllib.request import Request, urlopen
@@ -403,6 +403,28 @@ def main() -> None:
             print(failure, colour=BOLD_RED)
 
 
+def get_min_jckit() -> Optional[str]:
+    # stats will not compile anything
+    if ARGS.mode == 'stats':
+        return None
+
+    # older javac prints to stderr, newer to stdout
+    ret = run(['javac', '-version'], check=True, stdout=PIPE, stderr=STDOUT)
+
+    # get major version
+    ver = int(ret.stdout.decode().split()[1].split('.')[0])
+
+    # 8 and older
+    if ver == 1:
+        return None
+
+    if 9 <= ver <= 11:
+        return '303'
+
+    # 12+
+    return '310r20210706'
+
+
 def parse_args(args: List[str] = []) -> None:
     global ARGS
 
@@ -437,6 +459,13 @@ def parse_args(args: List[str] = []) -> None:
 
     if ARGS.card and ARGS.mode == 'stats':
         raise RuntimeError('Stats cannot be collected on a physical card!')
+
+    # set minimum JCKit based on used JDK
+    min_ver = get_min_jckit()
+    if min_ver is not None and \
+            (ARGS.min_jckit is None or ARGS.min_jckit < min_ver):
+        print('Overriding minimum JCKit version to', min_ver)
+        ARGS.min_jckit = min_ver
 
 
 if __name__ == '__main__':
