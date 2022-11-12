@@ -16,14 +16,23 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.jar.JarFile;
 
+/**
+ * JCProfiler's entry point class
+ */
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
+    /**
+     * JCProfiler's entry point method
+     *
+     * @param argv array of commandline arguments
+     */
     public static void main(final String[] argv) {
         Configurator.setRootLevel(Level.INFO);
         // TODO: add proper versioning info as well
         log.info("Welcome to JCProfilerNext!");
 
+        // parse commandline arguments
         final Args args = new Args();
         final JCommander jc = JCommander.newBuilder()
                 .addObject(args)
@@ -37,6 +46,7 @@ public class Main {
             System.exit(1);
         }
 
+        // show help
         if (args.help) {
             jc.usage();
             return;
@@ -48,7 +58,7 @@ public class Main {
             log.info("LogLevel set to DEBUG.");
         }
 
-        // Log basic info
+        // log basic info
         log.info("Found JavaCard SDK {} ({})", args.jcSDK.getRelease(), args.jcSDK.getRoot().getAbsolutePath());
         log.info("Working directory: {}", args.workDir);
         log.info("Executed in {} mode.", args.mode);
@@ -58,6 +68,7 @@ public class Main {
             log.info("Stop after: {}", args.stopAfter);
         }
 
+        // execute!
         try {
             validateArgs(args);
             JCProfiler.run(args);
@@ -68,6 +79,12 @@ public class Main {
         }
     }
 
+    /**
+     * Validates command line arguments.
+     *
+     * @param  args                          object with parsed commandline arguments
+     * @throws UnsupportedOperationException if the argument validation failed
+     */
     private static void validateArgs(final Args args) {
         // this is practically a noop but probably not a deliberate one
         if (args.startFrom.ordinal() > args.stopAfter.ordinal())
