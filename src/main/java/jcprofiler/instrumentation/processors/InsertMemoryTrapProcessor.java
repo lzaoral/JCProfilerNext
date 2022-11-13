@@ -1,7 +1,6 @@
 package jcprofiler.instrumentation.processors;
 
 import jcprofiler.args.Args;
-import jcprofiler.util.JCProfilerUtil;
 
 import pro.javacard.JavaCardSDK;
 
@@ -13,11 +12,6 @@ import spoon.reflect.reference.CtTypeReference;
 public class InsertMemoryTrapProcessor extends AbstractInsertTrapProcessor<CtExecutable<?>> {
     public InsertMemoryTrapProcessor(final Args args) {
         super(args);
-    }
-
-    @Override
-    public boolean isToBeProcessed(final CtExecutable<?> executable) {
-        return JCProfilerUtil.getFullSignature(executable).equals(args.executable);
     }
 
     @Override

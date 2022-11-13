@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 /**
  * General class for performance trap insertion
  *
- * @param <T> processed AST node type and an instance of {@link CtElement}
+ * @param <T> processed AST node type and an instance of {@link CtExecutable}
  */
-public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends AbstractProfilerProcessor<T> {
+public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> extends AbstractProfilerProcessor<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractInsertTrapProcessor.class);
 
     /**
@@ -48,11 +48,23 @@ public abstract class AbstractInsertTrapProcessor<T extends CtElement> extends A
     }
 
     /**
-     * Inserts traps into the given executable (constructor/method).
+     * Decides whether the input {@link CtExecutable} should be processed.
      *
-     * @param executable constructor/method instance
+     * @param  executable the candidate {@link CtExecutable}
+     * @return            true if yes, otherwise false
      */
-    protected void process(final CtExecutable<?> executable) {
+    @Override
+    public boolean isToBeProcessed(final T executable) {
+        return JCProfilerUtil.getFullSignature(executable).equals(args.executable);
+    }
+
+    /**
+     * Inserts traps into the given {@link CtExecutable} instance.
+     *
+     * @param executable {@link CtExecutable} instance
+     */
+    @Override
+    public void process(final T executable) {
         // make e.g. default constructor visible
         executable.setImplicit(false);
 
