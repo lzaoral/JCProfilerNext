@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtMethod;
 import spoon.support.compiler.VirtualFile;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -387,6 +390,12 @@ class JCProfilerUtilTest {
 
         assertEquals("TRAP_test_Test_dol_Test2_hash_foo_argb_test_Test_dol_Test1__java_lang_Long__int_arr_arge",
                 JCProfilerUtil.getTrapNamePrefix(method));
+
+        final List<String> trapNames = model.filterChildren(CtConstructor.class::isInstance)
+                        .map(JCProfilerUtil::getTrapNamePrefix).list();
+        assertEquals("TRAP_test_Test_hash_Test_argb_arge", trapNames.get(0));
+        assertEquals("TRAP_test_Test_dol_Test1_hash_Test1_argb_arge", trapNames.get(1));
+        assertEquals("TRAP_test_Test_dol_Test2_hash_Test2_argb_arge", trapNames.get(2));
     }
 
     @Test
