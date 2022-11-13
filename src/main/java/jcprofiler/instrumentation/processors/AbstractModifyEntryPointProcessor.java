@@ -46,7 +46,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         final CtField<Byte> insPerfField = addCustomInsField(fieldName, processMethod.getDeclaringType());
 
         // insert custom instruction handler
-        createInsHandler(processMethod, insPerfField);
+        insertCustomInsHandler(processMethod, insPerfField);
     }
 
     private CtField<Byte> addCustomInsField(final String name, final CtType<?> processCls) {
@@ -104,7 +104,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         return insPerfSetStop;
     }
 
-    private void createInsHandler(final CtMethod<Void> processMethod, final CtField<Byte> insPerfField) {
+    private void insertCustomInsHandler(final CtMethod<Void> processMethod, final CtField<Byte> insPerfField) {
         // ${param}
         @SuppressWarnings("unchecked") // the runtime check was done in getProcessMethod
         final CtParameter<APDU> apduParam = (CtParameter<APDU>) processMethod.getParameters().get(0);
