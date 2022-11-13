@@ -112,7 +112,7 @@ public class Main {
             // following check is applicable only for the profiling stage when we're not memory profiling a constructor
             final int profilingStage = Stage.profiling.ordinal();
             if (args.startFrom.ordinal() <= profilingStage && profilingStage <= args.stopAfter.ordinal() &&
-                    ((args.mode != Mode.memory && args.mode != Mode.stats) || args.method != null))
+                    ((args.mode != Mode.memory && args.mode != Mode.stats) || args.executable != null))
                 throw new UnsupportedOperationException(
                         "Either --data-file or --data-regex options must be specified for the profiling stage!");
         }

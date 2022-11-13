@@ -12,7 +12,7 @@ public class InsertCustomTrapProcessor extends AbstractInsertTrapProcessor<CtExe
 
     @Override
     public boolean isToBeProcessed(final CtExecutable<?> executable) {
-        return JCProfilerUtil.getFullSignature(executable).equals(args.method);
+        return JCProfilerUtil.getFullSignature(executable).equals(args.executable);
     }
 
     @Override

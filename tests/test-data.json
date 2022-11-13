@@ -1879,7 +1879,7 @@
                     "subtests": [
                         {
                             "name": "process",
-                            "method": "opencrypto.jcmathlib.ECExample#process",
+                            "executable": "opencrypto.jcmathlib.ECExample#process",
                             "input": "00"
                         }
                     ]
@@ -1892,34 +1892,34 @@
                     "subtests": [
                         {
                             "name": "Integer Storage",
-                            "method": "test_INT_STR",
+                            "executable": "test_INT_STR",
                             "inst": "0x09",
                             "input": "0[0-1][0-9A-F]{8}"
                         },
                         {
                             "name": "Integer Addition",
-                            "method": "test_INT_ADD",
+                            "executable": "test_INT_ADD",
                             "inst": "0x10",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A-F]{8}){2}"
                         },
                         {
                             "name": "Integer Subtraction",
-                            "method": "test_INT_SUB",
+                            "executable": "test_INT_SUB",
                             "inst": "0x11",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A-F]{8}){2}"
                         },
                         {
                             "name": "Integer Multiplication",
-                            "method": "test_INT_MUL",
+                            "executable": "test_INT_MUL",
                             "inst": "0x12",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A][0-9A-F]{7}){2}"
                         },
                         {
                             "name": "Integer Division",
-                            "method": "test_INT_DIV",
+                            "executable": "test_INT_DIV",
                             "inst": "0x13",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A-F]{8}){2}"
@@ -1927,7 +1927,7 @@
 
                         {
                             "name": "Integer Modulo",
-                            "method": "test_INT_MOD",
+                            "executable": "test_INT_MOD",
                             "inst": "0x15",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A-F]{8}){2}"
@@ -1938,34 +1938,34 @@
 
                         {
                             "name": "Bignat Storage",
-                            "method": "test_BN_STR",
+                            "executable": "test_BN_STR",
                             "inst": "0x20",
                             "input": "[8-9A-F][0-9A-F]{63}"
                         },
                         {
                             "name": "Bignat Addition",
-                            "method": "test_BN_ADD",
+                            "executable": "test_BN_ADD",
                             "inst": "0x21",
                             "p1": "0x20",
                             "input": "([4-7][0-9A-F]{63}){2}"
                         },
                         {
                             "name": "Bignat Subtraction",
-                            "method": "test_BN_SUB",
+                            "executable": "test_BN_SUB",
                             "inst": "0x22",
                             "p1": "0x20",
                             "input": "([4-7][0-9A-F]{63}){2}"
                         },
                         {
                             "name": "Bignat Multiplication",
-                            "method": "test_BN_MUL",
+                            "executable": "test_BN_MUL",
                             "inst": "0x23",
                             "p1": "0x20",
                             "input": "([8-9A-F][0-9A-F]{63}){2}"
                         },
                         {
                             "name": "Bignat Exponentiation",
-                            "method": "test_BN_EXP",
+                            "executable": "test_BN_EXP",
                             "inst": "0x24",
                             "p1": "0x08",
                             "p2": "0x19",
@@ -1973,7 +1973,7 @@
                         },
                         {
                             "name": "Bignat Modulo",
-                            "method": "test_BN_MOD",
+                            "executable": "test_BN_MOD",
                             "inst": "0x25",
                             "p1": "0x21",
                             "input": "00[8-9A-F][0-9A-F]{63}[4-7][0-9A-F]{63}"
@@ -1981,7 +1981,7 @@
 
                         {
                             "name": "Bignat School Multiplication",
-                            "method": "test_BN_MUL",
+                            "executable": "test_BN_MUL",
                             "inst": "0x27",
                             "p1": "0x20",
                             "input": "([8-9A-F][0-9A-F]{63}){2}"
@@ -1992,7 +1992,7 @@
 
                         {
                             "name": "Bignat Addition Modulo",
-                            "method": "test_BN_ADD_MOD",
+                            "executable": "test_BN_ADD_MOD",
                             "inst": "0x30",
                             "p1": "0x20",
                             "p2": "0x20",
@@ -2000,7 +2000,7 @@
                         },
                         {
                             "name": "Bignat Subtraction Modulo",
-                            "method": "test_BN_SUB_MOD",
+                            "executable": "test_BN_SUB_MOD",
                             "inst": "0x31",
                             "p1": "0x20",
                             "p2": "0x20",
@@ -2008,7 +2008,7 @@
                         },
                         {
                             "name": "Bignat Multiplication Modulo",
-                            "method": "test_BN_MUL_MOD",
+                            "executable": "test_BN_MUL_MOD",
                             "inst": "0x32",
                             "p1": "0x20",
                             "p2": "0x20",
@@ -2016,7 +2016,7 @@
                         },
                         {
                             "name": "Bignat Exponentiation Modulo",
-                            "method": "test_BN_EXP_MOD",
+                            "executable": "test_BN_EXP_MOD",
                             "inst": "0x33",
                             "p1": "0x20",
                             "p2": "0x01",
@@ -2024,14 +2024,14 @@
                         },
                         {
                             "name": "Bignat Inversion Modulo",
-                            "method": "test_BN_INV_MOD",
+                            "executable": "test_BN_INV_MOD",
                             "inst": "0x34",
                             "p1": "0x30",
                             "input": "[8-9A-F][0-9A-F]{95}F{8}0{7}10{24}F{24}[8-9A-F][0-9A-F]{63}"
                         },
                         {
                             "name": "Bignat Squared Modulo",
-                            "method": "test_BN_POW2_MOD",
+                            "executable": "test_BN_POW2_MOD",
                             "inst": "0x35",
                             "p1": "0x20",
                             "p2": "0x20",
@@ -2043,39 +2043,39 @@
 
                         {
                             "name": "EC Point Generation",
-                            "method": "test_EC_GEN",
+                            "executable": "test_EC_GEN",
                             "inst": "0x40",
                             "input": "00"
                         },
                         {
                             "name": "EC Point Double",
-                            "method": "test_EC_DBL",
+                            "executable": "test_EC_DBL",
                             "inst": "0x41",
                             "input": "046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
                         },
                         {
                             "name": "EC Point Add",
-                            "method": "test_EC_ADD",
+                            "executable": "test_EC_ADD",
                             "inst": "0x42",
                             "inputFile": "inputs/ECPointPairs.txt"
                         },
                         {
                             "name": "EC Point Scalar Multiplication",
-                            "method": "test_EC_MUL",
+                            "executable": "test_EC_MUL",
                             "inst": "0x43",
                             "p1": "0x20",
                             "input": "[8-9A-F][0-9A-F]{63}046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
                         },
                         {
                             "name": "EC Point Negation",
-                            "method": "test_EC_NEG",
+                            "executable": "test_EC_NEG",
                             "inst": "0x44",
                             "p1": "0x41",
                             "inputFile": "inputs/ECPoints.txt"
                         },
                         {
                             "name": "EC Point Comparison",
-                            "method": "test_EC_COMPARE",
+                            "executable": "test_EC_COMPARE",
                             "inst": "0x46",
                             "p1": "0x41",
                             "p2": "0x41",

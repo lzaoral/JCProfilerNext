@@ -232,10 +232,10 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
 
     for subtest in test_desc.get('subtests', []):
         sub_cmd = cmd.copy()
-        test_dir = prepare_workdir(test, dir_prefix + subtest["method"])
+        test_dir = prepare_workdir(test, dir_prefix + subtest['executable'])
 
         sub_cmd += ['--work-dir', str(test_dir)]
-        sub_cmd += ['--method', subtest['method']]
+        sub_cmd += ['--executable', subtest['executable']]
 
         if 'input' in subtest:
             sub_cmd += ['--data-regex', subtest['input']]
@@ -255,7 +255,7 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
 
         if not execute_cmd(sub_cmd, stages):
             FAILURES.append(
-                    f'{test["name"]} {subtest["method"]} in {ARGS.mode} mode')
+                f'{test["name"]} {subtest["executable"]} in {ARGS.mode} mode')
 
 
 def skip_test(test: Dict[str, Any]) -> Optional[str]:

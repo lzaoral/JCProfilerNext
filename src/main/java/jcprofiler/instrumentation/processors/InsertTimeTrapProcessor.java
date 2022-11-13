@@ -13,7 +13,7 @@ public class InsertTimeTrapProcessor extends AbstractInsertTrapProcessor<CtMetho
 
     @Override
     public boolean isToBeProcessed(final CtMethod<?> method) {
-        return JCProfilerUtil.getFullSignature(method).equals(args.method);
+        return JCProfilerUtil.getFullSignature(method).equals(args.executable);
     }
 
     @Override

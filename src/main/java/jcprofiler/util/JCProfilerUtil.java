@@ -265,7 +265,7 @@ public class JCProfilerUtil {
 
     public static CtMethod<?> getProfiledMethod(final CtModel model, final String methodName) {
         if (methodName == null)
-            throw new RuntimeException("--method argument was not provided!");
+            throw new RuntimeException("--executable argument was not provided!");
 
         final String[] split = methodName.split("#");
         final int lastIdx = split.length - 1;
@@ -278,7 +278,7 @@ public class JCProfilerUtil {
 
         if (methods.isEmpty())
             throw new RuntimeException(String.format(
-                    "None of the provided types contain %s method!", methodName));
+                    "None of the provided types contain %s executable!", methodName));
 
         final List<String> containingClassNames = methods.stream().map(CtMethod::getDeclaringType)
                 .map(CtType::getQualifiedName).distinct().sorted().collect(Collectors.toList());
@@ -289,22 +289,22 @@ public class JCProfilerUtil {
         // every method found is not overloaded and is in a distinct class
         if (containingClassNames.size() > 1 && methodSignatures.size() == 1)
             throw new RuntimeException(String.format(
-                    "More of the provided types contain the %s method!%n" +
-                    "Please, specify the --method parameter in the 'type#%s' format where type is one of:%n%s",
+                    "More of the provided types contain the %s executable!%n" +
+                    "Please, specify the --executable parameter in the 'type#%s' format where type is one of:%n%s",
                     methodName, methodName, containingClassNames));
 
         // overloaded methods are in a single class
         if (containingClassNames.size() == 1 && methodSignatures.size() > 1)
             throw new RuntimeException(String.format(
-                    "More %s methods with distinct signatures found in the %s type!%n" +
-                    "Please, add the corresponding signature to the --method parameter%nFound: %s",
+                    "More %s executables with distinct signatures found in the %s type!%n" +
+                    "Please, add the corresponding signature to the --executable parameter%nFound: %s",
                     split[split.length - 1], containingClassNames.get(0), methodSignatures));
 
         // overloaded methods in more classes
         if (containingClassNames.size() > 1 && methodSignatures.size() > 1)
             throw new RuntimeException(String.format(
-                    "More %s methods with distinct signatures found in more types!%n" +
-                    "Please, use one of the following values as an argument to the --method parameter:%n%s",
+                    "More %s executables with distinct signatures found in more types!%n" +
+                    "Please, use one of the following values as an argument to the --executable parameter:%n%s",
                     methodName, methods.stream().map(JCProfilerUtil::getFullSignature).sorted()
                             .collect(Collectors.toList())));
 
@@ -312,7 +312,7 @@ public class JCProfilerUtil {
         final CtMethod<?> method = methods.get(0);
         if (method.getBody() == null)
             throw new RuntimeException(String.format(
-                    "Found the %s method but it has no body! Found in type %s.",
+                    "Found the %s executable but it has no body! Found in type %s.",
                     methodName, containingClassNames.get(0)));
 
         return method;

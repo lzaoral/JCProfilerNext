@@ -107,7 +107,7 @@ public class Instrumenter {
     }
 
     private void checkArguments(final CtModel model) {
-        log.info("Validating '--entry-point' and '--method' arguments.");
+        log.info("Validating '--entry-point' and '--executable' arguments.");
 
         // validate args.entryPoint
         JCProfilerUtil.getEntryPoint(model, args.entryPoint);
@@ -117,15 +117,15 @@ public class Instrumenter {
         switch (args.mode) {
             case custom:
             case memory:
-                executable = JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method);
+                executable = JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.executable);
                 break;
             case time:
-                executable = JCProfilerUtil.getProfiledMethod(model, args.method);
+                executable = JCProfilerUtil.getProfiledMethod(model, args.executable);
                 break;
             default:
                 throw new RuntimeException("Unreachable statement reached!");
         }
-        args.method = JCProfilerUtil.getFullSignature(executable);
+        args.executable = JCProfilerUtil.getFullSignature(executable);
     }
 
     private void addMissingClasses(final Launcher spoon) {

@@ -58,10 +58,10 @@ public class Args {
                description = "Use jCardSim simulator instead of a real card")
     public boolean useSimulator = false;
 
-    @Parameter(names = {"--method"},
+    @Parameter(names = {"--executable"},
                description = "Method to profile or leave unset to instrument constructor " +
                              "(constructors are custom and memory profiling only)")
-    public String method;
+    public String executable;
 
     @Parameter(names = {"--entry-point"},
                description = "Qualified name of a class to be used as an entry point (useful when there are more)")

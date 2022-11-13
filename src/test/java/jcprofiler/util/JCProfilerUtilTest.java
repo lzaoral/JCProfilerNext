@@ -23,7 +23,7 @@ class JCProfilerUtilTest {
         Exception e = assertThrows(RuntimeException.class,
                 () -> JCProfilerUtil.getProfiledMethod(model, null));
 
-        String expected = "--method argument was not provided!";
+        String expected = "--executable argument was not provided!";
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
@@ -48,7 +48,7 @@ class JCProfilerUtilTest {
         Exception e = assertThrows(RuntimeException.class,
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
-        String expected = "None of the provided types contain foo method!";
+        String expected = "None of the provided types contain foo executable!";
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
@@ -64,7 +64,7 @@ class JCProfilerUtilTest {
         Exception e = assertThrows(RuntimeException.class,
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
-        String expected = "Found the foo method but it has no body! Found in type test.Test.";
+        String expected = "Found the foo executable but it has no body! Found in type test.Test.";
         String actual = e.getMessage();
 
         assertEquals(expected, actual);
@@ -81,8 +81,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
         String expected = String.format(
-                "More of the provided types contain the foo method!%n" +
-                "Please, specify the --method parameter in the 'type#foo' format where type is one of:%n" +
+                "More of the provided types contain the foo executable!%n" +
+                "Please, specify the --executable parameter in the 'type#foo' format where type is one of:%n" +
                 "[test.Test1, test.Test2]");
         String actual = e.getMessage();
 
@@ -108,8 +108,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo(java.lang.Integer)"));
 
         String expected = String.format(
-                "More of the provided types contain the foo(java.lang.Integer) method!%n" +
-                "Please, specify the --method parameter in the 'type#foo(java.lang.Integer)' format where type " +
+                "More of the provided types contain the foo(java.lang.Integer) executable!%n" +
+                "Please, specify the --executable parameter in the 'type#foo(java.lang.Integer)' format where type " +
                 "is one of:%n[test.Test1, test.Test2]");
         String actual = e.getMessage();
 
@@ -133,8 +133,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
         String expected = String.format(
-                "More foo methods with distinct signatures found in the test.Test type!%n" +
-                "Please, add the corresponding signature to the --method parameter%n" +
+                "More foo executables with distinct signatures found in the test.Test type!%n" +
+                "Please, add the corresponding signature to the --executable parameter%n" +
                 "Found: [foo(double), foo(int)]");
         String actual = e.getMessage();
 
@@ -158,8 +158,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
         String expected = String.format(
-                "More foo methods with distinct signatures found in the test.Test type!%n" +
-                "Please, add the corresponding signature to the --method parameter%n" +
+                "More foo executables with distinct signatures found in the test.Test type!%n" +
+                "Please, add the corresponding signature to the --executable parameter%n" +
                 "Found: [foo(java.lang.Double), foo(java.lang.Integer)]");
         String actual = e.getMessage();
 
@@ -186,8 +186,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
         String expected = String.format(
-                "More foo methods with distinct signatures found in more types!%n" +
-                "Please, use one of the following values as an argument to the --method parameter:%n" +
+                "More foo executables with distinct signatures found in more types!%n" +
+                "Please, use one of the following values as an argument to the --executable parameter:%n" +
                 "[test.Test1#foo(double), test.Test1#foo(int)," +
                 " test.Test2#foo(double), test.Test2#foo(int)]");
         String actual = e.getMessage();
@@ -199,8 +199,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo(double)"));
 
         expected = String.format(
-                "More of the provided types contain the foo(double) method!%n" +
-                "Please, specify the --method parameter in the 'type#foo(double)' format where type is one of:%n" +
+                "More of the provided types contain the foo(double) executable!%n" +
+                "Please, specify the --executable parameter in the 'type#foo(double)' format where type is one of:%n" +
                 "[test.Test1, test.Test2]");
         actual = e.getMessage();
 
@@ -211,8 +211,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "test.Test1#foo"));
 
         expected = String.format(
-                "More foo methods with distinct signatures found in the test.Test1 type!%n" +
-                "Please, add the corresponding signature to the --method parameter%n" +
+                "More foo executables with distinct signatures found in the test.Test1 type!%n" +
+                "Please, add the corresponding signature to the --executable parameter%n" +
                 "Found: [foo(double), foo(int)]");
         actual = e.getMessage();
 
@@ -248,8 +248,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
         String expected = String.format(
-                "More foo methods with distinct signatures found in more types!%n" +
-                "Please, use one of the following values as an argument to the --method parameter:%n" +
+                "More foo executables with distinct signatures found in more types!%n" +
+                "Please, use one of the following values as an argument to the --executable parameter:%n" +
                 "[test.Test1#foo(java.lang.Double), test.Test1#foo(java.lang.Integer)," +
                 " test.Test2#foo(java.lang.Double), test.Test2#foo(java.lang.Integer)]");
         String actual = e.getMessage();
@@ -261,9 +261,9 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo(java.lang.Double)"));
 
         expected = String.format(
-                "More of the provided types contain the foo(java.lang.Double) method!%n" +
-                "Please, specify the --method parameter in the 'type#foo(java.lang.Double)' format where type is one of:%n" +
-                "[test.Test1, test.Test2]");
+                "More of the provided types contain the foo(java.lang.Double) executable!%n" +
+                "Please, specify the --executable parameter in the 'type#foo(java.lang.Double)' " +
+                "format where type is one of:%n[test.Test1, test.Test2]");
         actual = e.getMessage();
 
         assertEquals(expected, actual);
@@ -273,8 +273,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "test.Test1#foo"));
 
         expected = String.format(
-                "More foo methods with distinct signatures found in the test.Test1 type!%n" +
-                "Please, add the corresponding signature to the --method parameter%n" +
+                "More foo executables with distinct signatures found in the test.Test1 type!%n" +
+                "Please, add the corresponding signature to the --executable parameter%n" +
                 "Found: [foo(java.lang.Double), foo(java.lang.Integer)]");
         actual = e.getMessage();
 
@@ -309,8 +309,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
         String expected = String.format(
-                "More of the provided types contain the foo method!%n" +
-                "Please, specify the --method parameter in the 'type#foo' format where type is one of:%n" +
+                "More of the provided types contain the foo executable!%n" +
+                "Please, specify the --executable parameter in the 'type#foo' format where type is one of:%n" +
                 "[test.Test1, test.Test1$Test2]");
         String actual = e.getMessage();
 
@@ -336,8 +336,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo(java.lang.Integer)"));
 
         String expected = String.format(
-                "More of the provided types contain the foo(java.lang.Integer) method!%n" +
-                "Please, specify the --method parameter in the 'type#foo(java.lang.Integer)' format where type " +
+                "More of the provided types contain the foo(java.lang.Integer) executable!%n" +
+                "Please, specify the --executable parameter in the 'type#foo(java.lang.Integer)' format where type " +
                 "is one of:%n[test.Test1, test.Test1$Test2]");
         String actual = e.getMessage();
 
@@ -363,8 +363,8 @@ class JCProfilerUtilTest {
                 () -> JCProfilerUtil.getProfiledMethod(model, "foo"));
 
         String expected = String.format(
-                "More foo methods with distinct signatures found in the test.Test type!%n" +
-                "Please, add the corresponding signature to the --method parameter%n" +
+                "More foo executables with distinct signatures found in the test.Test type!%n" +
+                "Please, add the corresponding signature to the --executable parameter%n" +
                 "Found: [foo(test.Test$Test1), foo(test.Test$Test2)]");
         String actual = e.getMessage();
 

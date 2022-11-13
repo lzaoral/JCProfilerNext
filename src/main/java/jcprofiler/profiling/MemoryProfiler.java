@@ -36,7 +36,7 @@ public class MemoryProfiler extends AbstractProfiler {
     private static final Logger log = LoggerFactory.getLogger(MemoryProfiler.class);
 
     public MemoryProfiler(final Args args, final CardManager cardManager, final CtModel model) {
-        super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method),
+        super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.executable),
               "INS_PERF_GETMEM");
 
         valueBytes = getValueBytes();

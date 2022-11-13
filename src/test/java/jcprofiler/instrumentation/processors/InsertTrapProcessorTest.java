@@ -28,7 +28,7 @@ class InsertTrapProcessorTest {
         AbstractCtElementAssert <?> assertThat = assertThat(input);
         for (String method : methods) {
             final Args args = new Args();
-            args.method = method;
+            args.executable = method;
             assertThat = assertThat.withProcessor(new InsertTimeTrapProcessor(args));
         }
         assertThat.isEqualTo(expected);
