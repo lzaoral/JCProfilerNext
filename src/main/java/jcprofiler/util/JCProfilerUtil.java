@@ -168,10 +168,14 @@ public class JCProfilerUtil {
      * @param model      Spoon model
      * @param entryPoint name of the entry point class. If empty, try to detect entry point instead.
      * @param field      name of the field
-     * @return           true if the entry point or one of its predecessors contain field with given name,
-     *                   false otherwise
+     * @return           true if the name is null or entry point or one of its predecessors contain
+     *                   field with given name, false otherwise
      */
     public static boolean entryPointHasField(final CtModel model, final String entryPoint, final String field) {
+        // given mode might not require a special instruction
+        if (field == null)
+            return true;
+
         CtTypeReference<?> classRef = getEntryPoint(model, entryPoint).getReference();
         while (classRef != null) {
             if (classRef.getDeclaredField(field) != null)

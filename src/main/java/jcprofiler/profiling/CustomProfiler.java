@@ -16,7 +16,7 @@ import java.io.IOException;
 public class CustomProfiler extends AbstractProfiler {
     public CustomProfiler(final Args args, final CardManager cardManager, final CtModel model) {
         super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.method),
-              "INS_PERF_CUSTOM");
+              /* customInsField */ null);
     }
 
     @Override
