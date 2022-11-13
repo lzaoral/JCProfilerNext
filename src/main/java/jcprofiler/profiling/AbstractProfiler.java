@@ -8,6 +8,7 @@ import cz.muni.fi.crocs.rcard.client.Util;
 import jcprofiler.args.Args;
 import jcprofiler.util.enums.InputDivision;
 import jcprofiler.util.JCProfilerUtil;
+import jcprofiler.util.enums.Mode;
 
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -255,6 +256,9 @@ public abstract class AbstractProfiler {
             dataSource = args.dataRegex != null ? "regex:" + args.dataRegex
                                                 : "file:" + args.dataFile;
         }
+
+        if (args.mode == Mode.custom)
+            elapsedTime = "TODO";
 
         if (inputs.isEmpty())
             throw new RuntimeException("The list of input values is empty!");
