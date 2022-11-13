@@ -18,13 +18,27 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * General class for modification of entry point classes.
+ */
 public abstract class AbstractModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass<?>> {
     private static final Logger log = LoggerFactory.getLogger(AbstractModifyEntryPointProcessor.class);
 
+    /**
+     * Constructs the {@link AbstractModifyEntryPointProcessor} class.
+     *
+     * @param args object with commandline arguments
+     */
     protected AbstractModifyEntryPointProcessor(final Args args) {
         super(args);
     }
 
+    /**
+     * Decides whether the input {@link CtClass} should be processed.
+     *
+     * @param  cls the candidate {@link CtClass}
+     * @return     true if yes, otherwise false
+     */
     @Override
     public boolean isToBeProcessed(final CtClass<?> cls) {
         // isEntryPoint && (!entryPointArg.isEmpty() => cls.SimpleName == entryPointArg)
@@ -32,9 +46,16 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                 (args.entryPoint.isEmpty() || cls.getQualifiedName().equals(args.entryPoint));
     }
 
+    /**
+     * Inserts a custom instruction and its handler into a given class.
+     *
+     * @param cls       class to be processed.
+     * @param fieldName custom instruction field name
+     */
     protected void process(final CtClass<?> cls, final String fieldName) {
         log.info("Instrumenting entry point class {}.", cls.getQualifiedName());
 
+        // get process(APDU) method
         final CtMethod<Void> processMethod = JCProfilerUtil.getProcessMethod(cls);
         if (processMethod == null)
             throw new RuntimeException(String.format(
@@ -49,6 +70,18 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         insertCustomInsHandler(processMethod, insPerfField);
     }
 
+    /**
+     * Inserts a new custom instruction field into the class containing
+     * the process method, or does nothing if it already exists.
+     *
+     * @param  name             name of the custom instruction field
+     * @param  processCls       class containing the process method
+     *
+     * @return                  new field instance with given name, or an existing
+     *                          instance if it's compatible
+     * @throws RuntimeException if the class already contains a field with such name,
+     *                          but with incompatible initializer, modifier or type.
+     */
     private CtField<Byte> addCustomInsField(final String name, final CtType<?> processCls) {
         // private static final byte ${name} = (byte) ${JCProfilerUtil.INS_PERF_HANDLER}
         final CtTypeReference<Byte> byteRef = getFactory().Type().bytePrimitiveType();
@@ -86,7 +119,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
 
         // create new ${name} field
         final CtField<Byte> insPerfSetStop = getFactory().createCtField(
-                name, byteRef, "", ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC);
+                name, byteRef, /* init */ null, ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC);
 
         // create and set the initializer
         final CtLiteral<Integer> initializer = getFactory().createLiteral(Byte.toUnsignedInt(JCProfilerUtil.INS_PERF_HANDLER));
@@ -104,12 +137,23 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
         return insPerfSetStop;
     }
 
+    /**
+     * Inserts a new custom instruction handler at the beginning of the process method,
+     * or does nothing if it already exists.
+     *
+     * @param  processMethod    instance of the process method
+     * @param  insPerfField     instance of the custom instruction field
+     *
+     * @throws RuntimeException if the process method already contains a custom
+     *                          instruction handler, but with a different body
+     * @throws RuntimeException if the handler does not end with a return statement
+     */
     private void insertCustomInsHandler(final CtMethod<Void> processMethod, final CtField<Byte> insPerfField) {
         // ${param}
         @SuppressWarnings("unchecked") // the runtime check was done in getProcessMethod
         final CtParameter<APDU> apduParam = (CtParameter<APDU>) processMethod.getParameters().get(0);
         final CtVariableRead<APDU> apduParamRead = (CtVariableRead<APDU>) getFactory()
-                .createVariableRead(apduParam.getReference(), false);
+                .createVariableRead(apduParam.getReference(), /* static */ false);
 
         // ${param}.getBuffer()[ISO7816.OFFSET_INS]
         CtArrayRead<Byte> apduBufferRead;
@@ -188,5 +232,11 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                 fieldName, JCProfilerUtil.getFullSignature(processMethod));
     }
 
+    /**
+     * Creates a body of the custom instruction handler.
+     *
+     * @param  apdu process method argument {@link APDU}
+     * @return      code block with the custom instruction handler body
+     */
     protected abstract CtBlock<Void> createInsHandlerBody(final CtVariableRead<APDU> apdu);
 }
