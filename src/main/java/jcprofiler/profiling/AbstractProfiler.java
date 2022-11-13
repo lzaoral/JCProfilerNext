@@ -57,7 +57,7 @@ public abstract class AbstractProfiler {
     private static final Logger log = LoggerFactory.getLogger(AbstractProfiler.class);
 
     protected AbstractProfiler(final Args args, final CardManager cardManager, final CtExecutable<?> executable,
-                               final String handlerInsField) {
+                               final String customInsField) {
         final CtModel model = executable.getFactory().getModel();
         PM = JCProfilerUtil.getToplevelType(model, "PM");
         PMC = JCProfilerUtil.getToplevelType(model, "PMC");
@@ -65,10 +65,10 @@ public abstract class AbstractProfiler {
         this.args = args;
         this.cardManager = cardManager;
 
-        if (!JCProfilerUtil.entryPointHasField(executable.getFactory().getModel(), args.entryPoint, handlerInsField))
+        if (!JCProfilerUtil.entryPointHasField(executable.getFactory().getModel(), args.entryPoint, customInsField))
             throw new RuntimeException(String.format(
                     "Profiling in %s mode but entry point class does not contain %s field!",
-                    args.mode, handlerInsField));
+                    args.mode, customInsField));
 
         profiledExecutable = executable;
         profiledExecutableSignature = JCProfilerUtil.getFullSignature(executable);
