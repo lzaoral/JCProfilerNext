@@ -249,7 +249,7 @@ public abstract class AbstractProfiler {
 
         String apduHeader, dataSource;
         if (profiledExecutable instanceof CtConstructor) {
-            apduHeader = dataSource = "install";
+            apduHeader = elapsedTime = dataSource = "install";
         } else {
             apduHeader = Util.bytesToHex(new byte[]{args.cla, args.inst, args.p1, args.p2});
             dataSource = args.dataRegex != null ? "regex:" + args.dataRegex

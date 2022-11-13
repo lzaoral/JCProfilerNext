@@ -66,7 +66,7 @@ $line
                         #if( $inputType == "file" )<a href="$inputValue" target="_blank">$inputValue</a>#else$inputValue#end<br>
                         <b>Input division:</b> $inputDivision<br>
                     #end
-                    <b>Elapsed time:</b> $elapsedTime<br>
+                    <b>Elapsed time:</b> #if( $elapsedTime == "install" )measured during installation#else$elapsedTime#end<br>
                     <b>Source measurements:</b> <a href="measurements.csv" target="_blank">measurements.csv</a>
                 </div>
                 <div class="trapSwitch">
