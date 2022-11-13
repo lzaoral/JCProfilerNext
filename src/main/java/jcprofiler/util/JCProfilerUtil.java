@@ -319,13 +319,20 @@ public class JCProfilerUtil {
     }
 
     public static String getFullSignature(final CtExecutable<?> executable) {
-        final String signature = executable.getSignature();
-        if (executable instanceof CtConstructor)
-            return signature;
+        if (!(executable instanceof CtTypeMember))
+            return executable.getSignature();
 
-        return (executable instanceof CtTypeMember)
-                ? ((CtTypeMember) executable).getDeclaringType().getQualifiedName() + "#" + signature
-                : signature;
+        final CtType<?> parent = ((CtTypeMember) executable).getDeclaringType();
+        String signature = executable.getSignature();
+        if (executable instanceof CtConstructor) {
+            // Spoon appends a fully qualified outer class or package name to the constructor signature.
+            final String prefix = parent.isTopLevel()
+                                  ? parent.getPackage().getQualifiedName()
+                                  : parent.getDeclaringType().getQualifiedName();
+            signature = signature.substring(prefix.length() + /*. or $*/ 1);
+        }
+
+        return parent.getQualifiedName() + "#" + signature;
     }
 
     // trap mangling
