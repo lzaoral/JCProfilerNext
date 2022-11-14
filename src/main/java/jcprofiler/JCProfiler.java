@@ -18,12 +18,20 @@ import org.slf4j.LoggerFactory;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtClass;
 
+/**
+ * JCProfilerNext's main class
+ */
 public class JCProfiler {
     private static final Logger log = LoggerFactory.getLogger(JCProfiler.class);
 
     // static class!
     private JCProfiler() {}
 
+    /**
+     * Executes JCProfilerNext with given commandline arguments.
+     *
+     * @param args object with parsed commandline arguments
+     */
     public static void run(final Args args) {
         if (args.mode == Mode.stats) {
             log.info("Collecting API usage statistics.");
