@@ -32,6 +32,9 @@ public class InsertMemoryTrapProcessor extends AbstractInsertTrapProcessor<CtExe
         arrayLengthLiteral.addTypeCast(shortRef);
 
         final CtField<?> arrayLengthField = PM.getField("ARRAY_LENGTH");
+
+        if (arrayLengthField == null)
+            throw new RuntimeException("PM does not contain an ARRAY_LENGTH field.");
         if (!arrayLengthField.getType().equals(shortRef))
             throw new RuntimeException(
                     "PM.ARRAY_LENGTH field is of type " + arrayLengthField.getType() + "! Expected short.");
