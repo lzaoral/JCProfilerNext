@@ -485,7 +485,7 @@ public class JCProfilerUtil {
     }
 
     public static int getHexStringBitCount(final String str) {
-        return new BigInteger(str, 16).bitCount();
+        return new BigInteger(/* positive */ '+' + str, 16).bitCount();
     }
 
     // Spoon helper methods
