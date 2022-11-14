@@ -1,7 +1,6 @@
 package jcprofiler.visualisation;
 
 import jcprofiler.args.Args;
-import jcprofiler.util.JCProfilerUtil;
 import jcprofiler.visualisation.processors.AbstractInsertMeasurementsProcessor;
 
 import jcprofiler.visualisation.processors.InsertTimeMeasurementsProcessor;
@@ -138,6 +137,6 @@ public class TimeVisualiser extends AbstractVisualiser {
     public void prepareVelocityContext(final VelocityContext context) {
         context.put("filteredMeasurements", filteredMeasurements);
         context.put("roundCount", measurements.values().iterator().next().size());
-        context.put("measureUnit", JCProfilerUtil.getTimeUnitSymbol(args.timeUnit));
+        context.put("measureUnit", args.timeUnit.toString());
     }
 }

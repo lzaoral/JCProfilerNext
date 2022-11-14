@@ -4,7 +4,6 @@ import javacard.framework.ISO7816;
 
 import jcprofiler.args.Args;
 import jcprofiler.util.enums.Stage;
-import jcprofiler.util.enums.TimeUnit;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVFormat.Builder;
@@ -442,20 +441,6 @@ public class JCProfilerUtil {
                 .build();
     }
 
-    public static String getTimeUnitSymbol(final TimeUnit unit) {
-        switch (unit) {
-            case nano:
-                return "ns";
-            case micro:
-                return "μs";
-            case milli:
-                return "ms";
-            case sec:
-                return "s";
-            default:
-                throw new RuntimeException("Unreachable statement reached!");
-        }
-    }
 
     public static boolean isHexString(final String str) {
         return hexString.matcher(str).matches();

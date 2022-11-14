@@ -1,7 +1,6 @@
 package jcprofiler.visualisation.processors;
 
 import jcprofiler.args.Args;
-import jcprofiler.util.JCProfilerUtil;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -22,7 +21,7 @@ public class InsertTimeMeasurementsProcessor extends AbstractInsertMeasurementsP
     protected String getCommentString(String fieldName) {
         final List<Long> values = measurements.get(fieldName);
         final DescriptiveStatistics statistics = statisticsMap.get(fieldName);
-        final String unitSymbol = JCProfilerUtil.getTimeUnitSymbol(args.timeUnit);
+        final String unitSymbol = args.timeUnit.toString();
         final long unreachableCount = values.stream().filter(Objects::isNull).count();
 
         return String.format(
