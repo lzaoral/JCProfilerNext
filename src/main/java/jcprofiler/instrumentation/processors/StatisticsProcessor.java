@@ -33,7 +33,8 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
 
     @Override
     public boolean isToBeProcessed(final CtReference ref) {
-        return ref instanceof CtTypeReference || ref instanceof CtFieldReference || ref instanceof CtExecutableReference;
+        return ref instanceof CtTypeReference || ref instanceof CtFieldReference ||
+               ref instanceof CtExecutableReference;
     }
 
     @Override

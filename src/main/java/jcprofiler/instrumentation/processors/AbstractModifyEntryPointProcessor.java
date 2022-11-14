@@ -121,7 +121,8 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                 name, byteRef, /* init */ null, ModifierKind.PUBLIC, ModifierKind.FINAL, ModifierKind.STATIC);
 
         // create and set the initializer
-        final CtLiteral<Integer> initializer = getFactory().createLiteral(Byte.toUnsignedInt(JCProfilerUtil.INS_PERF_HANDLER));
+        final CtLiteral<Integer> initializer = getFactory().createLiteral(
+                Byte.toUnsignedInt(JCProfilerUtil.INS_PERF_HANDLER));
         initializer.setBase(LiteralBase.HEXADECIMAL);
         initializer.addTypeCast(byteRef);
 
@@ -190,7 +191,8 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                     /* implicit */ processMethodDeclTypeRed.equals(insPerfSetStopDeclTypeRef)));
             insPerfSetStopFieldRead.setVariable(getFactory().Field().createReference(insPerfField));
 
-            insEqCond = getFactory().createBinaryOperator(apduBufferRead, insPerfSetStopFieldRead, BinaryOperatorKind.EQ);
+            insEqCond = getFactory().createBinaryOperator(
+                    apduBufferRead, insPerfSetStopFieldRead, BinaryOperatorKind.EQ);
             insEqCond.setType(getFactory().Type().booleanPrimitiveType());
         }
 

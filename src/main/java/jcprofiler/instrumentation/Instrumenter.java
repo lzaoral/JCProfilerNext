@@ -102,7 +102,8 @@ public class Instrumenter {
                 throw e;
 
             throw new RuntimeException(
-                    "Import resolution failed! Use the --jar option to add the corresponding JAR file with imports.", e);
+                    "Import resolution failed! Use the --jar option to add the corresponding JAR file with imports.",
+                    e);
         }
     }
 
@@ -181,7 +182,8 @@ public class Instrumenter {
                         actualFilename = args.mode + "/" + className;
 
                         // support newer JCSystem.getAvailableMemory overloads
-                        final boolean hasNewerAPI = args.jcSDK.getVersion().ordinal() >= JavaCardSDK.Version.V304.ordinal();
+                        final boolean hasNewerAPI =
+                                args.jcSDK.getVersion().ordinal() >= JavaCardSDK.Version.V304.ordinal();
                         if (hasNewerAPI && args.useSimulator) {
                             log.warn("jCardSim does not implement JCSystem.getAvailableMemory(short[],short,byte).");
                             log.info("Falling back to JCSystem.getAvailableMemory(short).");
