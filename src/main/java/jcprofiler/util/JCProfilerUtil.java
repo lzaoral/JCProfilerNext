@@ -203,32 +203,52 @@ public class JCProfilerUtil {
         return cls;
     }
 
-    // profiled constructor/method detection
-    public static CtExecutable<?> getProfiledExecutable(final CtModel model, final String fullSignature) {
-        final List<CtExecutable<?>> executables = model.getElements(
-                (CtExecutable<?> e) -> JCProfilerUtil.getFullSignature(e).equals(fullSignature));
+    // profiled executable detection
 
-        if (executables.isEmpty())
-            throw new RuntimeException(
-                    "Spoon model does not contain an executable with " + fullSignature + " signature!");
-
-        if (executables.size() > 1)
-            throw new RuntimeException(String.format(
-                    "Spoon model contains more executables with %s signature! %s", fullSignature,
-                    executables.stream().map(JCProfilerUtil::getFullSignature).collect(Collectors.toList())));
-
-        return executables.get(0);
-    }
-
+    /**
+     * Returns a {@link CtExecutable} instance according to the parameters.
+     *
+     * @param  model          Spoon model
+     * @param  entryPoint     name of the entry point class, if empty, try to detect entry point instead.
+     * @param  executableName name of the selected executable, if empty, selected the entry point class
+     *                        constructor.
+     * @return                selected {@link CtExecutable} instance
+     */
     public static CtExecutable<?> getProfiledExecutable(final CtModel model, final String entryPoint,
                                                         final String executableName) {
-        final CtConstructor<?> constructor = getProfiledConstructor(model, entryPoint, executableName);
-        return constructor != null ? constructor
-                                   : getProfiledMethod(model, executableName);
+        return executableName != null
+                ? getProfiledExecutable(model, executableName)
+                : getEntryPointConstructor(model, entryPoint);
     }
 
-    public static CtConstructor<?> getProfiledConstructor(final CtModel model, final String entryPoint,
-                                                          final String constructorName) {
+    /**
+     * Returns a {@link CtMethod} instance according to the parameters.
+     *
+     * @param  model      Spoon model
+     * @param  methodName name of the selected method
+     * @return            selected {@link CtMethod} instance
+     *
+     * @throws UnsupportedOperationException if the found executable is not a method, but e.g. a constructor.
+     */
+    public static CtMethod<?> getProfiledMethod(final CtModel model, final String methodName) {
+        final CtExecutable<?> executable = getProfiledExecutable(model, methodName);
+        if (!(executable instanceof CtMethod))
+            throw new UnsupportedOperationException(
+                    "Executable " + getFullSignature(executable) + " is not a method!");
+
+        return (CtMethod<?>) executable;
+    }
+
+    /**
+     * Returns a {@link CtConstructor} instance of the entry point class according to the parameters.
+     *
+     * @param  model      Spoon model
+     * @param  entryPoint name of the entry point class, if empty, try to detect entry point instead.
+     * @return            selected {@link CtConstructor} instance
+     *
+     * @throws RuntimeException if the constructor could not be found and more than one matching were found.
+     */
+    public static CtConstructor<?> getEntryPointConstructor(final CtModel model, final String entryPoint) {
         final CtClass<?> entryPointClass = getEntryPoint(model, entryPoint);
         final CtMethod<?> installMethod = getInstallMethod(entryPointClass);
 
@@ -248,73 +268,88 @@ public class JCProfilerUtil {
 
         if (constructorCalls.size() > 1)
             throw new RuntimeException(String.format(
-                    "The %s method calls more than one constructor of the %s type: %s",
+                    "The %s method calls more than one constructor of the %s type: %s%n" +
+                    "Specify it using the --executable option.",
                     getFullSignature(installMethod), entryPointClass.getQualifiedName(), constructorCalls.stream()
                             .map(CtConstructor::getSignature).collect(Collectors.toList())));
 
-        final CtConstructor<?> constructor = constructorCalls.get(0);
-
-        // TODO: Not the nicest piece of code.  If args.method is set and does not equal to the constructor signature,
-        // assume that we're profiling a method instead.
-        if (constructorName != null && !constructor.getSignature().equals(constructorName))
-            return null;
-
-        return constructor;
+        return constructorCalls.get(0);
     }
 
-    public static CtMethod<?> getProfiledMethod(final CtModel model, final String methodName) {
-        if (methodName == null)
+    /**
+     * Returns a {@link CtExecutable} instance according to the parameters.
+     *
+     * @param  model          Spoon model
+     * @param  executableName name of the selected executable
+     * @return                selected {@link CtExecutable} instance
+     *
+     * @throws RuntimeException if the executable could not be found and more than one matching were found.
+     */
+    public static CtExecutable<?> getProfiledExecutable(final CtModel model, final String executableName) {
+        if (executableName == null)
             throw new RuntimeException("--executable argument was not provided!");
 
-        final String[] split = methodName.split("#");
+        final String[] split = executableName.split("#");
         final int lastIdx = split.length - 1;
 
-        final List<CtMethod<?>> methods = model.getElements((CtMethod<?> m) -> {
-            boolean sameSignature = split[lastIdx].contains("(") ? m.getSignature().equals(split[lastIdx])
-                                                                 : m.getSimpleName().equals(split[lastIdx]);
-            return sameSignature && (split.length == 1 || m.getDeclaringType().getQualifiedName().equals(split[0]));
-        });
+        final List<CtExecutable<?>> executables = model
+                .filterChildren(e -> e instanceof CtMethod || e instanceof CtConstructor)
+                .filterChildren((CtExecutable<?> e) -> {
+            final CtType<?> parent = ((CtTypeMember) e).getDeclaringType();
+            final String simpleSignature = e instanceof CtConstructor
+                    ? e.getSignature().replace(parent.getPackage().getQualifiedName() + ".", "")
+                    : e.getSignature();
+            final String simpleName = e instanceof CtConstructor
+                    ? parent.getSimpleName()
+                    : e.getSimpleName();
 
-        if (methods.isEmpty())
+            boolean sameSignature = split[lastIdx].contains("(") ? simpleSignature.equals(split[lastIdx])
+                                                                 : simpleName.equals(split[lastIdx]);
+            return sameSignature && (split.length == 1 || parent.getQualifiedName().equals(split[0]));
+        }).list();
+
+        if (executables.isEmpty())
             throw new RuntimeException(String.format(
-                    "None of the provided types contain %s executable!", methodName));
+                    "None of the provided types contain %s executable!", executableName));
 
-        final List<String> containingClassNames = methods.stream().map(CtMethod::getDeclaringType)
+        final List<String> containingClassNames = executables.stream()
+                .map(e -> ((CtTypeMember) e).getDeclaringType())
                 .map(CtType::getQualifiedName).distinct().sorted().collect(Collectors.toList());
 
-        final List<String> methodSignatures = methods.stream().map(CtMethod::getSignature)
+        final List<String> executableSignature = executables.stream()
+                .map(CtExecutable::getSignature)
                 .distinct().sorted().collect(Collectors.toList());
 
         // every method found is not overloaded and is in a distinct class
-        if (containingClassNames.size() > 1 && methodSignatures.size() == 1)
+        if (containingClassNames.size() > 1 && executableSignature.size() == 1)
             throw new RuntimeException(String.format(
                     "More of the provided types contain the %s executable!%n" +
                     "Please, specify the --executable parameter in the 'type#%s' format where type is one of:%n%s",
-                    methodName, methodName, containingClassNames));
+                    executableName, executableName, containingClassNames));
 
         // overloaded methods are in a single class
-        if (containingClassNames.size() == 1 && methodSignatures.size() > 1)
+        if (containingClassNames.size() == 1 && executableSignature.size() > 1)
             throw new RuntimeException(String.format(
                     "More %s executables with distinct signatures found in the %s type!%n" +
                     "Please, add the corresponding signature to the --executable parameter%nFound: %s",
-                    split[split.length - 1], containingClassNames.get(0), methodSignatures));
+                    split[split.length - 1], containingClassNames.get(0), executableSignature));
 
         // overloaded methods in more classes
-        if (containingClassNames.size() > 1 && methodSignatures.size() > 1)
+        if (containingClassNames.size() > 1 && executableSignature.size() > 1)
             throw new RuntimeException(String.format(
                     "More %s executables with distinct signatures found in more types!%n" +
                     "Please, use one of the following values as an argument to the --executable parameter:%n%s",
-                    methodName, methods.stream().map(JCProfilerUtil::getFullSignature).sorted()
+                    executableName, executables.stream().map(JCProfilerUtil::getFullSignature).sorted()
                             .collect(Collectors.toList())));
 
         // only a single method with such name exists
-        final CtMethod<?> method = methods.get(0);
-        if (method.getBody() == null)
+        final CtExecutable<?> executable = executables.get(0);
+        if (executable.getBody() == null)
             throw new RuntimeException(String.format(
                     "Found the %s executable but it has no body! Found in type %s.",
-                    methodName, containingClassNames.get(0)));
+                    executableName, containingClassNames.get(0)));
 
-        return method;
+        return executable;
     }
 
     public static String getFullSignature(final CtExecutable<?> executable) {

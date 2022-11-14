@@ -59,8 +59,8 @@ public class Args {
     public boolean useSimulator = false;
 
     @Parameter(names = {"--executable"},
-               description = "Method to profile or leave unset to instrument constructor " +
-                             "(constructors are custom and memory profiling only)")
+               description = "Constructor or method to profile or leave unset to instrument applet entry point " +
+                             "constructor (constructors are custom and memory profiling only)")
     public String executable;
 
     @Parameter(names = {"--entry-point"},
