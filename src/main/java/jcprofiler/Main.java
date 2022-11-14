@@ -129,8 +129,8 @@ public class Main {
             if ((actualVersion.matches("(9|10|11).*") && requiredVersion.matches("1\\.[0-5]")) ||
                     (actualVersion.matches("1[^01.].*") && requiredVersion.matches("1\\.[0-6]")))
                 throw new UnsupportedOperationException(String.format(
-                        "JDK %s cannot be used to compile for JavaCard %s because javac %s cannot target Java %s.%n" +
-                        "Please, use an older JDK LTS release.",
+                        "JDK %s cannot be used to compile for JavaCard %s because javac %s cannot target" +
+                        " Java %s.%nPlease, use an older JDK LTS release.",
                         actualVersion, args.jcSDK.getRelease(), actualVersion, requiredVersion));
 
             // check that dependency JAR archives contain corresponding exp files
