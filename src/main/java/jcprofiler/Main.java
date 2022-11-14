@@ -36,7 +36,7 @@ public class Main {
         final Args args = new Args();
         final JCommander jc = JCommander.newBuilder()
                 .addObject(args)
-                .programName("JCProfiler")
+                .programName("JCProfilerNext")
                 .build();
 
         try {
