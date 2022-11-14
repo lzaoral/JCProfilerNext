@@ -17,13 +17,13 @@ import java.nio.file.Path;
 import java.util.jar.JarFile;
 
 /**
- * JCProfiler's entry point class
+ * JCProfilerNext's entry point class
  */
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     /**
-     * JCProfiler's entry point method
+     * JCProfilerNext's entry point method
      *
      * @param argv array of commandline arguments
      */
