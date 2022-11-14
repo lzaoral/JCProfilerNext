@@ -28,16 +28,29 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // TODO: support already instrumented stuff
+
+/**
+ * This class represents the instrumentation stage.
+ */
 public class Instrumenter {
     private final Args args;
 
     private static final List<String> generatedClasses = Arrays.asList("PM", "PMC");
     private static final Logger log = LoggerFactory.getLogger(Instrumenter.class);
 
+    /**
+     * Constructs the {@link Instrumenter} class.
+     *
+     * @param args object with commandline arguments
+     */
     public Instrumenter(final Args args) {
         this.args = args;
     }
 
+    /**
+     * Instruments the input source code and stores the results into
+     * the {@link JCProfilerUtil#INSTR_OUT_DIRNAME} directory.
+     */
     public void process() {
         // always recreate the output directory
         final Path outputDir = JCProfilerUtil.getInstrOutputDirectory(args.workDir);
@@ -90,6 +103,15 @@ public class Instrumenter {
         checkPMC(model);
     }
 
+    /**
+     * Builds and returns a Spoon model.
+     *
+     * @param  spoon Spoon instance
+     * @return       a {@link CtModel} Spoon model
+     *
+     * @throws ModelBuildingException if the model could not be successfully built
+     * @throws RuntimeException       if the import resolution failed
+     */
     private CtModel buildModel(final Launcher spoon) {
         JCProfilerUtil.setupSpoon(spoon, args);
         spoon.addInputResource(JCProfilerUtil.getSourceInputDirectory(args.workDir).toString());
@@ -107,6 +129,11 @@ public class Instrumenter {
         }
     }
 
+    /**
+     * Validates the --entry-point and --executable arguments.
+     *
+     * @param model Spoon model
+     */
     private void checkArguments(final CtModel model) {
         log.info("Validating '--entry-point' and '--executable' arguments.");
 
@@ -129,6 +156,14 @@ public class Instrumenter {
         args.executable = JCProfilerUtil.getFullSignature(executable);
     }
 
+    /**
+     * Generates the {@link Instrumenter#generatedClasses} classes
+     * and adds them to the given Spoon instance.
+     *
+     * @param spoon Spoon instance
+     *
+     * @throws UnsupportedOperationException for multipackage projects, for projects using the default pacakge
+     */
     private void addMissingClasses(final Launcher spoon) {
         log.info("Generating additional classes.");
 
@@ -221,6 +256,16 @@ public class Instrumenter {
         }
     }
 
+    /**
+     * Does a sanity check that the contents of the PMC class are valid:
+     * <ol>
+     *   <li>all trap constants have unique values,</li>
+     *   <li>every trap constant is used exactly once.</li>
+     * </ol>
+     *
+     * @param  model            Spoon model
+     * @throws RuntimeException if the sanity check failed
+     */
     private void checkPMC(final CtModel model) {
         // check that all trap constants have unique values
         final CtType<?> pmc = JCProfilerUtil.getToplevelType(model, "PMC");
@@ -258,9 +303,17 @@ public class Instrumenter {
             throw new RuntimeException("Some PMC trap fields are unused!");
     }
 
+    /**
+     * Generates API usage statistics and stores them into the {@code APIstatistics.csv}
+     * file for given source code.
+     * <br><br>
+     * If the Spoon model cannot be built with a full type resolution, the method
+     * tries it again in a permissive mode.  However, such results may not be precise.
+     */
     public void generateStatistics() {
         boolean permissive = false;
 
+        // build the Spoon model
         Launcher spoon = new Launcher();
         JCProfilerUtil.setupSpoon(spoon, args);
         spoon.addInputResource(args.workDir.toString());
@@ -282,10 +335,12 @@ public class Instrumenter {
             spoon.buildModel();
         }
 
+        // gather the statistics
         final StatisticsProcessor sp = new StatisticsProcessor();
         spoon.addProcessor(sp);
         spoon.process();
 
+        // store the statistics
         final Path csv = args.workDir.resolve("APIstatistics.csv");
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCSVFormat())) {
             if (permissive) {
