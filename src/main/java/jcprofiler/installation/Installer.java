@@ -45,9 +45,11 @@ public class Installer {
     /**
      * Installs the applet on a selected card.
      *
-     * @param args       object with commandline arguments
-     * @param entryPoint applet entry point class
-     * @return           {@link CardManager} connection instance
+     * @param  args       object with commandline arguments
+     * @param  entryPoint applet entry point class
+     * @return            {@link CardManager} connection instance
+     *
+     * @throws RuntimeException if the applet could not be installed or selected successfully
      */
     public static CardManager installOnCard(final Args args, final CtClass<?> entryPoint) {
         if (args.useSimulator)
@@ -93,9 +95,9 @@ public class Installer {
      * Either connects to a physical card or to simulator depending on the
      * commandline arguments.
      *
-     * @param args       object with commandline arguments
-     * @param entryPoint applet entry point class
-     * @return           {@link CardManager} connection instance
+     * @param  args       object with commandline arguments
+     * @param  entryPoint applet entry point class
+     * @return            {@link CardManager} connection instance
      */
     public static CardManager connect(final Args args, final CtClass<?> entryPoint) {
         return args.useSimulator ? configureSimulator(args, entryPoint)
@@ -103,10 +105,14 @@ public class Installer {
     }
 
     /**
+     * Creates and configures a jCardSim simulator instance for given applet.
      *
-     * @param args       object with commandline arguments
-     * @param entryPoint applet entry point class
-     * @return           {@link CardManager} connection instance
+     * @param  args       object with commandline arguments
+     * @param  entryPoint applet entry point class
+     * @return            {@link CardManager} connection instance
+     *
+     * @throws RuntimeException if the simulator could not be executed or the applet
+     *                          could not be  selected successfully
      */
     private static CardManager configureSimulator(final Args args, final CtClass<?> entryPoint) {
         log.info("Configuring jCardSim simulator.");
@@ -182,6 +188,9 @@ public class Installer {
      * Connects to a physical card.
      *
      * @return {@link CardManager} connection instance
+     *
+     * @throws RuntimeException if the card connection failed or the applet
+     *                          could not be selected successfully
      */
     private static CardManager connectToCard() {
         log.info("Connecting to a physical card reader.");
