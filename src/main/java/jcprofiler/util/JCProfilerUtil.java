@@ -1,5 +1,6 @@
 package jcprofiler.util;
 
+import javacard.framework.APDU;
 import javacard.framework.ISO7816;
 
 import jcprofiler.args.Args;
@@ -32,39 +33,75 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JCProfilerUtil {
+    /**
+     * Default value for the custom instruction
+     */
     public static final byte INS_PERF_HANDLER = (byte) 0xf5;
 
+
+    /**
+     * Regular expression pattern for hexadecimal strings
+     */
     public static final Pattern hexString = Pattern.compile("^([a-fA-F0-9]{2})+$");
 
-    // Needed to fix a SNAFU, where ISO7816.SW_NO_ERROR is a short, ResponseAPDU::getSW returns int
-    // and (short) 0x9000 != 0x9000 ...
+
+    /**
+     * An {@link int} instance of {@link ISO7816#SW_NO_ERROR}
+     * <br><br>
+     * Needed to fix a SNAFU, where {@link ISO7816#SW_NO_ERROR} is a {@link short},
+     * {@link javax.smartcardio.ResponseAPDU#getSW()} returns {@link int} and <pre>{@code (short) 0x9000 != 0x9000}</pre>
+     */
     public static final int SW_NO_ERROR = Short.toUnsignedInt(ISO7816.SW_NO_ERROR);
 
+
+    /**
+     * Default directory name for compilation artifacts
+     */
     public static final String APPLET_OUT_DIRNAME = "applet";
+    /**
+     * Default directory name for instrumented sources
+     */
     public static final String INSTR_OUT_DIRNAME  = "sources_instr";
+    /**
+     * Default directory name for annotated sources
+     */
     public static final String PERF_OUT_DIRNAME   = "sources_perf";
+    /**
+     * Default directory name for original sources
+     */
     public static final String SRC_IN_DIRNAME     = "sources_original";
 
+
+    /**
+     * Default AID string for the compiled package.
+     */
     public static final String PACKAGE_AID = "123456789001";
+    /**
+     * Default AID string for the compiled applet.
+     */
     public static final String APPLET_AID = PACKAGE_AID + "01";
+
 
     private static final Logger log = LoggerFactory.getLogger(JCProfilerUtil.class);
 
     // static class!
     private JCProfilerUtil() {}
 
+
     // entry points
 
-   /**
-    * Checks that a type in an entry point:
-    *   1. It inherits from the javacard.framework.Applet abstract class,
-    *   2. At least one of the classes in the inheritance chain implements
-    *      the void process(javacard.framework.APDU) method.
-    *   3. It implements the static void install(byte[] bArray, short bOffset, byte bLength) method.
-    *
-    * @param type - type to be checked
-    * @return true if the type in an applet entry point otherwise false
-    */
+    /**
+     * Checks that a type in an entry point.
+     * <ol>
+     *   <li>It inherits from the javacard.framework.Applet abstract class.</li>
+     *   <li>At least one of the classes in the inheritance chain implements
+     *       the void process(javacard.framework.APDU) method.</li>
+     *   <li>It implements the <pre>{@code public static void install(byte[] bArray, short bOffset, byte bLength)}</pre>
+     *   method.</li>
+     * </ol>
+     * @param  type type to be checked
+     * @return      true if the type in an applet entry point, otherwise false
+     */
     public static boolean isTypeEntryPoint(final CtType<?> type) {
         final List<CtTypeReference<?>> inheritanceChain = new ArrayList<>();
         CtTypeReference<?> typeRef = type.getReference();
@@ -80,16 +117,16 @@ public class JCProfilerUtil {
     }
 
     /**
-     * Checks that the input type instance defines the void process(javacard.framework.APDU) method.
+     * Checks that the given type instance defines the {@link javacard.framework.Applet#process(APDU)} method.
      *
-     * @param  type             type to be checked
+     * @param  type type to be checked
+     * @return      the given {@link CtMethod} instance if found, otherwise null
      *
-     * @return                  the instance of the void process(javacard.framework.APDU)
-     *                          method, otherwise null
      * @throws RuntimeException if the type defines more than one method with such property,
      *                          which should never happen
      */
     public static CtMethod<Void> getProcessMethod(final CtType<?> type) {
+        // get public void process(javacard.framework.APDU apdu)
         final List<CtMethod<?>> processMethods = type.getAllMethods().stream().filter(
             m -> m.getSignature().equals("process(javacard.framework.APDU)") && !m.isAbstract() &&
                  m.getType().equals(type.getFactory().Type().voidPrimitiveType()) &&
@@ -109,11 +146,12 @@ public class JCProfilerUtil {
     }
 
     /**
-     * Checks that the type contains the public static void install(byte[] bArray, short bOffset, byte bLength)
+     * Checks that the type defines the
+     * <pre>{@code public static void install(byte[] bArray, short bOffset, byte bLength)}</pre>
      * method and returns its instance.
      *
-     * @param type to be checked
-     * @return the given method instance if found, otherwise null
+     * @param  type a {@link CtType} instance
+     * @return      the given {@link CtMethod} instance if found, otherwise null
      */
     public static CtMethod<?> getInstallMethod(final CtType<?> type) {
         // get public static void install(byte[] bArray, short bOffset, byte bLength) throws ISOException
@@ -129,6 +167,16 @@ public class JCProfilerUtil {
         return installMethod;
     }
 
+    /**
+     * Returns a {@link CtClass} instance of the selected entry point class.
+     * If the arguments is empty, try to detect the entry point class instead.
+     *
+     * @param  model     Spoon model
+     * @param  className name of the entry point class, if empty, try to detect entry point instead.
+     * @return           a {@link CtClass} instance of the selected entry point class
+     *
+     * @throws RuntimeException if such class does not exist or more than one candidate was found
+     */
     public static CtClass<?> getEntryPoint(final CtModel model, final String className) {
         final List<CtClass<?>> entryPoints = model.getElements(JCProfilerUtil::isTypeEntryPoint);
         if (entryPoints.isEmpty())
@@ -162,13 +210,13 @@ public class JCProfilerUtil {
 
     /**
      * Detects whether the entry point or one of its predecessors contain a field with given name.
-     * Used to check that the profiler stage was not executed in wrong mode.
+     * Used to check that the profiler stage was not executed on sources instrumented in a different mode.
      *
-     * @param model      Spoon model
-     * @param entryPoint name of the entry point class. If empty, try to detect entry point instead.
-     * @param field      name of the field
-     * @return           true if the name is null or entry point or one of its predecessors contain
-     *                   field with given name, false otherwise
+     * @param  model      Spoon model
+     * @param  entryPoint name of the entry point class, if empty, try to detect entry point instead.
+     * @param  field      name of the field
+     * @return            true if the name is null or entry point or one of its predecessors contain
+     *                    field with given name, false otherwise
      */
     public static boolean entryPointHasField(final CtModel model, final String entryPoint, final String field) {
         // given mode might not require a special instruction
@@ -188,10 +236,10 @@ public class JCProfilerUtil {
     /**
      * Returns a top-level type with given name that should already exist at the time of this call.
      *
-     * @param  model            Spoon model
-     * @param  simpleName       name of the wanted top-level type
+     * @param  model      Spoon model
+     * @param  simpleName name of the wanted top-level type
+     * @return            a {@link CtType} instance of the top-level type with given name
      *
-     * @return                  instance of the top-level type with given name
      * @throws RuntimeException if the model does not contain such type
      */
     public static CtType<?> getToplevelType(final CtModel model, final String simpleName) {
@@ -202,6 +250,7 @@ public class JCProfilerUtil {
 
         return cls;
     }
+
 
     // profiled executable detection
 
@@ -352,6 +401,15 @@ public class JCProfilerUtil {
         return executable;
     }
 
+
+    // trap mangling
+
+    /**
+     * Returns a full signature for given {@link CtExecutable} instance in the 'class#name(args)' format.
+     *
+     * @param  executable executable instance
+     * @return            full signature for given {@link CtExecutable} instance.
+     */
     public static String getFullSignature(final CtExecutable<?> executable) {
         if (!(executable instanceof CtTypeMember))
             return executable.getSignature();
@@ -369,7 +427,12 @@ public class JCProfilerUtil {
         return parent.getQualifiedName() + "#" + signature;
     }
 
-    // trap mangling
+    /**
+     * Returns a mangled trap name prefix for given {@link CtExecutable} instance.
+     *
+     * @param  executable executable instance
+     * @return            mangled trap name prefix for given {@link CtExecutable} instance.
+     */
     public static String getTrapNamePrefix(final CtExecutable<?> executable) {
         final String prefix = "TRAP_" + getFullSignature(executable);
 
@@ -386,23 +449,58 @@ public class JCProfilerUtil {
                 .replace("[]", "_arr"); // used in arrays
     }
 
+
     // Path utils
+
+    /**
+     * Return a path to directory name for instrumented sources.
+     *
+     * @param  workDirPath path to the working directory
+     * @return             {@link Path} object pointing to a directory name for instrumented sources
+     */
     public static Path getInstrOutputDirectory(final Path workDirPath) {
         return workDirPath.resolve(INSTR_OUT_DIRNAME);
     }
 
+    /**
+     * Return a path to directory name for annotated sources.
+     *
+     * @param  workDirPath path to the working directory
+     * @return             {@link Path} object pointing to a directory name for annotated sources
+     */
     public static Path getPerfOutputDirectory(final Path workDirPath) {
         return workDirPath.resolve(PERF_OUT_DIRNAME);
     }
 
+    /**
+     * Return a path to directory name for compilation artifacts.
+     *
+     * @param  workDirPath path to the working directory
+     * @return             {@link Path} object pointing to a directory name for compilation artifacts
+     */
     public static Path getAppletOutputDirectory(final Path workDirPath) {
         return workDirPath.resolve(APPLET_OUT_DIRNAME);
     }
 
+    /**
+     * Return a path to directory name for original sources.
+     *
+     * @param  workDirPath path to the working directory
+     * @return             {@link Path} object pointing to a directory name for original sources
+     */
     public static Path getSourceInputDirectory(final Path workDirPath) {
         return workDirPath.resolve(SRC_IN_DIRNAME);
     }
 
+    /**
+     * Checks that the given file exists.
+     *
+     * @param  path  path to the given file
+     * @param  stage stage which should produce given file
+     * @return       {@link Path} object pointing to the given file
+     *
+     * @throws RuntimeException if the file does not exist
+     */
     public static Path checkFile(final Path path, final Stage stage) {
         if (!Files.exists(path))
             throw new RuntimeException(String.format(
@@ -411,6 +509,15 @@ public class JCProfilerUtil {
         return path;
     }
 
+    /**
+     * Checks that the given directory exists.
+     *
+     * @param  path  path to the given directory
+     * @param  stage stage which should produce given directory
+     * @return       {@link Path} object pointing to the given directory
+     *
+     * @throws RuntimeException if the directory does not exist
+     */
     public static Path checkDirectory(final Path path, final Stage stage) {
         checkFile(path, stage);
 
@@ -429,6 +536,12 @@ public class JCProfilerUtil {
         }
     }
 
+    /**
+     * Move a directory to its own subdirectory if the subdirectory does not exist.
+     *
+     * @param from source directory path
+     * @param to   target directory path
+     */
     public static void moveToSubDirIfNotExists(final Path from, final Path to) {
         if (Files.isDirectory(to)) {
             log.debug("{} already exists. Contents of {} will not be moved.", to, from);
@@ -454,6 +567,13 @@ public class JCProfilerUtil {
         log.info("Moved contents of {} to {}", from, to);
     }
 
+    /**
+     * Remove and recreate the given directory.
+     *
+     * @param dir path to a directory
+     *
+     * @throws RuntimeException if the argument exists and is not a directory
+     */
     public static void recreateDirectory(final Path dir) {
         try {
             if (Files.exists(dir)) {
@@ -471,7 +591,14 @@ public class JCProfilerUtil {
         }
     }
 
+
     // CSV
+
+    /**
+     * Return a default instance of {@link CSVFormat} for processed CSV files.
+     *
+     * @return {@link CSVFormat} instance
+     */
     public static CSVFormat getCSVFormat() {
         return Builder.create(CSVFormat.DEFAULT)
                 .setCommentMarker('#')
@@ -480,13 +607,30 @@ public class JCProfilerUtil {
     }
 
 
+    // String utils
+
+    /**
+     * Checks that the input string a correct hexadecimal string.
+     *
+     * @param  str a string
+     * @return     true if it is a valid hexadecimal string
+     */
     public static boolean isHexString(final String str) {
         return hexString.matcher(str).matches();
     }
 
+    /**
+     * Return a number of non-zero bits in the byte representation hexadecimal string.
+     *
+     * @param  str a hexadecimal string
+     * @return     number of non-zero bits in the hexadecimal string
+     *
+     * @throws NumberFormatException if the input is not a valid hexadecimal string
+     */
     public static int getHexStringBitCount(final String str) {
         return new BigInteger(/* positive */ '+' + str, 16).bitCount();
     }
+
 
     // Spoon helper methods
 
@@ -518,11 +662,11 @@ public class JCProfilerUtil {
     }
 
     /**
-     * Build a Spoon model from instrumented sources. Also checks that the instrumentation
-     * did not produce malformed source code.
+     * Build a Spoon model from instrumented sources.  Used to check
+     * that the instrumentation did not produce malformed source code.
      *
      * @param  args object with commandline arguments
-     * @return      Spoon instance
+     * @return      a {@link SpoonAPI} instance
      */
     public static SpoonAPI getInstrumentedSpoon(final Args args) {
         log.info("Validating Spoon model.");
