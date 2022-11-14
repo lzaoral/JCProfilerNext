@@ -380,6 +380,21 @@ class JCProfilerUtilTest {
     }
 
     @Test
+    void getProfiledMethodConstructor() {
+        final String input = "package test;" +
+                "public class Test {}";
+        final CtModel model = prepareModel(input);
+
+        final Exception e = assertThrows(RuntimeException.class,
+                () -> JCProfilerUtil.getProfiledMethod(model, "Test"));
+
+        final String expected = "Executable test.Test#Test() is not a method!";
+        final String actual = e.getMessage();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void getFullSignature() {
         final String input = "package test;" +
                 "public class Test {" +
