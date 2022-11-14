@@ -97,8 +97,6 @@ public class Args {
                converter = ByteConverter.class)
     public Byte cleanupInst;
 
-    // TODO: check that this (and related options) are correctly passed to the applet due
-    // to possible implicit conversions that may change the value
     @Parameter(names = {"--cla"},
                description = "Applet CLA in hex",
                converter = ByteConverter.class)
