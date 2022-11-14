@@ -556,4 +556,67 @@ class JCProfilerUtilTest {
         spoon.addInputResource(new VirtualFile(cls));
         return spoon.buildModel();
     }
+
+    @Test
+    void getEntryPointConstructorNoCall() {
+        final String input = "package test;" +
+                "public class Entry extends javacard.framework.Applet {" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "}";
+        final CtModel model = prepareModel(input);
+
+        final Exception e = assertThrows(RuntimeException.class,
+                () -> JCProfilerUtil.getEntryPointConstructor(model, ""));
+
+        final String expected =
+                "The test.Entry#install(byte[],short,byte) method does not call any constructor of the test.Entry type!";
+        final String actual = e.getMessage();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void getEntryPointConstructorTwoCalls() {
+        final String input = "package test;" +
+                "public class Entry extends javacard.framework.Applet {" +
+                "   Entry() {}" +
+                "   Entry(int a) {}" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "   public static void install(byte[] bArray, short bOffset, byte bLength) {" +
+                "       new Entry();" +
+                "       new Entry(1);" +
+                "   }" +
+                "}";
+        final CtModel model = prepareModel(input);
+
+        final Exception e = assertThrows(RuntimeException.class,
+                () -> JCProfilerUtil.getEntryPointConstructor(model, ""));
+
+        final String expected = String.format(
+                "The test.Entry#install(byte[],short,byte) method calls more than one constructor" +
+                " of the test.Entry type: [test.Entry(), test.Entry(int)]%n" +
+                "Specify it using the --executable option.");
+        final String actual = e.getMessage();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void getEntryPointConstructor() {
+        final String input = "package test;" +
+                "public class Entry extends javacard.framework.Applet {" +
+                "   @Override" +
+                "   public void process(javacard.framework.APDU apdu) {}" +
+                "   public static void install(byte[] bArray, short bOffset, byte bLength) {" +
+                "       new Entry();" +
+                "   }" +
+                "}";
+        final CtModel model = prepareModel(input);
+        final CtConstructor<?> constructor = model.filterChildren(CtConstructor.class::isInstance).first();
+
+        assertEquals(constructor, JCProfilerUtil.getEntryPointConstructor(model, ""));
+    }
 }
