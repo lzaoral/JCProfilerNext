@@ -46,8 +46,8 @@ public class Instrumenter {
         // prepare and check the model
         final Launcher spoon = new Launcher();
         addMissingClasses(spoon);
-        buildModel(spoon);
-        checkArguments(spoon.getModel());
+        final CtModel model = buildModel(spoon);
+        checkArguments(model);
 
         // Instrument the model
 
@@ -87,16 +87,16 @@ public class Instrumenter {
         spoon.prettyprint();
 
         // check that all PMC members are unique
-        checkPMC(spoon.getModel());
+        checkPMC(model);
     }
 
-    private void buildModel(final Launcher spoon) {
+    private CtModel buildModel(final Launcher spoon) {
         JCProfilerUtil.setupSpoon(spoon, args);
         spoon.addInputResource(JCProfilerUtil.getSourceInputDirectory(args.workDir).toString());
 
         log.debug("Building Spoon model.");
         try {
-            spoon.buildModel();
+            return spoon.buildModel();
         } catch (ModelBuildingException e) {
             if (!e.getMessage().matches(".* cannot be resolved (to a type )?at .*"))
                 throw e;
