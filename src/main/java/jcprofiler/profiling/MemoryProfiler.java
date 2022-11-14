@@ -122,7 +122,7 @@ public class MemoryProfiler extends AbstractProfiler {
     @Override
     protected void profileImpl() throws CardException {
         // methods must be executed explicitly
-        if (profiledExecutable instanceof CtMethod) {
+        if (!measuredDuringInstallation) {
             resetApplet();
             generateInputs(/* size */ 1);
 

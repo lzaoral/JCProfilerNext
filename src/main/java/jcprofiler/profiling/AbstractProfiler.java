@@ -43,6 +43,7 @@ public abstract class AbstractProfiler {
     protected final CardManager cardManager;
     protected final CtExecutable<?> profiledExecutable;
     protected final String profiledExecutableSignature;
+    protected final boolean measuredDuringInstallation;
 
     protected final CtType<?> PM;
     protected final CtType<?> PMC;
@@ -65,10 +66,14 @@ public abstract class AbstractProfiler {
         this.args = args;
         this.cardManager = cardManager;
 
-        if (!JCProfilerUtil.entryPointHasField(executable.getFactory().getModel(), args.entryPoint, customInsField))
+        if (!JCProfilerUtil.entryPointHasField(model, args.entryPoint, customInsField))
             throw new RuntimeException(String.format(
                     "Profiling in %s mode but entry point class does not contain %s field!",
                     args.mode, customInsField));
+
+        // check if executable is an entry point class constructor
+        measuredDuringInstallation = JCProfilerUtil.getEntryPointConstructor(model, args.entryPoint)
+                .equals(executable);
 
         profiledExecutable = executable;
         profiledExecutableSignature = JCProfilerUtil.getFullSignature(executable);
@@ -121,8 +126,8 @@ public abstract class AbstractProfiler {
     }
 
     protected void generateInputs(int size) {
-        if (profiledExecutable instanceof CtConstructor)
-            throw new RuntimeException("Constructors do not support inputs!");
+        if (measuredDuringInstallation)
+            throw new RuntimeException("Already measured constructors do not support inputs!");
 
         // TODO: print seed for reproducibility
         final Random rdn = new Random();
@@ -217,7 +222,7 @@ public abstract class AbstractProfiler {
             log.info("Executing profiler in {} mode.", args.mode);
             log.info("Profiling {}.", profiledExecutableSignature);
 
-            if (profiledExecutable instanceof CtConstructor) {
+            if (measuredDuringInstallation) {
                 inputs.add("measured during installation");
                 log.info("{} was already profiled during installation.", profiledExecutableSignature);
             }
@@ -249,7 +254,7 @@ public abstract class AbstractProfiler {
                                              : Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
 
         String apduHeader, dataSource;
-        if (profiledExecutable instanceof CtConstructor) {
+        if (measuredDuringInstallation) {
             apduHeader = elapsedTime = dataSource = "install";
         } else {
             apduHeader = Util.bytesToHex(new byte[]{args.cla, args.inst, args.p1, args.p2});
