@@ -457,6 +457,9 @@ public class JCProfilerUtil {
     public static void recreateDirectory(final Path dir) {
         try {
             if (Files.exists(dir)) {
+                if (!Files.isDirectory(dir))
+                    throw new RuntimeException("Argument is not a directory!");
+
                 FileUtils.deleteDirectory(dir.toFile());
                 log.debug("Deleted existing {}.", dir);
             }
