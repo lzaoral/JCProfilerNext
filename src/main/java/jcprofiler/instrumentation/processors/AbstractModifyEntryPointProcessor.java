@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * General class for modification of entry point classes.
+ * General class for modification of entry point classes
  */
 public abstract class AbstractModifyEntryPointProcessor extends AbstractProfilerProcessor<CtClass<?>> {
     private static final Logger log = LoggerFactory.getLogger(AbstractModifyEntryPointProcessor.class);
@@ -36,7 +36,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
     /**
      * Decides whether the input {@link CtClass} should be processed.
      *
-     * @param  cls the candidate {@link CtClass}
+     * @param  cls the candidate class
      * @return     true if yes, otherwise false
      */
     @Override
@@ -47,9 +47,9 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
     }
 
     /**
-     * Inserts a custom instruction and its handler into a given class.
+     * Inserts a custom instruction and its handler into a given {@link CtClass} instance.
      *
-     * @param cls       class to be processed.
+     * @param cls       class to be processed
      * @param fieldName custom instruction field name
      */
     protected void process(final CtClass<?> cls, final String fieldName) {
@@ -74,11 +74,10 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
      * Inserts a new custom instruction field into the class containing
      * the process method, or does nothing if it already exists.
      *
-     * @param  name             name of the custom instruction field
-     * @param  processCls       class containing the process method
+     * @param  name       name of the custom instruction field
+     * @param  processCls class containing the process method
+     * @return            a new {@link CtField} instance with given name, or an existing instance if it's compatible
      *
-     * @return                  new field instance with given name, or an existing
-     *                          instance if it's compatible
      * @throws RuntimeException if the class already contains a field with such name,
      *                          but with incompatible initializer, modifier or type.
      */
@@ -145,8 +144,8 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
      * @param  insPerfField     instance of the custom instruction field
      *
      * @throws RuntimeException if the process method already contains a custom
-     *                          instruction handler, but with a different body
-     * @throws RuntimeException if the handler does not end with a return statement
+     *                          instruction handler, but with a different body,
+     *                          or if the handler does not end with a return statement
      */
     private void insertCustomInsHandler(final CtMethod<Void> processMethod, final CtField<Byte> insPerfField) {
         // ${param}
@@ -235,8 +234,8 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
     /**
      * Creates a body of the custom instruction handler.
      *
-     * @param  apdu process method argument {@link APDU}
-     * @return      code block with the custom instruction handler body
+     * @param  apdu process method argument instance
+     * @return      a {@link CtBlock} instance with the custom instruction handler body
      */
     protected abstract CtBlock<Void> createInsHandlerBody(final CtVariableRead<APDU> apdu);
 }
