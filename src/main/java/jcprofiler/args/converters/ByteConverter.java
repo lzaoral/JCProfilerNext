@@ -17,7 +17,7 @@ public class ByteConverter extends BaseConverter<Byte> {
      * Coverts a hexadecimal string into a single byte.
      *
      * @param  value input string
-     * @return       converted byte
+     * @return       converted {@link byte}
      *
      * @throws ParameterException if the value is not a valid single byte hexadecimal string
      */

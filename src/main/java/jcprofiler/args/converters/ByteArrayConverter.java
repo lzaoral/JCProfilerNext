@@ -17,7 +17,7 @@ public class ByteArrayConverter extends BaseConverter<byte[]> {
      * Coverts a hexadecimal string into an array of bytes.
      *
      * @param  value input string
-     * @return       converted byte array
+     * @return       converted {@link byte} array
      *
      * @throws ParameterException if the value is not a valid single byte hexadecimal string
      */
