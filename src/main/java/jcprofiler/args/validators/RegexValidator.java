@@ -20,6 +20,10 @@ public class RegexValidator implements IParameterValidator {
      */
     @Override
     public void validate(final String name, final String value) throws ParameterException {
+        if (value.isEmpty())
+            throw new ParameterException(String.format(
+                    "\"%s\": \"%s\" is not a valid regular expression", name, value));
+
         try {
             Pattern.compile(value);
         } catch (PatternSyntaxException e) {
