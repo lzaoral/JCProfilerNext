@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 public class JCProfilerUtil {
     public static final byte INS_PERF_HANDLER = (byte) 0xf5;
 
-    public static final Pattern hexString = Pattern.compile("^([a-fA-F0-9]{2})*$");
+    public static final Pattern hexString = Pattern.compile("^([a-fA-F0-9]{2})+$");
 
     // Needed to fix a SNAFU, where ISO7816.SW_NO_ERROR is a short, ResponseAPDU::getSW returns int
     // and (short) 0x9000 != 0x9000 ...
