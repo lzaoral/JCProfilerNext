@@ -24,17 +24,17 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
     private static final Logger log = LoggerFactory.getLogger(AbstractInsertTrapProcessor.class);
 
     /**
-     * Full signature of the processed executable.
+     * Full signature of the processed executable
      */
     protected String fullSignature;
 
     /**
-     * Trap field name prefix for the processed executable.
+     * Trap field name prefix for the processed executable
      */
     protected String trapNamePrefix;
 
     /**
-     * Number of inserted traps.
+     * Number of inserted traps
      */
     protected int trapCount;
 
@@ -61,7 +61,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
     /**
      * Inserts traps into the given {@link CtExecutable} instance.
      *
-     * @param executable {@link CtExecutable} instance
+     * @param executable an executable instance
      */
     @Override
     public void process(final T executable) {
@@ -144,17 +144,20 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
     }
 
     /**
-     * Check whether the input statement in an empty block, a block without any actual statements.
+     * Check whether the input statement in an empty block, a block without any actual statements.<br>
      * E.g. the following block is empty.
+     * <br>
+     * <pre>{@code
      * {
      *     // foo
      *     {
      *         // bar
      *     }
-     * }
+     * }}
+     * </pre>
      *
      * @param  statement a statement
-     * @return           true if {@code statement} is an empty block, otherwise false
+     * @return           true if the statement is an empty block, otherwise false
      */
     private boolean isEmptyBlock(final CtStatement statement) {
         if (!(statement instanceof CtBlock))
@@ -165,7 +168,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
     }
 
     /**
-     * Checks whether the input statement is an Exception.throwIt(short) call.
+     * Checks whether the input statement is an {@link javacard.framework.CardException#throwIt(short)} call.
      *
      * @param  statement a statement
      * @return           true if the statement is an Exception.throwIt(short) call, otherwise false
@@ -200,21 +203,27 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
     }
 
     /**
+     * Checks that the statement is a terminator.
+     * <br><br>
      * Statement is a terminator iff any statement inserted after it in the corresponding block
      * will be unreachable, e.g.:
-     *   1. the statement is a break or continue,
-     *   2. the statement is a code block ending with a statement that is a terminator,
-     *   3. the statement is a complete terminator.
-     * <p>
+     * <ol>
+     *   <li>the statement is a break or continue,</li>
+     *   <li>the statement is a code block ending with a statement that is a terminator,</li>
+     *   <li>the statement is a complete terminator.</li>
+     * </ol>
+     * <pre>{@code
      * for (int i = 1; i < 100; i++) {
      *     if (cond) {
      *         return true;
-     *         PM.check(...) <- this would be unreachable!
+     *         PM.check(...) // <- this would be unreachable!
      *     }
      *     break;
-     *     PM.check(...) <- this would be unreachable!
+     *     PM.check(...) // <- this would be unreachable!
      * }
-     * PM.check(...) <- this is still reachable!
+     * PM.check(...) // <- this is still reachable!
+     * }
+     * </pre>
      *
      * @param  statement a statement
      * @return           true if the input statement is a terminator, otherwise false
@@ -230,16 +239,22 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
     }
 
     /**
-     * Statement is a full terminator iff any statement inserted after it into a given method will be unreachable, e.g.:
-     *   1. the statement is a return or a throw,
-     *   2. the last statement is not an expression and all its held block statements are full terminators, e.g.:
-     * <p>
+     * Checks that the statement is a complete terminator.
+     * <br><br>
+     * Statement is a complete terminator iff any statement inserted after it into a given method
+     * will be unreachable, e.g.:
+     * <ol>
+     *   <li>the statement is a return or a throw,</li>
+     *   <li>the last statement is not an expression and all its held block statements are full terminators.</li>
+     * </ol>
+     * <pre>{@code
      * if (cond) {
      *     return true;
      * } else {
      *     return false;
      * }
      * PM.check(...) <- this would be unreachable!
+     * }</pre>
      *
      * @param  statement a statement
      * @return           true if the input statement is a full terminator, otherwise false
@@ -279,8 +294,8 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
      * Generates a new performance trap before/after the input element.
      *
      * @param  element code element
-     * @param  where   {@link Insert} position relative to the element
-     * @return         PM.check(...) call invocation
+     * @param  where   position relative to the element
+     * @return         a {@link CtInvocation} instance of the PM.check(...) call
      */
     private CtInvocation<?> insertPMCall(final CtElement element, final Insert where) {
         final String trapName = String.format("%s_%d", trapNamePrefix, ++trapCount);
@@ -323,7 +338,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
      * Inserts a new performance trap before/after the input statement.
      *
      * @param statement a statement
-     * @param where     {@link Insert} position relative to the statement
+     * @param where     position relative to the statement
      */
     private void insertTrapCheck(final CtStatement statement, final Insert where) {
         final CtInvocation<?> pmCall = insertPMCall(statement, where);
@@ -337,7 +352,7 @@ public abstract class AbstractInsertTrapProcessor<T extends CtExecutable<?>> ext
      * Creates a new PMC field with given name.
      *
      * @param  trapFieldName name of a new PMC field
-     * @return               PMC field instance with given name
+     * @return               a {@link CtField} field instance of PMC class with given name
      */
     private CtField<Short> addTrapField(final String trapFieldName) {
         final CtTypeReference<Short> shortType = getFactory().Type().shortPrimitiveType();
