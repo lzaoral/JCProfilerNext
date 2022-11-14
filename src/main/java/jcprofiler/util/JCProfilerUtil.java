@@ -454,15 +454,15 @@ public class JCProfilerUtil {
         log.info("Moved contents of {} to {}", from, to);
     }
 
-    public static void recreateDirectory(Path appletDir) {
+    public static void recreateDirectory(final Path dir) {
         try {
-            if (Files.exists(appletDir)) {
-                FileUtils.deleteDirectory(appletDir.toFile());
-                log.debug("Deleted existing {}.", appletDir);
+            if (Files.exists(dir)) {
+                FileUtils.deleteDirectory(dir.toFile());
+                log.debug("Deleted existing {}.", dir);
             }
 
-            Files.createDirectories(appletDir);
-            log.debug("Created new {}.", appletDir);
+            Files.createDirectories(dir);
+            log.debug("Created new {}.", dir);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
