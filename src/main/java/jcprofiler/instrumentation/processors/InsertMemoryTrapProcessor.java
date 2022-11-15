@@ -9,17 +9,38 @@ import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.reference.CtTypeReference;
 
+/**
+ * Class for performance trap insertion in memory mode
+ * <br>
+ * Applicable to instances of {@link CtExecutable}.
+ */
 public class InsertMemoryTrapProcessor extends AbstractInsertTrapProcessor<CtExecutable<?>> {
+    /**
+     * Constructs the {@link InsertMemoryTrapProcessor} class.
+     *
+     * @param args object with commandline arguments
+     */
     public InsertMemoryTrapProcessor(final Args args) {
         super(args);
     }
 
+    /**
+     * Inserts traps into the given {@link CtExecutable} instance.
+     *
+     * @param executable an executable instance
+     */
     @Override
     public void process(final CtExecutable<?> executable) {
         super.process(executable);
         fixPMArrayLength();
     }
 
+    /**
+     * Sets the value of {@code PM#ARRAY_LENGTH} to the expected number of bytes
+     * needed for memory profiling of given executable.
+     *
+     * @throws RuntimeException when the PM does not contain the {@code PM#ARRAY_LENGTH} field.
+     */
     private void fixPMArrayLength() {
         // handle support for 16bit and 32bit values
         final int arrayLength = trapCount *
@@ -31,6 +52,7 @@ public class InsertMemoryTrapProcessor extends AbstractInsertTrapProcessor<CtExe
         final CtLiteral<Integer> arrayLengthLiteral = getFactory().createLiteral(arrayLength);
         arrayLengthLiteral.addTypeCast(shortRef);
 
+        // get PM.ARRAY_LENGTH field
         final CtField<?> arrayLengthField = PM.getField("ARRAY_LENGTH");
 
         if (arrayLengthField == null)
