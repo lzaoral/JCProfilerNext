@@ -13,15 +13,26 @@ import spoon.reflect.reference.*;
 
 import java.util.*;
 
+/**
+ * Class for generation of API usage statistics.
+ */
 public class StatisticsProcessor extends AbstractProcessor<CtReference> {
     private final Set<CtPackageReference> pkgs = new HashSet<>();
 
+    /**
+     * Returns a {@link SortedMap} with API usage statistics.
+     *
+     * @return unmodifiable {@link SortedMap} with (package, type, member) key and frequency value
+     */
     public SortedMap<Triple<String, String, String>, Integer> getUsedReferences() {
         return Collections.unmodifiableSortedMap(usedReferences);
     }
 
     private final SortedMap<Triple<String, String, String>, Integer> usedReferences = new TreeMap<>();
 
+    /**
+     * Initialises the processor.
+     */
     @Override
     public void init() {
         super.init();
@@ -31,12 +42,27 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
                 .map(CtType::getPackage).filter(Objects::nonNull).map(CtPackage::getReference).forEach(pkgs::add);
     }
 
+    /**
+     * Decides whether the input {@link CtReference} should be processed.
+     *
+     * @param  ref the candidate reference
+     * @return     true if yes, otherwise false
+     */
     @Override
     public boolean isToBeProcessed(final CtReference ref) {
         return ref instanceof CtTypeReference || ref instanceof CtFieldReference ||
                ref instanceof CtExecutableReference;
     }
 
+
+    /**
+     * Updates API usage statistics for given {@link CtReference} instance.
+     * <br><br>
+     * Primitive types, arrays, implicit references and references to elements
+     * from the process applet codebase are skipped.
+     *
+     * @param ref reference to be processed.
+     */
     @Override
     public void process(final CtReference ref) {
         if (ref instanceof CtTypeReference) {
@@ -90,6 +116,12 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
         add(declTypeRef, fieldRef.getSimpleName());
     }
 
+    /**
+     * Updates the statistics for the given type and member.
+     *
+     * @param type   type instance
+     * @param member member name (signature of an executable, field name or an empty string for types)
+     */
     private void add(final CtTypeReference<?> type, final String member) {
         String parentQualifiedName = "<unknown>";
         String typeSimpleName = "<unknown>";
@@ -101,6 +133,7 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
             while (outerType != null && outerType.getPackage() == null)
                 outerType = outerType.getDeclaringType();
 
+            // get parent (either a package or an outer class)
             if (outerType != null && outerType.getPackage() != null) {
                 final CtPackageReference pkg = outerType.getPackage();
                 if (pkgs.contains(pkg))
@@ -113,6 +146,7 @@ public class StatisticsProcessor extends AbstractProcessor<CtReference> {
             }
         }
 
+        // increment the counter
         usedReferences.compute(new ImmutableTriple<>(parentQualifiedName, typeSimpleName, member),
                 (k, v) -> v == null ? 1 : v + 1);
     }
