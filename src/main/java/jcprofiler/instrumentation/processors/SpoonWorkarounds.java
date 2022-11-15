@@ -10,11 +10,16 @@ import spoon.reflect.reference.CtTypeReference;
 
 /**
  * Workarounds for bugs in automatic generation of import statements from other compilation units:
- *     - Fixes import generation for nested types.
- *     - Fixes import generation for static fields imported through a static import.
- *     - Fixes import generation for static methods imported through a static import.
+ * <ul>
+ *     <li>Fixes import generation for nested types.</li>
+ *     <li>Fixes import generation for static fields imported through a static import.</li>
+ *     <li>Fixes import generation for static methods imported through a static import.</li>
+ * </ul>
  */
 public class SpoonWorkarounds {
+    /**
+     * Fixes import generation for nested types.
+     */
     static public class FixNestedClassImportProcessor extends AbstractProcessor<CtTypeReference<?>> {
         @Override
         public boolean isToBeProcessed(final CtTypeReference<?> typeRef) {
@@ -29,6 +34,9 @@ public class SpoonWorkarounds {
         }
     }
 
+    /**
+     * Fixes import generation for static fields imported through a static import.
+     */
     static public class FixStaticMethodImportProcessor extends AbstractProcessor<CtInvocation<?>> {
         @Override
         public boolean isToBeProcessed(final CtInvocation<?> invocation) {
@@ -46,6 +54,9 @@ public class SpoonWorkarounds {
         }
     }
 
+    /**
+     * Fixes import generation for static methods imported through a static import.
+     */
     static public class FixStaticFieldImportProcessor extends AbstractProcessor<CtFieldAccess<?>> {
         @Override
         public boolean isToBeProcessed(final CtFieldAccess<?> fieldAccess) {
