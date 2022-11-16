@@ -53,8 +53,10 @@ public class MemoryProfiler extends AbstractProfiler {
      * @return size of the getAvailableMemory measurement in bytes
      */
     private int getValueBytes() {
+        final CtTypeReference<?> shortType = PM.getFactory().Type().shortPrimitiveType();
+
         // get PM.check(short) method
-        final CtMethod<?> check = PM.getMethod("check", PM.getFactory().Type().shortPrimitiveType());
+        final CtMethod<?> check = PM.getMethod("check", shortType);
 
         // get all distinct return types of getAvailableMemory calls
         final List<CtTypeReference<?>> returnTypes = check.getElements(
@@ -65,7 +67,7 @@ public class MemoryProfiler extends AbstractProfiler {
             throw new RuntimeException("The sources are broken! The PM.check(short) method contains more than one" +
                     "javacard.framework.JCSystem.getAvailableMemory overload!");
 
-        return returnTypes.get(0).getSimpleName().equals("short") ? Short.BYTES : Integer.BYTES;
+        return returnTypes.get(0).equals(shortType) ? Short.BYTES : Integer.BYTES;
     }
 
     private void getMeasurements(final Map<String, Integer> map, final byte memType) throws CardException {
