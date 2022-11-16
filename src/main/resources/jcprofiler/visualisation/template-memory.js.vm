@@ -104,7 +104,11 @@ plotlyDiv.on('plotly_click', function (data) {
         e => e.scrollIntoView({block: 'center', behavior: 'smooth'}));
 });
 
-// redraw graph event handler
+/**
+ * Selects and highlight the given trap.
+ *
+ * @param trapName
+ */
 function highlightTrap(trapName) {
     // remove old traces
     if (document.querySelector('.trap .trap_select') != null)
@@ -150,6 +154,7 @@ function highlightTrap(trapName) {
     }
 }
 
+// Set-up event listeners
 window.addEventListener('load', _ => {
     document.getElementById('trapSwitch').addEventListener('change', toggleTraps);
     document.querySelectorAll('.trap').forEach(elem => elem.addEventListener('click',

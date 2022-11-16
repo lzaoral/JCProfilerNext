@@ -50,7 +50,7 @@ const histogramCommon = {
 
 const maxLineStringSize = 2 * heatmapValues.y[0].toString().length;
 
-// heatmap
+// Heatmap
 Plotly.newPlot('heatmap', [{
     ...heatmapValuesFiltered,
     hovertemplate: 'Line: %{y}<br>%{z} $measureUnit<extra></extra>',
@@ -92,7 +92,7 @@ Plotly.newPlot('heatmap', [{
 const padding = 6;
 const originalHeight = document.getElementById('codeWithoutTraps') - padding;
 
-// heatmap resize event
+// Heatmap resize event
 window.addEventListener('resize', _ => {
     const trapSwitch = document.getElementById('trapSwitch');
     const divWith = document.getElementById('codeWithTraps');
@@ -107,7 +107,7 @@ window.addEventListener('resize', _ => {
         });
 });
 
-// heatmap click event handler
+// Heatmap click event handler
 const heatmapDiv = document.getElementById('heatmap');
 heatmapDiv.on('plotly_click', function (data) {
     const graph = data.points[0];
@@ -124,11 +124,17 @@ heatmapDiv.on('plotly_click', function (data) {
             trapIdx++;
     }
 
+    // select the given trap
     const trapDiv = document.querySelector('.' + trapPrefix + trapIdx);
     const event = new MouseEvent('click');
     trapDiv.dispatchEvent(event);
 });
 
+/**
+ * Shows or hides explicit performance traps.
+ *
+ * @param {Event} event change event
+ */
 function toggleTraps(event) {
     const divWith = document.getElementById('codeWithTraps');
     const divWithout = document.getElementById('codeWithoutTraps');
@@ -161,6 +167,11 @@ function toggleTraps(event) {
     });
 }
 
+/**
+ * Highlights and selects the given trap.
+ *
+ * @param {String} trapName
+ */
 function selectTraps(trapName) {
     // update highlight of the selected trap
     document.querySelectorAll('.trap .trap_select').forEach(t => t.classList.remove('trap_select'));

@@ -81,7 +81,11 @@ const layoutCommon = {
 // set default heading
 document.getElementById('graphName').innerText = 'Select a line to view its histogram.';
 
-// redraw graph event handler
+/**
+ * Redraw graph event handler
+ *
+ * @param {Event} evt mouse click event
+ */
 function redrawGraph(evt) {
     // enable graph help
     document.getElementById('graphHelp').style.display = 'initial';
@@ -261,6 +265,7 @@ function redrawGraph(evt) {
     });
 }
 
+// Set-up event listeners
 window.addEventListener('load', _ => {
     document.getElementById('trapSwitch').addEventListener('change', toggleTraps);
     document.querySelectorAll('.trap').forEach(elem => elem.addEventListener('click', evt => redrawGraph(evt)));
