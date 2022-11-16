@@ -56,7 +56,7 @@ $line
                     #if( $roundCount )
                         <b>Number of rounds:</b> $roundCount<br>
                     #end
-                    <b>APDU header:</b>#if( $apduHeader == "install" ) measured during installation#else $apduHeader#end<br>
+                    <b>APDU header:</b> #if( $apduHeader == "install" )measured during installation#else$apduHeader#end<br>
                     #if( $inputs.size() == 1 )
                         <b>Input:</b> $inputs.get(0).replace("'", "")<br>
                     #else
