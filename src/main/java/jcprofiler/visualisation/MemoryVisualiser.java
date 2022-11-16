@@ -11,17 +11,33 @@ import spoon.reflect.CtModel;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class for visualisation of measurements in memory mode
+ */
 public class MemoryVisualiser extends AbstractVisualiser {
+    /**
+     * Constructs the {@link MemoryVisualiser} class.
+     *
+     * @param args  object with commandline arguments
+     * @param model Spoon model
+     */
     public MemoryVisualiser(final Args args, final CtModel model) {
         super(args, model);
     }
 
+    /**
+     * Loads and parses the CSV file with measurements, loads the source code of the profiled
+     * executable and prepares input data for the heatmap.
+     */
     @Override
     public void loadAndProcessMeasurements() {
         super.loadAndProcessMeasurements();
         prepareHeatmap();
     }
 
+    /**
+     * Prepares heatmap traces.
+     */
     private void prepareHeatmap() {
         String prevActualTrap = null;
         // prepare values for the heatMap
@@ -58,11 +74,21 @@ public class MemoryVisualiser extends AbstractVisualiser {
         }
     }
 
+    /**
+     * Returns an {@link InsertMemoryMeasurementsProcessor} instance.
+     *
+     * @return {@link InsertMemoryMeasurementsProcessor} instance
+     */
     @Override
     protected AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor() {
         return new InsertMemoryMeasurementsProcessor(args, measurements);
     }
 
+    /**
+     * Adds elements exclusive for the memory mode to the given {@link VelocityContext} instance.
+     *
+     * @param context {@link VelocityContext} instance
+     */
     @Override
     protected void prepareVelocityContext(final VelocityContext context) {
         context.put("measureUnit", "B");
