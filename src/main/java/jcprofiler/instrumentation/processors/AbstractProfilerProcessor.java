@@ -9,7 +9,7 @@ import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 
 /**
- * Base class for modification of the source code.
+ * Base class for modification of the source code
  *
  * @param <T> processed AST node type and an instance of {@link CtElement}
  */
