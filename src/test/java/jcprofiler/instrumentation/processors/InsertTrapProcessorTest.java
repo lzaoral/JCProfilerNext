@@ -1,13 +1,13 @@
 package jcprofiler.instrumentation.processors;
 
 import jcprofiler.args.Args;
-
 import jcprofiler.util.JCProfilerUtil;
+
 import org.junit.jupiter.api.Test;
 
 import spoon.Launcher;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.CtExecutable;
 import spoon.support.compiler.VirtualFile;
 import spoon.testing.AbstractCtElementAssert;
 
@@ -22,14 +22,15 @@ class InsertTrapProcessorTest {
         final CtClass<?> input = parseInputClass("InsertTrapProcessorTestInput.java");
         final CtClass<?> expected = parseExpectedClass(input, "InsertTrapProcessorTestExpected.java");
 
-        final List<String> methods = input.filterChildren(CtMethod.class::isInstance)
+        // get all executable signatures
+        final List<String> executables = input.filterChildren(CtExecutable.class::isInstance)
                 .map(JCProfilerUtil::getFullSignature).list();
 
         AbstractCtElementAssert <?> assertThat = assertThat(input);
-        for (String method : methods) {
+        for (final String executable : executables) {
             final Args args = new Args();
-            args.executable = method;
-            assertThat = assertThat.withProcessor(new InsertTimeTrapProcessor(args));
+            args.executable = executable;
+            assertThat = assertThat.withProcessor(new InsertCustomTrapProcessor(args));
         }
         assertThat.isEqualTo(expected);
     }
@@ -56,13 +57,15 @@ class InsertTrapProcessorTest {
         // add PM stub
         spoon.addInputResource(new VirtualFile("public class PM { public static void check(short s) {} }"));
 
+        // gel all executables
+        final List<CtExecutable<?>> executables = input.getElements(CtExecutable.class::isInstance);
+
         // Spoon must know the types of PMC fields used in SimpleClass
-        final List<CtMethod<?>> methods = input.getElements(CtMethod.class::isInstance);
         StringBuilder sb = new StringBuilder("public class PMC {");
-        for (final CtMethod<?> method : methods) {
+        for (final CtExecutable<?> executable : executables) {
             for (int i = 1; i <= 100; i++)
-                sb.append("public static short ").append(JCProfilerUtil.getTrapNamePrefix(method)).append("_").append(i)
-                        .append(" = 0;");
+                sb.append("public static short ").append(JCProfilerUtil.getTrapNamePrefix(executable))
+                        .append("_").append(i).append(" = 0;");
         }
         sb.append("}");
 

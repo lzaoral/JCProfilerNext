@@ -2,6 +2,10 @@ import javacard.framework.*;
 import javacard.security.CryptoException;
 
 public class SimpleClass {
+    public SimpleClass() {
+        PM.check(PMC.TRAP_SimpleClass_hash_SimpleClass_argb_arge_1);
+    }
+
     public void assignment(int a) {
         PM.check(PMC.TRAP_SimpleClass_hash_assignment_argb_int_arge_1);
         a = 1;
@@ -535,6 +539,10 @@ public class SimpleClass {
     }
 
     public static class Nest {
+        public Nest() {
+            PM.check(PMC.TRAP_SimpleClass_dol_Nest_hash_Nest_argb_arge_1);
+        }
+
         void nest(int a) {
             PM.check(PMC.TRAP_SimpleClass_dol_Nest_hash_nest_argb_int_arge_1);
             a++;
