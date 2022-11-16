@@ -33,7 +33,7 @@ public class TimeProfiler extends AbstractProfiler {
     }
 
     @Override
-    public void profileImpl() {
+    protected void profileImpl() {
         try {
             // reset if possible and erase any previous performance stop
             resetApplet();

@@ -20,7 +20,7 @@ public class CustomProfiler extends AbstractProfiler {
     }
 
     @Override
-    public void profileImpl() {
+    protected void profileImpl() {
         if (!(profiledExecutable instanceof CtConstructor))
             generateInputs(args.repeatCount);
     }
