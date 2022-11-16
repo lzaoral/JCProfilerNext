@@ -22,11 +22,6 @@ public class MemoryVisualiser extends AbstractVisualiser {
         prepareHeatmap();
     }
 
-    @Override
-    protected AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor() {
-        return new InsertMemoryMeasurementsProcessor(args, measurements);
-    }
-
     private void prepareHeatmap() {
         String prevActualTrap = null;
         // prepare values for the heatMap
@@ -61,6 +56,11 @@ public class MemoryVisualiser extends AbstractVisualiser {
 
             prevActualTrap = currentTrap;
         }
+    }
+
+    @Override
+    protected AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor() {
+        return new InsertMemoryMeasurementsProcessor(args, measurements);
     }
 
     @Override
