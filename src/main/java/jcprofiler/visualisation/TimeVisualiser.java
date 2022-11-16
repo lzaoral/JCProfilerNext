@@ -16,16 +16,29 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Class for visualisation of measurements in time mode
+ */
 public class TimeVisualiser extends AbstractVisualiser {
     private final Map<String, List<Long>> filteredMeasurements = new LinkedHashMap<>();
     private final Map<String, DescriptiveStatistics> filteredStatistics = new LinkedHashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(TimeVisualiser.class);
 
+    /**
+     * Constructs the {@link TimeVisualiser} class.
+     *
+     * @param args  object with commandline arguments
+     * @param model Spoon model
+     */
     public TimeVisualiser(final Args args, final CtModel model) {
         super(args, model);
     }
 
+    /**
+     * Loads and parses the CSV file with measurements, loads the source code of the profiled
+     * executable, filters obvious outliers and prepares input data for the heatmap.
+     */
     @Override
     public void loadAndProcessMeasurements() {
         super.loadAndProcessMeasurements();
@@ -33,6 +46,9 @@ public class TimeVisualiser extends AbstractVisualiser {
         prepareHeatmap();
     }
 
+    /**
+     * Filters obvious outliers from the input measurements.
+     */
     private void filterOutliers() {
         log.info("Filtering outliers from the loaded measurements.");
         measurements.forEach((k, v) -> {
@@ -66,6 +82,9 @@ public class TimeVisualiser extends AbstractVisualiser {
         });
     }
 
+    /**
+     * Prepares heatmap traces.
+     */
     private void prepareHeatmap() {
         // prepare values for the heatMap
         sourceCode.forEach(s -> {
@@ -108,6 +127,14 @@ public class TimeVisualiser extends AbstractVisualiser {
         });
     }
 
+    /**
+     * Converts the input CSV value into its numerical counterpart and converts it according
+     * to selected {@link TimeUnit}, or null if the measurement is missing.
+     *
+     * @param  value single CSV value
+     * @return       parsed {@link Long} value in given {@link TimeUnit}
+     *               or {@code null} if the value is empty.
+     */
     @Override
     protected Long convertValues(final String value) {
         if (value.isEmpty())
@@ -128,11 +155,21 @@ public class TimeVisualiser extends AbstractVisualiser {
         }
     }
 
+    /**
+     * Returns an {@link InsertTimeMeasurementsProcessor} instance.
+     *
+     * @return {@link InsertTimeMeasurementsProcessor} instance
+     */
     @Override
     protected AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor() {
         return new InsertTimeMeasurementsProcessor(args, measurements, filteredStatistics);
     }
 
+    /**
+     * Adds elements exclusive for the time mode to the given {@link VelocityContext} instance.
+     *
+     * @param context {@link VelocityContext} instance
+     */
     @Override
     protected void prepareVelocityContext(final VelocityContext context) {
         context.put("filteredMeasurements", filteredMeasurements);
