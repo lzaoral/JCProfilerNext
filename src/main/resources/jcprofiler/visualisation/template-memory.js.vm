@@ -85,30 +85,24 @@ for (var i = 0; i < 3; i++) {
 }
 
 // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
-function redrawGraphs() {
-    Plotly.newPlot('plotly', traces, {
-        ...layoutCommon
-    }, {
-        responsive: true
-    });
+Plotly.newPlot('plotly', traces, {
+    ...layoutCommon
+}, {
+    responsive: true
+});
 
-    // set click event handler
-    const plotlyDiv = document.getElementById('plotly');
+// set click event handler
+const plotlyDiv = document.getElementById('plotly');
 
-    // replace the event handler
-    plotlyDiv.removeAllListeners('plotly_click');
-    plotlyDiv.on('plotly_click', function (data) {
-        const graph = data.points[0];
-        const trapName = trapPrefix + graph.x;
+// add the click handler
+plotlyDiv.on('plotly_click', function (data) {
+    const graph = data.points[0];
+    const trapName = trapPrefix + graph.x;
 
-        highlightTrap(trapName);
-        document.querySelectorAll('.' + trapName).forEach(
-            e => e.scrollIntoView({block: 'center', behavior: 'smooth'}));
-    });
-}
-
-// initial draw
-redrawGraphs();
+    highlightTrap(trapName);
+    document.querySelectorAll('.' + trapName).forEach(
+        e => e.scrollIntoView({block: 'center', behavior: 'smooth'}));
+});
 
 // redraw graph event handler
 function highlightTrap(trapName) {
