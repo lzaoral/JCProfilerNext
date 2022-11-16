@@ -16,6 +16,9 @@ import java.util.Objects;
 
 import static spoon.testing.Assert.assertThat;
 
+/**
+ * Tests for trap insertion
+ */
 class InsertTrapProcessorTest {
     @Test
     public void process() {

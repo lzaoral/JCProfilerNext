@@ -18,6 +18,9 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static spoon.testing.Assert.assertThat;
 
+/**
+ * Tests for modification of the entry point class
+ */
 class ModifyEntryPointProcessorTest {
 
     @Test
