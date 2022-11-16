@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * @author Lukáš Zaoral and Petr Svenda
+ * This class represents the specifics of profiling in time mode.
+ *
+ * @author Lukáš Zaoral and Petr Švenda
  */
 public class TimeProfiler extends AbstractProfiler {
     // use LinkedHashX to preserve insertion order
@@ -28,11 +30,23 @@ public class TimeProfiler extends AbstractProfiler {
 
     private static final Logger log = LoggerFactory.getLogger(TimeProfiler.class);
 
+    /**
+     * Constructs the {@link TimeProfiler} class.
+     *
+     * @param args        object with commandline arguments
+     * @param cardManager applet connection instance
+     * @param model       Spoon model
+     */
     public TimeProfiler(final Args args, final CardManager cardManager, final CtModel model) {
         super(args, cardManager, JCProfilerUtil.getProfiledMethod(model, args.executable),
-              "INS_PERF_SETSTOP");
+              /* customInsField */ "INS_PERF_SETSTOP");
     }
 
+    /**
+     * Measures the elapsed time.
+     *
+     * @throws RuntimeException if some measurements are missing
+     */
     @Override
     protected void profileImpl() {
         try {
@@ -40,6 +54,7 @@ public class TimeProfiler extends AbstractProfiler {
             resetApplet();
             setTrap(PERF_START);
 
+            // main profiling loop
             generateInputs(args.repeatCount);
             for (int round = 1; round <= args.repeatCount; round++) {
                 final CommandAPDU triggerAPDU = getInputAPDU(round);
@@ -66,6 +81,14 @@ public class TimeProfiler extends AbstractProfiler {
         log.info("Collecting measurements complete.");
     }
 
+    /**
+     * Sets {@code jcprofiler.PM#nextPerfStop} to given performance trap ID.
+     *
+     * @param  trapID performance trap ID to be set
+     *
+     * @throws CardException    if the card connection failed
+     * @throws RuntimeException if setting the next fatal performance trap failed
+     */
     private void setTrap(short trapID) throws CardException {
         log.debug("Setting next trap to {}.", getTrapName(trapID));
 
@@ -78,6 +101,14 @@ public class TimeProfiler extends AbstractProfiler {
                     getTrapName(trapID), Integer.toHexString(response.getSW())));
     }
 
+    /**
+     * Performs a single time profiling step.  Executes the given APDU and stores the elapsed time.
+     *
+     * @param  triggerAPDU APDU to reach the selected fatal trap
+     *
+     * @throws CardException    if the card connection failed
+     * @throws RuntimeException if setting the next fatal performance trap failed
+     */
     private void profileSingleStep(CommandAPDU triggerAPDU) throws CardException {
         long prevTransmitDuration = 0;
         long currentTransmitDuration;
@@ -121,6 +152,13 @@ public class TimeProfiler extends AbstractProfiler {
         }
     }
 
+    /**
+     * Stores the time measurements using given {@link CSVPrinter} instance.
+     *
+     * @param  printer instance of the CSV printer
+     *
+     * @throws IOException if the printing fails
+     */
     @Override
     protected void saveMeasurements(final CSVPrinter printer) throws IOException {
         printer.printComment("trapName,measurement1,measurement2,...");
