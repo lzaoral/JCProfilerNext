@@ -83,7 +83,7 @@ public abstract class AbstractVisualiser {
             final List<String> header = it.next().toList();
             mode = Mode.valueOf(header.get(0));
             if (args.mode != mode)
-                throw new RuntimeException(String.format(
+                throw new UnsupportedOperationException(String.format(
                         "Visualisation executed in %s mode but CSV was generated in %s mode.", args.mode, mode));
 
             profiledExecutableSignature = header.get(1);
