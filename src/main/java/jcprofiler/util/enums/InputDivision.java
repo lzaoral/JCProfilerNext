@@ -1,10 +1,18 @@
 package jcprofiler.util.enums;
 
+/**
+ * Enum with possible input division types
+ */
 public enum InputDivision {
     effectiveBitLength,
     hammingWeight,
     none;
 
+    /**
+     * Returns a pretty name for given enum value.
+     *
+     * @return a {@link String} with pretty printed name
+     */
     public String prettyPrint() {
         switch (this) {
             case effectiveBitLength:

@@ -1,5 +1,8 @@
 package jcprofiler.util.enums;
 
+/**
+ * Enum with possible time units
+ */
 public enum TimeUnit {
     nano,
     micro,
