@@ -27,10 +27,10 @@ public abstract class AbstractInsertMeasurementsProcessor extends AbstractProces
     @Override
     public boolean isToBeProcessed(final CtInvocation<Void> statement) {
         final CtExecutableReference<?> executable = statement.getExecutable();
-        return executable.getDeclaringType().getSimpleName().equals("PM")
-                && executable.getSignature().equals("check(short)")
-                && executable.getType().equals(getFactory().Type().voidPrimitiveType())
-                && executable.isStatic();
+        return executable.getDeclaringType().getSimpleName().equals("PM") &&
+               executable.getSignature().equals("check(short)") &&
+               executable.getType().equals(getFactory().Type().voidPrimitiveType()) &&
+               executable.isStatic();
     }
 
     protected abstract String getCommentString(final String fieldName);
