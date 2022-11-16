@@ -204,12 +204,12 @@ public abstract class AbstractProfiler {
     }
 
     protected void resetApplet() throws CardException {
-        if (args.cleanupInst == null)
+        if (args.resetIns == null)
             return;
 
         log.debug("Resetting applet before measurement.");
 
-        CommandAPDU reset = new CommandAPDU(args.cla, args.cleanupInst, 0, 0);
+        CommandAPDU reset = new CommandAPDU(args.cla, args.resetIns, 0, 0);
         ResponseAPDU response = cardManager.transmit(reset);
         if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
             throw new RuntimeException("Resetting the applet failed with SW " + Integer.toHexString(response.getSW()));

@@ -216,8 +216,8 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         cmd += ['--entry-point', entry_point['name']]
         dir_prefix = entry_point['name'] + '_'
 
-    if 'resetInst' in test_desc:
-        cmd += ['--reset-inst', test_desc['resetInst']]
+    if 'resetIns' in test_desc:
+        cmd += ['--reset-ins', test_desc['resetIns']]
     if 'cla' in test_desc:
         cmd += ['--cla', test_desc['cla']]
 

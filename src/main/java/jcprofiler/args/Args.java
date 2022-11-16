@@ -92,10 +92,10 @@ public class Args {
                validateWith = PositiveIntegerValidator.class)
     public int repeatCount = 1000;
 
-    @Parameter(names = {"--reset-inst"},
+    @Parameter(names = {"--reset-ins"},
                description = "Applet reset instruction in hex",
                converter = ByteConverter.class)
-    public Byte cleanupInst;
+    public Byte resetIns;
 
     @Parameter(names = {"--cla"},
                description = "Applet CLA in hex",

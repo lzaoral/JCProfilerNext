@@ -1887,7 +1887,7 @@
                 },
                 {
                     "name": "opencrypto.jcmathlib.OCUnitTests",
-                    "resetInst": "0x03",
+                    "resetIns": "0x03",
                     "cla": "0xB0",
                     "subtests": [
                         {
