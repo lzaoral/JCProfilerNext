@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class represents the specifics of profiling in memory mode.
+ */
 public class MemoryProfiler extends AbstractProfiler {
     // use LinkedHashX to preserve insertion order
     private final Map<String, Integer> memoryUsageTransientDeselect = new LinkedHashMap<>();
@@ -35,10 +38,22 @@ public class MemoryProfiler extends AbstractProfiler {
 
     private static final Logger log = LoggerFactory.getLogger(MemoryProfiler.class);
 
+    /**
+     * Constructs the {@link MemoryProfiler} class.
+     *
+     * @param args        object with commandline arguments
+     * @param cardManager applet connection instance
+     * @param model       Spoon model
+     *
+     * @throws UnsupportedOperationException if jCardSim is used in combination with
+     *                                       {@link javacard.framework.JCSystem#getAvailableMemory(short[], short, byte)}
+     *
+     */
     public MemoryProfiler(final Args args, final CardManager cardManager, final CtModel model) {
         super(args, cardManager, JCProfilerUtil.getProfiledExecutable(model, args.entryPoint, args.executable),
-              "INS_PERF_GETMEM");
+              /* customInsField */ "INS_PERF_GETMEM");
 
+        // get size of measurements
         valueBytes = getValueBytes();
         if (valueBytes == Integer.BYTES && args.useSimulator)
             throw new UnsupportedOperationException(
@@ -46,11 +61,14 @@ public class MemoryProfiler extends AbstractProfiler {
     }
 
     /**
-     * Gets size of the measurement from the javacard.framework.JCSystem.getAvailableMemory
-     * static method used in the PM.check(short) method in bytes. JCSDK 3.0.4+ return an
-     * int and older return a short.
+     * Gets size of the measurement from the {@link javacard.framework.JCSystem#getAvailableMemory}
+     * static method used in the {@link jcprofiler.PM#check(short)} method in bytes.  JCSDK 3.0.4+
+     * returns an {@link int} and older return a {@link short}.
      *
-     * @return size of the getAvailableMemory measurement in bytes
+     * @return size of the {@link javacard.framework.JCSystem#getAvailableMemory} measurement in bytes
+     *
+     * @throws RuntimeException if the {@link jcprofiler.PM#check(short)} mixes both
+     *                          {@link javacard.framework.JCSystem#getAvailableMemory} overloads
      */
     private int getValueBytes() {
         final CtTypeReference<?> shortType = PM.getFactory().Type().shortPrimitiveType();
@@ -70,16 +88,29 @@ public class MemoryProfiler extends AbstractProfiler {
         return returnTypes.get(0).equals(shortType) ? Short.BYTES : Integer.BYTES;
     }
 
+    /**
+     * Retrieves measurements for given memory type
+     *
+     * @param  map     map with measurements for given memory type
+     * @param  memType {@link javacard.framework.JCSystem} constant representing given memory type
+     *
+     * @throws CardException    if the card connection failed
+     * @throws RuntimeException if the measurement retrieval failed or the measurement are in
+     *                          an invalid format
+     */
     private void getMeasurements(final Map<String, Integer> map, final byte memType) throws CardException {
+        // init
         final int arrayLength = trapNameMap.size() * valueBytes;
         final byte[] buffer = new byte[arrayLength];
 
         int part = 0;
         int remainingLength = arrayLength;
 
+        // go through the whole array
         while (remainingLength > 0) {
             final int nextLength = Math.min(remainingLength, 256);
 
+            // get the given part
             final CommandAPDU getMeasurements = new CommandAPDU(
                     args.cla, JCProfilerUtil.INS_PERF_HANDLER, memType, part++);
             final ResponseAPDU response = cardManager.transmit(getMeasurements);
@@ -98,6 +129,7 @@ public class MemoryProfiler extends AbstractProfiler {
             remainingLength -= nextLength;
         }
 
+        // convert and store the retrieved byte array
         trapNameMap.forEach((trapID, trapName) -> {
             int idx = (Short.toUnsignedInt(trapID) - /* PERF_START */ 2) * valueBytes;
 
@@ -122,17 +154,26 @@ public class MemoryProfiler extends AbstractProfiler {
         });
     }
 
+    /**
+     * Measures the memory usage and retrieves the measurements from the card.
+     * Only does the latter, if the applet was already measured during installation.
+     *
+     * @throws CardException    if the card connection failed
+     * @throws RuntimeException if the applet execution failed
+     */
     @Override
     protected void profileImpl() throws CardException {
-        // methods must be executed explicitly
+        // measure the usage unless already done during installation
         if (!measuredDuringInstallation) {
             resetApplet();
             generateInputs(/* size */ 1);
 
+            // get the input
             final CommandAPDU triggerAPDU = getInputAPDU(/* round */ 1);
             final String input = Util.bytesToHex(triggerAPDU.getBytes());
             log.info("APDU: {}", input);
 
+            // measure!
             final ResponseAPDU response = cardManager.transmit(triggerAPDU);
             if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
                 throw new RuntimeException(
@@ -151,6 +192,13 @@ public class MemoryProfiler extends AbstractProfiler {
         log.info("Measurements retrieved successfully.");
     }
 
+    /**
+     * Stores the memory usage measurements using given {@link CSVPrinter} instance.
+     *
+     * @param  printer instance of the CSV printer
+     *
+     * @throws IOException if the printing fails
+     */
     @Override
     protected void saveMeasurements(final CSVPrinter printer) throws IOException {
         printer.printComment("trapName,freeTransientDeselect,freeTransientReset,freePersistent");
