@@ -204,7 +204,7 @@ class ModifyEntryPointProcessorTest {
         spoon.addInputResource(new VirtualFile(
                 "import javacard.framework.APDU;" +
                 "public class PM { public static void set(APDU apdu) {} }", "PM.java"));
-        spoon.addInputResource(new VirtualFile("public class PMC { }", "PMC.java"));
+        spoon.addInputResource(new VirtualFile("public class PMC {}", "PMC.java"));
 
         // add the input
         spoon.addInputResource(Objects.requireNonNull(getClass().getResource(fileName)).getPath());
