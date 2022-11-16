@@ -398,11 +398,11 @@ class JCProfilerUtilTest {
     void getFullSignature() {
         final String input = "package test;" +
                 "public class Test {" +
-                "   public class Test1 {};" +
-                "   public class Test2 {" +
-                "       void foo(Test1 a, Long b, int[] c) {};" +
-                "   }" +
-                " };";
+                "    public class Test1 {};" +
+                "    public class Test2 {" +
+                "        void foo(Test1 a, Long b, int[] c) {};" +
+                "    }" +
+                "};";
         final CtModel model = prepareModel(input);
         final CtMethod<?> method = model.filterChildren(CtMethod.class::isInstance).first();
 
@@ -463,9 +463,9 @@ class JCProfilerUtilTest {
     void isClsEntryPointSimple() {
         final String input = "package test;" +
                 "public class Entry extends javacard.framework.Applet {" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
-                "   public static void install(byte[] bArray, short bOffset, byte bLength) {} +" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
+                "    public static void install(byte[] bArray, short bOffset, byte bLength) {} +" +
                 "}";
         final CtModel model = prepareModel(input);
         final CtClass<?> cls = model.filterChildren(CtClass.class::isInstance).first();
@@ -477,7 +477,7 @@ class JCProfilerUtilTest {
     void isClsEntryPointNoProcess() {
         final String input = "package test;" +
                 "public class Entry extends javacard.framework.Applet {" +
-                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "    public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
                 "}";
         final CtModel model = prepareModel(input);
         final CtClass<?> cls = model.filterChildren(CtClass.class::isInstance).first();
@@ -489,8 +489,8 @@ class JCProfilerUtilTest {
     void isClsEntryPointNoInstall() {
         final String input = "package test;" +
                 "public class Entry extends javacard.framework.Applet {" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
                 "}";
         final CtModel model = prepareModel(input);
         final CtClass<?> cls = model.filterChildren(CtClass.class::isInstance).first();
@@ -513,9 +513,9 @@ class JCProfilerUtilTest {
         final String input = "package test;" +
                 "public class Test extends javacard.framework.Applet {}" +
                 "public class Entry extends Test {" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
-                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
+                "    public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
                 "}";
         final CtModel model = prepareModel(input);
         final CtClass<?> cls = model.filterChildren((CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
@@ -527,11 +527,11 @@ class JCProfilerUtilTest {
     void isClsEntryPointInherited2() {
         final String input = "package test;" +
                 "public class Test extends javacard.framework.Applet {" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
                 "}" +
                 "public class Entry extends Test {" +
-                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "    public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
                 "}";
         final CtModel model = prepareModel(input);
         final CtClass<?> cls = model.filterChildren((CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
@@ -544,7 +544,7 @@ class JCProfilerUtilTest {
         final String input = "package test;" +
                 "public class Test extends javacard.framework.Applet {}" +
                 "public class Entry extends Test {" +
-                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "    public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
                 "}";
         final CtModel model = prepareModel(input);
         final CtClass<?> cls = model.filterChildren((CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
@@ -556,8 +556,8 @@ class JCProfilerUtilTest {
     void isClsEntryPointInheritedNoInstall() {
         final String input = "package test;" +
                 "public class Test extends javacard.framework.Applet {" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
                 "}" +
                 "public class Entry extends Test {}";
         final CtModel model = prepareModel(input);
@@ -571,8 +571,8 @@ class JCProfilerUtilTest {
         final String input = "package test;" +
                 "public abstract class Test extends javacard.framework.Applet {}" +
                 "public abstract class Entry extends Test {" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
                 "}";
         final CtModel model = prepareModel(input);
         final CtClass<?> cls = model.filterChildren((CtClass<?> c) -> c.getSimpleName().equals("Entry")).first();
@@ -590,9 +590,9 @@ class JCProfilerUtilTest {
     void getEntryPointConstructorNoCall() {
         final String input = "package test;" +
                 "public class Entry extends javacard.framework.Applet {" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
-                "   public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
+                "    public static void install(byte[] bArray, short bOffset, byte bLength) {}" +
                 "}";
         final CtModel model = prepareModel(input);
 
@@ -610,14 +610,14 @@ class JCProfilerUtilTest {
     void getEntryPointConstructorTwoCalls() {
         final String input = "package test;" +
                 "public class Entry extends javacard.framework.Applet {" +
-                "   Entry() {}" +
-                "   Entry(int a) {}" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
-                "   public static void install(byte[] bArray, short bOffset, byte bLength) {" +
-                "       new Entry();" +
-                "       new Entry(1);" +
-                "   }" +
+                "    Entry() {}" +
+                "    Entry(int a) {}" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
+                "    public static void install(byte[] bArray, short bOffset, byte bLength) {" +
+                "        new Entry();" +
+                "        new Entry(1);" +
+                "    }" +
                 "}";
         final CtModel model = prepareModel(input);
 
@@ -637,11 +637,11 @@ class JCProfilerUtilTest {
     void getEntryPointConstructor() {
         final String input = "package test;" +
                 "public class Entry extends javacard.framework.Applet {" +
-                "   @Override" +
-                "   public void process(javacard.framework.APDU apdu) {}" +
-                "   public static void install(byte[] bArray, short bOffset, byte bLength) {" +
-                "       new Entry();" +
-                "   }" +
+                "    @Override" +
+                "    public void process(javacard.framework.APDU apdu) {}" +
+                "    public static void install(byte[] bArray, short bOffset, byte bLength) {" +
+                "        new Entry();" +
+                "    }" +
                 "}";
         final CtModel model = prepareModel(input);
         final CtConstructor<?> constructor = model.filterChildren(CtConstructor.class::isInstance).first();
