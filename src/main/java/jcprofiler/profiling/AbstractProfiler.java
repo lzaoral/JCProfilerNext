@@ -34,29 +34,76 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * @author Lukáš Zaoral and Petr Svenda
+ * This class represents the profiling stage.
+ *
+ * @author Lukáš Zaoral and Petr Švenda
  */
 public abstract class AbstractProfiler {
+    /**
+     * Initial value of {@code jcprofiler.PM#nextPerfStop}.
+     */
     protected static final short PERF_START = 0x0001;
 
+    /**
+     * Commandline arguments
+     */
     protected final Args args;
+    /**
+     * A card connection instance
+     */
     protected final CardManager cardManager;
+    /**
+     * Profiled executable
+     */
     protected final CtExecutable<?> profiledExecutable;
+    /**
+     * Signature of the profiled executable
+     */
     protected final String profiledExecutableSignature;
+    /**
+     * Indicates whether the applet was measured during installation.
+     */
     protected final boolean measuredDuringInstallation;
 
+    /**
+     * Instance of the PM class
+     */
     protected final CtType<?> PM;
+    /**
+     * Instance of the PMC class
+     */
     protected final CtType<?> PMC;
 
     // use LinkedHashX to preserve insertion order
+
+    /**
+     * Map between s value and the name of the corresponding performance trap
+     */
     protected final Map<Short, String> trapNameMap = new LinkedHashMap<>();
+    /**
+     * List of unreachable traps
+     */
     protected final Set<String> unreachedTraps = new LinkedHashSet<>();
+    /**
+     * List of generated inputs
+     */
     protected final List<String> inputs = new ArrayList<>();
 
     private String elapsedTime;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractProfiler.class);
 
+    /**
+     * Constructs the {@link AbstractProfiler} class.
+     *
+     * @param  args           object with commandline arguments
+     * @param  cardManager    applet connection instance
+     * @param  executable     instance of the profiled executable
+     * @param  customInsField name of the custom instruction field for given profiling mode,
+     *                        may be null if the given mode does not depend on such field
+     *
+     * @throws RuntimeException if the sources were instrumented fo ra different profiling mode
+     */
     protected AbstractProfiler(final Args args, final CardManager cardManager, final CtExecutable<?> executable,
                                final String customInsField) {
         final CtModel model = executable.getFactory().getModel();
@@ -66,6 +113,7 @@ public abstract class AbstractProfiler {
         this.args = args;
         this.cardManager = cardManager;
 
+        // check for profiling mode mismatch
         if (!JCProfilerUtil.entryPointHasField(model, args.entryPoint, customInsField))
             throw new RuntimeException(String.format(
                     "Profiling in %s mode but entry point class does not contain %s field!",
@@ -81,6 +129,14 @@ public abstract class AbstractProfiler {
         buildPerfMapping();
     }
 
+    /**
+     * Factory method
+     *
+     * @param  args        object with commandline arguments
+     * @param  cardManager applet connection instance
+     * @param  model       a Spoon model
+     * @return             constructed {@link AbstractProfiler} object
+     */
     public static AbstractProfiler create(final Args args, final CardManager cardManager, final CtModel model) {
         switch (args.mode) {
             case custom:
@@ -94,14 +150,26 @@ public abstract class AbstractProfiler {
         }
     }
 
+    /**
+     * Returns the name of the performance to corresponding trap ID.
+     *
+     * @param  trapID performance trap ID
+     * @return        string corresponding to given trap id
+     */
     protected String getTrapName(final short trapID) {
         return trapID == PERF_START ? "PERF_START" : trapNameMap.get(trapID);
     }
 
+    /**
+     * Populates the {@link #trapNameMap} map.
+     *
+     * @throws RuntimeException if the extraction of traps from profiled executable failed
+     */
     private void buildPerfMapping() {
         log.info("Looking for traps in the {}.", profiledExecutableSignature);
         final String trapNamePrefix = JCProfilerUtil.getTrapNamePrefix(profiledExecutable);
 
+        // get traps form profiledExecutable
         final List<CtField<Short>> traps = profiledExecutable.filterChildren(CtFieldAccess.class::isInstance)
                 .map((CtFieldAccess<Short> fa) -> fa.getVariable().getFieldDeclaration())
                 .filterChildren((CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix)).list();
@@ -109,16 +177,19 @@ public abstract class AbstractProfiler {
             throw new RuntimeException(String.format(
                     "Extraction of traps from %s failed!", profiledExecutableSignature));
 
+        // get given traps from PMC
         final List<CtField<Short>> pmTraps = PMC.getElements(
                 (CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix));
         if (pmTraps.isEmpty())
             throw new RuntimeException("Extraction of traps from PMC failed!");
 
+        // check that the trap lists are the same
         if (traps.size() != pmTraps.size() || !new HashSet<>(traps).containsAll(pmTraps))
             throw new RuntimeException(String.format(
                     "The profiled method and the PMC class contain different traps!%n" +
                     "Please, reinstrument the given sources!"));
 
+        // populate the map
         for (final CtField<Short> f : traps) {
             final CtLiteral<Integer> evaluated = f.getDefaultExpression().partiallyEvaluate();
             trapNameMap.put(evaluated.getValue().shortValue(), f.getSimpleName());
@@ -126,6 +197,14 @@ public abstract class AbstractProfiler {
         }
     }
 
+    /**
+     * Generates the vector of inputs, either from a regular expression or from given text file.
+     * Optionally, divides the input according to selected {@link InputDivision}.
+     *
+     * @param  size             number of inputs to be generated
+     *
+     * @throws RuntimeException if the generated inputs are not valid
+     */
     protected void generateInputs(int size) {
         if (measuredDuringInstallation)
             throw new RuntimeException("Already measured constructors do not support inputs!");
@@ -167,6 +246,7 @@ public abstract class AbstractProfiler {
             }
         }
 
+        // divide the input
         int oddSize = size & 0x1;
         switch (args.inputDivision) {
             case effectiveBitLength:
@@ -198,6 +278,15 @@ public abstract class AbstractProfiler {
             log.info("Inputs divided according to the {}.", args.inputDivision.prettyPrint());
     }
 
+    /**
+     * Constructs a {@link CommandAPDU} with an input for given round.
+     *
+     * @param  round current profiling round
+     * @return       a {@link CommandAPDU} instance
+     *
+     * @throws ArrayIndexOutOfBoundsException if the round is not positive or larger than
+     *                                        the number of all generated inputs
+     */
     protected CommandAPDU getInputAPDU(int round) {
         if (round < 1 || inputs.size() < round)
             throw new ArrayIndexOutOfBoundsException("Unexpected index: " + round);
@@ -206,6 +295,12 @@ public abstract class AbstractProfiler {
         return new CommandAPDU(args.cla, args.ins, args.p1, args.p2, arr);
     }
 
+    /**
+     * Resets the applet if {@link Args#resetIns} is defined.
+     *
+     * @throws CardException    if the card connection failed
+     * @throws RuntimeException if the applet reset failed
+     */
     protected void resetApplet() throws CardException {
         if (args.resetIns == null)
             return;
@@ -218,6 +313,9 @@ public abstract class AbstractProfiler {
             throw new RuntimeException("Resetting the applet failed with SW " + Integer.toHexString(response.getSW()));
     }
 
+    /**
+     * Executes the profiling stage.
+     */
     public void profile() {
         try {
             final long startTime = System.nanoTime();
@@ -241,6 +339,7 @@ public abstract class AbstractProfiler {
             cardManager.disconnect(true);
             log.info("Disconnected from card.");
 
+            // process unreached traps
             if (!unreachedTraps.isEmpty()) {
                 log.warn("Some traps were not always reached:");
                 unreachedTraps.forEach(System.out::println);
@@ -250,9 +349,15 @@ public abstract class AbstractProfiler {
         }
     }
 
+    /**
+     * Implements the main profiling loop.
+     *
+     * @throws CardException if the card connection failed
+     */
     protected abstract void profileImpl() throws CardException;
 
     public void generateCSV() {
+        // prepare header data
         final String atr = args.useSimulator ? "jCardSim"
                                              : Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes());
 
@@ -271,6 +376,7 @@ public abstract class AbstractProfiler {
         if (inputs.isEmpty())
             throw new RuntimeException("The list of input values is empty!");
 
+        // store the measurements
         final Path csv = args.workDir.resolve("measurements.csv");
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCSVFormat())) {
             printer.printComment("mode,type#signature,ATR,elapsedTime,APDUHeader,inputType:value,inputFilter");
@@ -288,5 +394,12 @@ public abstract class AbstractProfiler {
         log.info("Measurements saved to {}.", csv);
     }
 
+    /**
+     * Stores the measurements using given {@link CSVPrinter} instance.
+     *
+     * @param  printer instance of the CSV printer
+     *
+     * @throws IOException if the printing fails
+     */
     protected abstract void saveMeasurements(final CSVPrinter printer) throws IOException;
 }
