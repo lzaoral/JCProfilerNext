@@ -54,7 +54,7 @@ class InsertTrapProcessorTest {
         return spoon.getModel().filterChildren((CtClass<?> cls) -> cls.getSimpleName().equals("SimpleClass")).first();
     }
 
-    public CtClass<?> parseExpectedClass(final CtClass<?> input, final String fileName) {
+    private CtClass<?> parseExpectedClass(final CtClass<?> input, final String fileName) {
         final Launcher spoon = new Launcher();
 
         // add PM stub

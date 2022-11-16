@@ -197,7 +197,7 @@ class ModifyEntryPointProcessorTest {
         assertEquals(expected, actual);
     }
 
-    public CtClass<?> parseClass(final String fileName) {
+    private CtClass<?> parseClass(final String fileName) {
         final Launcher spoon = new Launcher();
 
         // add PM and PMC stubs
