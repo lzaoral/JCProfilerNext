@@ -23,7 +23,7 @@ public class MemoryVisualiser extends AbstractVisualiser {
     }
 
     @Override
-    public AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor() {
+    protected AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor() {
         return new InsertMemoryMeasurementsProcessor(args, measurements);
     }
 
@@ -64,7 +64,7 @@ public class MemoryVisualiser extends AbstractVisualiser {
     }
 
     @Override
-    public void prepareVelocityContext(final VelocityContext context) {
+    protected void prepareVelocityContext(final VelocityContext context) {
         context.put("measureUnit", "B");
         context.put("nonemptyHeatmap", heatmapValues.stream().anyMatch(
                 l -> l.stream().anyMatch(e -> e != null && e != 0.0)));

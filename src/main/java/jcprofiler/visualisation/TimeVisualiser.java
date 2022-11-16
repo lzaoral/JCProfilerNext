@@ -129,12 +129,12 @@ public class TimeVisualiser extends AbstractVisualiser {
     }
 
     @Override
-    public AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor() {
+    protected AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor() {
         return new InsertTimeMeasurementsProcessor(args, measurements, filteredStatistics);
     }
 
     @Override
-    public void prepareVelocityContext(final VelocityContext context) {
+    protected void prepareVelocityContext(final VelocityContext context) {
         context.put("filteredMeasurements", filteredMeasurements);
         context.put("roundCount", measurements.values().iterator().next().size());
         context.put("measureUnit", args.timeUnit.toString());

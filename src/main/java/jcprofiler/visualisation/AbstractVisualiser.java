@@ -121,7 +121,7 @@ public abstract class AbstractVisualiser {
         return Long.parseLong(value);
     }
 
-    public abstract AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor();
+    protected abstract AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor();
 
     public void insertMeasurementsToSources() {
         // always recreate the output directory
@@ -136,7 +136,7 @@ public abstract class AbstractVisualiser {
         spoon.prettyprint();
     }
 
-    public abstract void prepareVelocityContext(final VelocityContext context);
+    protected abstract void prepareVelocityContext(final VelocityContext context);
 
     public void generateHTML() {
         log.info("Initializing Apache Velocity.");
