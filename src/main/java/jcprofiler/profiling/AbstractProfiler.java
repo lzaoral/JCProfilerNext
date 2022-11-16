@@ -200,7 +200,7 @@ public abstract class AbstractProfiler {
             throw new RuntimeException("Unexpected index: " + round);
 
         final byte[] arr = Util.hexStringToByteArray(inputs.get(round - 1));
-        return new CommandAPDU(args.cla, args.inst, args.p1, args.p2, arr);
+        return new CommandAPDU(args.cla, args.ins, args.p1, args.p2, arr);
     }
 
     protected void resetApplet() throws CardException {
@@ -257,7 +257,7 @@ public abstract class AbstractProfiler {
         if (measuredDuringInstallation) {
             apduHeader = elapsedTime = dataSource = "install";
         } else {
-            apduHeader = Util.bytesToHex(new byte[]{args.cla, args.inst, args.p1, args.p2});
+            apduHeader = Util.bytesToHex(new byte[]{args.cla, args.ins, args.p1, args.p2});
             dataSource = args.dataRegex != null ? "regex:" + args.dataRegex
                                                 : "file:" + args.dataFile;
         }

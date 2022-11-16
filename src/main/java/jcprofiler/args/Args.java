@@ -102,10 +102,10 @@ public class Args {
                converter = ByteConverter.class)
     public byte cla = 0;
 
-    @Parameter(names = {"--inst"},
+    @Parameter(names = {"--ins"},
                description = "Applet instruction in hex",
                converter = ByteConverter.class)
-    public byte inst = 0;
+    public byte ins = 0;
 
     @Parameter(names = {"--p1"},
                description = "Applet P1 in hex",

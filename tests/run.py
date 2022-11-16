@@ -243,8 +243,8 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
             input_file = Path(subtest['inputFile']).absolute()
             sub_cmd += ['--data-file', str(input_file)]
 
-        if 'inst' in subtest:
-            sub_cmd += ['--inst', subtest['inst']]
+        if 'ins' in subtest:
+            sub_cmd += ['--ins', subtest['ins']]
         if 'p1' in subtest:
             sub_cmd += ['--p1', subtest['p1']]
         if 'p2' in subtest:

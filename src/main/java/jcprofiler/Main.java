@@ -147,7 +147,7 @@ public class Main {
         }
 
         // fail if --inst equals to JCProfilerUtil.INS_PERF_HANDLER
-        if (args.inst == JCProfilerUtil.INS_PERF_HANDLER)
+        if (args.ins == JCProfilerUtil.INS_PERF_HANDLER)
             throw new UnsupportedOperationException(String.format(
                     "Applet instruction byte has the same value as profiler's custom internal instruction: %d%n" +
                     "This is temporarily unsupported!", Short.toUnsignedInt(JCProfilerUtil.INS_PERF_HANDLER)));
