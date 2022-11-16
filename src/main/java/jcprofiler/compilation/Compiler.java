@@ -29,7 +29,8 @@ public class Compiler {
     private Compiler() {}
 
     /**
-     * Compiles the instrumented sources into a CAP package, JAR archive, JCA file and *.class files.
+     * Compiles the instrumented sources into a CAP package, JAR archive, JCA file and *.class files
+     * and stores in the {@link JCProfilerUtil#APPLET_OUT_DIRNAME} directory.
      *
      * @param args       object with commandline arguments
      * @param entryPoint applet entry point class
