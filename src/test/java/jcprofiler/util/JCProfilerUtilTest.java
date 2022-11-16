@@ -417,6 +417,20 @@ class JCProfilerUtilTest {
     }
 
     @Test
+    void getFullSignatureDefaultPackage() {
+        final String input = "public class Test {" +
+                "    void foo(short a, Long b, int[] c) {};" +
+                "};";
+        final CtModel model = prepareModel(input);
+
+        final CtMethod<?> method = model.filterChildren(CtMethod.class::isInstance).first();
+        assertEquals("Test#foo(short,java.lang.Long,int[])", JCProfilerUtil.getFullSignature(method));
+
+        final CtConstructor<?> ctor = model.filterChildren(CtConstructor.class::isInstance).first();
+        assertEquals("Test#Test()", JCProfilerUtil.getFullSignature(ctor));
+    }
+
+    @Test
     void getTrapNamePrefix() {
         final String input = "package test;" +
                 "public class Test { public class Test1 {}; public class Test2 {" +

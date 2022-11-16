@@ -421,7 +421,8 @@ public class JCProfilerUtil {
             final String prefix = parent.isTopLevel()
                                   ? parent.getPackage().getQualifiedName()
                                   : parent.getDeclaringType().getQualifiedName();
-            signature = signature.substring(prefix.length() + /*. or $*/ 1);
+            if (!prefix.isEmpty())
+                signature = signature.substring(prefix.length() + /* . or $ */ 1);
         }
 
         return parent.getQualifiedName() + "#" + signature;
