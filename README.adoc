@@ -88,7 +88,7 @@ public class Example extends Applet {
 Run as:
 [source,console]
 ----
-$ ./gradlew run --args="--work-dir example --jckit jc222_kit --method example --inst 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100"
+$ ./gradlew run --args="--work-dir example --jckit jc222_kit --executable example --ins 0xEE --data-regex 00[0-9A-F]{2} --repeat-count 100"
 ----
 JCProfilerNext will process all sources in the `example` directory and will
 also use this directory to store all intermediate results:
@@ -143,10 +143,10 @@ Run as:
 $ ./gradlew run --args="--work-dir example --jckit jc304_kit --mode memory"
 ----
 JCProfilerNext will produce the same directory structure as in the time mode
-above.  The `--method` option is omitted because we want to measure memory
-usage in the constructor. Note that the allocation of transient deselect memory
-may also affect the amount of free transient memory and vice versa. See
-link:https://lzaoral.github.io/JCProfilerNext/example-memory.html[`measurements.html`]
+above.  The `--executable` option is omitted because we want to measure memory
+usage in the entry point class constructor. Note that the allocation of transient
+deselect memory may also affect the amount of free transient memory and vice versa.
+See link:https://lzaoral.github.io/JCProfilerNext/example-memory.html[`measurements.html`]
 for visualisation of the measurements.
 
 Stats Example

@@ -4,12 +4,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Measurements - example.Example()</title>
+    <title>Measurements - example.Example#Example()</title>
         <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"></script>
     <script>hljs.highlightAll()</script>
-    <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
     <style>
 .contents {
     display: flex;
@@ -116,7 +116,7 @@
     </style>
 </head>
 <body>
-    <h1>example.Example()</h1>
+    <h1>example.Example#Example()</h1>
     <h3 id="graphName" class="center"></h3>
     <div class="contents">
         <div class="code">
@@ -199,7 +199,8 @@
 const heatmapX = ['Trans', 'Pers'];
 const heatmapData  = {
     colorscale: [
-        [0, 'white'], [1, 'red']
+        [0, 'white'],
+        [1, 'red']
     ]
 };
 
@@ -216,10 +217,10 @@ const trapPrefix = 'TRAP_example_Example_argb_arge_';
 
 const inputs = ['measured during installation'];
 const measurements = {
-        TRAP_example_Example_argb_arge_1: [4240, 4250, 157852],
-        TRAP_example_Example_argb_arge_2: [3984, 3994, 157836],
-        TRAP_example_Example_argb_arge_3: [3728, 3738, 157820],
-        TRAP_example_Example_argb_arge_4: [3728, 3738, 157548]
+    TRAP_example_Example_argb_arge_1: [4240, 4250, 157852],
+    TRAP_example_Example_argb_arge_2: [3984, 3994, 157836],
+    TRAP_example_Example_argb_arge_3: [3728, 3738, 157820],
+    TRAP_example_Example_argb_arge_4: [3728, 3738, 157548]
 };
 
 const heatmapValues = {
@@ -249,7 +250,7 @@ const histogramCommon = {
 
 const maxLineStringSize = 2 * heatmapValues.y[0].toString().length;
 
-// heatmap
+// Heatmap
 Plotly.newPlot('heatmap', [{
     ...heatmapValuesFiltered,
     hovertemplate: 'Line: %{y}<br>%{z} B<extra></extra>',
@@ -263,7 +264,7 @@ Plotly.newPlot('heatmap', [{
     margin: {
         l: 18 + maxLineStringSize,
         r: 110,
-        b: 6,
+        b: 12,
         t: 18,
         pad: 4
     },
@@ -288,10 +289,10 @@ Plotly.newPlot('heatmap', [{
 });
 
 // this is not very nice but Google didn't help much nor I'm a JS developer ¯\_(ツ)_/¯
-const padding = 12;
+const padding = 6;
 const originalHeight = document.getElementById('codeWithoutTraps') - padding;
 
-// heatmap resize event
+// Heatmap resize event
 window.addEventListener('resize', _ => {
     const trapSwitch = document.getElementById('trapSwitch');
     const divWith = document.getElementById('codeWithTraps');
@@ -306,7 +307,7 @@ window.addEventListener('resize', _ => {
         });
 });
 
-// heatmap click event handler
+// Heatmap click event handler
 const heatmapDiv = document.getElementById('heatmap');
 heatmapDiv.on('plotly_click', function (data) {
     const graph = data.points[0];
@@ -323,11 +324,17 @@ heatmapDiv.on('plotly_click', function (data) {
             trapIdx++;
     }
 
+    // select the given trap
     const trapDiv = document.querySelector('.' + trapPrefix + trapIdx);
     const event = new MouseEvent('click');
     trapDiv.dispatchEvent(event);
 });
 
+/**
+ * Shows or hides explicit performance traps.
+ *
+ * @param {Event} event change event
+ */
 function toggleTraps(event) {
     const divWith = document.getElementById('codeWithTraps');
     const divWithout = document.getElementById('codeWithoutTraps');
@@ -360,6 +367,11 @@ function toggleTraps(event) {
     });
 }
 
+/**
+ * Highlights and selects the given trap.
+ *
+ * @param {String} trapName
+ */
 function selectTraps(trapName) {
     // update highlight of the selected trap
     document.querySelectorAll('.trap .trap_select').forEach(t => t.classList.remove('trap_select'));
@@ -436,32 +448,30 @@ for (let i = 0; i < 3; i++) {
 }
 
 // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
-function redrawGraphs() {
-    Plotly.newPlot('plotly', traces, {
-        ...layoutCommon
-    }, {
-        responsive: true
-    });
+Plotly.newPlot('plotly', traces, {
+    ...layoutCommon
+}, {
+    responsive: true
+});
 
-    // set click event handler
-    const plotlyDiv = document.getElementById('plotly');
+// set click event handler
+const plotlyDiv = document.getElementById('plotly');
 
-    // replace the event handler
-    plotlyDiv.removeAllListeners('plotly_click');
-    plotlyDiv.on('plotly_click', function (data) {
-        const graph = data.points[0];
-        const trapName = trapPrefix + graph.x;
+// add the click handler
+plotlyDiv.on('plotly_click', function (data) {
+    const graph = data.points[0];
+    const trapName = trapPrefix + graph.x;
 
-        highlightTrap(trapName);
-        document.querySelectorAll('.' + trapName).forEach(
-            e => e.scrollIntoView({block: 'center', behavior: 'smooth'}));
-    });
-}
+    highlightTrap(trapName);
+    document.querySelectorAll('.' + trapName).forEach(
+        e => e.scrollIntoView({block: 'center', behavior: 'smooth'}));
+});
 
-// initial draw
-redrawGraphs();
-
-// redraw graph event handler
+/**
+ * Selects and highlight the given trap.
+ *
+ * @param trapName
+ */
 function highlightTrap(trapName) {
     // remove old traces
     if (document.querySelector('.trap .trap_select') != null)
@@ -507,6 +517,7 @@ function highlightTrap(trapName) {
     }
 }
 
+// Set-up event listeners
 window.addEventListener('load', _ => {
     document.getElementById('trapSwitch').addEventListener('change', toggleTraps);
     document.querySelectorAll('.trap').forEach(elem => elem.addEventListener('click',
