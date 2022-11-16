@@ -77,7 +77,7 @@ public class TimeProfiler extends AbstractProfiler {
                     getTrapName(trapID), Integer.toHexString(response.getSW())));
     }
 
-    private void profileSingleStep(CommandAPDU triggerAPDu) throws CardException {
+    private void profileSingleStep(CommandAPDU triggerAPDU) throws CardException {
         long prevTransmitDuration = 0;
         long currentTransmitDuration;
 
@@ -88,7 +88,7 @@ public class TimeProfiler extends AbstractProfiler {
             // execute target operation
             final String trapName = getTrapName(trapID);
             log.debug("Measuring {}.", trapName);
-            final ResponseAPDU response = cardManager.transmit(triggerAPDu);
+            final ResponseAPDU response = cardManager.transmit(triggerAPDU);
 
             // SW should be equal to the trap ID
             final int SW = response.getSW();
