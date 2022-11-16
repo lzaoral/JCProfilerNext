@@ -21,8 +21,8 @@
         #set( $trap_err = $trap_warn && $vals.stream().distinct().count() > 1 )
         #set( $spaceCount = $line.length() - $line.trim().length() )
 <div class="$trap trap#if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn#end">$line.substring(0, $spaceCount)<span class="trap_contents">$line.trim()</span>
-</div>#elseif( $implicit )
-<div class="#if( $trap_err ) trap_err #elseif( $trap_warn ) trap_warn#end">$line
+</div>#elseif( $implicit && ($trap_err || $trap_warn))
+<div class="#if( $trap_err ) trap_err#else trap_warn#end">$line
 </div>#else
 $line
 #end#end
