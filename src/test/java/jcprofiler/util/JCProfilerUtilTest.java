@@ -4,17 +4,21 @@ import org.junit.jupiter.api.Test;
 
 import spoon.Launcher;
 import spoon.reflect.CtModel;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtConstructor;
-import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.declaration.*;
 import spoon.support.compiler.VirtualFile;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the {@link JCProfilerUtil} class
+ */
 class JCProfilerUtilTest {
 
+    /**
+     * Tests for {@link JCProfilerUtil#getProfiledMethod(CtModel, String)}
+     */
     @Test
     void getProfiledMethodNull() {
         final String input = "package test; public class Test { void foo() {}; }";
@@ -394,6 +398,9 @@ class JCProfilerUtilTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Tests for {@link JCProfilerUtil#getFullSignature(CtExecutable)}
+     */
     @Test
     void getFullSignature() {
         final String input = "package test;" +
@@ -430,6 +437,9 @@ class JCProfilerUtilTest {
         assertEquals("Test#Test()", JCProfilerUtil.getFullSignature(ctor));
     }
 
+    /**
+     * Tests for {@link JCProfilerUtil#getTrapNamePrefix(CtExecutable)}
+     */
     @Test
     void getTrapNamePrefix() {
         final String input = "package test;" +
@@ -449,6 +459,9 @@ class JCProfilerUtilTest {
         assertEquals("TRAP_test_Test_dol_Test2_hash_Test2_argb_arge", trapNames.get(2));
     }
 
+    /**
+     * Tests for {@link JCProfilerUtil#isTypeEntryPoint(CtType)}
+     */
     @Test
     void isClsEntryPointRegularClass() {
         final String input = "package test;" +
@@ -586,6 +599,9 @@ class JCProfilerUtilTest {
         return spoon.buildModel();
     }
 
+    /**
+     * Tests for {@link JCProfilerUtil#getEntryPointConstructor(CtModel, String)}
+     */
     @Test
     void getEntryPointConstructorNoCall() {
         final String input = "package test;" +
