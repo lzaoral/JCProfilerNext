@@ -29,7 +29,8 @@ public class TimeProfiler extends AbstractProfiler {
     private static final Logger log = LoggerFactory.getLogger(TimeProfiler.class);
 
     public TimeProfiler(final Args args, final CardManager cardManager, final CtModel model) {
-        super(args, cardManager, JCProfilerUtil.getProfiledMethod(model, args.executable), "INS_PERF_SETSTOP");
+        super(args, cardManager, JCProfilerUtil.getProfiledMethod(model, args.executable),
+              "INS_PERF_SETSTOP");
     }
 
     @Override

@@ -78,7 +78,8 @@ public class MemoryProfiler extends AbstractProfiler {
         while (remainingLength > 0) {
             final int nextLength = Math.min(remainingLength, 256);
 
-            final CommandAPDU getMeasurements = new CommandAPDU(args.cla, JCProfilerUtil.INS_PERF_HANDLER, memType, part++);
+            final CommandAPDU getMeasurements = new CommandAPDU(
+                    args.cla, JCProfilerUtil.INS_PERF_HANDLER, memType, part++);
             final ResponseAPDU response = cardManager.transmit(getMeasurements);
             if (response.getSW() != JCProfilerUtil.SW_NO_ERROR)
                 throw new RuntimeException(

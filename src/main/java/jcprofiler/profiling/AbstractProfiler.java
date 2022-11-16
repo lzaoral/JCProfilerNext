@@ -109,7 +109,8 @@ public abstract class AbstractProfiler {
             throw new RuntimeException(String.format(
                     "Extraction of traps from %s failed!", profiledExecutableSignature));
 
-        final List<CtField<Short>> pmTraps = PMC.getElements((CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix));
+        final List<CtField<Short>> pmTraps = PMC.getElements(
+                (CtField<Short> f) -> f.getSimpleName().startsWith(trapNamePrefix));
         if (pmTraps.isEmpty())
             throw new RuntimeException("Extraction of traps from PMC failed!");
 
@@ -171,8 +172,10 @@ public abstract class AbstractProfiler {
             case effectiveBitLength:
                 // strings with more leading zero bits will be sorted first
                 undividedInputs.sort(String::compareTo);
-                inputs.addAll(undividedInputs.subList(0, size / 2));
-                inputs.addAll(undividedInputs.subList(undividedInputs.size() - size / 2 - oddSize, undividedInputs.size()));
+
+                int mid = size / 2;
+                inputs.addAll(undividedInputs.subList(0, mid));
+                inputs.addAll(undividedInputs.subList(undividedInputs.size() - mid - oddSize, undividedInputs.size()));
                 break;
 
             case hammingWeight:
