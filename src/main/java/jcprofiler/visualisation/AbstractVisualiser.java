@@ -30,32 +30,92 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class represents the visualisation stage.
+ */
 public abstract class AbstractVisualiser {
+    /**
+     * Commandline arguments
+     */
     protected final Args args;
+    /**
+     * Spoon model
+     */
     protected final CtModel model;
 
+
     // CSV header
+
+    /**
+     * Parsed {@link Mode}
+     */
     protected Mode mode;
+    /**
+     * Parsed card ATR
+     */
     protected String atr;
+    /**
+     * Parsed signature of the profiled executable
+     */
     protected String profiledExecutableSignature;
+    /**
+     * Parsed elapsed time
+     */
     protected String elapsedTime;
+    /**
+     * Parsed APDU header
+     */
     protected String apduHeader;
+    /**
+     * Parsed input description, e.g. <pre>{@code ["regex", "00[A-F]{2}"]}</pre>
+     */
     protected String[] inputDescription;
+    /**
+     * Parsed {@link InputDivision}
+     */
     protected InputDivision inputDivision;
 
+
+    // CSV contents
+
+    /**
+     * List of APDU inputs
+     */
     protected List<String> inputs;
+    /**
+     * List of heatmap traces
+     */
     protected final List<List<Double>> heatmapValues = new ArrayList<>();
+    /**
+     * Map between traps and measurements
+     */
     protected final Map<String, List<Long>> measurements = new LinkedHashMap<>();
 
+    /**
+     * List with source code lines of the profiled executable
+     */
     protected List<String> sourceCode;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractVisualiser.class);
 
+    /**
+     * Constructs the {@link AbstractVisualiser} class.
+     *
+     * @param args  object with commandline arguments
+     * @param model Spoon model
+     */
     protected AbstractVisualiser(final Args args, final CtModel model) {
         this.args = args;
         this.model = model;
     }
 
+    /**
+     * Factory method
+     *
+     * @param  args  object with commandline arguments
+     * @param  model a Spoon model
+     * @return       constructed {@link AbstractVisualiser} object
+     */
     public static AbstractVisualiser create(final Args args, final CtModel model) {
         switch (args.mode) {
             case memory:
@@ -67,11 +127,20 @@ public abstract class AbstractVisualiser {
         }
     }
 
+    /**
+     * Loads and parses the CSV file with measurements and loads the source
+     * code of the profiled executable.
+     */
     public void loadAndProcessMeasurements() {
         loadCSV();
         loadSourceCode();
     }
 
+    /**
+     * Loads and parses the CSV file with measurements.
+     *
+     * @throws UnsupportedOperationException if the measurements were generated for a different mode
+     */
     private void loadCSV() {
         final Path csv = JCProfilerUtil.checkFile(args.workDir.resolve("measurements.csv"), Stage.profiling);
         log.info("Loading measurements from {}.", csv);
@@ -107,6 +176,9 @@ public abstract class AbstractVisualiser {
         }
     }
 
+    /**
+     * Loads the source code of the profiled executable.
+     */
     private void loadSourceCode() {
         // get source code, escape it for HTML and strip empty lines
         final CtExecutable<?> executable = JCProfilerUtil.getProfiledExecutable(model, profiledExecutableSignature);
@@ -114,6 +186,12 @@ public abstract class AbstractVisualiser {
                 .split(System.lineSeparator())).filter(x -> !x.isEmpty()).collect(Collectors.toList());
     }
 
+    /**
+     * Converts the input CSV value into its numerical counterpart, or null if the measurement is missing.
+     *
+     * @param  value single CSV value
+     * @return       parsed {@link Long} value or {@code null} if the value is empty.
+     */
     protected Long convertValues(final String value) {
         if (value.isEmpty())
             return null;
@@ -121,8 +199,17 @@ public abstract class AbstractVisualiser {
         return Long.parseLong(value);
     }
 
+    /**
+     * Returns an {@link AbstractInsertMeasurementsProcessor} instance for the given mode.
+     *
+     * @return {@link AbstractInsertMeasurementsProcessor} instance
+     */
     protected abstract AbstractInsertMeasurementsProcessor getInsertMeasurementsProcessor();
 
+    /**
+     * Inserts measurements to profiled sources and store them to
+     * the {@link JCProfilerUtil#PERF_OUT_DIRNAME} directory.
+     */
     public void insertMeasurementsToSources() {
         // always recreate the output directory
         final Path outputDir = JCProfilerUtil.getPerfOutputDirectory(args.workDir);
@@ -136,8 +223,16 @@ public abstract class AbstractVisualiser {
         spoon.prettyprint();
     }
 
+    /**
+     * Adds elements exclusive for given mode to the given {@link VelocityContext} instance.
+     *
+     * @param context {@link VelocityContext} instance
+     */
     protected abstract void prepareVelocityContext(final VelocityContext context);
 
+    /**
+     * Generates the HTML page with interactive visualisation.
+     */
     public void generateHTML() {
         log.info("Initializing Apache Velocity.");
         final Properties props = new Properties();
