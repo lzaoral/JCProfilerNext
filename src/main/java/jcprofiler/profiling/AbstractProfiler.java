@@ -200,7 +200,7 @@ public abstract class AbstractProfiler {
 
     protected CommandAPDU getInputAPDU(int round) {
         if (round < 1 || inputs.size() < round)
-            throw new RuntimeException("Unexpected index: " + round);
+            throw new ArrayIndexOutOfBoundsException("Unexpected index: " + round);
 
         final byte[] arr = Util.hexStringToByteArray(inputs.get(round - 1));
         return new CommandAPDU(args.cla, args.ins, args.p1, args.p2, arr);
