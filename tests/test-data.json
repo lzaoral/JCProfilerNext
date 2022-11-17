@@ -653,6 +653,7 @@
             "etsi": "143.019",
             "fixup": [
                 {
+                    "reason": "Instrumentation: the import sun.security.krb5.internal.crypto.b cannot be resolved",
                     "pattern": "import sun.security.krb5.internal.crypto.b;",
                     "replacement": "",
                     "files": [
