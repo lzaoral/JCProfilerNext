@@ -1710,15 +1710,6 @@
             "subtests": []
         },
         {
-            "name": "pool-mockcard",
-            "repo": "https://github.com/seek-for-android/pool",
-            "path": "tests/CTS-OpenMobileAPI/src/mockcard",
-            "jckit": "222",
-            "failure": {
-                "reason": "Instrumentation: the import org.simalliance cannot be resolved"
-            }
-        },
-        {
             "name": "pool-AllowAll",
             "repo": "https://github.com/seek-for-android/pool",
             "path": "samples/AllowAll/com",
