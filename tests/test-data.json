@@ -1863,6 +1863,16 @@
                     "files": [
                         "JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java"
                     ]
+                },
+                {
+                    "reason": "Profiling: do not needlessly brick smart cards",
+                    "cardOnly": true,
+                    "pattern": "(setCard\\(OperationSupport\\.)SIMULATOR",
+                    "replacement": "\\1J3H145",
+                    "files": [
+                        "JCMathLib/src/opencrypto/jcmathlib/ECExample.java",
+                        "JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java"
+                    ]
                 }
             ],
             "entryPoints": [

@@ -131,10 +131,15 @@ def modify_repo(test: Dict[str, Any]) -> None:
             os.unlink(file)
 
     for replace in test.get('fixup', []):
-        pattern = re.compile(replace['pattern'], re.MULTILINE)
         pattern_str: str = replace['pattern'].replace('\n', '\\n')
         replacement: str = replace['replacement']
 
+        # skip card only fixes in simulator mode
+        if 'cardOnly' in replace and not ARGS.card:
+            print('Skipping', pattern_str, 'fix not applicable to simulator.')
+            continue
+
+        pattern = re.compile(replace['pattern'], re.MULTILINE)
         for glb in replace['files']:
             for file in Path(test['name']).glob(glb):
                 print('Replacing lines matching', f'"{pattern_str}"', 'with',
