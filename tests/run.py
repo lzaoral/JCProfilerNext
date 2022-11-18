@@ -199,8 +199,8 @@ def get_stats(test: Dict[str, Any], cmd: List[str]) -> None:
         FAILURES.append(f'{test["name"]} in stats mode')
 
 
-def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str,
-              stages: List[str]) -> None:
+def test_ctor(test: Dict[str, Any], test_desc: Dict[str, Any], cmd: List[str],
+              dir_prefix: str, stages: List[str]) -> None:
     ctor_cmd = cmd.copy()
     test_dir = prepare_workdir(test, dir_prefix + 'ctor')
 
@@ -208,7 +208,10 @@ def test_ctor(test: Dict[str, Any], cmd: List[str], dir_prefix: str,
     ctor_cmd += ['--mode', 'memory']
 
     if not execute_cmd(ctor_cmd, stages):
-        FAILURES.append(f'{test["name"]} constructor in memory mode')
+        name = test['name']
+        if test is not test_desc:
+            name += f' {test_desc["name"]}'
+        FAILURES.append(f'{name} constructor in memory mode')
 
 
 def test_applet(test: Dict[str, Any], cmd: List[str],
@@ -233,7 +236,7 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
 
     if ARGS.mode == 'memory':
         # test memory measurement in constructor
-        test_ctor(test, cmd, dir_prefix, stages)
+        test_ctor(test, test_desc, cmd, dir_prefix, stages)
 
     for subtest in test_desc.get('subtests', []):
         sub_cmd = cmd.copy()
@@ -259,8 +262,11 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
         sub_cmd += ['--mode', ARGS.mode]
 
         if not execute_cmd(sub_cmd, stages):
+            name = test['name']
+            if test is not test_desc:
+                name += f' {test_desc["name"]}'
             FAILURES.append(
-                f'{test["name"]} {subtest["executable"]} in {ARGS.mode} mode')
+                f'{name} {subtest["executable"]} in {ARGS.mode} mode')
 
 
 def skip_test(test: Dict[str, Any]) -> Optional[str]:
@@ -365,6 +371,7 @@ def execute_test(test: Dict[str, Any]) -> None:
                 (not ARGS.ci or 'stopAfter' not in entry_point['failure']):
             print('Skipping failing entry point', entry_point['name'],
                   colour=BOLD_YELLOW)
+            SKIPS.append(f'{test["name"]} {entry_point["name"]}: {reason}')
             continue
 
         print('Using', entry_point['name'], 'entry point')
