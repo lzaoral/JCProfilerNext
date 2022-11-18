@@ -472,6 +472,10 @@ def parse_args(args: List[str] = []) -> None:
         print('Overriding minimum JCKit version to', min_ver)
         ARGS.min_jckit = min_ver
 
+    if ARGS.max_jckit is not None and ARGS.max_jckit < ARGS.min_jckit:
+        raise RuntimeError(f'Minimum JCKit version {ARGS.min_jckit} is newer' +
+                           f' than maximum {ARGS.max_jckit}!')
+
 
 if __name__ == '__main__':
     parse_args()
