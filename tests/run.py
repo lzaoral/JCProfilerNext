@@ -5,7 +5,7 @@ from pathlib import Path
 from shutil import copy, copytree, make_archive, rmtree
 from subprocess import PIPE, STDOUT, run
 from tempfile import mkdtemp
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 from urllib.request import Request, urlopen
 
 import json
@@ -408,7 +408,7 @@ def main() -> None:
             print(failure, colour=BOLD_RED)
 
 
-def get_min_jckit() -> Optional[str]:
+def get_min_jckit() -> Optional[Tuple[int, str]]:
     # stats will not compile anything
     if ARGS.mode == 'stats':
         return None
@@ -424,10 +424,10 @@ def get_min_jckit() -> Optional[str]:
         return None
 
     if 9 <= ver <= 11:
-        return '303'
+        return ver, '303'
 
     # 12+
-    return '310r20210706'
+    return ver, '310r20210706'
 
 
 def parse_args(args: List[str] = []) -> None:
@@ -466,11 +466,14 @@ def parse_args(args: List[str] = []) -> None:
         raise RuntimeError('Stats cannot be collected on a physical card!')
 
     # set minimum JCKit based on used JDK
-    min_ver = get_min_jckit()
-    if min_ver is not None and \
-            (ARGS.min_jckit is None or ARGS.min_jckit < min_ver):
-        print('Overriding minimum JCKit version to', min_ver)
-        ARGS.min_jckit = min_ver
+    tpl = get_min_jckit()
+    if tpl is not None:
+        jdk_ver, min_ver = tpl
+        if ARGS.min_jckit is None or ARGS.min_jckit < min_ver:
+            print('WARNING: Overriding minimum JCKit version to', min_ver,
+                  'because JDK', jdk_ver, 'does not support older versions.',
+                  colour=BOLD_YELLOW)
+            ARGS.min_jckit = min_ver
 
     if ARGS.max_jckit is not None and ARGS.max_jckit < ARGS.min_jckit:
         raise RuntimeError(f'Minimum JCKit version {ARGS.min_jckit} is newer' +
