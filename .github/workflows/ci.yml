@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest]
         jdk: [8, 11, 17, 19]
         include:
           - os: macos-latest
@@ -41,11 +41,5 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew build
 
-      - name: Execute profiling tests (stats)
-        run: python3 tests/gather-stats.py
-
       - name: Execute profiling tests (memory)
-        run: python3 tests/run.py --mode memory --ci
-
-      - name: Execute profiling tests (time)
-        run: python3 tests/run.py --mode time --ci
+        run: python3 tests/run.py --mode memory --card
