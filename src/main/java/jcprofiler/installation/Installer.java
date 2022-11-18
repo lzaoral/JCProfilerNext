@@ -235,15 +235,15 @@ public class Installer {
         while (true) {
             System.out.println("More card terminals found. Please, select one:");
 
-            int i = 0;
+            int i = 1;
             for (final CardTerminal ct : terminalList)
                 System.out.printf("%d. %s%n", i++, ct.getName());
 
             final Scanner in = new Scanner(System.in);
             try {
                 int idx = in.nextInt();
-                if (0 <= idx && idx < terminalList.size())
-                    return idx;
+                if (0 < idx && idx <= terminalList.size())
+                    return idx - 1;
                 System.err.println("Invalid index entered!");
             } catch (InputMismatchException e) {
                 System.err.println("Invalid input format!");
