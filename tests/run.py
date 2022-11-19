@@ -307,7 +307,7 @@ def skip_test(test: Dict[str, Any]) -> Optional[str]:
     # time mode requires nonempty subtests
     if ARGS.mode == 'time' and not test.get('subtests', []) and not \
             any(e.get('subtests', []) for e in test.get('entryPoints', [])):
-        return "no subtests"
+        return 'no subtests'
 
     return None
 
