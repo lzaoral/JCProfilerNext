@@ -312,11 +312,23 @@ def skip_test(test: Dict[str, Any]) -> Optional[str]:
     return None
 
 
+def handle_skip(test: Dict[str, Any], reason: str) -> None:
+    if 'entryPoints' not in test:
+        print(f'Skip test {test["name"]}: {reason}', colour=BOLD_YELLOW)
+        SKIPS.append(f'{test["name"]}: {reason}')
+        return
+
+    for entry_point in test['entryPoints']:
+        r = reason if 'failure' not in entry_point else 'failing test'
+        print(f'Skip test {test["name"]} {entry_point["name"]}: {r}',
+              colour=BOLD_YELLOW)
+        SKIPS.append(f'{test["name"]} {entry_point["name"]}: {r}')
+
+
 def execute_test(test: Dict[str, Any]) -> None:
     reason = skip_test(test)
     if reason is not None:
-        print(f'Skip test {test["name"]}: {reason}', colour=BOLD_YELLOW)
-        SKIPS.append(f'{test["name"]}: {reason}')
+        handle_skip(test, reason)
         return
 
     print('Running test', test['name'])
