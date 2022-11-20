@@ -43,6 +43,20 @@ public class Installer {
     private Installer() {}
 
     /**
+     * Selects an applet on a physical card.
+     *
+     * @param cardManager {@link CardManager} connection instance
+     *
+     * @throws CardException if the selection fails
+     */
+    private static void selectApplet(final CardManager cardManager) throws CardException {
+        log.info("Selecting profiled applet on card.");
+        ResponseAPDU out = cardManager.selectApplet();
+        if (out.getSW() != JCProfilerUtil.SW_NO_ERROR)
+            throw new CardException("Applet could not se selected. SW: " + Integer.toHexString(out.getSW()));
+    }
+
+    /**
      * Installs the applet on a selected card.
      *
      * @param  args       object with commandline arguments
@@ -56,7 +70,7 @@ public class Installer {
             throw new UnsupportedOperationException("Installation on a simulator is not possible");
 
         // connect to the card
-        final CardManager cardManager = connectToCard();
+        final CardManager cardManager = connectToCard(/* select */ false);
         final BIBO bibo = CardBIBO.wrap(cardManager.getChannel().getCard());
 
         // get path to CAP package
@@ -80,10 +94,7 @@ public class Installer {
 
         // select the applet
         try {
-            log.info("Selecting installed applet on card.");
-            ResponseAPDU out = cardManager.selectApplet();
-            if (out.getSW() != JCProfilerUtil.SW_NO_ERROR)
-                throw new CardException("Applet could not se selected. SW: " + Integer.toHexString(out.getSW()));
+            selectApplet(cardManager);
         } catch (CardException e) {
             throw new RuntimeException(e);
         }
@@ -101,7 +112,7 @@ public class Installer {
      */
     public static CardManager connect(final Args args, final CtClass<?> entryPoint) {
         return args.useSimulator ? configureSimulator(args, entryPoint)
-                                 : connectToCard();
+                                 : connectToCard(/* select */ true);
     }
 
     /**
@@ -187,12 +198,13 @@ public class Installer {
     /**
      * Connects to a physical card.
      *
-     * @return {@link CardManager} connection instance
+     * @param  select decides whether the profiled applet should be selected
+     * @return        {@link CardManager} connection instance
      *
      * @throws RuntimeException if the card connection failed or the applet
      *                          could not be selected successfully
      */
-    private static CardManager connectToCard() {
+    private static CardManager connectToCard(boolean select) {
         log.info("Connecting to a physical card reader.");
         final CardManager cardManager = new CardManager(/* logging */ true, APPLET_AID);
 
@@ -219,6 +231,8 @@ public class Installer {
             log.info("Successfully connected.");
             log.info("Card ATR: {}", Util.bytesToHex(cardManager.getChannel().getCard().getATR().getBytes()));
 
+            if (select)
+                selectApplet(cardManager);
             return cardManager;
         } catch (CardException e) {
             throw new RuntimeException(e);
