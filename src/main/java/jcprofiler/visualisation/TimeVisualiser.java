@@ -23,6 +23,8 @@ public class TimeVisualiser extends AbstractVisualiser {
     private final Map<String, List<Long>> filteredMeasurements = new LinkedHashMap<>();
     private final Map<String, DescriptiveStatistics> filteredStatistics = new LinkedHashMap<>();
 
+    private final Map<String, List<Double>> movingAverages = new LinkedHashMap<>();
+
     private static final Logger log = LoggerFactory.getLogger(TimeVisualiser.class);
 
     /**
@@ -37,11 +39,13 @@ public class TimeVisualiser extends AbstractVisualiser {
 
     /**
      * Loads and parses the CSV file with measurements, loads the source code of the profiled
-     * executable, filters obvious outliers and prepares input data for the heatmap.
+     * executable, computes moving averages of measurements, filters obvious outliers
+     * and prepares input data for the heatmap.
      */
     @Override
     public void loadAndProcessMeasurements() {
         super.loadAndProcessMeasurements();
+        computeMovingAverages();
         filterOutliers();
         prepareHeatmap();
     }
@@ -79,6 +83,26 @@ public class TimeVisualiser extends AbstractVisualiser {
             final DescriptiveStatistics filteredDs = new DescriptiveStatistics();
             filteredValues.stream().filter(Objects::nonNull).map(Long::doubleValue).forEach(filteredDs::addValue);
             filteredStatistics.put(k, filteredDs);
+        });
+    }
+
+    /**
+     * Computes moving average of measurements.
+     */
+    private void computeMovingAverages() {
+        // compute moving averages
+        final DescriptiveStatistics movingAverage = new DescriptiveStatistics(/* window */ 10);
+        measurements.forEach((k, v) -> {
+            movingAverage.clear();
+            movingAverages.put(k, v.stream().map(l -> {
+                if (l == null) {
+                    movingAverage.clear();
+                    return null;
+                }
+
+                movingAverage.addValue(l.doubleValue());
+                return movingAverage.getMean();
+            }).collect(Collectors.toList()));
         });
     }
 
@@ -173,7 +197,8 @@ public class TimeVisualiser extends AbstractVisualiser {
     @Override
     protected void prepareVelocityContext(final VelocityContext context) {
         context.put("filteredMeasurements", filteredMeasurements);
-        context.put("roundCount", measurements.values().iterator().next().size());
         context.put("measureUnit", args.timeUnit.toString());
+        context.put("movingAverages", movingAverages);
+        context.put("roundCount", measurements.values().iterator().next().size());
     }
 }

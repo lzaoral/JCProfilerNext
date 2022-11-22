@@ -2,6 +2,7 @@
 ## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="inputDivision" type="java.lang.String"
 ## @vtlvariable name="measureUnit" type="java.lang.String"
+## @vtlvariable name="movingAverages" type="java.util.Map<java.lang.String, java.util.List<java.lang.Double>>"
 
 ## include common code
 const heatmapX = [
@@ -21,6 +22,8 @@ const heatmapData  = {
  */
 
 const filteredMeasurements = #object( $filteredMeasurements );
+
+const movingAverages = #object( $movingAverages );
 
 const scatterCommon = {
     type: 'scatter',
@@ -100,7 +103,9 @@ function redrawGraph(evt) {
     document.getElementById('graphName').textContent = trapName;
 
     const filteredVals = filteredMeasurements[trapName];
+    const movingAverage = movingAverages[trapName];
     const vals = measurements[trapName];
+
     const traces = [];
 
     // bar graph visualising number of unreachable rounds
@@ -195,6 +200,16 @@ function redrawGraph(evt) {
             x: [...Array(vals.length + 1).keys()].splice(1),
             y: vals,
             mode: 'lines'
+        }, {
+            ...scatterCommon,
+            x: [...Array(vals.length + 1).keys()].splice(1),
+            y: movingAverage,
+            name: 'moving average',
+            marker: {
+                color: 'rgb(163,49,189)',
+                opacity: 0.75
+            },
+            hovertemplate: 'Round: %{x}<br>Average time: %{y} $measureUnit<extra></extra>'
         });
     }
 
