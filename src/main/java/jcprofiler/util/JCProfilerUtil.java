@@ -182,7 +182,7 @@ public class JCProfilerUtil {
         if (entryPoints.isEmpty())
             throw new RuntimeException("None of the provided classes is an entry point!");
 
-        if (className.isEmpty()) {
+        if (className == null) {
             if (entryPoints.size() > 1)
                 throw new RuntimeException(String.format(
                         "More entry points detected but none was specified to be used! " +

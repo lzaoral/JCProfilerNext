@@ -42,8 +42,8 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
     @Override
     public boolean isToBeProcessed(final CtClass<?> cls) {
         // isEntryPoint && (!entryPointArg.isEmpty() => cls.SimpleName == entryPointArg)
-        return JCProfilerUtil.isTypeEntryPoint(cls) &&
-                (args.entryPoint.isEmpty() || cls.getQualifiedName().equals(args.entryPoint));
+        return cls.getQualifiedName().equals(args.entryPoint) ||
+                (JCProfilerUtil.isTypeEntryPoint(cls) && args.entryPoint == null);
     }
 
     /**

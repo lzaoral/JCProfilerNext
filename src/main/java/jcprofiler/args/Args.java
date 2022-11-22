@@ -65,7 +65,7 @@ public class Args {
 
     @Parameter(names = {"--entry-point"},
                description = "Qualified name of a class to be used as an entry point (useful when there are more)")
-    public String entryPoint = "";
+    public String entryPoint;
 
     @Parameter(names = {"--install-params"},
                description = "Parameters for applet's install method",

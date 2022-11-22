@@ -613,7 +613,7 @@ class JCProfilerUtilTest {
         final CtModel model = prepareModel(input);
 
         final Exception e = assertThrows(RuntimeException.class,
-                () -> JCProfilerUtil.getEntryPointConstructor(model, ""));
+                () -> JCProfilerUtil.getEntryPointConstructor(model, null));
 
         final String expected =
                 "The test.Entry#install(byte[],short,byte) method does not call any constructor of the test.Entry type!";
@@ -638,7 +638,7 @@ class JCProfilerUtilTest {
         final CtModel model = prepareModel(input);
 
         final Exception e = assertThrows(RuntimeException.class,
-                () -> JCProfilerUtil.getEntryPointConstructor(model, ""));
+                () -> JCProfilerUtil.getEntryPointConstructor(model, null));
 
         final String expected = String.format(
                 "The test.Entry#install(byte[],short,byte) method calls more than one constructor" +
@@ -662,6 +662,6 @@ class JCProfilerUtilTest {
         final CtModel model = prepareModel(input);
         final CtConstructor<?> constructor = model.filterChildren(CtConstructor.class::isInstance).first();
 
-        assertEquals(constructor, JCProfilerUtil.getEntryPointConstructor(model, ""));
+        assertEquals(constructor, JCProfilerUtil.getEntryPointConstructor(model, null));
     }
 }

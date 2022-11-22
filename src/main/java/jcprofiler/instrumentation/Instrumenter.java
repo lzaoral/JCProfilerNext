@@ -138,7 +138,7 @@ public class Instrumenter {
         log.info("Validating '--entry-point' and '--executable' arguments.");
 
         // validate args.entryPoint
-        JCProfilerUtil.getEntryPoint(model, args.entryPoint);
+        args.entryPoint = JCProfilerUtil.getEntryPoint(model, args.entryPoint).getQualifiedName();
 
         // validate and select args.method
         CtExecutable<?> executable;
