@@ -252,6 +252,8 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
             input_file = Path(subtest['inputFile']).absolute()
             sub_cmd += ['--data-file', str(input_file)]
 
+        sub_cmd += ['--input-division', 'effectiveBitLength']
+
         if 'ins' in subtest:
             sub_cmd += ['--ins', subtest['ins']]
         if 'p1' in subtest:
