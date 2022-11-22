@@ -133,6 +133,7 @@ def modify_repo(test: Dict[str, Any]) -> None:
     for replace in test.get('fixup', []):
         pattern_str: str = replace['pattern'].replace('\n', '\\n')
         replacement: str = replace['replacement']
+        replacement_str: str = replace['replacement'].replace('\n', '\\n')
 
         # skip card only fixes in simulator mode
         if 'cardOnly' in replace and not ARGS.card:
@@ -143,7 +144,7 @@ def modify_repo(test: Dict[str, Any]) -> None:
         for glb in replace['files']:
             for file in Path(test['name']).glob(glb):
                 print('Replacing lines matching', f'"{pattern_str}"', 'with',
-                      f'"{replacement}"', 'in', file)
+                      f'"{replacement_str}"', 'in', file)
                 with open(file, 'r', encoding='utf8', errors='ignore') as f:
                     lines = f.read()
                 with open(file, 'w', encoding='utf8') as f:
