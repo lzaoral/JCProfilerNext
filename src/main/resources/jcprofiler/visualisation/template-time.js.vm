@@ -245,7 +245,7 @@ function redrawGraph(evt) {
     plotlyDiv.removeAllListeners('plotly_click');
     plotlyDiv.on('plotly_click', function (data) {
         const graph = data.points[0];
-        let msg, selectedInputs;
+        let msg = '', selectedInputs;
 
         switch (graph.data.type) {
             // line graph
@@ -256,11 +256,12 @@ function redrawGraph(evt) {
             case 'histogram':
                 #if( $inputDivision != "none" )
                 const dividedHigh = graph.data.name.startsWith('high');
+                msg += 'Division: ' + graph.data.name + '\n';
                 #end
                 selectedInputs = graph.pointIndices.map(
                     e => inputs[#if( $inputDivision != "none" )dividedHigh ? vals.length / 2 + e :#end e]);
 
-                msg = 'Bin: ' + Math.ceil(graph.x - binSizeHalf) + ' to ' + Math.floor(graph.x + binSizeHalf) + '\n';
+                msg += 'Bin: ' + Math.ceil(graph.x - binSizeHalf) + ' to ' + Math.floor(graph.x + binSizeHalf) + '\n';
                 break;
             case 'bar':
                 selectedInputs = vals.reduce((res, e, i) => {
