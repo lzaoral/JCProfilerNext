@@ -72,6 +72,11 @@
     width: 50%;
 }
 
+pre {
+    /* override the default pre margin in Firefox and Chrome */
+    margin-bottom: 0;
+}
+
 #codeWithTraps, #codeWithoutTraps {
     flex: 1;
     overflow-x: auto;
