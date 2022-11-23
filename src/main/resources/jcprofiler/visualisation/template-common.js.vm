@@ -92,21 +92,6 @@ Plotly.newPlot('heatmap', [{
 const padding = 12;
 const originalHeight = document.getElementById('codeWithoutTraps') - padding;
 
-// Heatmap resize event
-window.addEventListener('resize', _ => {
-    const trapSwitch = document.getElementById('trapSwitch');
-    const divWith = document.getElementById('codeWithTraps');
-
-    if (trapSwitch.checked)
-        Plotly.relayout('heatmap', {
-            height: divWith.clientHeight - padding
-        });
-    else
-        Plotly.relayout('heatmap', {
-            height: originalHeight
-        });
-});
-
 // Heatmap click event handler
 const heatmapDiv = document.getElementById('heatmap');
 heatmapDiv.on('plotly_click', function (data) {
