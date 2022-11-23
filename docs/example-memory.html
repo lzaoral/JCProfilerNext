@@ -85,9 +85,14 @@
     width: 50%;
 }
 
+pre {
+    /* override the default pre margin in Firefox and Chrome */
+    margin-bottom: 0;
+}
+
 #codeWithTraps, #codeWithoutTraps {
     flex: 1;
-    overflow: scroll;
+    overflow-x: auto;
 }
 
 #codeWithTraps, #graphHelp {
@@ -237,16 +242,26 @@ const heatmapValuesFiltered = {
 heatmapValuesFiltered.y = heatmapValues.y.slice(12 - heatmapValuesFiltered.z.length, 12);
 
 const histogramCommon = {
+    bingroup: '1',
     type: 'histogram',
     xaxis: 'x2',
     yaxis: 'y1',
     showlegend: true,
-    hovertemplate: 'Bin: %{x}<br>Count: %{y}<extra></extra>'
+    hovertemplate: 'Trace: %{meta[0]}<br>Bin: %{x}<br>Count: %{y}<extra></extra>'
 };
 
 /*
  * FUNCTIONS
  */
+
+// this is not very nice but Google didn't help much nor I'm a JS developer ¯\_(ツ)_/¯
+let heatmapHeight;
+window.addEventListener('load', _ => {
+    heatmapHeight = document.querySelector('#codeWithoutTraps code').clientHeight + 6;
+    Plotly.relayout('heatmap', {
+        height: heatmapHeight
+    });
+});
 
 const maxLineStringSize = 2 * heatmapValues.y[0].toString().length;
 
@@ -264,7 +279,7 @@ Plotly.newPlot('heatmap', [{
     margin: {
         l: 18 + maxLineStringSize,
         r: 110,
-        b: 6,
+        b: 0,
         t: 18,
         pad: 4
     },
@@ -286,25 +301,6 @@ Plotly.newPlot('heatmap', [{
     }
 }, {
     displayModeBar: false
-});
-
-// this is not very nice but Google didn't help much nor I'm a JS developer ¯\_(ツ)_/¯
-const padding = 12;
-const originalHeight = document.getElementById('codeWithoutTraps') - padding;
-
-// Heatmap resize event
-window.addEventListener('resize', _ => {
-    const trapSwitch = document.getElementById('trapSwitch');
-    const divWith = document.getElementById('codeWithTraps');
-
-    if (trapSwitch.checked)
-        Plotly.relayout('heatmap', {
-            height: divWith.clientHeight - padding
-        });
-    else
-        Plotly.relayout('heatmap', {
-            height: originalHeight
-        });
 });
 
 // Heatmap click event handler
@@ -343,13 +339,14 @@ function toggleTraps(event) {
         divWith.style.display = 'initial';
         divWithout.style.display = 'none';
 
+        const codeWith = divWith.querySelector('code');
         Plotly.update('heatmap', {
             x: [heatmapValues.x],
             y: [heatmapValues.y],
             z: [heatmapValues.z]
         }, {
             'yaxis.type': 'category',
-            height: divWith.clientHeight - padding
+            height: codeWith.clientHeight + 6
         });
         return;
     }
@@ -363,7 +360,7 @@ function toggleTraps(event) {
         z: [heatmapValuesFiltered.z]
     }, {
         'yaxis.type': 'category',
-        height: originalHeight
+        height: heatmapHeight
     });
 }
 
