@@ -28,6 +28,6 @@ public class DirectoryPathConverter extends BaseConverter<Path> {
         final Path input = Paths.get(value);
         if (!Files.isDirectory(input))
             throw new ParameterException(getErrorString(value, "a path to existing directory"));
-        return input.toAbsolutePath();
+        return input.toAbsolutePath().normalize();
     }
 }
