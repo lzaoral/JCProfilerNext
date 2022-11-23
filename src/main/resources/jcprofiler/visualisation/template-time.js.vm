@@ -40,6 +40,7 @@ const scatterCommon = {
 
 const layoutCommon = {
     bargap: 0.2,
+    barmode: 'overlay',
     height: 700,
     margin: {
         l: 60,
@@ -136,6 +137,7 @@ function redrawGraph(evt) {
             ...histogramCommon,
             x: filteredVals,
             name: 'measurements',
+            meta: ['measurements'],
             marker: {
                 color: 'rgb(49, 130, 189)',
                 opacity: 0.75
@@ -146,17 +148,19 @@ function redrawGraph(evt) {
             ...histogramCommon,
             x: filteredVals.slice(0, filteredVals.length / 2),
             name: 'low $inputDivision',
+            meta: ['low $inputDivision'],
             marker: {
-                color: 'rgb(58,189,49)',
-                opacity: 0.75
+                color: 'rgb(14,199,0)',
+                opacity: 0.70
             }
         }, {
             ...histogramCommon,
             x: filteredVals.slice(filteredVals.length / 2),
             name: 'high $inputDivision',
+            meta: ['high $inputDivision'],
             marker: {
-                color: 'rgb(49, 130, 189)',
-                opacity: 0.75
+                color: 'rgb(185,0,199)',
+                opacity: 0.65
             }
         });
         #end
@@ -165,6 +169,7 @@ function redrawGraph(evt) {
             ...histogramCommon,
             x: vals.map((e, i) => filteredVals[i] !== null ? null : e),
             name: 'outliers',
+            meta: ['outliers'],
             visible: 'legendonly',
             marker: {
                 color: 'rgb(255, 136, 0)',

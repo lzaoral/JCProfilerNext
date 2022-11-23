@@ -37,11 +37,12 @@ const heatmapValuesFiltered = {
 heatmapValuesFiltered.y = heatmapValues.y.slice($heatmapValues.size() - heatmapValuesFiltered.z.length, $heatmapValues.size());
 
 const histogramCommon = {
+    bingroup: '1',
     type: 'histogram',
     xaxis: 'x2',
     yaxis: 'y1',
     showlegend: true,
-    hovertemplate: 'Bin: %{x}<br>Count: %{y}<extra></extra>'
+    hovertemplate: 'Trace: %{meta[0]}<br>Bin: %{x}<br>Count: %{y}<extra></extra>'
 };
 
 /*
