@@ -1914,28 +1914,28 @@
                             "name": "Bignat Storage",
                             "executable": "test_BN_STR",
                             "ins": "0x20",
-                            "input": "[8-9A-F][0-9A-F]{63}"
+                            "input": "[0-9A-F]{64}"
                         },
                         {
                             "name": "Bignat Addition",
                             "executable": "test_BN_ADD",
                             "ins": "0x21",
                             "p1": "0x20",
-                            "input": "([4-7][0-9A-F]{63}){2}"
+                            "input": "([0-7][0-9A-F]{63}){2}"
                         },
                         {
                             "name": "Bignat Subtraction",
                             "executable": "test_BN_SUB",
                             "ins": "0x22",
                             "p1": "0x20",
-                            "input": "([4-7][0-9A-F]{63}){2}"
+                            "input": "([0-7][0-9A-F]{63}){2}"
                         },
                         {
                             "name": "Bignat Multiplication",
                             "executable": "test_BN_MUL",
                             "ins": "0x23",
                             "p1": "0x20",
-                            "input": "([8-9A-F][0-9A-F]{63}){2}"
+                            "input": "([0-9A-F]{64}){2}"
                         },
                         {
                             "name": "Bignat Exponentiation",
@@ -1943,14 +1943,14 @@
                             "ins": "0x24",
                             "p1": "0x08",
                             "p2": "0x19",
-                            "input": "[8-9A-F][0-9A-F]{15}03"
+                            "input": "[0-9A-F]{16}03"
                         },
                         {
                             "name": "Bignat Modulo",
                             "executable": "test_BN_MOD",
                             "ins": "0x25",
                             "p1": "0x21",
-                            "input": "00[8-9A-F][0-9A-F]{63}[4-7][0-9A-F]{63}"
+                            "input": "00[0-9A-F]{64}[4-7][0-9A-F]{63}"
                         },
 
                         {
@@ -1958,7 +1958,7 @@
                             "executable": "test_BN_MUL",
                             "ins": "0x27",
                             "p1": "0x20",
-                            "input": "([8-9A-F][0-9A-F]{63}){2}"
+                            "input": "([0-9A-F]{64}){2}"
                         },
 
 
@@ -1970,7 +1970,7 @@
                             "ins": "0x30",
                             "p1": "0x20",
                             "p2": "0x20",
-                            "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
+                            "input": "([0-9A-F]{64}){2}[4-7][0-9A-F]{63}"
                         },
                         {
                             "name": "Bignat Subtraction Modulo",
@@ -1978,7 +1978,7 @@
                             "ins": "0x31",
                             "p1": "0x20",
                             "p2": "0x20",
-                            "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
+                            "input": "([0-9A-F]{64}){2}[4-7][0-9A-F]{63}"
                         },
                         {
                             "name": "Bignat Multiplication Modulo",
@@ -1986,7 +1986,7 @@
                             "ins": "0x32",
                             "p1": "0x20",
                             "p2": "0x20",
-                            "input": "([8-9A-F][0-9A-F]{63}){2}[4-7][0-9A-F]{63}"
+                            "input": "([0-9A-F]{64}){2}[4-7][0-9A-F]{63}"
                         },
                         {
                             "name": "Bignat Exponentiation Modulo",
@@ -1994,14 +1994,14 @@
                             "ins": "0x33",
                             "p1": "0x20",
                             "p2": "0x01",
-                            "input": "[8-9A-F][0-9A-F]{63}02[8-9A-F][0-9A-F]{63}"
+                            "input": "[0-9A-F]{64}02[8-9A-F][0-9A-F]{63}"
                         },
                         {
                             "name": "Bignat Inversion Modulo",
                             "executable": "test_BN_INV_MOD",
                             "ins": "0x34",
                             "p1": "0x30",
-                            "input": "[8-9A-F][0-9A-F]{95}F{8}0{7}10{24}F{24}[8-9A-F][0-9A-F]{63}"
+                            "input": "[0-9A-F]{96}F{8}0{7}10{24}F{24}[8-9A-F][0-9A-F]{63}"
                         },
                         {
                             "name": "Bignat Squared Modulo",
@@ -2009,7 +2009,7 @@
                             "ins": "0x35",
                             "p1": "0x20",
                             "p2": "0x20",
-                            "input": "([8-9A-F][0-9A-F]{63}){2}"
+                            "input": "[0-9A-F]{64}[8-9A-F][0-9A-F]{63}"
                         },
 
 
@@ -2038,7 +2038,7 @@
                             "executable": "test_EC_MUL",
                             "ins": "0x43",
                             "p1": "0x20",
-                            "input": "[8-9A-F][0-9A-F]{63}046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
+                            "input": "[0-9A-F]{64}046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
                         },
                         {
                             "name": "EC Point Negation",
