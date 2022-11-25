@@ -417,13 +417,13 @@ const scatterCommon = {
     type: 'scatter',
     xaxis: 'x3',
     yaxis: 'y2',
-    name: 'timediff',
-    showlegend: false,
+    name: 'elapsed time',
+    showlegend: true,
     marker: {
         color: 'rgb(86, 189, 49)',
         opacity: 0.75
     },
-    hovertemplate: 'Round: %{x}<br>Time: %{y} μs<extra></extra>'
+    hovertemplate: 'Trace: elapsed time<br>Round: %{x}<br>Time: %{y} μs<extra></extra>'
 };
 
 const layoutCommon = {
@@ -580,7 +580,7 @@ function redrawGraph(evt) {
                 color: 'rgb(163,49,189)',
                 opacity: 0.75
             },
-            hovertemplate: 'Round: %{x}<br>Average time: %{y} μs<extra></extra>'
+            hovertemplate: 'Trace: moving average<br>Round: %{x}<br>Average time: %{y} μs<extra></extra>'
         });
     }
 
