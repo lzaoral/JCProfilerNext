@@ -1719,35 +1719,105 @@
             "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
             "path": "AEAD/ACORN/src",
             "jckit": "222",
-            "subtests": []
+            "cla": "0xB0",
+            "subtests": [
+                {
+                    "name": "ACORN Encryption",
+                    "executable": "ACORNEncryption",
+                    "ins": "0x61",
+                    "input": "([0-9A-F]{2}){64}"
+                },
+                {
+                    "name": "ACORN Dencryption",
+                    "executable": "ACORNDecryption",
+                    "ins": "0x62",
+                    "input": "([0-9A-F]{2}){64}"
+                }
+            ]
         },
         {
             "name": "OptimizedJCAlgs-AEGIS",
             "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
             "path": "AEAD/AEGIS/src",
             "jckit": "222",
-            "subtests": []
+            "cla": "0xB0",
+            "subtests": [
+                {
+                    "name": "AEGIS Encryption",
+                    "executable": "AEGISEncryption",
+                    "ins": "0x61",
+                    "input": "([0-9A-F]{2}){64}"
+                },
+                {
+                    "name": "AEGIS Dencryption",
+                    "executable": "AEGISDecryption",
+                    "ins": "0x62",
+                    "input": "([0-9A-F]{2}){64}"
+                }
+            ]
         },
         {
             "name": "OptimizedJCAlgs-ASCON",
             "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
             "path": "AEAD/ASCON/src",
             "jckit": "222",
-            "subtests": []
+            "cla": "0xB0",
+            "subtests": [
+                {
+                    "name": "ASCON Encryption",
+                    "executable": "ASCONEncryption",
+                    "ins": "0x61",
+                    "input": "([0-9A-F]{2}){64}"
+                },
+                {
+                    "name": "ASCON Dencryption",
+                    "executable": "ASCONDecryption",
+                    "ins": "0x62",
+                    "input": "([0-9A-F]{2}){64}"
+                }
+            ]
         },
         {
             "name": "OptimizedJCAlgs-CLOC",
             "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
             "path": "AEAD/CLOC/src",
             "jckit": "222",
-            "subtests": []
+            "cla": "0xB0",
+            "subtests": [
+                {
+                    "name": "CLOC Encryption",
+                    "executable": "CLOCEncryption",
+                    "ins": "0x61",
+                    "input": "([0-9A-F]{2}){248}"
+                },
+                {
+                    "name": "CLOC Dencryption",
+                    "executable": "CLOCDecryption",
+                    "ins": "0x62",
+                    "input": "([0-9A-F]{2}){255}"
+                }
+            ]
         },
         {
             "name": "OptimizedJCAlgs-MORUS",
             "repo": "https://github.com/MiragePV/OptimizedJCAlgs",
             "path": "AEAD/MORUS/src",
             "jckit": "222",
-            "subtests": []
+            "cla": "0xB0",
+            "subtests": [
+                {
+                    "name": "MORUS Encryption",
+                    "executable": "MORUSEncryption",
+                    "ins": "0x61",
+                    "input": "([0-9A-F]{2}){64}"
+                },
+                {
+                    "name": "MORUS Dencryption",
+                    "executable": "MORUSDecryption",
+                    "ins": "0x62",
+                    "input": "([0-9A-F]{2}){64}"
+                }
+            ]
         },
         {
             "name": "OptimizedJCAlgs-OpenPGP",
