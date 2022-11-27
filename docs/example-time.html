@@ -532,7 +532,6 @@ function redrawGraph(evt) {
 
         traces.push({
             ...histogramCommon,
-            bingroup: '0',
             x: vals.map((e, i) => filteredVals[i] !== null ? null : e),
             name: 'outliers',
             meta: ['outliers'],
