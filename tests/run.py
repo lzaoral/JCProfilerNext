@@ -238,6 +238,9 @@ def test_applet(test: Dict[str, Any], cmd: List[str],
     if ARGS.mode == 'memory':
         # test memory measurement in constructor
         test_ctor(test, test_desc, cmd, dir_prefix, stages)
+        # subtests are meant only for the time mode
+        if not ARGS.ci:
+            return
 
     for subtest in test_desc.get('subtests', []):
         sub_cmd = cmd.copy()
