@@ -108,26 +108,6 @@ function redrawGraph(evt) {
 
     const traces = [];
 
-    // bar graph visualising number of unreachable rounds
-    const hasUnreach = vals.includes(null);
-    if (hasUnreach) {
-        const y = vals.filter(e => e === null).length;
-        traces.push({
-            x: [''],
-            y: [y],
-            type: 'bar',
-            xaxis: 'x1',
-            yaxis: 'y1',
-            name: 'unreachable',
-            showlegend: false,
-            marker: {
-                color: 'rgb(255, 0, 0)',
-                opacity: 0.65
-            },
-            hovertemplate: 'Unreachable<br>Count: %{y} (%{y}/' + vals.length + ')<extra></extra>'
-        });
-    }
-
     const hasTime = vals.some(e => e !== null);
     if (hasTime) {
         // Histograms
@@ -213,6 +193,26 @@ function redrawGraph(evt) {
                 color: 'rgb(166, 56, 64)'
             },
             hovertemplate: 'Trace: moving average<br>Round: %{x}<br>Average time: %{y} $measureUnit<extra></extra>'
+        });
+    }
+
+    // bar graph visualising number of unreachable rounds
+    const hasUnreach = vals.includes(null);
+    if (hasUnreach) {
+        const y = vals.filter(e => e === null).length;
+        traces.push({
+            x: [''],
+            y: [y],
+            type: 'bar',
+            xaxis: 'x1',
+            yaxis: 'y1',
+            name: 'unreachable',
+            showlegend: false,
+            marker: {
+                color: 'rgb(255, 0, 0)',
+                opacity: 0.65
+            },
+            hovertemplate: 'Unreachable<br>Count: %{y} (%{y}/' + vals.length + ')<extra></extra>'
         });
     }
 
