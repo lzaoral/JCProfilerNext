@@ -178,7 +178,8 @@ function redrawGraph(evt) {
             ...scatterCommon,
             x: dot_x,
             y: dot_y,
-            mode: 'markers'
+            mode: 'markers',
+            showlegend: false
         }, {
             ...scatterCommon,
             x: [...Array(vals.length + 1).keys()].splice(1),
