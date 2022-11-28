@@ -228,9 +228,7 @@ function redrawGraph(evt) {
             ...layoutCommon.xaxis2,
             domain: [hasUnreach ? 0.55 : 0, 1]
         }
-    }, {
-        responsive: true
-    });
+    }, {...configCommon});
 
     // set click event handler
     const plotlyDiv = document.getElementById('plotly');

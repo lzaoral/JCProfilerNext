@@ -45,6 +45,11 @@ const histogramCommon = {
     hovertemplate: 'Trace: %{meta[0]}<br>Bin: %{x}<br>Count: %{y}<extra></extra>'
 };
 
+const configCommon = {
+    displaylogo: false,
+    responsive: true,
+};
+
 /*
  * FUNCTIONS
  */
