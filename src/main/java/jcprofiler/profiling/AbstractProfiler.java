@@ -379,7 +379,7 @@ public abstract class AbstractProfiler {
         // store the measurements
         final Path csv = args.workDir.resolve("measurements.csv");
         try (final CSVPrinter printer = new CSVPrinter(new FileWriter(csv.toFile()), JCProfilerUtil.getCSVFormat())) {
-            printer.printComment("mode,type#signature,ATR,elapsedTime,APDUHeader,inputType:value,inputFilter");
+            printer.printComment("mode,type#signature,ATR,elapsedTime,APDUHeader,inputType:value,inputDivision");
             printer.printRecord(args.mode, profiledExecutableSignature, atr, elapsedTime, apduHeader, dataSource,
                     args.inputDivision);
 
