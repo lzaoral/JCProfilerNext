@@ -16,6 +16,10 @@
     justify-content: space-between;
 }
 
+.modebar-container {
+    z-index: 2;
+}
+
 .main-svg {
     z-index: 1;
 }
@@ -250,6 +254,15 @@ const histogramCommon = {
     hovertemplate: 'Trace: %{meta[0]}<br>Bin: %{x}<br>Count: %{y}<extra></extra>'
 };
 
+const configCommon = {
+    displaylogo: false,
+    responsive: true,
+    toImageButtonOptions: {
+        format: 'svg',
+        scale: 2
+    }
+};
+
 /*
  * FUNCTIONS
  */
@@ -445,11 +458,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 // WARNING: Layout and config must be passed directly!  Otherwise, sometimes the graph may fail to load.
-Plotly.newPlot('plotly', traces, {
-    ...layoutCommon
-}, {
-    responsive: true
-});
+Plotly.newPlot('plotly', traces, {...layoutCommon}, {...configCommon});
 
 // set click event handler
 const plotlyDiv = document.getElementById('plotly');
