@@ -48,6 +48,10 @@ const histogramCommon = {
 const configCommon = {
     displaylogo: false,
     responsive: true,
+    toImageButtonOptions: {
+        format: 'svg',
+        scale: 2
+    }
 };
 
 /*
