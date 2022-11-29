@@ -197,7 +197,7 @@ public class TimeVisualiser extends AbstractVisualiser {
     @Override
     protected void prepareVelocityContext(final VelocityContext context) {
         context.put("filteredMeasurements", filteredMeasurements);
-        context.put("measureUnit", args.timeUnit.toString());
+        context.put("measureUnit", args.timeUnit.prettyPrint());
         context.put("movingAverages", movingAverages);
         context.put("roundCount", measurements.values().iterator().next().size());
     }

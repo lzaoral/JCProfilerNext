@@ -9,8 +9,12 @@ public enum TimeUnit {
     milli,
     sec;
 
-    @Override
-    public String toString() {
+    /**
+     * Returns a pretty name for given enum value.
+     *
+     * @return a {@link String} with pretty printed name
+     */
+    public String prettyPrint() {
         switch (this) {
             case nano:
                 return "ns";

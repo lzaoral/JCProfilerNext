@@ -38,7 +38,7 @@ public class InsertTimeMeasurementsProcessor extends AbstractInsertMeasurementsP
     protected String getCommentString(String fieldName) {
         final List<Long> values = measurements.get(fieldName);
         final DescriptiveStatistics statistics = statisticsMap.get(fieldName);
-        final String unitSymbol = args.timeUnit.toString();
+        final String unitSymbol = args.timeUnit.prettyPrint();
         final long unreachableCount = values.stream().filter(Objects::isNull).count();
 
         return String.format(
