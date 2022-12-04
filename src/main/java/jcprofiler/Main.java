@@ -29,8 +29,6 @@ public class Main {
      */
     public static void main(final String[] argv) {
         Configurator.setRootLevel(Level.INFO);
-        // TODO: add proper versioning info as well
-        log.info("Welcome to JCProfilerNext!");
 
         // parse commandline arguments
         final Args args = new Args();
@@ -52,6 +50,8 @@ public class Main {
             return;
         }
 
+        // TODO: add proper versioning info as well
+        log.info("Welcome to JCProfilerNext!");
         log.info("Command-line arguments parsed successfully.");
         if (args.debug) {
             Configurator.setRootLevel(Level.DEBUG);
