@@ -550,7 +550,6 @@ public class JCProfilerUtil {
         }
 
         try {
-            // FIXME: there has to be a nicer solution than this ...
             Files.createDirectories(to);
             try (Stream<Path> s = Files.list(from)) {
                 s.filter(p -> !p.equals(to)).forEach(f -> {

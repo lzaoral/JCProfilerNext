@@ -209,7 +209,6 @@ public abstract class AbstractProfiler {
         if (measuredDuringInstallation)
             throw new RuntimeException("Already measured constructors do not support inputs!");
 
-        // TODO: print seed for reproducibility
         final Random rdn = new Random();
         final List<String> undividedInputs = new ArrayList<>();
 
@@ -335,7 +334,6 @@ public abstract class AbstractProfiler {
             elapsedTime = DurationFormatUtils.formatDuration(endTimeMillis, "d' days 'HH:mm:ss.SSS");
             log.info("Elapsed time: {}", elapsedTime);
 
-            // TODO: what difference is between true and false? javax.smartcardio.Card javadoc is now very helpful
             cardManager.disconnect(true);
             log.info("Disconnected from card.");
 

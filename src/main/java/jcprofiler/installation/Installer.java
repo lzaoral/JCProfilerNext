@@ -85,7 +85,7 @@ public class Installer {
         if (args.installParams != null)
             gpArgv = ArrayUtils.insert(gpArgv.length, gpArgv, "--params", Util.bytesToHex(args.installParams));
 
-        // TODO: be very careful to not destroy the card!!!
+        // be very careful to not destroy the card!!!
         log.info("Executing GlobalPlatformPro to install {}.", capPath);
         log.debug("GlobalPlatformPro argv: {}", Arrays.toString(gpArgv));
         int ret = new GPTool().run(bibo, gpArgv);

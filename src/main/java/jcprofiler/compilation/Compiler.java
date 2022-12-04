@@ -92,7 +92,6 @@ public class Compiler {
         cap.setSources(JCProfilerUtil.getInstrOutputDirectory(args.workDir).toString());
         cap.setExport(".");
 
-        // TODO: check if this ok
         cap.setDebug(false);
         cap.setStrip(false);
 
