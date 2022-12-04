@@ -7,6 +7,7 @@
 ## @vtlvariable name="inputDescription" type="java.lang.String[]"
 ## @vtlvariable name="inputDivision" type="java.lang.String"
 ## @vtlvariable name="inputs" type="java.util.List<java.lang.String>"
+## @vtlvariable name="line" type="java.lang.String"
 ## @vtlvariable name="measurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="mode" type="jcprofiler.util.enums.Mode"
 ## @vtlvariable name="null" type="java.lang.Object"
