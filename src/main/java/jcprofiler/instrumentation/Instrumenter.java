@@ -162,7 +162,7 @@ public class Instrumenter {
      *
      * @param spoon Spoon instance
      *
-     * @throws UnsupportedOperationException for multipackage projects, for projects using the default pacakge
+     * @throws UnsupportedOperationException for multipackage projects, for projects using the default package
      */
     private void addMissingClasses(final Launcher spoon) {
         log.info("Generating additional classes.");

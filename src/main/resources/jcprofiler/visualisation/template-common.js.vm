@@ -59,7 +59,7 @@ const configCommon = {
  * FUNCTIONS
  */
 
-// this is not very nice but Google didn't help much nor I'm a JS developer ¯\_(ツ)_/¯
+// this is not very nice but Google didn't help much, nor I'm a JS developer ¯\_(ツ)_/¯
 let heatmapHeight;
 window.addEventListener('load', _ => {
     heatmapHeight = document.querySelector('#codeWithoutTraps code').clientHeight + 6;
