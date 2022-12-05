@@ -10,8 +10,8 @@ simulator.
 
 Prerequisites
 -------------
-
-Install JDK 8 or newer.
+* Install JDK 8 or newer.
+* Obtain a copy of the JavaCard Development Kit, e.g. from this link:https://github.com/martinpaljak/oracle_javacard_sdks[GitHub archive] maintained by Martin Paljak.
 
 .Compatibility Matrix
 [cols="^1,^2"]
