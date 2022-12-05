@@ -29,9 +29,8 @@ Prerequisites
 |===
 
 
-Installation
-------------
-
+Compilation
+-----------
 . Clone this repository.
 . Run `./gradlew build` on Unix-like systems or `gradlew.bat build` on Windows.
 . Execute
