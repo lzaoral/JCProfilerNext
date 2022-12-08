@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Lukáš Zaoral <x456487@fi.muni.cz>
+// SPDX-License-Identifier: GPL-3.0-only
+
 package jcprofiler.instrumentation.processors;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;

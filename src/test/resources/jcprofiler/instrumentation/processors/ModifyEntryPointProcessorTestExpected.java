@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Lukáš Zaoral <x456487@fi.muni.cz>
+// SPDX-License-Identifier: GPL-3.0-only
+
 import javacard.framework.*;
 
 public class Example extends Applet {

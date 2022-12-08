@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2017-2021 Petr Švenda <petrsgit@gmail.com>
+// SPDX-FileCopyrightText: 2022 Lukáš Zaoral <x456487@fi.muni.cz>
+// SPDX-License-Identifier: MIT
+
 package jcprofiler;
 
 /**

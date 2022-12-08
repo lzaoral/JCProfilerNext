@@ -1,3 +1,6 @@
+## SPDX-FileCopyrightText: 2022 Lukáš Zaoral <x456487@fi.muni.cz>
+## SPDX-License-Identifier: GPL-3.0-only
+
 ## @vtlvariable name="apduHeader" type="java.lang.String"
 ## @vtlvariable name="filteredMeasurements" type="java.util.Map<java.lang.String, java.util.List<java.lang.Long>>"
 ## @vtlvariable name="inputDivision" type="java.lang.String"

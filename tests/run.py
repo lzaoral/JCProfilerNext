@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# SPDX-FileCopyrightText: 2022 Lukáš Zaoral <x456487@fi.muni.cz>
+# SPDX-License-Identifier: GPL-3.0-only
+
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from shutil import copy, copytree, make_archive, rmtree

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Lukáš Zaoral <x456487@fi.muni.cz>
+// SPDX-License-Identifier: MIT
+
 package jcprofiler;
 
 // Explicit imports to ensure that they are not shadowed by other classes from the applet package.
