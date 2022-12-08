@@ -65,6 +65,10 @@ application {
     mainClass = 'jcprofiler.Main'
 }
 
+run {
+    standardInput = System.in
+}
+
 jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from {
