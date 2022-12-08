@@ -1,3 +1,5 @@
+## @vtlvariable name="heatmapValues" type="java.util.List<java.lang.Double>"
+
 .contents {
     display: flex;
     justify-content: space-between;
@@ -83,6 +85,9 @@ pre {
 
 #codeWithTraps, #codeWithoutTraps {
     flex: 1;
+#if( !$heatmapValues.isEmpty() )
+    margin-left: -100px;
+#end
     overflow-x: auto;
 }
 
