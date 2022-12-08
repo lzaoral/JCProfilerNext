@@ -40,7 +40,7 @@ $line
     <script>hljs.highlightAll()</script>
     <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
     <style>
-        #include( "template.css" )
+        #parse( "template.css.vm" )
     </style>
 </head>
 <body>
