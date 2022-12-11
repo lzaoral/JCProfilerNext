@@ -22,7 +22,7 @@
  * CONSTANTS
  */
 
-const trapPrefix = '$measurements.keySet().iterator().next().replace('1', '')';
+const trapPrefix = '$measurements.keySet().iterator().next().replaceAll("1$", '')';
 
 const inputs = $inputs;
 const measurements = #object( $measurements );
