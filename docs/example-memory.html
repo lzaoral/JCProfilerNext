@@ -1,16 +1,21 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Measurements - example.Example#Example()</title>
         <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Open+Sans">
+        <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"></script>
     <script>hljs.highlightAll()</script>
     <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
     <style>
+
+
 .contents {
     display: flex;
     justify-content: space-between;
@@ -96,6 +101,7 @@ pre {
 
 #codeWithTraps, #codeWithoutTraps {
     flex: 1;
+    margin-left: -100px;
     overflow-x: auto;
 }
 
@@ -145,7 +151,7 @@ pre {
                 </div>
             </div>
             <div class="codeContainer">
-<div id="heatmap"></div>                <div id="codeWithTraps" style="margin-left: -100px;">
+<div id="heatmap"></div>                <div id="codeWithTraps">
                     <div class="codeWrapper">
                         <pre><code class="language-java">private Example() {
 <div class="TRAP_example_Example_argb_arge_1 trap">    <span class="trap_contents">PM.check(PMC.TRAP_example_Example_argb_arge_1);</span>
@@ -162,7 +168,7 @@ pre {
 </code></pre>
                     </div>
                 </div>
-                <div id="codeWithoutTraps" style="margin-left: -100px;">
+                <div id="codeWithoutTraps">
                     <div class="codeWrapper">
                                                                         <pre><code class="language-java"><div class="TRAP_example_Example_argb_arge_1 trap"><span class="trap_contents">private Example() {</span>
 </div>    // Transient Deselect
@@ -205,6 +211,7 @@ pre {
     </div>
     <script type="application/javascript">
 
+
 const heatmapX = ['Trans', 'Pers'];
 const heatmapData  = {
     colorscale: [
@@ -212,6 +219,7 @@ const heatmapData  = {
         [1, 'red']
     ]
 };
+
 
 /*
  * MACROS
@@ -267,76 +275,73 @@ const configCommon = {
  * FUNCTIONS
  */
 
-// this is not very nice but Google didn't help much nor I'm a JS developer ¯\_(ツ)_/¯
+// this is not very nice but Google didn't help much, nor I'm a JS developer ¯\_(ツ)_/¯
 let heatmapHeight;
 window.addEventListener('load', _ => {
     heatmapHeight = document.querySelector('#codeWithoutTraps code').clientHeight + 6;
-    Plotly.relayout('heatmap', {
-        height: heatmapHeight
+    const maxLineStringSize = 2 * heatmapValues.y[0].toString().length;
+
+    // Heatmap
+    Plotly.newPlot('heatmap', [{
+        ...heatmapValuesFiltered,
+        hovertemplate: 'Line: %{y}<br>%{z} B<extra></extra>',
+        showlegend: false,
+        showscale: false,
+        type: 'heatmap',
+        xgap: 4,
+        ...heatmapData
+    }], {
+        paper_bgcolor: 'rgba(0, 0, 0, 0)',
+        margin: {
+            l: 18 + maxLineStringSize,
+            r: 110,
+            b: 0,
+            t: 18,
+            pad: 4
+        },
+        height: heatmapHeight,
+        width: 112 + 45 * heatmapValues.x.length + maxLineStringSize,
+        xaxis: {
+            side: 'top',
+            fixedrange: true,
+            ticks: '',
+            showgrid: false,
+            zeroline: false
+        },
+        yaxis: {
+            fixedrange: true,
+            ticks: '',
+            title: '',
+            type: 'category',
+            showgrid: false,
+            zeroline: false
+        }
+    }, {
+        displayModeBar: false
     });
-});
 
-const maxLineStringSize = 2 * heatmapValues.y[0].toString().length;
+    // Heatmap click event handler
+    const heatmapDiv = document.getElementById('heatmap');
+    heatmapDiv.on('plotly_click', function (data) {
+        const graph = data.points[0];
+        // check for a valid value
+        if (graph.z === null)
+            return;
 
-// Heatmap
-Plotly.newPlot('heatmap', [{
-    ...heatmapValuesFiltered,
-    hovertemplate: 'Line: %{y}<br>%{z} B<extra></extra>',
-    showlegend: false,
-    showscale: false,
-    type: 'heatmap',
-    xgap: 4,
-    ...heatmapData
-}], {
-    paper_bgcolor: 'rgba(0, 0, 0, 0)',
-    margin: {
-        l: 18 + maxLineStringSize,
-        r: 110,
-        b: 0,
-        t: 18,
-        pad: 4
-    },
-    width: 112 + 40 * heatmapValues.x.length + maxLineStringSize,
-    xaxis: {
-        side: 'top',
-        fixedrange: true,
-        ticks: '',
-        showgrid: false,
-        zeroline: false
-    },
-    yaxis: {
-        fixedrange: true,
-        ticks: '',
-        title: '',
-        type: 'category',
-        showgrid: false,
-        zeroline: false
-    }
-}, {
-    displayModeBar: false
-});
+        // compute the correct trap index
+        const z = graph.data.z;
 
-// Heatmap click event handler
-const heatmapDiv = document.getElementById('heatmap');
-heatmapDiv.on('plotly_click', function (data) {
-    const graph = data.points[0];
-    // check for a valid value
-    if (graph.z === null)
-        return;
+        let trapIdx = 0;
+        for (let i = z.length - 1; i >= z.length - graph.y; i--) {
+            if (z[i][0] !== null)
+                trapIdx++;
+        }
 
-    // compute the correct trap index
-    const z = graph.data.z;
-
-    let trapIdx = 0;
-    for (let i = z.length - 1; i >= z.length - graph.y; i--) {
-        if (z[i][0] !== null)
-            trapIdx++;
-    }
-
-    // select the given trap
-    const trapDiv = document.querySelector('.' + trapPrefix + trapIdx);
-    const event = new MouseEvent('click');
-    trapDiv.dispatchEvent(event);
+        // select the given trap
+        const trapDiv = document.querySelector('.' + trapPrefix + trapIdx);
+        const event = new MouseEvent('click');
+        trapDiv.dispatchEvent(event);
+    });
 });
 
 /**
