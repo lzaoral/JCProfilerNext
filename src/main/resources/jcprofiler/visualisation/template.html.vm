@@ -36,6 +36,9 @@ $line
 <head>
     <meta charset="UTF-8">
     <title>Measurements - $executableName</title>
+    ## Plotly.js relies on OpenSans
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Open+Sans">
     ## highlight.js 11+ ignores and strips HTML tags inside <code> element
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/styles/github.min.css">
