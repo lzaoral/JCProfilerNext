@@ -178,7 +178,7 @@
             "name": "IsoApplet",
             "repo": "https://github.com/philipWendland/IsoApplet",
             "path": "src",
-            "jckit": "222",
+            "jckit": "304",
             "subtests": []
         },
         {
