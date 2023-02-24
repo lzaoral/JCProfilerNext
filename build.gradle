@@ -36,7 +36,7 @@ dependencies {
     implementation 'com.github.curious-odd-man:rgxgen:1.4'
 
     // applet installation
-    implementation 'org.apache.ant:ant:1.10.12'
+    implementation 'org.apache.ant:ant:1.10.13'
     implementation 'com.github.martinpaljak:ant-javacard:21.12.31'
     implementation 'com.github.martinpaljak:gptool:20.08.12'
 
