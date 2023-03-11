@@ -1906,6 +1906,22 @@
             "subtests": []
         },
         {
+            "name": "PinSentry-OTP",
+            "repo": "https://github.com/Celliwig/PinSentry-OTP",
+            "path": "psotp",
+            "jckit": "222",
+            "entryPoints": [
+                {
+                    "name": "psotp.PinSentryOTP",
+                    "subtests": []
+                },
+                {
+                    "name": "psotp.PinSentryOTPAdmin",
+                    "subtests": []
+                }
+            ]
+        },
+        {
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
             "path": "JCMathLib/src",
