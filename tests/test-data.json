@@ -1882,6 +1882,13 @@
             }
         },
         {
+            "name": "jc-sskr",
+            "repo": "https://github.com/proxyco/jc-sskr",
+            "path": "applet/src/main",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
             "path": "JCMathLib/src",
