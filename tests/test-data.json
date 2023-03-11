@@ -1906,6 +1906,15 @@
             "subtests": []
         },
         {
+            "name": "JavaCardLightweightCiphers",
+            "repo": "https://github.com/CarpAlberto/JavaCardLightweightCiphers",
+            "path": "src",
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: DEBUG_MODE cannot be resolved or is not a field"
+            }
+        },
+        {
             "name": "PinSentry-OTP",
             "repo": "https://github.com/Celliwig/PinSentry-OTP",
             "path": "psotp",
