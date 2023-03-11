@@ -1889,6 +1889,23 @@
             "subtests": []
         },
         {
+            "name": "key-ring",
+            "repo": "https://github.com/G1gg1L3s/key-ring",
+            "path": "applet/src/main/java/applet",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "reason": "Selection: process does not handle ISO7816.INS_SELECT",
+                    "pattern": "(public void process\\(APDU apdu\\) {)",
+                    "replacement": "\\1\\nif (selectingApplet()) return;",
+                    "files": [
+                        "applet/src/main/java/applet/crypto/CryptoApplet.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
             "path": "JCMathLib/src",
