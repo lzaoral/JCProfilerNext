@@ -37,7 +37,7 @@ dependencies {
 
     // applet installation
     implementation 'org.apache.ant:ant:1.10.13'
-    implementation 'com.github.martinpaljak:ant-javacard:21.12.31'
+    implementation 'com.github.martinpaljak:ant-javacard:23.03.21'
     implementation 'com.github.martinpaljak:gptool:20.08.12'
 
     // use the latest JNA release to support Apple Silicon MacBooks
