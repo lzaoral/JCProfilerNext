@@ -22,6 +22,8 @@ getPartialBytes(short,byte[],short,byte)
 partialEquals(byte[],short,byte)
 RIDEquals(javacard.framework.AID)
 
+# javacard.security.AlgorithmParameterSpec (empty)
+
 # javacard.framework.APDU
 getBuffer()
 getCLAChannel()
@@ -210,6 +212,65 @@ getBioType()
 getPublicData(short,byte[],short,short)
 isInitialized()
 
+# javacardx.framework.nio.Buffer
+array()
+arrayOffset()
+capacity()
+clear()
+flip()
+hasArray()
+hasRemaining()
+isDirect()
+isReadOnly()
+limit()
+limit(int)
+position()
+position(int)
+remaining()
+rewind()
+slice()
+
+# javacardx.framework.nio.BufferOverflowException
+BufferOverflowException()
+
+# javacardx.framework.nio.BufferUnderflowException
+BufferUnderflowException()
+
+# javacardx.framework.nio.ByteBuffer
+allocateDirect(int)
+array()
+arrayOffset()
+asReadOnlyBuffer()
+compact()
+compareTo(javacardx.framework.nio.ByteBuffer)
+equals(java.lang.Object)
+get()
+get(byte[])
+get(byte[],int,int)
+get(int index)
+getInt()
+getInt(int)
+getShort()
+getShort(int)
+hasArray()
+isDirect()
+order()
+order(javacardx.framework.nio.ByteOrder)
+put(byte)
+put(byte[])
+put(byte[],int,int)
+put(int,byte)
+put(javacardx.framework.nio.ByteBuffer)
+putInt(int)
+putInt(int,int)
+putShort(int,short)
+putShort(short)
+slice()
+wrap(byte[])
+wrap(byte[],int,int)
+
+# javacardx.framework.nio.ByteOrder (empty)
+
 # javacard.framework.CardException
 CardException(short)
 getReason()
@@ -226,6 +287,27 @@ CardRuntimeException(short)
 getReason()
 setReason(short)
 throwIt(short)
+
+# javacardx.security.cert.Certificate
+getPublicKey()
+getType()
+verify(javacard.security.PublicKey)
+
+# javacardx.security.cert.CertificateException
+CertificateException(short)
+throwIt(short)
+
+# javacardx.security.cert.CertificateParser
+buildCert(byte[],short,short,javacardx.security.cert.CertificateParser.ParserHandler)
+buildCert(byte[],short,short,javacardx.security.cert.CertificateParser.ParserHandler,javacard.security.PublicKey)
+getInstance(short)
+parseCert(byte[],short,short,javacardx.security.cert.CertificateParser.ParserHandler)
+parseCert(byte[],short,short,javacardx.security.cert.CertificateParser.ParserHandler,javacard.security.PublicKey)
+
+# javacardx.security.cert.CertificateParser.KeyHandler
+onKey(byte,short)
+
+# javacardx.security.cert.CertificateParser.ParserHandler (empty)
 
 # javacard.security.Checksum
 Checksum()
@@ -282,6 +364,30 @@ init(javacardx.framework.tlv.ConstructedBERTag,byte[],short,short)
 # javacard.security.CryptoException
 CryptoException(short)
 throwIt(short)
+
+# javacardx.framework.time.DateTimeException
+DateTimeException(short)
+throwIt(short)
+
+# javacardx.security.derivation.DerivationFunction 
+DerivationFunction()
+getAlgorithm()
+getInstance(short,boolean)
+init(javacard.security.AlgorithmParameterSpec)
+lastBytes(byte[],short,short)
+lastBytes(javacard.security.SecretKey)
+nextBytes(byte[],short,short)
+nextBytes(javacard.security.SecretKey)
+
+# javacardx.security.derivation.DerivationFunction.OneShot
+close()
+getAlgorithm()
+init(javacard.security.AlgorithmParameterSpec)
+lastBytes(byte[],short,short)
+lastBytes(javacard.security.SecretKey)
+nextBytes(byte[],short,short)
+nextBytes(javacard.security.SecretKey)
+open(byte algorithm)
 
 # javacard.security.DESKey
 getKey(byte[],short)
@@ -351,6 +457,15 @@ setS(byte[],short,short)
 getW(byte[],short)
 setW(byte[],short,short)
 
+# javacardx.framework.event.EventListener (empty)
+
+# javacardx.framework.event.EventRegistry
+getEventRegistry(javacardx.framework.event.EventSource)
+register(javacardx.framework.event.EventListener)
+unregister(javacardx.framework.event.EventListener)
+
+# javacardx.framework.event.EventSource (empty)
+
 # java.lang.Exception
 Exception()
 
@@ -359,6 +474,10 @@ Exception()
 # javacardx.external.ExternalException
 ExternalException(short)
 throwIt(short)
+
+# javacard.security.GenericSecretKey
+getKey(byte[],short)
+setKey(byte[],short,short)
 
 # javacard.security.HMACKey
 getKey(byte[],short)
@@ -394,6 +513,7 @@ throwIt(short)
 getInt(byte[],short)
 makeInt(byte,byte,byte,byte)
 makeInt(short,short)
+makeIntArrayView(int[],short,short,short,javacard.framework.Shareable)
 makeTransientIntArray(short,byte)
 setInt(byte[],short,int)
 
@@ -404,6 +524,7 @@ commitTransaction()
 getAID()
 getAppletShareableInterfaceObject(javacard.framework.AID,byte)
 getAssignedChannel()
+getAttributes(java.lang.Object)
 getAvailableMemory(byte)
 getAvailableMemory(short[],short,byte)
 getMaxCommitCapacity()
@@ -412,15 +533,66 @@ getTransactionDepth()
 getUnusedCommitCapacity()
 getVersion()
 isAppletActive(javacard.framework.AID)
+isArrayView(java.lang.Object)
 isObjectDeletionSupported()
 isTransient(java.lang.Object)
 lookupAID(byte[],short,byte)
+makeArrayView(java.lang.Object,short,short,short,javacard.framework.Shareable)
+makeBooleanArrayView(boolean[],short,short,short,javacard.framework.Shareable)
+makeByteArrayView(byte[],short,short,short,javacard.framework.Shareable)
 makeGlobalArray(byte,short)
+ makeShortArrayView(short[],short,short,short,javacard.framework.Shareable)
 makeTransientBooleanArray(short,byte)
 makeTransientByteArray(short,byte)
 makeTransientObjectArray(short,byte)
 makeTransientShortArray(short,byte)
 requestObjectDeletion()
+
+# javacardx.security.derivation.KDFAnsiX963Spec
+getAlgorithm()
+getOutputLength()
+getSecret()
+getSharedInfo()
+
+# javacardx.security.derivation.KDFCounterModeSpec
+getAlgorithm()
+getCounterLength()
+getInputDataAfterCounter()
+getInputDataBeforeCounter()
+getOutputLength()
+getSecret()
+
+# javacardx.security.derivation.KDFDoublePipelineIterationModeSpec
+getAlgorithm()
+getCounterLength()
+getInputData()
+getOutputLength()
+getSecret()
+
+# javacardx.security.derivation.KDFFeedbackModeSpec
+getAlgorithm()
+getCounterLength()
+getInputData()
+getIV()
+getOutputLength()
+getSecret()
+
+# javacardx.security.derivation.KDFHmacSpec
+getAlgorithm()
+getInfo()
+getOutputLength()
+getSalt()
+getSecret()
+
+# javacardx.security.derivation.KDFIcaoMrtdSpec
+getAlgorithm()
+getCounter()
+getSecret()
+
+# javacardx.security.derivation.KDFIcaoMrtdSpec
+getAlgorithm()
+getParameters()
+getSecret()
 
 # javacard.security.Key
 clearKey()
@@ -439,6 +611,8 @@ init(javacard.security.PrivateKey)
 buildKey(byte,byte,short,boolean)
 buildKey(byte,short,boolean)
 buildKeyWithSharedDomain(byte,byte,javacard.security.Key,boolean)
+buildXECKey(javacard.security.NamedParameterSpec,short,boolean)
+getMemoryType(javacard.security.Key)
 
 # javacardx.crypto.KeyEncryption
 getKeyCipher()
@@ -448,6 +622,7 @@ setKeyCipher(javacardx.crypto.Cipher)
 KeyPair(byte,short)
 KeyPair(javacard.security.PublicKey,javacard.security.PrivateKey)
 genKeyPair()
+genKeyPair(javacard.security.AlgorithmParameterSpec)
 getPrivate()
 getPublic()
 
@@ -481,9 +656,24 @@ open(byte)
 reset()
 update(byte[],short,short)
 
+# javacardx.security.util.MonotonicCounter
+compareTo(byte[],short,short)
+compareTo(javacardx.security.util.MonotonicCounter)
+equalsMax()
+get(byte[],short)
+getInstance(short,byte)
+getMemoryType()
+getSize()
+incrementBy(short)
+setValue(byte[],short,short)
+
 # javacard.framework.MultiSelectable
 deselect(boolean)
 select(boolean)
+
+# javacard.security.NamedParameterSpec
+getInstance(short)
+getName()
 
 # java.lang.NegativeArraySizeException
 NegativeArraySizeException()
@@ -550,6 +740,10 @@ reset()
 PINException(short)
 throwIt(short)
 
+# javacard.security.PrimalityTestParamSpec
+getRounds()
+getType()
+
 # javacardx.framework.tlv.PrimitiveBERTag
 PrimitiveBERTag()
 init(byte[],short)
@@ -586,12 +780,21 @@ nextBytes(byte[],short,short)
 open(byte)
 setSeed(byte[],short,short)
 
+# javacardx.framework.nio.ReadOnlyBufferException
+ReadOnlyBufferException()
+
 # java.rmi.Remote (empty)
 
 # java.rmi.RemoteException
 RemoteException()
 
 # javacard.framework.service.RemoteService (empty)
+
+# javacard.framework.Resources
+getResources()
+getSize(short)
+getView(short)
+getView(short,short,short)
 
 # javacard.framework.service.RMIService
 RMIService(java.rmi.Remote)
@@ -715,6 +918,10 @@ sign(byte[],short,short,byte[],short,short[],short)
 update(byte[],short,short)
 verify(byte[],short,short)
 
+# javacard.security.SM4Key
+getKey(byte[],short)
+setKey(byte[],short)
+
 # javacardx.annotations.StringDef (empty)
 
 # javacardx.framework.string.StringException
@@ -751,8 +958,33 @@ valueOf(short,byte[],short)
 SystemException(short)
 throwIt(short)
 
+# javacardx.framework.time.SysTime
+uptime(javacardx.framework.time.TimeDuration)
+
 # java.lang.Throwable
 Throwable()
+
+# javacardx.framework.time.TimeDuration
+abs()
+compareTo(short,short)
+compareTo(javacardx.framework.time.TimeDuration)
+getByteLength(short)
+getInstance(byte)
+getInstance(byte,short,short)
+getMemoryType()
+isNegative()
+minus(short,short)
+minus(javacardx.framework.time.TimeDuration)
+neg()
+plus(short,short)
+plus(javacardx.framework.time.TimeDuration)
+reset()
+set(byte[],short,short,short)
+toBytes(byte[],short,short,short)
+
+# javacardx.security.derivation.TLSPseudoRandomFunctionSpec
+getSecret()
+getSeed()
 
 # javacardx.framework.tlv.TLVException
 TLVException(short)
@@ -780,3 +1012,25 @@ setShort(byte[],short,short)
 # javacardx.framework.util.UtilException
 UtilException(short)
 throwIt(short)
+
+# javacardx.security.cert.X509Certificate
+getExtension(byte[],short,short)
+getExtensions(javacardx.security.cert.X509Certificate.ExtensionHandler)
+getField(short)
+getVersion()
+
+# javacardx.security.cert.X509Certificate.ExtensionHandler
+onExtension(byte[],boolean,byte[])
+
+# javacardx.security.cert.X509Certificate.FieldHandler
+onField(short,byte[])
+
+# javacard.security.XECKey
+getEncoded(byte[],short)
+getEncodingLength()
+getParams()
+setEncoded(byte[],short,short)
+
+# javacard.security.XECPrivateKey (empty)
+
+# javacard.security.XECPublicKey (empty)
