@@ -79,7 +79,7 @@ def download_file(url: str, target: str) -> None:
         return
 
     print('Downloading', url)
-    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    req = Request(url, headers={'User-Agent': 'curl/8.1.2'})
     with urlopen(req) as res, open(target, 'wb') as f:
         f.write(res.read())
 
