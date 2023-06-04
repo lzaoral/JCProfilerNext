@@ -58,6 +58,28 @@
             "subtests": []
         },
         {
+            "name": "jmrtd",
+            "archive": "https://sourceforge.net/projects/jmrtd/files/passportapplet/0.0.2b/passportapplet-src.zip",
+            "path": "passportapplet/src",
+            "jckit": "221",
+            "entryPoints": [
+                {
+                    "name": "sos.passportapplet.EvilPassportApplet",
+                    "failure": {
+                        "stopAfter": "instrumentation",
+                        "reason": "Conversion: interface fields may only be initialized to primitive compile-time constant values."
+                    }
+                },
+                {
+                    "name": "sos.passportapplet.PassportApplet",
+                    "failure": {
+                        "stopAfter": "instrumentation",
+                        "reason": "Conversion: interface fields may only be initialized to primitive compile-time constant values."
+                    }
+                }
+            ]
+        },
+        {
             "name": "jmrtd-noeac",
             "repo": "https://github.com/walterschell/jmrtd-noeac",
             "path": "src",
@@ -213,6 +235,13 @@
                 "stopAfter": "compilation",
                 "reason": "Installation: constructor requires custom install data"
             }
+        },
+        {
+            "name": "MuscleApplet",
+            "repo": "https://github.com/martinpaljak/AppletPlayground",
+            "path": "src/com/musclecard",
+            "jckit": "222",
+            "subtests": []
         },
         {
             "name": "OneCard_Card",
@@ -469,6 +498,22 @@
             "path": "mirror/applet",
             "jckit": "222",
             "subtests": []
+        },
+        {
+            "name": "EMVCAP",
+            "repo": "https://github.com/zoobab/EMVCAP",
+            "path": "mirror/applet",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "Gemplus-Purse",
+            "repo": "https://github.com/ncatanoc/chasetool",
+            "path": "src/purse",
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: the import com.gemplus.pacap.utils cannot be resolved to a type"
+            }
         },
         {
             "name": "Loyalty-Card",
@@ -764,6 +809,14 @@
             "subtests": []
         },
         {
+            "name": "JCOpenPGP",
+            "archive": "https://sourceforge.net/projects/jcopenpgp/files/JCOpenPGP-1.0.zip",
+            "path": "JCOpenPGP/src/",
+            "jckit": "221",
+            "visa": null,
+            "subtests": []
+        },
+        {
             "name": "SmartPGP-test_applet",
             "repo": "https://github.com/ANSSI-FR/SmartPGP",
             "path": "test_applet/src",
@@ -813,6 +866,26 @@
             "gppro": "1.7",
             "failure": {
                 "reason": "Instrumentation: the import com.nxp cannot be resolved"
+            }
+        },
+        {
+            "name": "Virtual-Keycard",
+            "repo": "https://github.com/eriknellessen/Virtual-Keycard",
+            "path": "android-projects/Muscle_Card_on_Android/app/src/main/java/com/",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "(256 \\+ LC)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "android-projects/Muscle_Card_on_Android/app/src/main/java/com/musclecard/CardEdge/CardEdge.java"
+                    ]
+                }
+            ],
+            "failure": {
+                "stopAfter": "instrumentation",
+                "reason": "Conversion: unsupported int type of local variable"
             }
         },
         {
@@ -1980,6 +2053,77 @@
 
 
         {
+            "name": "AppletPlayground_AlgTest",
+            "repo": "https://github.com/martinpaljak/AppletPlayground",
+            "path": "src/AlgTest",
+            "jckit": "222",
+            "entryPoints": [
+                {
+                    "name": "AlgTest.AlgTest",
+                    "subtests": []
+                },
+                {
+                    "name": "AlgTest.AlgTestPerformance",
+                    "subtests": []
+                },
+                {
+                    "name": "AlgTest.AlgTestSinglePerApdu",
+                    "subtests": []
+                }
+            ]
+        },
+        {
+            "name": "AppletPlayground_PKIApplet",
+            "repo": "https://github.com/martinpaljak/AppletPlayground",
+            "path": "src/net/sourceforge",
+            "jckit": "222",
+            "gppro": "1.7",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Selection: applet requires specific APDU"
+            }
+        },
+        {
+            "name": "AppletPlayground_ReaderTest",
+            "repo": "https://github.com/martinpaljak/AppletPlayground",
+            "path": "src/org/debian",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "AppletPlayground_PLAID",
+            "repo": "https://github.com/martinpaljak/AppletPlayground",
+            "path": "src/plaid804",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "cdax-crypto",
+            "repo": "https://github.com/marlonbaeten/cdax-crypto-cpp",
+            "path": "applet",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "reason": "Instrumentation: aapdu cannot be resolved",
+                    "pattern": "aapdu",
+                    "replacement": "apdu",
+                    "files": [
+                        "applet/src/cdax/ClientApplet.java"
+                    ]
+                }
+            ],
+            "failure": {
+                "reason": "Instrumentation: generate_keyPair method must return a result of type short"
+            }
+        },
+        {
+            "name": "CryptedBankCard",
+            "repo": "https://github.com/Herve-M/UQAM-EMB7015",
+            "path": "CryptedBankCard/src/cbc",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
             "name": "HelloSTK2",
             "repo": "https://github.com/alan-turing-institute/simple-id",
             "path": "src",
@@ -1987,6 +2131,318 @@
             "failure": {
                 "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
             }
+        },
+        {
+            "name": "JCDemo_jcapdu",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcapdu/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JCDemo_jcapplet",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcapplet/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JCDemo_jcchksum",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcchksum/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JCDemo_jcdes",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcdes/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JCDemo_jclib",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jclib/src",
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: no entry point class"
+            }
+        },
+        {
+            "name": "JCDemo_jcmsgdig",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcmsgdig/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JCDemo_jcmultiselect",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcmultiselect/src",
+            "jckit": "222",
+            "entryPoints": [
+                {
+                    "name": "com.jcdemo.jcmultiselect.JCMultiSelect",
+                    "subtests": []
+                },
+                {
+                    "name": "com.jcdemo.jcmultiselect.JCMultiSelect2",
+                    "subtests": []
+                }
+            ]
+        },
+        {
+            "name": "JCDemo_jcrandom",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcrandom/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JCDemo_jcrsa",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcrsa/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JCDemo_jcshare_client",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcshare/client/src",
+            "jckit": "222",
+            "failure": {
+                "reason": "Intrumentation: The import com.jcdemo.jclib cannot be resolved"
+            }
+        },
+        {
+            "name": "JCDemo_jcshare_server",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcshare/server/src",
+            "jckit": "222",
+            "failure": {
+                "reason": "Intrumentation: The import com.jcdemo.jclib cannot be resolved"
+            }
+        },
+        {
+            "name": "JCDemo_jcsign",
+            "repo": "https://github.com/leowenyang/JCDemo",
+            "path": "jcsign/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JavaCardDemo-Driving-License-Applet",
+            "repo": "https://github.com/gracebear/JavaCard",
+            "path": "Driving-License-Applet",
+            "jckit": "222",
+            "move": [
+                {
+                    "from": "Driving-License-Applet/LicenseCryto.java",
+                    "to": "Driving-License-Applet/LicenseCrypto.java"
+                }
+            ],
+            "fixup": [
+                {
+                    "reason": "Conversion: unsupported int type array index",
+                    "pattern": "(i\\s*\\+\\s*1)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "Driving-License-Applet/FileSystem.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "JavaCardDemo-Datastore",
+            "repo": "https://github.com/gracebear/JavaCard",
+            "path": "Datastore",
+            "jckit": "222",
+            "move": [
+                {
+                    "from": "Datastore.java",
+                    "to": "Datastore/Datastore.java"
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "JavaCardDemo-Helloworld",
+            "repo": "https://github.com/gracebear/JavaCard",
+            "path": "Helloworld",
+            "jckit": "222",
+            "move": [
+                {
+                    "from": "Helloworld.java",
+                    "to": "Helloworld/helloworld.java"
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "JavaCardDemo-WalletDemo",
+            "repo": "https://github.com/gracebear/JavaCard",
+            "path": "WalletDemo",
+            "jckit": "222",
+            "move": [
+                {
+                    "from": "WalletDemo.java",
+                    "to": "WalletDemo/WalletDemoApplet.java"
+                }
+            ],
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
+        },
+        {
+            "name": "javacard_maze",
+            "repo": "https://github.com/henryhoo/javacard_maze",
+            "path": "src/henryhoo",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "reason": "Conversion: unsupported int type array index",
+                    "pattern": "\\[([^\\[\\]]+)\\]",
+                    "replacement": "[(short)(\\1)]",
+                    "files": [
+                        "src/henryhoo/Mymaze.java"
+                    ]
+                },
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "([mn] [+*] [(]?[mn] - 1[)]?)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "src/henryhoo/Mymaze.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "nrf6310-pca10007_Eclipse",
+            "repo": "https://github.com/pauksk/nrf6310-pca10007",
+            "path": "JC Applet for ECLIPSE35/test/src",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "nrf6310-pca10007_Applet",
+            "repo": "https://github.com/pauksk/nrf6310-pca10007",
+            "path": "JC Applet/applet/src",
+            "jckit": "305u4",
+            "subtests": []
+        },
+        {
+            "name": "javacard-calculator",
+            "repo": "https://github.com/philatelist05/javacard-calculator",
+            "path": "src/main",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "Smartcard-Offline-Lock",
+            "repo": "https://github.com/GeorgesAlkhouri/Smartcard-Offline-Lock",
+            "path": "EOSApplet/src",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "(pos\\s*\\+\\s*KEY_BYTE_SIZE)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "EOSApplet/src/eosApplet/EOSApplet.java"
+                    ]
+                },
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "(\\(ADMIN_IDENTITY\\.length[^)]+\\))",
+                    "replacement": "(short)\\1",
+                    "files": [
+                        "EOSApplet/src/eosApplet/EOSApplet.java"
+                    ]
+                },
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "(pos\\s*\\+\\s*ENTRY_BYTE_SIZE)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "EOSApplet/src/eosApplet/EOSApplet.java"
+                    ]
+                },
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "((?:temp|src)Off\\s*\\+\\s*(?:pat|src)Len)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "EOSApplet/src/eosApplet/EOSApplet.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
+            "name": "sc_traincard",
+            "repo": "https://github.com/TBoonX/sc_traincard",
+            "path": "Traincard/src",
+            "jckit": "222",
+            "remove": [
+                "Traincard/src/htwk/smartcard/traincard/model",
+                "Traincard/src/htwk/smartcard/traincard/test"
+            ],
+            "fixup": [
+                {
+                    "reason": "Conversion: unsupported int type array index",
+                    "pattern": "(temp.length\\s*\\+\\s*length\\s*-\\s*1)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "Traincard/src/htwk/smartcard/traincard/Traincard.java"
+                    ]
+                },
+                {
+                    "reason": "Conversion: unsupported int type array index",
+                    "pattern": "(length\\s*-\\s*1)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "Traincard/src/htwk/smartcard/traincard/Traincard.java"
+                    ]
+                },
+                {
+                    "reason": "Conversion: unsupported int type of intermediate value",
+                    "pattern": "(\\w+.length\\s*-\\s*mod)",
+                    "replacement": "(short)(\\1)",
+                    "files": [
+                        "Traincard/src/htwk/smartcard/traincard/Traincard.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+
+
+
+        {
+            "name": "corba",
+            "repo": "https://github.com/lbarbisan/corba",
+            "path": "Applet/src/fr/umlv/ir3/corba/calculator/applet",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "teleport_secret",
+            "repo": "https://github.com/EyeOfPython/teleport_secret",
+            "path": "card",
+            "jckit": "303",
+            "subtests": []
+        },
+        {
+            "name": "unifei-smart-cards",
+            "repo": "https://github.com/themindfuldev/unifei-smart-cards",
+            "path": "SmartSystemSC/src",
+            "jckit": "222",
+            "subtests": []
         },
 
 
