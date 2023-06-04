@@ -127,7 +127,7 @@ def prepare_thoth(version: str) -> str:
     return result_str
 
 
-def modify_repo(test: Dict[str, Any]) -> None:
+def modify_project(test: Dict[str, Any]) -> None:
     for rm in test.get('remove', []):
         for file in Path(test['name']).glob(rm):
             print('Removing', file)
@@ -382,7 +382,7 @@ def execute_test(test: Dict[str, Any]) -> None:
 
     cmd += ['--repeat-count', str(ARGS.repeat_count)]
 
-    modify_repo(test)
+    modify_project(test)
 
     if not ARGS.card:
         cmd.append('--simulator')
