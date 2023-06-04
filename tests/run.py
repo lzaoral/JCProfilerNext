@@ -145,18 +145,21 @@ def prepare_thoth(version: str) -> str:
     return result_str
 
 
-def modify_project(test: Dict[str, Any]) -> None:
-    for rm in test.get('remove', []):
-        for file in Path(test['name']).glob(rm):
-            print('Removing', file)
-            ro_rmtree(file)
-
+def modify_project(test: Dict[str, Any], onlyMove: bool = False) -> None:
     for mv in test.get('move', []):
         src = Path(test['name']) / mv['from']
         dest = Path(test['name']) / mv['to']
         print(f'Moving "{src}" to "{dest}"')
         os.makedirs(dest.parent, exist_ok=True)
         move(src, dest)
+
+    if onlyMove:
+        return
+
+    for rm in test.get('remove', []):
+        for file in Path(test['name']).glob(rm):
+            print('Removing', file)
+            ro_rmtree(file)
 
     for replace in test.get('fixup', []):
         pattern_str: str = replace['pattern'].replace('\n', '\\n')
@@ -407,6 +410,7 @@ def execute_test(test: Dict[str, Any]) -> None:
         cmd.append('--debug')
 
     if ARGS.mode == 'stats':
+        modify_project(test, onlyMove=True)
         get_stats(test, cmd)
         return
 
