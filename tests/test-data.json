@@ -1,4 +1,5 @@
 {
+    "reference": "https://github.com/crocs-muni/javacard-curated-list",
     "etsiRepo": "https://github.com/OpenJavaCard/etsi-exports",
     "jckitRepo": "https://github.com/martinpaljak/oracle_javacard_sdks",
     "gpapiRepo": "https://github.com/OpenJavaCard/globalplatform-exports",
