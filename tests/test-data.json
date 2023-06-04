@@ -108,6 +108,9 @@
                 "reason": "Selection: APDUException.ILLEGAL_USE"
             }
         },
+
+
+
         {
             "name": "BiometricAuthentification",
             "repo": "https://github.com/albertocarp/BiometricAuthentification",
@@ -277,6 +280,22 @@
             }
         },
         {
+            "name": "PinSentry-OTP",
+            "repo": "https://github.com/Celliwig/PinSentry-OTP",
+            "path": "psotp",
+            "jckit": "222",
+            "entryPoints": [
+                {
+                    "name": "psotp.PinSentryOTP",
+                    "subtests": []
+                },
+                {
+                    "name": "psotp.PinSentryOTPAdmin",
+                    "subtests": []
+                }
+            ]
+        },
+        {
             "name": "PivApplet",
             "repo": "https://github.com/arekinath/PivApplet",
             "path": "src",
@@ -294,6 +313,26 @@
             }
         },
         {
+            "name": "javacard-smpc-rsa",
+            "repo": "https://github.com/lzaoral/javacard-smpc-rsa",
+            "path": "applet/src/main",
+            "jckit": "222",
+            "entryPoints": [
+                {
+                    "name": "smpc_rsa.RSAClient",
+                    "subtests": []
+                },
+                {
+                    "name": "smpc_rsa.RSAClientSign",
+                    "subtests": []
+                },
+                {
+                    "name": "smpc_rsa.RSAServer",
+                    "subtests": []
+                }
+            ]
+        },
+        {
             "name": "uclinux",
             "repo": "https://github.com/scs/uclinux",
             "path": "user/ssh/scard",
@@ -301,6 +340,15 @@
             "windows": false,
             "failure": {
                 "reason": "Instrumentation: CyberflexFile cannot be resolved to a type"
+            }
+        },
+        {
+            "name": "simple-id",
+            "repo": "https://github.com/alan-turing-institute/simple-id",
+            "path": "src",
+            "jckit": "304",
+            "failure": {
+                "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
             }
         },
         {
@@ -348,6 +396,9 @@
             ],
             "subtests": []
         },
+
+
+
         {
             "name": "appsecure",
             "repo": "https://github.com/deepakprabhakara/appsecure",
@@ -416,13 +467,6 @@
             "name": "EMVCAP",
             "repo": "https://github.com/zoobab/EMVCAP",
             "path": "mirror/applet",
-            "jckit": "222",
-            "subtests": []
-        },
-        {
-            "name": "JavaCard_Wallet",
-            "repo": "https://github.com/RimGazzeh/JavaCard_Wallet",
-            "path": "JavaCard/src",
             "jckit": "222",
             "subtests": []
         },
@@ -559,6 +603,9 @@
             "jckit": "222",
             "subtests": []
         },
+
+
+
         {
             "name": "cryptsetup-javacard",
             "repo": "https://github.com/WOnder93/cryptsetup-javacard",
@@ -632,6 +679,23 @@
             "subtests": []
         },
         {
+            "name": "key-ring",
+            "repo": "https://github.com/G1gg1L3s/key-ring",
+            "path": "applet/src/main/java/applet",
+            "jckit": "222",
+            "fixup": [
+                {
+                    "reason": "Selection: process does not handle ISO7816.INS_SELECT",
+                    "pattern": "(public void process\\(APDU apdu\\) {)",
+                    "replacement": "\\1\\nif (selectingApplet()) return;",
+                    "files": [
+                        "applet/src/main/java/applet/crypto/CryptoApplet.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
             "name": "Passmg",
             "repo": "https://github.com/cranixx/Passmg",
             "path": "passmg",
@@ -689,6 +753,9 @@
             "jckit": "222",
             "subtests": []
         },
+
+
+
         {
             "name": "SmartPGP-applet",
             "repo": "https://github.com/ANSSI-FR/SmartPGP",
@@ -711,6 +778,34 @@
             "subtests": []
         },
         {
+            "name": "Myst",
+            "repo": "https://github.com/OpenCryptoProject/Myst",
+            "path": "MPCApplet/src",
+            "jckit": "222",
+            "remove": [
+                "MPCApplet/src/mpc/PM.java"
+            ],
+            "fixup": [
+                {
+                    "reason": "Instrumentation: already contains PM class",
+                    "pattern": "^\\s*PM\\.check.*$",
+                    "replacement": "",
+                    "files": [
+                        "MPCApplet/src/mpc/*.java"
+                    ]
+                },
+                {
+                    "reason": "Instrumentation: already contains PM class",
+                    "pattern": "^\\s*case Consts\\.INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
+                    "replacement": "",
+                    "files": [
+                        "MPCApplet/src/mpc/MPCApplet.java"
+                    ]
+                }
+            ],
+            "subtests": []
+        },
+        {
             "name": "SigAnima",
             "repo": "https://github.com/tsenger/SigAnima",
             "path": "src",
@@ -727,6 +822,9 @@
             "jckit": "222",
             "subtests": []
         },
+
+
+
         {
             "name": "eHealthCard",
             "repo": "https://github.com/gabriellewp/eHealthCard",
@@ -744,6 +842,9 @@
             ],
             "subtests": []
         },
+
+
+
         {
             "name": "openjavacard-ndef-advanced",
             "repo": "https://github.com/OpenJavaCard/openjavacard-ndef",
@@ -802,6 +903,9 @@
             "jckit": "222",
             "subtests": []
         },
+
+
+
         {
             "name": "BitcoinWallet",
             "repo": "https://github.com/JavaCardOS/BitcoinWallet",
@@ -907,6 +1011,9 @@
                 }
             ]
         },
+
+
+
         {
             "name": "Java-Card-Project-Des_client_1",
             "repo": "https://github.com/robsbeat1/Java-Card-Project",
@@ -999,6 +1106,63 @@
             ],
             "subtests": []
         },
+
+
+
+        {
+            "name": "LiteID-SimApp",
+            "repo": "https://github.com/LiteID/LiteID-SimApp",
+            "path": "SIM Client/src",
+            "jckit": "222",
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
+        },
+        {
+            "name": "sim-applet-sms-im-alive",
+            "repo": "https://github.com/PodgroupConnectivity/sim-applet-sms-im-alive",
+            "path": "src",
+            "jckit": "222",
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
+        },
+        {
+            "name": "sim-applet-apn-autoconf",
+            "repo": "https://github.com/PodgroupConnectivity/sim-applet-apn-autoconf",
+            "path": "src",
+            "jckit": "222",
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
+        },
+        {
+            "name": "sim-applet-data-heartbeat",
+            "repo": "https://github.com/PodgroupConnectivity/sim-applet-data-heartbeat",
+            "path": "src",
+            "jckit": "222",
+            "etsi": "143.019",
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
+            }
+        },
+        {
+            "name": "upsc",
+            "repo": "https://github.com/paromix/upsc",
+            "path": "SIMCard Framework",
+            "jckit": "222",
+            "subtests": []
+        },
+
+
+
         {
             "name": "EVIV-MP2JavaCard",
             "repo": "https://github.com/EVIVoting/EVIV",
@@ -1108,17 +1272,6 @@
             "failure": {
                 "stopAfter": "compilation",
                 "reason": "Installation: constructor requires custom install data"
-            }
-        },
-        {
-            "name": "LiteID-SimApp",
-            "repo": "https://github.com/LiteID/LiteID-SimApp",
-            "path": "SIM Client/src",
-            "jckit": "222",
-            "etsi": "143.019",
-            "failure": {
-                "stopAfter": "compilation",
-                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
             }
         },
         {
@@ -1329,13 +1482,6 @@
             }
         },
         {
-            "name": "upsc",
-            "repo": "https://github.com/paromix/upsc",
-            "path": "SIMCard Framework",
-            "jckit": "222",
-            "subtests": []
-        },
-        {
             "name": "Wookey",
             "repo": "https://github.com/wookey-project/javacard-applet",
             "path": "src/wookey",
@@ -1344,84 +1490,9 @@
                 "reason": "Instrumentation: WooKey cannot be resolved to a type"
             }
         },
-        {
-            "name": "javacard-smpc-rsa",
-            "repo": "https://github.com/lzaoral/javacard-smpc-rsa",
-            "path": "applet/src/main",
-            "jckit": "222",
-            "entryPoints": [
-                {
-                    "name": "smpc_rsa.RSAClient",
-                    "subtests": []
-                },
-                {
-                    "name": "smpc_rsa.RSAClientSign",
-                    "subtests": []
-                },
-                {
-                    "name": "smpc_rsa.RSAServer",
-                    "subtests": []
-                }
-            ]
-        },
-        {
-            "name": "simple-id",
-            "repo": "https://github.com/alan-turing-institute/simple-id",
-            "path": "src",
-            "jckit": "304",
-            "failure": {
-                "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
-            }
-        },
-        {
-            "name": "HelloSTK2",
-            "repo": "https://github.com/alan-turing-institute/simple-id",
-            "path": "src",
-            "jckit": "304",
-            "failure": {
-                "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
-            }
-        },
-        {
-            "name": "sim-applet-sms-im-alive",
-            "repo": "https://github.com/PodgroupConnectivity/sim-applet-sms-im-alive",
-            "path": "src",
-            "jckit": "222",
-            "etsi": "143.019",
-            "failure": {
-                "stopAfter": "compilation",
-                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
-            }
-        },
-        {
-            "name": "sim-applet-apn-autoconf",
-            "repo": "https://github.com/PodgroupConnectivity/sim-applet-apn-autoconf",
-            "path": "src",
-            "jckit": "222",
-            "etsi": "143.019",
-            "failure": {
-                "stopAfter": "compilation",
-                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
-            }
-        },
-        {
-            "name": "sim-applet-data-heartbeat",
-            "repo": "https://github.com/PodgroupConnectivity/sim-applet-data-heartbeat",
-            "path": "src",
-            "jckit": "222",
-            "etsi": "143.019",
-            "failure": {
-                "stopAfter": "compilation",
-                "reason": "Installation: constructor calls ToolkitRegistry.getEntry()"
-            }
-        },
-        {
-            "name": "JCEd25519",
-            "repo": "https://github.com/dufkan/JCEd25519",
-            "path": "applet/src/main/java",
-            "jckit": "222",
-            "subtests": []
-        },
+
+
+
         {
             "name": "AEonJC-acorn",
             "repo": "https://github.com/palkrajesh/AEonJC",
@@ -1572,6 +1643,29 @@
             "failure": {
                 "stopAfter": "instrumentation",
                 "reason": "Conversion: unsupported int type of field"
+            }
+        },
+        {
+            "name": "JCEd25519",
+            "repo": "https://github.com/dufkan/JCEd25519",
+            "path": "applet/src/main/java",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "jc-sskr",
+            "repo": "https://github.com/proxyco/jc-sskr",
+            "path": "applet/src/main",
+            "jckit": "222",
+            "subtests": []
+        },
+        {
+            "name": "JavaCardLightweightCiphers",
+            "repo": "https://github.com/CarpAlberto/JavaCardLightweightCiphers",
+            "path": "src",
+            "jckit": "222",
+            "failure": {
+                "reason": "Instrumentation: DEBUG_MODE cannot be resolved or is not a field"
             }
         },
         {
@@ -1882,55 +1976,21 @@
                 "reason": "Installation: CryptoException.ILLEGAL_VALUE"
             }
         },
+
+
+
         {
-            "name": "jc-sskr",
-            "repo": "https://github.com/proxyco/jc-sskr",
-            "path": "applet/src/main",
-            "jckit": "222",
-            "subtests": []
-        },
-        {
-            "name": "key-ring",
-            "repo": "https://github.com/G1gg1L3s/key-ring",
-            "path": "applet/src/main/java/applet",
-            "jckit": "222",
-            "fixup": [
-                {
-                    "reason": "Selection: process does not handle ISO7816.INS_SELECT",
-                    "pattern": "(public void process\\(APDU apdu\\) {)",
-                    "replacement": "\\1\\nif (selectingApplet()) return;",
-                    "files": [
-                        "applet/src/main/java/applet/crypto/CryptoApplet.java"
-                    ]
-                }
-            ],
-            "subtests": []
-        },
-        {
-            "name": "JavaCardLightweightCiphers",
-            "repo": "https://github.com/CarpAlberto/JavaCardLightweightCiphers",
+            "name": "HelloSTK2",
+            "repo": "https://github.com/alan-turing-institute/simple-id",
             "path": "src",
-            "jckit": "222",
+            "jckit": "304",
             "failure": {
-                "reason": "Instrumentation: DEBUG_MODE cannot be resolved or is not a field"
+                "reason": "Instrumentation: ToolkitInterface cannot be resolved to a type"
             }
         },
-        {
-            "name": "PinSentry-OTP",
-            "repo": "https://github.com/Celliwig/PinSentry-OTP",
-            "path": "psotp",
-            "jckit": "222",
-            "entryPoints": [
-                {
-                    "name": "psotp.PinSentryOTP",
-                    "subtests": []
-                },
-                {
-                    "name": "psotp.PinSentryOTPAdmin",
-                    "subtests": []
-                }
-            ]
-        },
+
+
+
         {
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
@@ -2178,34 +2238,6 @@
                     ]
                 }
             ]
-        },
-        {
-            "name": "Myst",
-            "repo": "https://github.com/OpenCryptoProject/Myst",
-            "path": "MPCApplet/src",
-            "jckit": "222",
-            "remove": [
-                "MPCApplet/src/mpc/PM.java"
-            ],
-            "fixup": [
-                {
-                    "reason": "Instrumentation: already contains PM class",
-                    "pattern": "^\\s*PM\\.check.*$",
-                    "replacement": "",
-                    "files": [
-                        "MPCApplet/src/mpc/*.java"
-                    ]
-                },
-                {
-                    "reason": "Instrumentation: already contains PM class",
-                    "pattern": "^\\s*case Consts\\.INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
-                    "replacement": "",
-                    "files": [
-                        "MPCApplet/src/mpc/MPCApplet.java"
-                    ]
-                }
-            ],
-            "subtests": []
         }
     ]
 }
