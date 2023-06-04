@@ -38,7 +38,7 @@ with open('test-data.json', 'r') as j, open(STATS_FILE, 'w') as f:
 
     for test in tests:
         print('# Applet:', test['name'], file=f)
-        print('# Repo:', test['repo'], file=f)
+        print('# Repo:', test.get('repo') or test['archive'], file=f)
         print('# Path:', test['path'], file=f)
         print(file=f)
 
