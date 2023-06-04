@@ -5,10 +5,11 @@
 
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from shutil import copy, copytree, make_archive, rmtree
+from shutil import copy, copytree, make_archive, rmtree, unpack_archive
 from subprocess import PIPE, STDOUT, run
 from tempfile import mkdtemp
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 import json
@@ -81,6 +82,13 @@ def download_file(url: str, target: str) -> None:
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     with urlopen(req) as res, open(target, 'wb') as f:
         f.write(res.read())
+
+
+def get_archive(url: str, target: str) -> None:
+    filename = urlparse(url).path.rsplit('/', 1)[-1]
+    download_file(url, filename)
+    ro_rmtree(target)
+    unpack_archive(filename, target)
 
 
 def prepare_etsi(version: str) -> str:
@@ -357,7 +365,12 @@ def execute_test(test: Dict[str, Any]) -> None:
     print('Running test', test['name'])
 
     test['name'] = test['name'].replace(' ', '_')
-    clone_git_repo(test['repo'], test['name'])
+    if 'repo' in test:
+        clone_git_repo(test['repo'], test['name'])
+    elif 'archive' in test:
+        get_archive(test['archive'], test['name'])
+    else:
+        raise ValueError(f'test {test["name"]} does not specify sources!')
 
     jar = Path('../build/libs/JCProfilerNext-1.0-SNAPSHOT.jar').absolute()
 
