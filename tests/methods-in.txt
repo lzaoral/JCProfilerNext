@@ -469,7 +469,7 @@ unregister(javacardx.framework.event.EventListener)
 # java.lang.Exception
 Exception()
 
-# javacardx.apdu.ExtendedLengthA (empty)
+# javacardx.apdu.ExtendedLength (empty)
 
 # javacardx.external.ExternalException
 ExternalException(short)
@@ -910,7 +910,7 @@ verify(byte[],short,short,byte[],short,short)
 verifyPreComputedHash(byte[],short,short,byte[],short,short)
 
 # javacard.security.SignatureMessageRecovery
-beginVerify(byte[] sigAndRecDataBuff,short buffOffset,short sigLength)
+beginVerify(byte[],short,short)
 getAlgorithm()
 getLength()
 init(javacard.security.Key,byte)
