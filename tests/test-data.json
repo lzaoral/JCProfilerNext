@@ -1610,7 +1610,7 @@
             }
         },
         {
-            "name": "jcard",
+            "name": "TestMAC",
             "repo": "https://github.com/mll11/jcard",
             "path": "TestMAC/src",
             "jckit": "222",
