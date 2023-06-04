@@ -5,7 +5,7 @@
 
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from shutil import copy, copytree, make_archive, rmtree, unpack_archive
+from shutil import copy, copytree, make_archive, move, rmtree, unpack_archive
 from subprocess import PIPE, STDOUT, run
 from tempfile import mkdtemp
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -150,6 +150,13 @@ def modify_project(test: Dict[str, Any]) -> None:
         for file in Path(test['name']).glob(rm):
             print('Removing', file)
             ro_rmtree(file)
+
+    for mv in test.get('move', []):
+        src = Path(test['name']) / mv['from']
+        dest = Path(test['name']) / mv['to']
+        print(f'Moving "{src}" to "{dest}"')
+        os.makedirs(dest.parent, exist_ok=True)
+        move(src, dest)
 
     for replace in test.get('fixup', []):
         pattern_str: str = replace['pattern'].replace('\n', '\\n')
