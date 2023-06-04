@@ -80,6 +80,7 @@ RSAPrivateKey
 RSAPublicKey
 SecretKey
 SignatureMessageRecovery
+SM2KeyAgreementParameterSpec
 SM4Key
 XECKey
 XECPrivateKey
@@ -215,6 +216,7 @@ KDFFeedbackModeSpec
 KDFHmacSpec
 KDFIcaoMrtdSpec
 KDFIeee1363Spec
+TLSKDFExpandLabelSpec
 TLSPseudoRandomFunctionSpec
 DerivationFunction
 
