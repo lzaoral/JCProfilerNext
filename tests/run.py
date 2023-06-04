@@ -422,7 +422,7 @@ def main() -> None:
 
     tests = data['tests']
     if ARGS.filter:
-        tests = [x for x in tests if any(y in x['name'] for y in ARGS.filter)]
+        tests = [x for x in tests if any(y.lower() in x['name'].lower() for y in ARGS.filter)]
         if not tests:
             raise ValueError(f'No tests match the {ARGS.filter} filter')
 
