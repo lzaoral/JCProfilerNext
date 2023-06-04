@@ -8,7 +8,7 @@ from pathlib import Path
 from shutil import copy, copytree, make_archive, rmtree
 from subprocess import PIPE, STDOUT, run
 from tempfile import mkdtemp
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from urllib.request import Request, urlopen
 
 import json
@@ -47,16 +47,26 @@ def rebuild_jar() -> None:
     run([script_path, '--project-dir=..', 'build'], check=True)
 
 
-def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
-    if os.path.exists(target):
-        if not reclone:
-            return
+def ro_rmtree(target: Union[Path, str]) -> None:
+    if not os.path.exists(target):
+        return
 
-        def remove_readonly(func: Callable[[Path], None],
-                            path: Path, _: Exception) -> None:
-            os.chmod(path, stat.S_IWRITE)
-            func(path)
-        rmtree(target, onerror=remove_readonly)
+    if os.path.isfile(target):
+        os.unlink(target)
+        return
+
+    def remove_readonly(func: Callable[[Path], None],
+                        path: Path, _: Exception) -> None:
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    rmtree(target, onerror=remove_readonly)
+
+
+def clone_git_repo(repo: str, target: str, reclone: bool = True) -> None:
+    if os.path.exists(target) and not reclone:
+        return
+
+    ro_rmtree(target)
 
     run(['git', 'clone', '--depth=1', repo, target], check=True)
     print(target, 'cloned successfully')
@@ -131,7 +141,7 @@ def modify_project(test: Dict[str, Any]) -> None:
     for rm in test.get('remove', []):
         for file in Path(test['name']).glob(rm):
             print('Removing', file)
-            os.unlink(file)
+            ro_rmtree(file)
 
     for replace in test.get('fixup', []):
         pattern_str: str = replace['pattern'].replace('\n', '\\n')
