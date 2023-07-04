@@ -2205,7 +2205,7 @@
             "path": "jcshare/client/src",
             "jckit": "222",
             "failure": {
-                "reason": "Intrumentation: The import com.jcdemo.jclib cannot be resolved"
+                "reason": "Instrumentation: The import com.jcdemo.jclib cannot be resolved"
             }
         },
         {
@@ -2214,7 +2214,7 @@
             "path": "jcshare/server/src",
             "jckit": "222",
             "failure": {
-                "reason": "Intrumentation: The import com.jcdemo.jclib cannot be resolved"
+                "reason": "Instrumentation: The import com.jcdemo.jclib cannot be resolved"
             }
         },
         {
