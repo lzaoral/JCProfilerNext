@@ -500,13 +500,6 @@
             "subtests": []
         },
         {
-            "name": "EMVCAP",
-            "repo": "https://github.com/zoobab/EMVCAP",
-            "path": "mirror/applet",
-            "jckit": "222",
-            "subtests": []
-        },
-        {
             "name": "Gemplus-Purse",
             "repo": "https://github.com/ncatanoc/chasetool",
             "path": "src/purse",
