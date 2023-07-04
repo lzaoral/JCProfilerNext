@@ -2028,7 +2028,7 @@
         {
             "name": "carrier_privilege",
             "repo": "https://github.com/sabtmoha/carrier_privilege",
-            "path": "",
+            "path": ".",
             "jckit": "222",
             "subtests": []
         },
