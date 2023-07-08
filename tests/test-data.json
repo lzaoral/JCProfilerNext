@@ -802,18 +802,18 @@
             "subtests": []
         },
         {
+            "name": "SmartPGP-test_applet",
+            "repo": "https://github.com/ANSSI-FR/SmartPGP",
+            "path": "test_applet/src",
+            "jckit": "304",
+            "subtests": []
+        },
+        {
             "name": "JCOpenPGP",
             "archive": "https://sourceforge.net/projects/jcopenpgp/files/JCOpenPGP-1.0.zip",
             "path": "JCOpenPGP/src/",
             "jckit": "221",
             "visa": null,
-            "subtests": []
-        },
-        {
-            "name": "SmartPGP-test_applet",
-            "repo": "https://github.com/ANSSI-FR/SmartPGP",
-            "path": "test_applet/src",
-            "jckit": "304",
             "subtests": []
         },
         {
