@@ -42,6 +42,7 @@ tests/**/*
 !tests/types-in.txt
 
 # actual test scripts and inputs
+!tests/gather-mem.py
 !tests/gather-stats.py
 !tests/run.py
 !tests/test_data.json
