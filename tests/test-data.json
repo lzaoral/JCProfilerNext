@@ -35,7 +35,7 @@
             "repo": "https://github.com/Twuk/eid-quick-key-toolset",
             "path": "eid-quick-key-toolset/eid-applet/src/main/java/be",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "entryPoints": [
                 {
                     "name": "be.fedict.eidapplet.EidCard",
@@ -248,7 +248,7 @@
             "repo": "https://github.com/ash2005/OneCard",
             "path": "Card/src",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "subtests": []
         },
         {
@@ -256,7 +256,7 @@
             "repo": "https://github.com/ash2005/OneCard",
             "path": "Jacket/src",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "subtests": []
         },
         {
@@ -264,7 +264,7 @@
             "repo": "https://github.com/makinako/OpenFIPS201",
             "path": "src",
             "jckit": "305u4",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "fixup": [
                 {
                     "reason": "Instrumentation: comment X cannot be added into the AST",
@@ -291,7 +291,7 @@
             "repo": "https://github.com/O-R-W-L/KeyFob-applet",
             "path": "Code/ORWL_Keypair",
             "jckit": "305u4",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "failure": {
                 "stopAfter": "compilation",
                 "reason": "Installation: constructor calls GPSystem.getCVM"
@@ -575,7 +575,7 @@
             "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
             "path": "CardApplet-MMPP_GPL/src",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "failure": {
                 "reason": "Instrumentation: the import com.st.mmpp.crypto cannot be resolved"
             }
@@ -594,7 +594,7 @@
             "repo": "https://github.com/javacard-FOSS-applets/CardExamples",
             "path": "CardApplet-VCBP_GPL/src",
             "jckit": "305u4",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "failure": {
                 "reason": "Instrumentation: the import com.st.vcbp.crypto cannot be resolved"
             }
@@ -694,7 +694,7 @@
             "repo": "https://github.com/divegeek/JavaCardKeymaster",
             "path": "Applet/JCardSimProvider/src",
             "jckit": "305u4",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "failure": {
                 "reason": "Instrumentation: KMOperation cannot be resolved to a type"
             }
@@ -774,7 +774,7 @@
             "repo": "https://github.com/bertrandmartel/sim-password-wallet",
             "path": "applet/src/main",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "subtests": []
         },
         {
@@ -856,7 +856,7 @@
             "repo": "https://github.com/tsenger/SigAnima",
             "path": "src",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "failure": {
                 "reason": "Instrumentation: the import com.nxp cannot be resolved"
             }
@@ -1307,7 +1307,7 @@
             "repo": "https://github.com/FourTree/LicenseCardApp",
             "path": "PBOC3_JC2_1_1_License/src",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "entryPoints": [
                 {
                     "name": "com.broadthinking.pboc3.PBOC",
@@ -1324,7 +1324,7 @@
             "repo": "https://github.com/FourTree/LicenseCardApp",
             "path": "PBOCLicenseCardApp/src",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "fixup": [
                 {
                     "reason": "Conversion: unsupported int type array index",
@@ -2070,7 +2070,7 @@
             "repo": "https://github.com/martinpaljak/AppletPlayground",
             "path": "src/net/sourceforge",
             "jckit": "222",
-            "gppro": "1.3",
+            "gppro": "1.6",
             "failure": {
                 "stopAfter": "compilation",
                 "reason": "Selection: applet requires specific APDU"
