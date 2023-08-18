@@ -421,6 +421,9 @@ def execute_test(test: Dict[str, Any]) -> None:
     if not ARGS.card:
         cmd.append('--simulator')
 
+    if ARGS.key:
+        cmd += ['--key', ARGS.key]
+
     if 'entryPoints' not in test:
         test_applet(test, cmd)
         return
@@ -514,6 +517,9 @@ def parse_args(args: List[str] = []) -> None:
 
     parser.add_argument('--card', action='store_true',
                         help='Use a real card instead of a simulator')
+    parser.add_argument('--key',
+                        help='Key to manage installed applets on the card')
+
     parser.add_argument('--repeat-count', type=int, default=100,
                         help='Number profiling rounds (default 100)')
 
