@@ -15,6 +15,8 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pro.javacard.sdk.JavaCardSDK;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.jar.JarFile;
@@ -62,7 +64,7 @@ public class Main {
         }
 
         // log basic info
-        log.info("Found JavaCard SDK {} ({})", args.jcSDK.getRelease(), args.jcSDK.getRoot().getAbsolutePath());
+        log.info("Found JavaCard SDK {} ({})", args.jcSDK.getRelease(), args.jcSDK.getRoot().toAbsolutePath());
         log.info("Working directory: {}", args.workDir);
         log.info("Executed in {} mode.", args.mode);
 
@@ -127,7 +129,7 @@ public class Main {
                 args.startFrom.ordinal() <= compilationStage && compilationStage <= args.stopAfter.ordinal()) {
             // check that the current JDK can target given JavaCard version
             final String actualVersion = System.getProperty("java.version");
-            final String requiredVersion = args.jcSDK.getJavaVersion();
+            final String requiredVersion = JavaCardSDK.getJavaVersion(args.jcSDK.getVersion());
 
             if ((actualVersion.matches("(9|10|11).*") && requiredVersion.matches("1\\.[0-5]")) ||
                     (actualVersion.matches("1[^01.].*") && requiredVersion.matches("1\\.[0-6]")))

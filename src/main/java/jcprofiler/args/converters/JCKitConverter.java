@@ -6,7 +6,10 @@ package jcprofiler.args.converters;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.BaseConverter;
 
-import pro.javacard.JavaCardSDK;
+import pro.javacard.sdk.JavaCardSDK;
+
+import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * Parameter converter for the {@link JavaCardSDK} type
@@ -26,10 +29,8 @@ public class JCKitConverter extends BaseConverter<JavaCardSDK> {
      */
     @Override
     public JavaCardSDK convert(final String value) {
-        final JavaCardSDK jcSDK = JavaCardSDK.detectSDK(value);
-        if (jcSDK == null)
-            throw new ParameterException(getErrorString(value, "a valid path to directory with JavaCard SDK"));
-
-        return jcSDK;
+        final Optional<JavaCardSDK> jcSDK = JavaCardSDK.detectSDK(Paths.get(value));
+        return jcSDK.orElseThrow(() -> new ParameterException(
+                getErrorString(value, "a valid path to directory with JavaCard SDK")));
     }
 }

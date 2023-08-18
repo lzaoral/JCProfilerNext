@@ -23,7 +23,6 @@ import spoon.reflect.code.CtConstructorCall;
 import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -655,7 +654,8 @@ public class JCProfilerUtil {
 
         // construct the list of JavaCard API JAR files
         final List<String> apiJars = args.jcSDK.getApiJars().stream()
-                .map(File::getAbsolutePath).collect(Collectors.toList());
+                .map(Path::toAbsolutePath).map(Path::toString)
+                .collect(Collectors.toList());
         apiJars.addAll(args.jars.stream().map(j -> {
             log.debug("Adding {} to Spoon's path.", j);
             return j.toString();
