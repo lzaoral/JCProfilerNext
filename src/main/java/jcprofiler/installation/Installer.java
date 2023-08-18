@@ -133,6 +133,9 @@ public class Installer {
     private static CardManager configureSimulator(final Args args, final CtClass<?> entryPoint) {
         log.info("Configuring jCardSim simulator.");
 
+        // assure jCardsSim compatibility with newer bouncycastle
+        System.setProperty("com.licel.jcardsim.bouncycastle.rsa.allow_unsafe_mod", "true");
+
         // get path to JAR archive
         final Path jarPath = JCProfilerUtil.getAppletOutputDirectory(args.workDir)
                         .resolve(entryPoint.getPackage().getSimpleName() + ".jar");

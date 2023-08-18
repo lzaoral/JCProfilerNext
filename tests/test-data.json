@@ -1807,20 +1807,14 @@
             "repo": "https://github.com/ddealmei/SCP10-attack",
             "path": "SCP10Applet_mitigated/src",
             "jckit": "222",
-            "failure": {
-                "stopAfter": "compilation",
-                "reason": "Installation: CryptoException.NO_SUCH_ALGORITHM"
-            }
+            "subtests": []
         },
         {
             "name": "Sec2",
             "repo": "https://github.com/RUB-NDS/Sec2",
             "path": "sec2-tokenware/src",
             "jckit": "222",
-            "failure": {
-                "stopAfter": "compilation",
-                "reason": "Installation: CryptoException.NO_SUCH_ALGORITHM"
-            }
+            "subtests": []
         },
         {
             "name": "pool-AuthenticationApplet",
@@ -2023,7 +2017,10 @@
             "repo": "https://github.com/mobilesec/secure-channel-srp6a-applet",
             "path": "src",
             "jckit": "222",
-            "subtests": []
+            "failure": {
+                "stopAfter": "compilation",
+                "reason": "Installation: constructor requires custom install data"
+            }
         },
         {
             "name": "carrier_privilege",
