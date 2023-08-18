@@ -179,7 +179,7 @@ public class Installer {
 
             // Simulator may print unrelated messages to stdout during initialization (happens with JCMathLib)
             final PrintStream stdout = System.out;
-            System.setOut(new PrintStream(NullOutputStream.NULL_OUTPUT_STREAM));
+            System.setOut(new PrintStream(NullOutputStream.INSTANCE));
 
             log.debug("Connecting to jCardSim simulator.");
             boolean ret = cardManager.connect(runCfg);
