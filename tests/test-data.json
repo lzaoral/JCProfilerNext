@@ -2443,53 +2443,34 @@
         {
             "name": "JCMathLib",
             "repo": "https://github.com/OpenCryptoProject/JCMathLib",
-            "path": "JCMathLib/src",
+            "path": "applet/src/main/java/opencrypto/jcmathlib",
             "jckit": "222",
-            "remove": [
-                "JCMathLib/src/opencrypto/jcmathlib/PM.java"
-            ],
             "fixup": [
-                {
-                    "reason": "Instrumentation: already contains PM class",
-                    "pattern": "^\\s*PM\\.check.*$",
-                    "replacement": "",
-                    "files": [
-                        "JCMathLib/src/opencrypto/jcmathlib/*.java"
-                    ]
-                },
-                {
-                    "reason": "Instrumentation: already contains PM class",
-                    "pattern": "^\\s*case INS_PERF_SETSTOP:.*\n\\s*PM\\.m_perfStop.*\n.*$",
-                    "replacement": "",
-                    "files": [
-                        "JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java"
-                    ]
-                },
                 {
                     "reason": "Profiling: do not needlessly brick smart cards",
                     "cardOnly": true,
                     "pattern": "(setCard\\(OperationSupport\\.)SIMULATOR",
                     "replacement": "\\1J3H145",
                     "files": [
-                        "JCMathLib/src/opencrypto/jcmathlib/ECExample.java",
-                        "JCMathLib/src/opencrypto/jcmathlib/OCUnitTests.java"
+                        "applet/src/main/java/opencrypto/jcmathlib/Example.java",
+                        "applet/src/main/java/opencrypto/jcmathlib/UnitTests.java"
                     ]
                 }
             ],
             "entryPoints": [
                 {
-                    "name": "opencrypto.jcmathlib.ECExample",
+                    "name": "opencrypto.jcmathlib.Example",
                     "subtests": [
                         {
                             "name": "process",
-                            "executable": "opencrypto.jcmathlib.ECExample#process",
+                            "executable": "opencrypto.jcmathlib.Example#process",
                             "input": "00"
                         }
                     ]
 
                 },
                 {
-                    "name": "opencrypto.jcmathlib.OCUnitTests",
+                    "name": "opencrypto.jcmathlib.UnitTests",
                     "resetIns": "0x03",
                     "cla": "0xB0",
                     "subtests": [
