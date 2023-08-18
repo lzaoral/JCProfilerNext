@@ -80,6 +80,11 @@ public class Args {
                converter = ModeConverter.class)
     public Mode mode = Mode.time;
 
+    @Parameter(names = {"--key"},
+               description = "Key for given card",
+               converter = ByteArrayConverter.class)
+    public byte[] key;
+
     @Parameter(names = {"--custom-pm"},
                description = "Custom PM class (custom profiling only)",
                converter = FilePathConverter.class)
