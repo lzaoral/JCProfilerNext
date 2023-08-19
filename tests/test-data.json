@@ -2473,42 +2473,41 @@
                     "subtests": [
                         {
                             "name": "Integer Storage",
-                            "executable": "test_INT_STR",
+                            "executable": "testIntStr",
                             "ins": "0x09",
                             "input": "0[0-1][0-9A-F]{8}"
                         },
                         {
                             "name": "Integer Addition",
-                            "executable": "test_INT_ADD",
+                            "executable": "testIntAdd",
                             "ins": "0x10",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A-F]{8}){2}"
                         },
                         {
                             "name": "Integer Subtraction",
-                            "executable": "test_INT_SUB",
+                            "executable": "testIntSub",
                             "ins": "0x11",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A-F]{8}){2}"
                         },
                         {
                             "name": "Integer Multiplication",
-                            "executable": "test_INT_MUL",
+                            "executable": "testIntMul",
                             "ins": "0x12",
                             "p1": "0x05",
-                            "input": "(0[0-1][0-9A][0-9A-F]{7}){2}"
+                            "input": "(00(00){4}[0-9A][0-9A-F]{3}){2}"
                         },
                         {
                             "name": "Integer Division",
-                            "executable": "test_INT_DIV",
+                            "executable": "testIntDiv",
                             "ins": "0x13",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A-F]{8}){2}"
                         },
-
                         {
                             "name": "Integer Modulo",
-                            "executable": "test_INT_MOD",
+                            "executable": "testIntMod",
                             "ins": "0x15",
                             "p1": "0x05",
                             "input": "(0[0-1][0-9A-F]{8}){2}"
@@ -2519,53 +2518,63 @@
 
                         {
                             "name": "Bignat Storage",
-                            "executable": "test_BN_STR",
+                            "executable": "testBnStr",
                             "ins": "0x20",
                             "input": "[0-9A-F]{64}"
                         },
                         {
                             "name": "Bignat Addition",
-                            "executable": "test_BN_ADD",
+                            "executable": "testBnAdd",
                             "ins": "0x21",
                             "p1": "0x20",
                             "input": "([0-7][0-9A-F]{63}){2}"
                         },
                         {
                             "name": "Bignat Subtraction",
-                            "executable": "test_BN_SUB",
+                            "executable": "testBnSub",
                             "ins": "0x22",
                             "p1": "0x20",
                             "input": "([0-7][0-9A-F]{63}){2}"
                         },
                         {
                             "name": "Bignat Multiplication",
-                            "executable": "test_BN_MUL",
+                            "executable": "testBnMul",
                             "ins": "0x23",
                             "p1": "0x20",
                             "input": "([0-9A-F]{64}){2}"
                         },
                         {
-                            "name": "Bignat Exponentiation",
-                            "executable": "test_BN_EXP",
+                            "name": "Bignat Right Shift",
+                            "executable": "testBnShiftRight",
                             "ins": "0x24",
                             "p1": "0x08",
-                            "p2": "0x19",
-                            "input": "[0-9A-F]{16}03"
+                            "input": "[0-9A-F]{64}"
                         },
                         {
                             "name": "Bignat Modulo",
-                            "executable": "test_BN_MOD",
+                            "executable": "testBnMod",
                             "ins": "0x25",
                             "p1": "0x21",
                             "input": "00[0-9A-F]{64}[4-7][0-9A-F]{63}"
                         },
-
+                        {
+                            "name": "Bignat Squared",
+                            "executable": "testBnSq",
+                            "ins": "0x26",
+                            "input": "[0-9A-F]{64}"
+                        },
                         {
                             "name": "Bignat School Multiplication",
-                            "executable": "test_BN_MUL",
+                            "executable": "testBnMulSchool",
                             "ins": "0x27",
                             "p1": "0x20",
                             "input": "([0-9A-F]{64}){2}"
+                        },
+                        {
+                            "name": "Bignat Set Value",
+                            "executable": "testBnSetValue",
+                            "ins": "0x28",
+                            "input": "123456"
                         },
 
 
@@ -2573,50 +2582,49 @@
 
                         {
                             "name": "Bignat Addition Modulo",
-                            "executable": "test_BN_ADD_MOD",
+                            "executable": "testBnAddMod",
                             "ins": "0x30",
                             "p1": "0x20",
                             "p2": "0x20",
-                            "input": "([0-9A-F]{64}){2}[4-7][0-9A-F]{63}"
+                            "input": "([0-9A-F]{64}){2}F{8}0{8}F{16}BCE6FAADA7179E84F3B9CAC2FC632551"
                         },
                         {
                             "name": "Bignat Subtraction Modulo",
-                            "executable": "test_BN_SUB_MOD",
+                            "executable": "testBnSubMod",
                             "ins": "0x31",
                             "p1": "0x20",
                             "p2": "0x20",
-                            "input": "([0-9A-F]{64}){2}[4-7][0-9A-F]{63}"
+                            "input": "([0-9A-F]{64}){2}F{8}0{8}F{16}BCE6FAADA7179E84F3B9CAC2FC632551"
                         },
                         {
                             "name": "Bignat Multiplication Modulo",
-                            "executable": "test_BN_MUL_MOD",
+                            "executable": "testBnMulMod",
                             "ins": "0x32",
                             "p1": "0x20",
                             "p2": "0x20",
-                            "input": "([0-9A-F]{64}){2}[4-7][0-9A-F]{63}"
+                            "input": "([0-9A-F]{64}){2}F{8}0{8}F{16}BCE6FAADA7179E84F3B9CAC2FC632551"
                         },
                         {
                             "name": "Bignat Exponentiation Modulo",
-                            "executable": "test_BN_EXP_MOD",
+                            "executable": "testBnExpMod",
                             "ins": "0x33",
                             "p1": "0x20",
-                            "p2": "0x01",
-                            "input": "[0-9A-F]{64}02[8-9A-F][0-9A-F]{63}"
+                            "p2": "0x20",
+                            "input": "([0-9A-F]{64}){2}F{8}0{8}F{16}BCE6FAADA7179E84F3B9CAC2FC632551"
                         },
                         {
                             "name": "Bignat Inversion Modulo",
-                            "executable": "test_BN_INV_MOD",
+                            "executable": "testBnInvMod",
                             "ins": "0x34",
-                            "p1": "0x30",
-                            "input": "[0-9A-F]{96}F{8}0{7}10{24}F{24}[8-9A-F][0-9A-F]{63}"
+                            "p1": "0x20",
+                            "input": "[0-9A-F]{64}F{8}0{8}F{16}BCE6FAADA7179E84F3B9CAC2FC632551"
                         },
                         {
                             "name": "Bignat Squared Modulo",
-                            "executable": "test_BN_POW2_MOD",
+                            "executable": "testBnSqMod",
                             "ins": "0x35",
                             "p1": "0x20",
-                            "p2": "0x20",
-                            "input": "[0-9A-F]{64}[8-9A-F][0-9A-F]{63}"
+                            "input": "[0-9A-F]{64}F{8}0{8}F{16}BCE6FAADA7179E84F3B9CAC2FC632551"
                         },
 
 
@@ -2624,43 +2632,65 @@
 
                         {
                             "name": "EC Point Generation",
-                            "executable": "test_EC_GEN",
+                            "executable": "testEcGen",
                             "ins": "0x40",
                             "input": "00"
                         },
                         {
                             "name": "EC Point Double",
-                            "executable": "test_EC_DBL",
+                            "executable": "testEcDbl",
                             "ins": "0x41",
                             "input": "046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
                         },
                         {
                             "name": "EC Point Add",
-                            "executable": "test_EC_ADD",
+                            "executable": "testEcAdd",
                             "ins": "0x42",
                             "inputFile": "inputs/ECPointPairs.txt"
                         },
                         {
                             "name": "EC Point Scalar Multiplication",
-                            "executable": "test_EC_MUL",
+                            "executable": "testEcMul",
                             "ins": "0x43",
                             "p1": "0x20",
                             "input": "[0-9A-F]{64}046B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C2964FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"
                         },
                         {
                             "name": "EC Point Negation",
-                            "executable": "test_EC_NEG",
+                            "executable": "testEcNeg",
                             "ins": "0x44",
                             "p1": "0x41",
                             "inputFile": "inputs/ECPoints.txt"
                         },
                         {
                             "name": "EC Point Comparison",
-                            "executable": "test_EC_COMPARE",
+                            "executable": "testEcCompare",
                             "ins": "0x46",
                             "p1": "0x41",
                             "p2": "0x41",
                             "inputFile": "inputs/ECPointPairs.txt"
+                        },
+                        {
+                            "name": "EC Point From X",
+                            "executable": "testEcFromX",
+                            "ins": "0x47",
+                            "p1": "0x20",
+                            "inputFile": "inputs/ECPointXCoords.txt"
+                        },
+                        {
+                            "name": "EC Point Is Y Even",
+                            "executable": "testEcIsYEven",
+                            "ins": "0x48",
+                            "p1": "0x41",
+                            "inputFile": "inputs/ECPoints.txt"
+                        },
+
+                        {
+                            "name": "EC Point Encode",
+                            "executable": "testEcEncode",
+                            "ins": "0x4A",
+                            "p1": "0x41",
+                            "inputFile": "inputs/ECPoints.txt"
                         }
                     ]
                 }
