@@ -181,7 +181,9 @@
             "repo": "https://github.com/vletoux/GidsApplet",
             "path": "src/com/mysmartlogon/gidsApplet",
             "jckit": "221",
-            "subtests": []
+            "failure": {
+                "reason": "Instrumentation: Config cannot be resolved to a variable"
+            }
         },
         {
             "name": "GidsApp",
