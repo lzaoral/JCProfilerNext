@@ -219,7 +219,7 @@ public abstract class AbstractProfiler {
         // regex
         if (args.dataRegex != null) {
             log.info("Generating inputs from regular expression {}.", args.dataRegex);
-            final RgxGen rgxGen = new RgxGen(args.dataRegex);
+            final RgxGen rgxGen = RgxGen.parse(args.dataRegex);
 
             for (int i = 0; i < size * 100; i++) {
                 final String input = rgxGen.generate(rdn);
