@@ -12,8 +12,8 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Echo;
 
 import pro.javacard.ant.JavaCard;
-import pro.javacard.ant.JavaCard.JCApplet;
-import pro.javacard.ant.JavaCard.JCCap;
+import pro.javacard.ant.JCApplet;
+import pro.javacard.ant.JCCap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
