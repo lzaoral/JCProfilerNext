@@ -274,7 +274,7 @@ public class Instrumenter {
         final CtType<?> pmc = JCProfilerUtil.getToplevelType(model, "PMC");
         final Map<CtField<?>, Short> fieldValuesMap = pmc.getFields().stream().collect(Collectors.toMap(
                 Function.identity(),
-                f -> f.getAssignment().<CtLiteral<Integer>>partiallyEvaluate().getValue().shortValue()));
+                f -> f.getAssignment().<CtLiteral<Number>>partiallyEvaluate().getValue().shortValue()));
         if (fieldValuesMap.size() != fieldValuesMap.values().stream().distinct().count()) {
             final Map<Short, List<CtField<?>>> valueFieldsMap = new HashMap<>();
             fieldValuesMap.forEach((k, v) -> valueFieldsMap.computeIfAbsent(v, e -> new ArrayList<>()).add(k));

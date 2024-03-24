@@ -195,7 +195,7 @@ public abstract class AbstractProfiler {
 
         // populate the map
         for (final CtField<Short> f : traps) {
-            final CtLiteral<Integer> evaluated = f.getDefaultExpression().partiallyEvaluate();
+            final CtLiteral<Number> evaluated = f.getDefaultExpression().partiallyEvaluate();
             trapNameMap.put(evaluated.getValue().shortValue(), f.getSimpleName());
             log.info("Found {}.", f.getSimpleName());
         }

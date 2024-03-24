@@ -110,7 +110,7 @@ public abstract class AbstractModifyEntryPointProcessor extends AbstractProfiler
                         // Set<ModifierKind> does not have a stable ordering
                         insPerfSetStopCasted.getModifiers().stream().sorted().collect(Collectors.toList())));
 
-            final CtLiteral<? extends Number> lit = insPerfSetStopCasted.getAssignment().partiallyEvaluate();
+            final CtLiteral<Number> lit = insPerfSetStopCasted.getAssignment().partiallyEvaluate();
             if (lit.getValue().byteValue() != JCProfilerUtil.INS_PERF_HANDLER)
                 throw new RuntimeException(String.format(
                         "Existing %s field has %s as initializer! Expected: (byte) 0x%02x",
