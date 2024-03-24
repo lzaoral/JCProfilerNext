@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# SPDX-FileCopyrightText: 2023-2024 Lukáš Zaoral <lukaszaoral@outlook.com>
+# SPDX-License-Identifier: GPL-3.0-only
+
 from pathlib import Path
 
 import csv
