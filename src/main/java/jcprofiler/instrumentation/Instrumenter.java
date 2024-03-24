@@ -25,6 +25,7 @@ import spoon.reflect.reference.CtFieldReference;
 import spoon.support.compiler.VirtualFile;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
@@ -118,6 +119,7 @@ public class Instrumenter {
     private CtModel buildModel(final Launcher spoon) {
         JCProfilerUtil.setupSpoon(spoon, args);
         spoon.addInputResource(JCProfilerUtil.getSourceInputDirectory(args.workDir).toString());
+        spoon.getEnvironment().setEncoding(StandardCharsets.UTF_8);
 
         log.debug("Building Spoon model.");
         try {

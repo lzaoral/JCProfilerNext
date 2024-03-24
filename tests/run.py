@@ -176,7 +176,7 @@ def modify_project(test: Dict[str, Any], onlyMove: bool = False) -> None:
             for file in Path(test['name']).glob(glb):
                 print('Replacing lines matching', f'"{pattern_str}"', 'with',
                       f'"{replacement_str}"', 'in', file)
-                with open(file, 'r', encoding='utf8', errors='ignore') as f:
+                with open(file, 'r', encoding='utf8', errors='replace') as f:
                     lines = f.read()
                 with open(file, 'w', encoding='utf8') as f:
                     f.write(pattern.sub(replacement, lines))
