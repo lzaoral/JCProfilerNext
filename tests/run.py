@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# SPDX-FileCopyrightText: 2022 Lukáš Zaoral <lukaszaoral@outlook.com>
+# SPDX-FileCopyrightText: 2022-2024 Lukáš Zaoral <lukaszaoral@outlook.com>
 # SPDX-License-Identifier: GPL-3.0-only
 
 from argparse import ArgumentParser, Namespace
