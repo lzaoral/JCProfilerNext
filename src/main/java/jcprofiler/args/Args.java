@@ -9,7 +9,7 @@ import jcprofiler.args.converters.*;
 import jcprofiler.args.validators.*;
 import jcprofiler.util.enums.*;
 
-import pro.javacard.sdk.JavaCardSDK;
+import pro.javacard.JavaCardSDK;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

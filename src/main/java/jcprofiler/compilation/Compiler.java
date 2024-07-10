@@ -84,7 +84,7 @@ public class Compiler {
         final JavaCard jc = new JavaCard();
         jc.setTaskName("JavaCard");
         jc.setProject(project);
-        jc.setJCKit(args.jcSDK.getRoot().toAbsolutePath().toString());
+        jc.setJCKit(args.jcSDK.getRoot().getAbsolutePath());
         jcTarget.addTask(jc);
 
         // create a CAP file subtask

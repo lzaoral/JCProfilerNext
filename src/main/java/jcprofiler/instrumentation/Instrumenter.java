@@ -13,7 +13,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pro.javacard.sdk.SDKVersion;
+import pro.javacard.JavaCardSDK;
 
 import spoon.Launcher;
 import spoon.OutputType;
@@ -186,8 +186,8 @@ public class Instrumenter {
         // Only JavaCard 3.0.1 and newer support multi package CAP files.
         // https://docs.oracle.com/en/java/javacard/3.1/guide/programming-multi-package-large-cap-files.html
         if (pkgs.size() != 1) {
-            final SDKVersion jcVersion = args.jcSDK.getVersion();
-            if (!jcVersion.isOneOf(SDKVersion.V310)) {
+            final JavaCardSDK.Version jcVersion = args.jcSDK.getVersion();
+            if (!jcVersion.isOneOf(JavaCardSDK.Version.V310)) {
                 throw new UnsupportedOperationException(String.format(
                         "Only one package is allowed with JavaCard %s! Found: %s", jcVersion, pkgs));
             }
@@ -221,7 +221,7 @@ public class Instrumenter {
 
                         // support newer JCSystem.getAvailableMemory overloads
                         final boolean hasNewerAPI =
-                                args.jcSDK.getVersion().ordinal() >= SDKVersion.V304.ordinal();
+                                args.jcSDK.getVersion().ordinal() >= JavaCardSDK.Version.V304.ordinal();
                         if (hasNewerAPI && args.useSimulator) {
                             log.warn("jCardSim does not implement JCSystem.getAvailableMemory(short[],short,byte).");
                             log.info("Falling back to JCSystem.getAvailableMemory(short).");
