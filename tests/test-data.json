@@ -1485,8 +1485,7 @@
             "jckit": "222",
             "thoth": "KM101",
             "failure": {
-                "stopAfter": "instrumentation",
-                "reason": "Conversion: unsupported int type method parameter"
+                "reason": "Instrumentation:  The method newAOCUserCred(byte, byte[], short, short, short, byte[], short, short, byte[], short, byte, null, short, short, byte, byte[], short) is undefined for the type T101OpenAPI"
             }
         },
         {
@@ -1496,8 +1495,7 @@
             "jckit": "304",
             "thoth": "KM101",
             "failure": {
-                "stopAfter": "compilation",
-                "reason": "Selection: SystemException.ILLEGAL_USE"
+                "reason": "Instrumentation: The method uiSession(byte, byte, byte, byte, byte, byte, byte[], short, short, byte[], short, short, byte[], short) in the type T101OpenAPI is not applicable for the arguments (byte, byte, byte, byte, byte, byte[], short, short, byte[], short, short, byte[], short)"
             }
         },
         {
@@ -1506,7 +1504,9 @@
             "path": "Samples/T101Test1/src/testt101",
             "jckit": "304",
             "thoth": "KM101",
-            "subtests": []
+            "failure": {
+                "reason": "Instrumentation:  The method newAOCUserCred(byte, byte[], short, short, short, byte[], short, short, byte[], short, byte, null, short, short, byte, byte[], short) is undefined for the type T101OpenAPI"
+            }
         },
         {
             "name": "T101-Devhub-ThetaPass",
@@ -1515,8 +1515,7 @@
             "jckit": "304",
             "thoth": "KM101",
             "failure": {
-                "stopAfter": "instrumentation",
-                "reason": "Conversion: unsupported int type method parameter"
+                "reason": "Instrumentation: The method uiSession(byte, byte, byte, byte, byte, byte, byte[], short, short, byte[], short, short, byte[], short) in the type T101OpenAPI is not applicable for the arguments (byte, byte, byte, byte, byte, byte[], short, short, byte[], short, short, byte[], short)"
             }
         },
         {
