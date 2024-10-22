@@ -59,7 +59,7 @@ dependencies {
     implementation 'org.apache.velocity:velocity-engine-core:2.3'
 
     // unit tests
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
