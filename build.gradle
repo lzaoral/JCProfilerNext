@@ -51,7 +51,7 @@ dependencies {
 
     // apache commons
     implementation 'commons-io:commons-io:2.18.0'
-    implementation 'org.apache.commons:commons-csv:1.11.0'
+    implementation 'org.apache.commons:commons-csv:1.14.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'org.apache.commons:commons-text:1.13.0'
 
