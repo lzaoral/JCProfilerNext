@@ -10,7 +10,6 @@ import jcprofiler.args.Args;
 import jcprofiler.util.enums.Stage;
 
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVFormat.Builder;
 import org.apache.commons.io.FileUtils;
 
 import org.slf4j.Logger;
@@ -603,10 +602,10 @@ public class JCProfilerUtil {
      * @return {@link CSVFormat} instance
      */
     public static CSVFormat getCSVFormat() {
-        return Builder.create(CSVFormat.DEFAULT)
+        return CSVFormat.DEFAULT.builder()
                 .setCommentMarker('#')
                 .setRecordSeparator(System.lineSeparator())
-                .build();
+                .get();
     }
 
 
