@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022-2024 Lukáš Zaoral <lukaszaoral@outlook.com>
+// SPDX-FileCopyrightText: 2022-2026 Lukáš Zaoral <lukaszaoral@outlook.com>
 // SPDX-License-Identifier: MIT
 
 package jcprofiler;
