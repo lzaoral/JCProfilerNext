@@ -7,8 +7,8 @@ plugins {
 
 // TODO: shadow plugin?
 
-group 'org.crocs'
-version '1.0-SNAPSHOT'
+group = 'org.crocs'
+version = '1.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -17,8 +17,8 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url "https://javacard.pro/maven" }
-    maven { url "https://deadcode.me/mvn" }
+    maven { url = "https://javacard.pro/maven" }
+    maven { url = "https://deadcode.me/mvn" }
 }
 
 dependencies {
